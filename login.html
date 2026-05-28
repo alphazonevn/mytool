@@ -90,6 +90,7 @@
         <div class="w-full md:w-5/12 bg-secondary p-10 flex flex-col justify-between text-white relative overflow-hidden">
             <div class="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-400 via-transparent to-transparent"></div>
             <div class="relative z-10">
+                <a href="index.html" class="flex items-center mb-12 group">
                     <img src="https://i.pinimg.com/736x/58/98/19/58981979f44731d95ab25aad9a7c88cb.jpg" alt="My Tool Logo" class="w-12 h-12 rounded-xl object-cover mr-3 shadow-lg border-2 border-white/20 transition-transform group-hover:scale-105">
                     <span class="font-bold text-2xl tracking-tight">My<span class="text-primary font-extrabold">Tool</span></span>
                 </a>
@@ -214,7 +215,7 @@
 
     <script>
         // BƯỚC QUAN TRỌNG 1: Thay link này bằng URL Web App Google Apps Script của bạn
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyCmaMaxRGBNHX424EvFX6KfDWHhYMZKZoElcxTjfomTVtnrTBwaXHjQxqCnybTMBpdRA/exec';
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwcVoNslqqmVodR8JcX5nmbWjP5SBGUFb8kroJlQDnYtLa7llKSFwa42zqU9Wu4malu/exec';
         
         // BƯỚC QUAN TRỌNG 2: Thay Client ID của bạn để dùng được Google Sign-In
         // Truy cập Google Cloud Console -> APIs & Services -> Credentials để tạo OAuth Client ID
@@ -381,7 +382,16 @@
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' }
                 });
                 
-                const result = await response.json();
+                // Đọc dữ liệu dạng text trước thay vì ép sang json() ngay để bắt lỗi Google trả về trang HTML
+                const responseText = await response.text(); 
+                
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (parseError) {
+                    console.error("Lỗi phản hồi từ Google:", responseText);
+                    throw new Error("Máy chủ Google phản hồi sai định dạng. Vui lòng check lại Deploy (Xem chi tiết ở F12 Console).");
+                }
                 
                 if(result.success) {
                     showToast(result.message, "success");
@@ -413,8 +423,8 @@
                     showToast(result.message, "error");
                 }
             } catch (error) {
-                showToast("Lỗi kết nối đến máy chủ. Vui lòng thử lại!", "error");
-                console.error(error);
+                showToast(error.message || "Lỗi kết nối đến máy chủ. Vui lòng thử lại!", "error");
+                console.error("Chi tiết lỗi:", error);
             } finally {
                 loader.style.display = 'none';
                 btnText.style.opacity = '1';
