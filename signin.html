@@ -209,7 +209,7 @@
 
     <script>
         // BƯỚC QUAN TRỌNG: Thay link này bằng URL Web App Google Apps Script của bạn sau khi Deploy
-        const APPS_SCRIPT_URL = 'THAY_URL_WEB_APP_CUA_BAN_VAO_DAY';
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzCjU9ituWj17HYwg0jKcgSq_iRFhmIyREOcEgLzynzYjgzSYRJXKsH0bk3Gl_FJow/exec';
 
         // Xử lý chuyển tab Đăng nhập/Đăng ký
         function switchTab(tab) {
@@ -254,7 +254,7 @@
         async function handleFormSubmit(event, action) {
             event.preventDefault();
             
-            if(https://script.google.com/macros/s/AKfycbzCjU9ituWj17HYwg0jKcgSq_iRFhmIyREOcEgLzynzYjgzSYRJXKsH0bk3Gl_FJow/exec === 'THAY_URL_WEB_APP_CUA_BAN_VAO_DAY') {
+            if(APPS_SCRIPT_URL === 'THAY_URL_WEB_APP_CUA_BAN_VAO_DAY') {
                 showToast("Lỗi: Bạn chưa cấu hình APPS_SCRIPT_URL.", "error");
                 return;
             }
