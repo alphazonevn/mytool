@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
+  <link rel="icon" href="https://cdn.abphotos.link/photos/resized/40x40/2026/03/11/1773232281_ARJvCgc348bqad67_1773238655-phpcgaoey.png" type="image/png">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HR SmartKit - Nâng cấp Thông minh</title>
+  <title>HR SmartKit - Quản trị thông minh</title>
   <!-- React & ReactDOM -->
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
@@ -12,7 +13,6 @@
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Custom Scrollbar */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
@@ -27,70 +27,162 @@
 
     // --- ICON COMPONENTS (Inline SVG) ---
     const IconBriefcase = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>;
-    const IconDashboard = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>;
     const IconUsers = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>;
     const IconWand = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z"></path><path d="m14 7 3 3"></path><path d="M5 6v4"></path><path d="M19 14v4"></path><path d="M10 2v2"></path><path d="M7 8H3"></path><path d="M21 16h-4"></path><path d="M11 3H9"></path></svg>;
     const IconMail = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>;
+    const IconLink = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>;
     const IconPlus = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>;
     const IconCopy = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>;
     const IconCheckCircle = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>;
-    const IconSave = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>;
     const IconLoader = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="animate-spin"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg>;
     const IconSearch = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>;
     const IconDownload = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>;
     const IconSparkles = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path></svg>;
-    const IconSend = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>;
     const IconFileCsv = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="8" y1="13" x2="16" y2="13"></line><line x1="8" y1="17" x2="16" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>;
+    const IconDatabase = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>;
+    const IconCode = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>;
+    const IconEye = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>;
+    const IconGmail = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>;
+    const IconPaperPlane = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>;
+    const IconTrash = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>;
 
     // --- MAIN APP ---
     const App = () => {
       const [activeTab, setActiveTab] = useState('candidates');
       const [toast, setToast] = useState(null);
       
-      // Global Data State
+      // GẮN CỨNG URL APPS SCRIPT
+      const DEFAULT_API_URL = "https://script.google.com/macros/s/AKfycbxMo8lENcmJ7LeY9GyPWPgrnpZQGKjKexUsHUTp8ruPJU_rW_1xxiiLhaARvrFL2CarXQ/exec";
+      
+      const [apiUrl, setApiUrl] = useState(localStorage.getItem('hr_api_url') || DEFAULT_API_URL);
+      const [isConfiguring, setIsConfiguring] = useState(false); 
+      const [connectionStatus, setConnectionStatus] = useState('connecting'); 
+      
       const [columns, setColumns] = useState([]);
       const [candidates, setCandidates] = useState([]);
-      const [isLoading, setIsLoading] = useState(true);
+      const [isLoading, setIsLoading] = useState(false);
+
+      const [prefillData, setPrefillData] = useState(null);
 
       const showToast = (message) => {
         setToast(message);
         setTimeout(() => setToast(null), 3000);
       };
 
-      // Tự động nhận diện môi trường (Apps Script hoặc Local preview)
-      const isGAS = typeof google !== 'undefined' && google.script;
-
-      useEffect(() => {
-        fetchData();
-      }, []);
-
-      const fetchData = () => {
-        setIsLoading(true);
-        if (isGAS) {
-          google.script.run.withSuccessHandler(data => {
-            setColumns(data.columns.filter(c => c.id !== 'id'));
-            setCandidates(data.candidates);
-            setIsLoading(false);
-          }).getAppData();
-        } else {
-          // Mock data cho giao diện xem trước
-          setTimeout(() => {
-            setColumns([
-              { id: 'Họ và tên', label: 'Họ và tên' },
-              { id: 'Vị trí ứng tuyển', label: 'Vị trí ứng tuyển' },
-              { id: 'Trạng thái', label: 'Trạng thái' }
-            ]);
-            setCandidates([
-              { id: '1', 'Họ và tên': 'Lâm Tuấn Kiệt', 'Vị trí ứng tuyển': 'Idol Livestream', 'Trạng thái': 'Chờ phỏng vấn' },
-              { id: '2', 'Họ và tên': 'Nguyễn Văn A', 'Vị trí ứng tuyển': 'Nhân viên Media', 'Trạng thái': 'Đã nhận việc' }
-            ]);
-            setIsLoading(false);
-          }, 800);
+      const callAPI = async (action, payload = {}) => {
+        if (!apiUrl) throw new Error("Chưa cấu hình API URL");
+        try {
+          const res = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action, ...payload })
+          });
+          const result = await res.json();
+          if (result.status !== 'success') throw new Error(result.message);
+          return result.data;
+        } catch (err) {
+          console.error("API Call Error:", err);
+          throw err;
         }
       };
 
+      useEffect(() => {
+        if (!isConfiguring) {
+          fetchData();
+        }
+      }, [isConfiguring, apiUrl]);
+
+      const fetchData = async () => {
+        setIsLoading(true);
+        if (apiUrl) {
+          try {
+            const data = await callAPI('getAppData');
+            setColumns(data.columns.filter(c => c.id !== 'id'));
+            setCandidates(data.candidates);
+            setConnectionStatus('connected');
+          } catch (error) {
+            setConnectionStatus('error');
+            showToast("Lỗi kết nối CSDL. Đang dùng dữ liệu Demo!");
+            setMockData();
+          }
+        } else {
+          setConnectionStatus('demo');
+          setMockData();
+        }
+        setIsLoading(false);
+      };
+
+      const setMockData = () => {
+        setColumns([
+          { id: 'Họ và tên', label: 'Họ và tên' },
+          { id: 'Vị trí ứng tuyển', label: 'Vị trí ứng tuyển' },
+          { id: 'Email', label: 'Email' },
+          { id: 'Trạng thái', label: 'Trạng thái' }
+        ]);
+        setCandidates([
+          { id: '1', 'Họ và tên': 'Lâm Tuấn Kiệt', 'Vị trí ứng tuyển': 'Idol Livestream', 'Email': 'kiet@gmail.com', 'Trạng thái': 'Chờ phỏng vấn' },
+          { id: '2', 'Họ và tên': 'Nguyễn Văn A', 'Vị trí ứng tuyển': 'Nhân viên Media', 'Email': 'nguyenvana@gmail.com', 'Trạng thái': 'Đã nhận việc' }
+        ]);
+      };
+
+      const handleJumpToEmail = (cand) => {
+        let nameKey = Object.keys(cand).find(k => k.toLowerCase().includes('tên'));
+        let posKey = Object.keys(cand).find(k => k.toLowerCase().includes('vị trí'));
+        let emailKey = Object.keys(cand).find(k => k.toLowerCase() === 'email');
+
+        setPrefillData({
+          candId: cand.id,
+          name: cand[nameKey] || '',
+          position: cand[posKey] || '',
+          email: cand[emailKey] || ''
+        });
+        setActiveTab('emails');
+        showToast("Đã lấy thông tin ứng viên!");
+      };
+
       return (
-        <div className="flex flex-col md:flex-row h-screen bg-slate-50">
+        <div className="flex flex-col md:flex-row h-screen bg-slate-50 relative">
+          {/* Modal Cấu hình Database */}
+          {isConfiguring && (
+            <div className="fixed inset-0 bg-slate-900/60 flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-200">
+                <div className="bg-indigo-600 p-6 text-white">
+                  <h3 className="text-xl font-bold flex items-center"><IconDatabase /> <span className="ml-2">Cấu hình Lưu trữ Đám mây</span></h3>
+                  <p className="text-indigo-100 mt-2 text-sm">Chỉnh sửa Web App URL nếu bạn thay đổi link Apps Script.</p>
+                </div>
+                <div className="p-6 space-y-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-1">Web App URL</label>
+                    <input 
+                      type="text" 
+                      className="w-full border border-slate-300 focus:ring-2 focus:ring-indigo-500 rounded-lg p-3 outline-none text-sm" 
+                      value={apiUrl}
+                      onChange={e => setApiUrl(e.target.value)}
+                    />
+                  </div>
+                  <div className="flex justify-end space-x-3 pt-4 border-t border-slate-100">
+                    <button 
+                      onClick={() => setIsConfiguring(false)} 
+                      className="px-5 py-2.5 bg-slate-100 text-slate-700 hover:bg-slate-200 font-medium rounded-lg transition-colors"
+                    >
+                      Đóng
+                    </button>
+                    <button 
+                      onClick={() => { 
+                        if(!apiUrl) return showToast('Vui lòng nhập URL!');
+                        localStorage.setItem('hr_api_url', apiUrl); 
+                        setIsConfiguring(false); 
+                      }} 
+                      className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors flex items-center"
+                    >
+                      <IconCheckCircle /> <span className="ml-2">Lưu & Kết nối</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Sidebar */}
           <aside className="w-full md:w-64 bg-white border-r border-slate-200 flex flex-col flex-shrink-0">
             <div className="h-16 flex items-center px-6 border-b border-slate-200">
@@ -99,17 +191,36 @@
             </div>
             <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
               <NavItem icon={IconUsers} label="Quản lý Ứng viên" isActive={activeTab === 'candidates'} onClick={() => setActiveTab('candidates')} />
+              <NavItem icon={IconLink} label="Lưu trữ Liên kết" isActive={activeTab === 'links'} onClick={() => setActiveTab('links')} />
               <NavItem icon={IconWand} label="Trợ lý tạo JD" isActive={activeTab === 'jd-builder'} onClick={() => setActiveTab('jd-builder')} />
               <NavItem icon={IconMail} label="Mẫu thư (Email)" isActive={activeTab === 'emails'} onClick={() => setActiveTab('emails')} />
             </nav>
-            <div className="p-4 border-t border-slate-200 text-xs text-center">
-              {isGAS ? (
-                <span className="text-green-600 font-medium flex items-center justify-center">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
-                  Đã kết nối Google Sheets
+            <div className="p-4 border-t border-slate-200 text-xs text-center flex flex-col items-center">
+              <button 
+                onClick={() => setIsConfiguring(true)}
+                className="w-full mb-2 py-2 border border-slate-200 rounded-md flex justify-center items-center text-slate-600 hover:bg-slate-50 transition-colors"
+              >
+                <IconDatabase /> <span className="ml-1">Cấu hình DB</span>
+              </button>
+              {connectionStatus === 'connected' && (
+                <span className="text-green-600 font-medium flex items-center justify-center bg-green-50 w-full py-1.5 rounded">
+                  <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div> Đã kết nối Sheets
                 </span>
-              ) : (
-                <span className="text-slate-400">Chế độ Demo (Chưa kết nối Sheets)</span>
+              )}
+              {connectionStatus === 'error' && (
+                <span className="text-red-500 font-medium flex items-center justify-center bg-red-50 w-full py-1.5 rounded">
+                  Lỗi kết nối API
+                </span>
+              )}
+              {connectionStatus === 'demo' && (
+                <span className="text-slate-500 font-medium flex items-center justify-center bg-slate-100 w-full py-1.5 rounded">
+                  Chế độ Offline (Demo)
+                </span>
+              )}
+              {connectionStatus === 'connecting' && (
+                <span className="text-indigo-500 font-medium flex items-center justify-center bg-indigo-50 w-full py-1.5 rounded">
+                  <IconLoader /> <span className="ml-1">Đang kết nối...</span>
+                </span>
               )}
             </div>
           </aside>
@@ -118,9 +229,10 @@
           <main className="flex-1 flex flex-col h-screen overflow-hidden">
             <header className="h-16 bg-white border-b border-slate-200 flex items-center px-8 shadow-sm flex-shrink-0">
               <h2 className="text-lg md:text-xl font-semibold text-slate-800">
-                {activeTab === 'candidates' && 'Cơ sở dữ liệu Ứng viên (Đồng bộ Sheets)'}
+                {activeTab === 'candidates' && 'Cơ sở dữ liệu Ứng viên'}
+                {activeTab === 'links' && 'Lưu trữ URL / Liên kết Tuyển dụng'}
                 {activeTab === 'jd-builder' && 'Tạo Job Description Thông minh'}
-                {activeTab === 'emails' && 'Mẫu thư Tuyển dụng'}
+                {activeTab === 'emails' && 'Mẫu thư Tuyển dụng (Free Bird)'}
               </h2>
             </header>
 
@@ -136,11 +248,31 @@
                 <CandidatesTab 
                   columns={columns} setColumns={setColumns}
                   candidates={candidates} setCandidates={setCandidates}
-                  isGAS={isGAS} showToast={showToast}
+                  callAPI={callAPI} connectionStatus={connectionStatus} showToast={showToast}
+                  onJumpToEmail={handleJumpToEmail}
+                />
+              )}
+              {!isLoading && activeTab === 'links' && (
+                <LinksTab 
+                  callAPI={callAPI} connectionStatus={connectionStatus} showToast={showToast} 
                 />
               )}
               {!isLoading && activeTab === 'jd-builder' && <JdBuilderTab showToast={showToast} />}
-              {!isLoading && activeTab === 'emails' && <EmailsTab showToast={showToast} />}
+              {!isLoading && activeTab === 'emails' && (
+                <EmailsTab 
+                  showToast={showToast} 
+                  prefillData={prefillData} 
+                  callAPI={callAPI} 
+                  connectionStatus={connectionStatus}
+                  columns={columns}
+                  updateLocalCandidate={(id, colId, val) => {
+                    const newCands = [...candidates];
+                    const idx = newCands.findIndex(c => c.id === id);
+                    if(idx > -1) newCands[idx][colId] = val;
+                    setCandidates(newCands);
+                  }}
+                />
+              )}
             </div>
           </main>
 
@@ -171,55 +303,59 @@
       </button>
     );
 
-    // 1. Tab Quản lý Ứng viên (Đồng bộ Google Sheets)
-    const CandidatesTab = ({ columns, setColumns, candidates, setCandidates, isGAS, showToast }) => {
+    // 1. Tab Quản lý Ứng viên
+    const CandidatesTab = ({ columns, setColumns, candidates, setCandidates, callAPI, connectionStatus, showToast, onJumpToEmail }) => {
       const [newFieldName, setNewFieldName] = useState('');
       const [isAddingField, setIsAddingField] = useState(false);
       const [isSaving, setIsSaving] = useState(false);
       const [searchTerm, setSearchTerm] = useState('');
 
-      const handleAddField = () => {
+      const handleAddField = async () => {
         if (!newFieldName.trim()) return;
         setIsAddingField(false);
         setIsSaving(true);
         
-        if (isGAS) {
-          google.script.run.withSuccessHandler(data => {
+        if (connectionStatus === 'connected') {
+          try {
+            const data = await callAPI('addColumn', { colName: newFieldName });
             setColumns(data.columns.filter(c => c.id !== 'id'));
             setCandidates(data.candidates);
-            setIsSaving(false);
             showToast(`Đã thêm trường tự động: "${newFieldName}"`);
-          }).addColumn(newFieldName);
+          } catch (err) {
+            showToast("Lỗi khi thêm trường!");
+          }
         } else {
           setTimeout(() => {
             setColumns([...columns, { id: newFieldName, label: newFieldName }]);
-            setIsSaving(false);
             showToast(`(Demo) Đã tạo cột: "${newFieldName}"`);
           }, 500);
         }
+        setIsSaving(false);
         setNewFieldName('');
       };
 
-      const handleAddCandidate = () => {
+      const handleAddCandidate = async () => {
         const newCand = {};
         columns.forEach(c => newCand[c.id] = '');
         newCand['Họ và tên'] = 'Ứng viên mới';
         setIsSaving(true);
 
-        if (isGAS) {
-          google.script.run.withSuccessHandler(data => {
+        if (connectionStatus === 'connected') {
+          try {
+            const data = await callAPI('addCandidate', { candidateObj: newCand });
             setColumns(data.columns.filter(c => c.id !== 'id'));
             setCandidates(data.candidates);
-            setIsSaving(false);
             showToast("Đã tạo ứng viên mới!");
-          }).addCandidate(newCand);
+          } catch (err) {
+            showToast("Lỗi khi tạo ứng viên!");
+          }
         } else {
           setTimeout(() => {
             setCandidates([...candidates, { id: Date.now().toString(), ...newCand }]);
-            setIsSaving(false);
             showToast("(Demo) Đã tạo ứng viên!");
           }, 500);
         }
+        setIsSaving(false);
       };
 
       const updateCellValue = (id, colId, value) => {
@@ -231,15 +367,17 @@
         }
       };
 
-      const syncCellToSheets = (id, colId, value) => {
-        if (isGAS) {
-          google.script.run.withSuccessHandler((success) => {
-            if(success) showToast("Đã lưu tự động");
-          }).updateCandidate(id, colId, value);
+      const syncCellToSheets = async (id, colId, value) => {
+        if (connectionStatus === 'connected') {
+          try {
+            await callAPI('updateCandidate', { id, colId, value });
+            showToast("Đã lưu tự động");
+          } catch (err) {
+            showToast("Lỗi khi lưu dữ liệu!");
+          }
         }
       };
 
-      // TÍNH NĂNG THÔNG MINH: Xuất file CSV
       const exportToCSV = () => {
         if (candidates.length === 0) return showToast("Không có dữ liệu để xuất!");
         
@@ -259,7 +397,6 @@
         showToast("Đã xuất file CSV thành công!");
       };
 
-      // TÍNH NĂNG THÔNG MINH: Lọc danh sách & Định dạng màu tự động cho cột Trạng thái
       const filteredCandidates = candidates.filter(cand => 
         Object.values(cand).some(val => 
           String(val).toLowerCase().includes(searchTerm.toLowerCase())
@@ -275,7 +412,7 @@
           return 'bg-green-100 text-green-800 font-medium border-green-200';
         if (val.includes('rớt') || val.includes('từ chối') || val.includes('fail') || val.includes('hủy')) 
           return 'bg-red-100 text-red-800 font-medium border-red-200';
-        if (val.includes('phỏng vấn') || val.includes('chờ') || val.includes('pv')) 
+        if (val.includes('phỏng vấn') || val.includes('chờ') || val.includes('pv') || val.includes('gửi thư')) 
           return 'bg-amber-100 text-amber-800 font-medium border-amber-200';
           
         return 'bg-slate-100 text-slate-800 font-medium border-slate-200';
@@ -346,6 +483,7 @@
             <table className="w-full text-left border-collapse min-w-[600px]">
               <thead className="sticky top-0 bg-slate-50 z-10 shadow-sm rounded-t-lg">
                 <tr className="text-slate-600 text-sm border-b border-slate-200">
+                  <th className="py-3 px-4 font-semibold whitespace-nowrap w-16">Tools</th>
                   {columns.map(col => (
                     <th key={col.id} className="py-3 px-4 font-semibold whitespace-nowrap">
                       {col.label}
@@ -355,12 +493,21 @@
               </thead>
               <tbody>
                 {filteredCandidates.length === 0 ? (
-                  <tr><td colSpan={columns.length} className="text-center py-8 text-slate-500">
+                  <tr><td colSpan={columns.length + 1} className="text-center py-8 text-slate-500">
                     {searchTerm ? "Không tìm thấy ứng viên nào phù hợp." : "Chưa có dữ liệu ứng viên."}
                   </td></tr>
                 ) : (
                   filteredCandidates.map((candidate) => (
                     <tr key={candidate.id} className="border-b border-slate-100 hover:bg-slate-50/80 group transition-colors">
+                      <td className="py-2 px-4 text-center">
+                        <button 
+                          onClick={() => onJumpToEmail(candidate)}
+                          className="p-1.5 text-indigo-500 hover:bg-indigo-100 hover:text-indigo-700 rounded transition-colors"
+                          title="Gửi Email (Tự động điền)"
+                        >
+                          <IconMail />
+                        </button>
+                      </td>
                       {columns.map(col => {
                         const statusClass = getSmartStatusStyle(col.label, candidate[col.id]);
                         return (
@@ -386,6 +533,193 @@
       );
     };
 
+    // TÍNH NĂNG MỚI: Tab Lưu trữ Link Tuyển dụng (Đồng bộ Apps Script)
+    const LinksTab = ({ showToast, callAPI, connectionStatus }) => {
+      const [links, setLinks] = useState([]);
+      const [searchTerm, setSearchTerm] = useState('');
+      const [isSyncing, setIsSyncing] = useState(false);
+
+      useEffect(() => {
+        const fetchLinks = async () => {
+          if (connectionStatus === 'connected') {
+            try {
+              const data = await callAPI('getLinks');
+              setLinks(data);
+            } catch (err) {
+              console.error("Lỗi lấy links:", err);
+            }
+          } else {
+            // Chế độ demo
+            const saved = localStorage.getItem('hr_saved_links');
+            if (saved) setLinks(JSON.parse(saved));
+            else setLinks([
+              { id: '1', name: 'Nhóm Tuyển dụng (Zalo)', url: 'https://zalo.me/g/xxxxxxxx', type: 'Zalo', note: 'Dùng cho Idol' },
+              { id: '2', name: 'Link Apps Script (API)', url: 'https://script.google.com/macros/s/...', type: 'System', note: 'Backend hệ thống' }
+            ]);
+          }
+        };
+        fetchLinks();
+      }, [connectionStatus]);
+
+      // Lưu fallback local
+      useEffect(() => {
+        if (connectionStatus !== 'connected') {
+          localStorage.setItem('hr_saved_links', JSON.stringify(links));
+        }
+      }, [links, connectionStatus]);
+
+      const handleAddLink = async () => {
+        setIsSyncing(true);
+        const newLinkObj = { name: 'Link mới', type: 'Khác', url: '', note: '' };
+        
+        if (connectionStatus === 'connected') {
+          try {
+            const data = await callAPI('addLink', { linkObj: newLinkObj });
+            setLinks(data);
+            showToast("Đã thêm liên kết mới lên Cloud!");
+          } catch(err) {
+            showToast("Lỗi khi thêm Link!");
+          }
+        } else {
+          setLinks([...links, { id: Date.now().toString(), ...newLinkObj }]);
+          showToast("(Demo) Đã tạo hàng mới!");
+        }
+        setIsSyncing(false);
+      };
+
+      const updateLocalLink = (id, field, value) => {
+        const newLinks = [...links];
+        const idx = newLinks.findIndex(l => l.id === id);
+        if (idx > -1) {
+          newLinks[idx][field] = value;
+          setLinks(newLinks);
+        }
+      };
+
+      const syncLinkToCloud = async (id, field, value) => {
+        if (connectionStatus === 'connected') {
+          try {
+            await callAPI('updateLink', { id, field, value });
+            showToast("Đã lưu liên kết tự động");
+          } catch(err) {
+            showToast("Lỗi khi lưu link!");
+          }
+        }
+      };
+
+      const deleteLink = async (id) => {
+        if(confirm('Bạn có chắc muốn xóa link này không?')) {
+          setIsSyncing(true);
+          if (connectionStatus === 'connected') {
+            try {
+               const data = await callAPI('deleteLink', { id });
+               setLinks(data);
+               showToast("Đã xóa liên kết trên Cloud!");
+            } catch(err) {
+               showToast("Lỗi xóa liên kết!");
+            }
+          } else {
+             setLinks(links.filter(l => l.id !== id));
+             showToast("(Demo) Đã xóa liên kết!");
+          }
+          setIsSyncing(false);
+        }
+      };
+
+      const filteredLinks = links.filter(l => 
+        (l.name || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
+        (l.url || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (l.note || '').toLowerCase().includes(searchTerm.toLowerCase())
+      );
+
+      return (
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col h-full relative">
+          {isSyncing && <div className="absolute inset-0 bg-white/50 z-10 flex items-center justify-center"><IconLoader className="text-indigo-600 w-8 h-8"/></div>}
+          <div className="p-4 border-b border-slate-200 flex flex-wrap justify-between items-center bg-slate-50/50 gap-4">
+            <button 
+              onClick={handleAddLink}
+              className="flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors"
+            >
+              <IconPlus /> <span>Thêm Link mới</span>
+            </button>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                <IconSearch />
+              </div>
+              <input 
+                type="text" 
+                placeholder="Tìm kiếm link..." 
+                className="pl-9 pr-3 py-2 border border-slate-300 rounded-lg text-sm w-48 md:w-64 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="overflow-x-auto flex-1 p-2">
+            <table className="w-full text-left border-collapse min-w-[600px]">
+              <thead className="bg-slate-50 rounded-t-lg">
+                <tr className="text-slate-600 text-sm border-b border-slate-200">
+                  <th className="py-3 px-4 font-semibold w-12">Mở</th>
+                  <th className="py-3 px-4 font-semibold w-1/4">Tên / Mô tả</th>
+                  <th className="py-3 px-4 font-semibold w-1/6">Nền tảng</th>
+                  <th className="py-3 px-4 font-semibold w-1/3">Đường dẫn (URL)</th>
+                  <th className="py-3 px-4 font-semibold">Ghi chú</th>
+                  <th className="py-3 px-4 font-semibold w-12 text-center">Xóa</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredLinks.length === 0 ? (
+                  <tr><td colSpan="6" className="text-center py-8 text-slate-500">Chưa có liên kết nào được lưu.</td></tr>
+                ) : (
+                  filteredLinks.map((link) => (
+                    <tr key={link.id} className="border-b border-slate-100 hover:bg-slate-50/80 transition-colors">
+                      <td className="py-2 px-4 text-center">
+                        <a href={link.url && link.url.startsWith('http') ? link.url : (link.url ? `https://${link.url}` : '#')} target="_blank" rel="noreferrer" 
+                           className={`p-1.5 rounded inline-block ${link.url ? 'text-indigo-600 hover:bg-indigo-100' : 'text-slate-300 pointer-events-none'}`}
+                           title="Truy cập đường link"
+                        >
+                          <IconLink />
+                        </a>
+                      </td>
+                      <td className="py-2 px-4">
+                        <input type="text" className="bg-transparent border border-transparent hover:border-slate-300 focus:border-indigo-500 focus:bg-white rounded px-2 py-1.5 w-full outline-none text-sm font-medium text-slate-800"
+                          value={link.name} onChange={(e) => updateLocalLink(link.id, 'name', e.target.value)} onBlur={(e) => syncLinkToCloud(link.id, 'name', e.target.value)} placeholder="Tên nhóm..." />
+                      </td>
+                      <td className="py-2 px-4">
+                        <input type="text" className="bg-transparent border border-transparent hover:border-slate-300 focus:border-indigo-500 focus:bg-white rounded px-2 py-1.5 w-full outline-none text-sm text-slate-600"
+                          value={link.type} onChange={(e) => updateLocalLink(link.id, 'type', e.target.value)} onBlur={(e) => syncLinkToCloud(link.id, 'type', e.target.value)} placeholder="VD: Zalo, FB..." />
+                      </td>
+                      <td className="py-2 px-4">
+                        <input type="text" className="bg-transparent border border-transparent hover:border-slate-300 focus:border-indigo-500 focus:bg-white rounded px-2 py-1.5 w-full outline-none text-sm text-blue-600"
+                          value={link.url} onChange={(e) => updateLocalLink(link.id, 'url', e.target.value)} onBlur={(e) => syncLinkToCloud(link.id, 'url', e.target.value)} placeholder="https://..." />
+                      </td>
+                      <td className="py-2 px-4">
+                        <input type="text" className="bg-transparent border border-transparent hover:border-slate-300 focus:border-indigo-500 focus:bg-white rounded px-2 py-1.5 w-full outline-none text-sm text-slate-500"
+                          value={link.note} onChange={(e) => updateLocalLink(link.id, 'note', e.target.value)} onBlur={(e) => syncLinkToCloud(link.id, 'note', e.target.value)} placeholder="Ghi chú thêm..." />
+                      </td>
+                      <td className="py-2 px-4 text-center">
+                        <button onClick={() => deleteLink(link.id)} className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors" title="Xóa">
+                          <IconTrash />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+          <div className="p-3 bg-slate-50 text-xs text-slate-500 border-t border-slate-200 text-center flex items-center justify-center">
+            {connectionStatus === 'connected' ? (
+              <span className="flex items-center text-green-600"><div className="w-1.5 h-1.5 bg-green-500 rounded-full mr-2"></div> Đang đồng bộ với Google Sheets (Tab: SavedLinks)</span>
+            ) : (
+              <span>Đang lưu trữ Offline trên trình duyệt.</span>
+            )}
+          </div>
+        </div>
+      );
+    };
+
     // 2. Tab Trợ lý JD
     const JdBuilderTab = ({ showToast }) => {
       const [preset, setPreset] = useState('custom');
@@ -397,7 +731,6 @@
       const [isGenerating, setIsGenerating] = useState(false);
       const [result, setResult] = useState('');
 
-      // Database JD chuyên biệt từ Free Bird
       const jobDatabase = {
         'media': {
           role: 'Nhân viên Media (Chụp - Edit - Quay - Dựng)',
@@ -518,7 +851,6 @@
         showToast("Đã tải xuống file TXT!");
       };
 
-      // TÍNH NĂNG THÔNG MINH: Tạo AI Prompt để dùng ở ChatGPT
       const generateAIPrompt = () => {
         if (!result) return showToast("Vui lòng tạo JD trước!");
         const prompt = `Hãy đóng vai một chuyên gia nhân sự (Headhunter) xuất sắc. Tôi có một bản nháp Mô tả công việc (Job Description) cho vị trí ${role} (Cấp bậc: ${level}). \nHãy viết lại bản JD này sao cho chuyên nghiệp, rõ ràng, thu hút ứng viên và tối ưu hóa các từ khóa: ${skills}.\n\nĐây là bản gốc:\n"""\n${result}\n"""`;
@@ -623,7 +955,7 @@
               {result && (
                 <div className="flex space-x-2">
                   <button onClick={generateAIPrompt} className="text-fuchsia-300 hover:text-white flex items-center text-sm bg-slate-700 px-3 py-1.5 rounded transition-colors" title="Copy câu lệnh để tối ưu trên ChatGPT">
-                    <div className="mr-1"><IconSparkles /></div> Tối ưu bằng AI
+                    <div className="mr-1"><IconSparkles /></div> Tối ưu AI
                   </button>
                   <button onClick={downloadTxt} className="text-slate-300 hover:text-white flex items-center text-sm bg-slate-700 px-3 py-1.5 rounded transition-colors">
                     <div className="mr-1"><IconDownload /></div> Tải TXT
@@ -648,21 +980,44 @@
       );
     };
 
-    // 3. Tab Mẫu Email (Đã nâng cấp chuẩn HTML Dark Theme)
-    const EmailsTab = ({ showToast }) => {
+    // 3. Tab Mẫu Email
+    const EmailsTab = ({ showToast, prefillData, callAPI, connectionStatus, columns, updateLocalCandidate }) => {
+      // Nhận dữ liệu prefill nếu được ấn từ Tab CRM
+      const [candId, setCandId] = useState('');
       const [candName, setCandName] = useState('');
       const [position, setPosition] = useState('');
+      const [candEmail, setCandEmail] = useState(''); 
+
       const [date, setDate] = useState('');
       const [time, setTime] = useState('');
-      const [location, setLocation] = useState('');
+      const [location, setLocation] = useState('Số 1 Trương Đình Hợi, P18, Quận 4, TP. HCM');
       const [deadline, setDeadline] = useState('');
       const [hrPhone, setHrPhone] = useState('');
+      
+      const [viewModes, setViewModes] = useState({});
+      const [isSending, setIsSending] = useState({}); 
+
+      useEffect(() => {
+        if (prefillData) {
+          setCandId(prefillData.candId);
+          setCandName(prefillData.name);
+          setPosition(prefillData.position);
+          setCandEmail(prefillData.email);
+        }
+      }, [prefillData]);
+
+      const toggleViewMode = (id) => {
+        setViewModes(prev => ({
+          ...prev,
+          [id]: prev[id] === 'code' ? 'preview' : 'code'
+        }));
+      };
 
       const fillTemplate = (htmlText) => {
         return htmlText
           .replace(/\[Tên Ứng Viên\]/g, candName || '[Tên Ứng Viên]')
           .replace(/LÂM TUẤN KIỆT/g, candName || 'LÂM TUẤN KIỆT')
-          .replace(/\[Vị Trí\]|\[Tên Vị Trí\]|Idol Live/g, position || '[Vị Trí]')
+          .replace(/\[Vị Trí\]|\[Tên Vị Trí\]/g, position || '[Vị Trí]')
           .replace(/\[Ngày trong tuần\], Ngày \[DD\/MM\/YYYY\]|23\/05\/2026|18\/05\/2026/g, date || '[Ngày]')
           .replace(/\[Giờ:Phút\]|09:00 - 16:00|9h30/g, time || '[Giờ]')
           .replace(/\[Địa chỉ công ty hoặc Link phòng họp\]|Số 1 Trương Định Hội, Phường 18, Quận 4, TP\. HCM|1 Trương Đình Hợi, P\.18, Q\.4/g, location || '[Địa điểm]')
@@ -673,15 +1028,16 @@
       const templates = [
         {
           id: 1, 
-          name: "1. Thư mời Phỏng vấn (BE LAB)",
-          subject: "BE LAB MEDIA - THƯ MỜI PHỎNG VẤN - [Vị Trí]",
+          name: "1. Thư mời Phỏng vấn (FREE BIRD)",
+          statusTag: "Đã mời Phỏng vấn",
+          subject: "FREE BIRD ENTERTAINMENT - THƯ MỜI PHỎNG VẤN - [Vị Trí]",
           isHtml: true,
           body: `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="vi">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>THƯ MỜI PHỎNG VẤN - BE LAB MEDIA</title>
+  <title>THƯ MỜI PHỎNG VẤN - FREE BIRD ENTERTAINMENT</title>
   <style type="text/css">
     body { margin: 0; padding: 0; min-width: 100%; background-color: #000000; font-family: Arial, Helvetica, sans-serif; -webkit-font-smoothing: antialiased; }
     table { border-spacing: 0; color: #ffffff; }
@@ -706,17 +1062,17 @@
           <h1 class="header-title" style="margin: 0; font-size: 42px; font-weight: bold; line-height: 1.1; color: #ffffff; text-transform: uppercase;">
             THƯ MỜI<br/>PHỎNG VẤN
           </h1>
-          <p style="margin: 25px 0 0 0; font-size: 14px; color: #888888; text-transform: uppercase; letter-spacing: 1px;">BE LAB MEDIA</p>
+          <p style="margin: 25px 0 0 0; font-size: 14px; color: #888888; text-transform: uppercase; letter-spacing: 1px;">FREE BIRD ENTERTAINMENT</p>
         </td>
       </tr>
       <tr>
         <td class="info-section padding-mobile">
           <p style="font-size: 16px; font-weight: bold; color: #ffffff; margin-bottom: 20px;">Chào bạn [Tên Ứng Viên],</p>
           <p style="font-size: 15px; line-height: 1.8; color: #aaaaaa; margin-bottom: 20px;">
-            Lời đầu tiên, bộ phận Tuyển dụng <strong>BE LAB MEDIA</strong> xin gửi lời cảm ơn chân thành vì bạn đã quan tâm và nộp hồ sơ ứng tuyển vào công ty chúng tôi.
+            Lời đầu tiên, bộ phận Tuyển dụng <strong>FREE BIRD ENTERTAINMENT</strong> xin gửi lời cảm ơn chân thành vì bạn đã quan tâm và nộp hồ sơ ứng tuyển vào công ty chúng tôi.
           </p>
           <p style="font-size: 15px; line-height: 1.8; color: #aaaaaa; margin-bottom: 40px;">
-            Qua quá trình sàng lọc và đánh giá hồ sơ, chúng tôi nhận thấy năng lực cũng như định hướng nghề nghiệp của bạn có nhiều điểm tương đồng phù hợp với vị trí mà công ty đang tìm kiếm. Vì vậy, BE LAB MEDIA trân trọng kính mời bạn tham gia buổi phỏng vấn trực tiếp để cùng trao đổi sâu hơn:
+            Qua quá trình sàng lọc và đánh giá hồ sơ, chúng tôi nhận thấy năng lực cũng như định hướng nghề nghiệp của bạn có nhiều điểm tương đồng phù hợp với vị trí mà công ty đang tìm kiếm. Vì vậy, FREE BIRD trân trọng kính mời bạn tham gia buổi phỏng vấn trực tiếp để cùng trao đổi sâu hơn:
           </p>
           <div style="margin-bottom: 40px;">
             <div class="section-label">Thông tin buổi phỏng vấn</div>
@@ -742,13 +1098,13 @@
       <tr>
         <td class="cta-container padding-mobile">
           <p style="margin-top: 25px; font-size: 11px; color: #555555; text-transform: uppercase;">Trân trọng,</p>
-          <p style="margin-top: 5px; font-size: 14px; font-weight: bold; color: #ffffff; text-transform: uppercase; letter-spacing: 1px;">BE LAB MEDIA Recruitment Team</p>
+          <p style="margin-top: 5px; font-size: 14px; font-weight: bold; color: #ffffff; text-transform: uppercase; letter-spacing: 1px;">Free Bird Recruitment Team</p>
         </td>
       </tr>
       <tr>
         <td style="padding: 60px 40px; text-align: left; border-top: 1px solid #222222;">
-          <p class="footer-text" style="font-weight: bold; color: #888888; text-transform: uppercase; margin-bottom: 10px;">BE LAB MEDIA - Giải pháp truyền thông toàn diện</p>
-          <p class="footer-text">Địa chỉ: Thành phố Hồ Chí Minh, Việt Nam<br/>Email: hr@belabmedia.com<br/>Hotline hỗ trợ: [Số điện thoại HR]<br/>Đây là thư mời phỏng vấn chính thức được gửi từ hệ thống tuyển dụng.</p>
+          <p class="footer-text" style="font-weight: bold; color: #888888; text-transform: uppercase; margin-bottom: 10px;">Free Bird Entertainment Culture Media</p>
+          <p class="footer-text">Địa chỉ: Số 1 Trương Đình Hợi, P18, Quận 4, TP. HCM<br/>Hotline hỗ trợ: [Số điện thoại HR]<br/>Đây là thư mời phỏng vấn chính thức được gửi từ hệ thống tuyển dụng.</p>
         </td>
       </tr>
     </table>
@@ -758,8 +1114,9 @@
         },
         {
           id: 2, 
-          name: "2. Thư mời Casting (Free Bird)",
-          subject: "THƯ MỜI CASTING IDOL LIVE TIKTOK - Free Bird Entertainment",
+          name: "2. Thư mời Casting (FREE BIRD)",
+          statusTag: "Đã gửi thư Casting",
+          subject: "THƯ MỜI CASTING - Free Bird Entertainment",
           isHtml: true,
           body: `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="vi">
@@ -834,7 +1191,8 @@
         },
         {
           id: 3, 
-          name: "3. Thư mời Nhận việc (Free Bird)",
+          name: "3. Thư mời Nhận việc (FREE BIRD)",
+          statusTag: "Đã gửi Offer Nhận Việc",
           subject: "THƯ MỜI NHẬN VIỆC - [Tên Ứng Viên]",
           isHtml: true,
           body: `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -904,7 +1262,8 @@
         {
           id: 4, 
           name: "4. Thư thông báo kết quả (Từ chối)",
-          subject: "THÔNG BÁO KẾT QUẢ PHỎNG VẤN - Vị trí [Vị Trí]",
+          statusTag: "Đã gửi Mail Từ chối",
+          subject: "FREE BIRD - THÔNG BÁO KẾT QUẢ PHỎNG VẤN - Vị trí [Vị Trí]",
           isHtml: true,
           body: `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="vi">
@@ -940,61 +1299,7 @@
           <p style="font-size: 15px; line-height: 1.8; color: #aaaaaa; margin-bottom: 40px;">
             Chúng tôi sẽ lưu giữ hồ sơ của bạn vào hệ thống dữ liệu ứng viên tiềm năng và hy vọng sẽ có cơ hội hợp tác cùng bạn trong tương lai ở những vị trí phù hợp hơn. Chúc bạn nhiều sức khỏe và thành công trên con đường sự nghiệp!
           </p>
-          <p style="margin-top: 25px; font-size: 14px; font-weight: bold; color: #ffffff; text-transform: uppercase;">Trân trọng,<br/>Bộ phận Tuyển dụng</p>
-        </td>
-      </tr>
-    </table>
-  </center>
-</body>
-</html>`
-        },
-        {
-          id: 5, 
-          name: "5. Thư yêu cầu xác nhận/bổ sung thông tin",
-          subject: "YÊU CẦU BỔ SUNG THÔNG TIN - Vị trí [Vị Trí]",
-          isHtml: true,
-          body: `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="vi">
-<head>
-  <style type="text/css">
-    body { margin: 0; padding: 0; min-width: 100%; background-color: #000000; font-family: Arial, Helvetica, sans-serif; -webkit-font-smoothing: antialiased; }
-    table { border-spacing: 0; color: #ffffff; } td { padding: 0; }
-    .main-wrapper { width: 100%; table-layout: fixed; background-color: #000000; padding: 40px 0; }
-    .content-table { width: 100%; max-width: 600px; margin: 0 auto; background-color: #000000; border: 1px solid #222222; }
-    .header-area { padding: 60px 40px; text-align: left; border-bottom: 1px solid #222222; }
-    .tagline { color: #00F2EA; font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 15px; }
-    .info-section { padding: 50px 40px; }
-  </style>
-</head>
-<body>
-  <center class="main-wrapper">
-    <table class="content-table" align="center" cellpadding="0" cellspacing="0" border="0">
-      <tr>
-        <td class="header-area">
-          <div class="tagline">Information Request</div>
-          <h1 style="margin: 0; font-size: 32px; font-weight: bold; color: #ffffff; text-transform: uppercase;">XÁC NHẬN THÔNG TIN</h1>
-        </td>
-      </tr>
-      <tr>
-        <td class="info-section">
-          <p style="font-size: 16px; font-weight: bold; color: #ffffff; margin-bottom: 20px;">Chào bạn [Tên Ứng Viên],</p>
-          <p style="font-size: 15px; line-height: 1.8; color: #aaaaaa; margin-bottom: 20px;">
-            Bộ phận Tuyển dụng xin thông báo chúng tôi đã nhận được hồ sơ của bạn cho vị trí <strong>[Vị Trí]</strong>. Để tiếp tục quy trình xét duyệt, bạn vui lòng phản hồi lại email này và bổ sung/xác nhận các thông tin sau:
-          </p>
-          <div style="background-color: #111111; padding: 20px; border-left: 3px solid #00F2EA; margin-bottom: 20px;">
-            <p style="font-size: 14px; color: #dddddd; margin: 0; line-height: 1.6;">
-              1. Link Portfolio / Sản phẩm thực tế của bạn.<br/>
-              2. Xác nhận mức lương mong muốn hiện tại.<br/>
-              3. Thời gian có thể bắt đầu công việc nếu trúng tuyển.
-            </p>
-          </div>
-          <p style="font-size: 15px; line-height: 1.8; color: #aaaaaa; margin-bottom: 20px;">
-            Vui lòng gửi lại thông tin trước <strong>[Giờ] ngày [DD/MM/YYYY]</strong> để chúng tôi kịp thời sắp xếp lịch phỏng vấn tiếp theo.
-          </p>
-          <p style="font-size: 15px; line-height: 1.8; color: #aaaaaa; margin-bottom: 40px;">
-            Nếu có thắc mắc, vui lòng liên hệ: [Số điện thoại]
-          </p>
-          <p style="margin-top: 25px; font-size: 14px; font-weight: bold; color: #ffffff; text-transform: uppercase;">Trân trọng,<br/>Bộ phận Tuyển dụng</p>
+          <p style="margin-top: 25px; font-size: 14px; font-weight: bold; color: #ffffff; text-transform: uppercase;">Trân trọng,<br/>Bộ phận Tuyển dụng Free Bird</p>
         </td>
       </tr>
     </table>
@@ -1005,34 +1310,94 @@
       ];
 
       const handleCopyHTMLCode = (subject, htmlBody) => {
-        const textToCopy = `Tiêu đề: ${fillTemplate(subject)}\n\n-- MÃ HTML BÊN DƯỚI (Dùng cho Apps Script / SendGrid) --\n\n${fillTemplate(htmlBody)}`;
+        const textToCopy = `Tiêu đề: ${fillTemplate(subject)}\n\n-- MÃ HTML BÊN DƯỚI --\n\n${fillTemplate(htmlBody)}`;
         navigator.clipboard.writeText(textToCopy).then(() => showToast("Đã copy Mã HTML!"));
       };
 
-      // TÍNH NĂNG THÔNG MINH: Gửi Email trực tiếp bằng Mailto (Trích xuất Text từ HTML)
       const handleSendDirectEmail = (subject, htmlBody) => {
-        // Loại bỏ thẻ HTML để tương thích với Mailto (Chỉ hỗ trợ text thuần)
+        const filledSubject = fillTemplate(subject);
         const filledHtml = fillTemplate(htmlBody);
-        let plainText = filledHtml
-            .replace(/<style[^>]*>.*<\/style>/gis, '') 
-            .replace(/<br\s*[\/]?>/gi, "\n")
-            .replace(/<\/p>|<\/div>|<\/tr>/gi, "\n\n")
-            .replace(/<[^>]+>/g, '') 
-            .replace(/&nbsp;/g, ' ')
-            .replace(/^\s*[\r\n]/gm, ""); // Xóa dòng trống thừa
-            
-        const mailtoLink = `mailto:?subject=${encodeURIComponent(fillTemplate(subject))}&body=${encodeURIComponent(plainText)}`;
-        window.location.href = mailtoLink;
+
+        const el = document.createElement('div');
+        el.innerHTML = filledHtml;
+        el.style.position = 'absolute';
+        el.style.left = '-9999px';
+        document.body.appendChild(el);
+        
+        const sel = window.getSelection();
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        document.execCommand('copy');
+        sel.removeAllRanges();
+        document.body.removeChild(el);
+
+        showToast("Đã copy thiết kế. Đang mở Gmail...");
+        
+        setTimeout(() => {
+          const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&su=${encodeURIComponent(filledSubject)}`;
+          window.open(gmailUrl, '_blank');
+        }, 800);
+      };
+
+      // Gửi mail trực tiếp qua hệ thống Apps Script + Đồng bộ trạng thái
+      const sendViaAppsScript = async (id, subject, htmlBody, statusTag) => {
+        if (!candEmail) {
+          return showToast("Vui lòng nhập Email của ứng viên!");
+        }
+        if (connectionStatus !== 'connected') {
+          return showToast("Chưa kết nối Database! Hãy dùng tính năng Gửi qua Gmail (Ctrl+V).");
+        }
+
+        setIsSending(prev => ({ ...prev, [id]: true }));
+        try {
+          const filledSubject = fillTemplate(subject);
+          const filledHtml = fillTemplate(htmlBody);
+
+          // Gửi Email API
+          await callAPI('sendEmail', {
+            to: candEmail,
+            subject: filledSubject,
+            htmlBody: filledHtml
+          });
+
+          // Cập nhật trạng thái thông minh
+          if (candId) {
+            let statusCol = columns.find(c => c.label.toLowerCase().includes('trạng thái') || c.label.toLowerCase().includes('status'));
+            if (statusCol) {
+              await callAPI('updateCandidate', {
+                id: candId,
+                colId: statusCol.id,
+                value: statusTag
+              });
+              updateLocalCandidate(candId, statusCol.id, statusTag);
+            }
+          }
+
+          showToast(`Đã gửi mail tới ${candEmail} thành công!`);
+        } catch (err) {
+          showToast("Có lỗi xảy ra khi gửi mail.");
+        }
+        setIsSending(prev => ({ ...prev, [id]: false }));
       };
 
       return (
         <div className="flex flex-col h-full space-y-6">
           <div className="bg-white p-5 rounded-xl shadow-sm border border-indigo-100">
-            <h3 className="font-semibold text-slate-800 mb-4 text-sm flex items-center">
-              <span className="w-2 h-2 rounded-full bg-indigo-500 mr-2"></span>
-              Bộ Tinh chỉnh Cá nhân hóa Tự động
-            </h3>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="font-semibold text-slate-800 text-sm flex items-center">
+                <span className="w-2 h-2 rounded-full bg-indigo-500 mr-2 animate-pulse"></span>
+                Bộ Tinh chỉnh Cá nhân hóa Tự động
+              </h3>
+              {candId && <span className="text-xs bg-indigo-100 text-indigo-700 font-bold px-2 py-1 rounded-full">Đang đồng bộ với CRM</span>}
+            </div>
+            
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Email Ứng Viên (*)</label>
+                <input type="email" placeholder="VD: ungvien@gmail.com" value={candEmail} onChange={(e)=>setCandEmail(e.target.value)} className="w-full px-3 py-2 border border-blue-300 bg-blue-50 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none font-medium" />
+              </div>
               <div>
                 <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Tên Ứng Viên</label>
                 <input type="text" placeholder="VD: Nguyễn Văn A" value={candName} onChange={(e)=>setCandName(e.target.value)} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none" />
@@ -1051,53 +1416,78 @@
               </div>
               <div className="col-span-2">
                 <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Địa điểm / Link Meeting</label>
-                <input type="text" placeholder="VD: Tầng 3, Tòa nhà ABC / Link Google Meet" value={location} onChange={(e)=>setLocation(e.target.value)} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none" />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Hạn chót xác nhận</label>
-                <input type="text" placeholder="VD: 17:00 ngày 20/06" value={deadline} onChange={(e)=>setDeadline(e.target.value)} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none" />
+                <input type="text" placeholder="VD: Tầng 3, Tòa nhà ABC" value={location} onChange={(e)=>setLocation(e.target.value)} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none" />
               </div>
               <div>
                 <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">SĐT HR Liên hệ</label>
                 <input type="text" placeholder="VD: 090xxxxxxx" value={hrPhone} onChange={(e)=>setHrPhone(e.target.value)} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none" />
               </div>
             </div>
-            <div className="text-xs text-slate-500 mt-4 italic">
-              💡 Gõ thông tin vào các ô trên, tất cả các mẫu thư bên dưới sẽ tự động cập nhật ngay lập tức.
+            <div className="text-xs text-slate-500 mt-4 italic flex items-center justify-between">
+              <span>💡 Gõ thông tin vào các ô trên, tất cả các mẫu thư bên dưới sẽ tự động cập nhật ngay lập tức.</span>
+              <span className="text-indigo-600 font-semibold flex items-center"><IconGmail/> Hướng dẫn: Bấm [Gửi qua Gmail], sau đó ấn Ctrl + V vào khung soạn thư.</span>
             </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-10">
             {templates.map(tpl => (
-              <div key={tpl.id} className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex flex-col min-h-[500px]">
-                <div className="mb-3 border-b border-slate-100 pb-3">
-                  <h3 className="font-bold text-slate-800 text-lg">{tpl.name}</h3>
-                  <div className="mt-2 text-sm">
-                    <span className="font-semibold text-slate-500">Subject: </span>
-                    <span className="text-indigo-700 font-medium">{fillTemplate(tpl.subject)}</span>
+              <div key={tpl.id} className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex flex-col h-auto min-h-[600px]">
+                <div className="mb-3 border-b border-slate-100 pb-3 flex justify-between items-start">
+                  <div>
+                    <h3 className="font-bold text-slate-800 text-lg">{tpl.name}</h3>
+                    <div className="mt-1 text-sm">
+                      <span className="font-semibold text-slate-500">Subject: </span>
+                      <span className="text-indigo-700 font-medium">{fillTemplate(tpl.subject)}</span>
+                    </div>
                   </div>
+                  
+                  <button 
+                    onClick={() => toggleViewMode(tpl.id)} 
+                    className="flex items-center text-xs space-x-1 px-3 py-1.5 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded transition-colors whitespace-nowrap"
+                    title={viewModes[tpl.id] === 'code' ? 'Xem lại giao diện trực quan' : 'Hiện Full mã HTML nguồn'}
+                  >
+                    {viewModes[tpl.id] === 'code' ? <IconEye /> : <IconCode />}
+                    <span>{viewModes[tpl.id] === 'code' ? 'Xem giao diện' : 'Xem Code HTML'}</span>
+                  </button>
                 </div>
                 
-                <div className="flex-1 bg-slate-900 rounded-lg overflow-y-auto mb-4 border border-slate-700 shadow-inner relative max-h-[400px]">
-                  <div 
-                    className="w-full"
-                    dangerouslySetInnerHTML={{ __html: fillTemplate(tpl.body) }}
-                  />
+                <div className="flex-1 bg-slate-900 rounded-lg overflow-y-auto mb-4 border border-slate-700 shadow-inner relative max-h-[550px]">
+                  {viewModes[tpl.id] === 'code' ? (
+                    <pre className="p-4 text-[13px] text-green-400 whitespace-pre-wrap font-mono leading-relaxed">
+                      {fillTemplate(tpl.body)}
+                    </pre>
+                  ) : (
+                    <div 
+                      className="w-full h-full"
+                      dangerouslySetInnerHTML={{ __html: fillTemplate(tpl.body) }}
+                    />
+                  )}
                 </div>
                 
-                <div className="flex space-x-3 mt-auto">
+                <div className="flex flex-col space-y-2 mt-auto">
                   <button 
-                    onClick={() => handleSendDirectEmail(tpl.subject, tpl.body)}
-                    className="flex-1 flex items-center justify-center space-x-2 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 py-2.5 rounded-lg font-medium transition-colors text-sm"
+                    onClick={() => sendViaAppsScript(tpl.id, tpl.subject, tpl.body, tpl.statusTag)}
+                    disabled={isSending[tpl.id]}
+                    className="w-full flex items-center justify-center space-x-2 bg-indigo-600 text-white hover:bg-indigo-700 py-3 rounded-lg font-medium transition-colors shadow-sm disabled:opacity-70"
                   >
-                    <IconSend /> <span>Gửi ngay (Mailto)</span>
+                    {isSending[tpl.id] ? <IconLoader /> : <IconPaperPlane />}
+                    <span>{isSending[tpl.id] ? "Đang xử lý gửi..." : "Gửi trực tiếp (Tự động cập nhật CRM)"}</span>
                   </button>
-                  <button 
-                    onClick={() => handleCopyHTMLCode(tpl.subject, tpl.body)}
-                    className="flex-1 flex items-center justify-center space-x-2 bg-slate-800 text-white hover:bg-slate-900 py-2.5 rounded-lg font-medium transition-colors text-sm"
-                  >
-                    <IconCopy /> <span>Copy Code HTML</span>
-                  </button>
+
+                  <div className="flex space-x-2">
+                    <button 
+                      onClick={() => handleSendDirectEmail(tpl.subject, tpl.body)}
+                      className="flex-1 flex items-center justify-center space-x-2 bg-slate-100 text-slate-700 hover:bg-slate-200 py-2.5 rounded-lg font-medium transition-colors text-sm"
+                    >
+                      <IconGmail /> <span>Mở qua Gmail</span>
+                    </button>
+                    <button 
+                      onClick={() => handleCopyHTMLCode(tpl.subject, tpl.body)}
+                      className="flex-1 flex items-center justify-center space-x-2 bg-slate-100 text-slate-700 hover:bg-slate-200 py-2.5 rounded-lg font-medium transition-colors text-sm"
+                    >
+                      <IconCopy /> <span>Copy HTML Raw</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
