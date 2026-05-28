@@ -165,7 +165,7 @@
 
     <script>
         // BƯỚC 1: Dán link Web App (Google Apps Script) của bạn vào đây
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwcVoNslqqmVodR8JcX5nmbWjP5SBGUFb8kroJlQDnYtLa7llKSFwa42zqU9Wu4malu/exec';
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzR15fu5ABfHc4cxIpcH772MVQTBiQCyLxawwuEXUChUpRa5pwcaAzTFn7GHcO8BfPI2Q/exec';
 
         // 1. Kiểm tra trạng thái đăng nhập
         function checkAuthStatus() {
@@ -230,6 +230,32 @@
         async function fetchTools() {
             const container = document.getElementById('tools-container');
             
+            // KIỂM TRA TRẠNG THÁI ĐĂNG NHẬP
+            const userDataString = localStorage.getItem('mytool_user');
+            
+            if (!userDataString) {
+                // Hiển thị giao diện khóa (Locked State) nếu chưa đăng nhập
+                container.innerHTML = `
+                    <div class="col-span-full flex flex-col items-center justify-center py-16 bg-white rounded-3xl border border-slate-200 shadow-sm text-center px-4">
+                        <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-6 border border-slate-100 shadow-inner">
+                            <i class="fa-solid fa-lock text-3xl text-slate-400"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-800 mb-3">Nội dung đã bị khóa</h3>
+                        <p class="text-slate-500 mb-8 max-w-lg mx-auto">Bạn cần đăng nhập để xem danh sách và truy cập vào bộ công cụ tiện ích của My Tool. Việc đăng ký hoàn toàn miễn phí!</p>
+                        <div class="flex space-x-4">
+                            <a href="login.html" class="bg-primary hover:bg-primaryHover text-white px-6 py-3 rounded-xl font-medium transition-colors shadow-sm shadow-primary/30 flex items-center">
+                                Đăng nhập
+                            </a>
+                            <a href="login.html" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-6 py-3 rounded-xl font-medium transition-colors border border-slate-200">
+                                Đăng ký
+                            </a>
+                        </div>
+                    </div>
+                `;
+                return; // Dừng việc fetch data từ Apps Script
+            }
+
+            // NẾU ĐÃ ĐĂNG NHẬP THÌ MỚI GỌI API LẤY CÔNG CỤ
             try {
                 const response = await fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
@@ -245,9 +271,6 @@
                     
                     // Render từng công cụ
                     result.data.forEach(tool => {
-                        // Tính toán class màu nền nhẹ dựa trên màu icon
-                        // Để đơn giản, ta chỉ dùng một background chung nếu không có hàm tính riêng
-                        
                         const toolHtml = `
                             <div class="tool-card bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col h-full relative group">
                                 <div class="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center mb-4 border border-slate-100 group-hover:scale-110 transition-transform">
