@@ -45,9 +45,35 @@
             display: none;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .toast {
+            min-width: 250px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            transform: translateX(120%);
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        .toast.show {
+            transform: translateX(0);
+        }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+    <div id="toast-container" class="toast-container"></div>
+
     <!-- Background Decor -->
     <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-blue-400 rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-blob"></div>
     <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-cyan-400 rounded-full mix-blend-multiply filter blur-[100px] opacity-40 animate-blob animation-delay-2000"></div>
@@ -107,14 +133,14 @@
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                                 <i class="fa-solid fa-lock"></i>
                             </div>
-                            <input type="password" id="login-password" required class="w-full pl-10 pr-10 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm" placeholder="••••••••">
+                            <input type="password" id="login-password" required class="w-full pl-10 pr-12 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm" placeholder="••••••••">
+                            <button type="button" onclick="togglePassword('login-password', 'login-eye')" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-primary transition-colors focus:outline-none">
+                                <i id="login-eye" class="fa-regular fa-eye"></i>
+                            </button>
                         </div>
                     </div>
                     
-                    <!-- Thông báo trạng thái -->
-                    <div id="login-msg" class="text-sm mb-4 hidden rounded-lg p-3"></div>
-
-                    <button type="submit" id="btn-login" class="w-full bg-primary hover:bg-primaryHover text-white font-semibold py-3.5 rounded-xl transition-colors shadow-md flex items-center justify-center">
+                    <button type="submit" id="btn-login" class="w-full bg-primary hover:bg-primaryHover text-white font-semibold py-3.5 rounded-xl transition-colors shadow-md flex items-center justify-center mt-2">
                         <span class="mr-2">Đăng Nhập</span>
                         <div class="loader" id="loader-login"></div>
                     </button>
@@ -148,14 +174,14 @@
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                                 <i class="fa-solid fa-lock"></i>
                             </div>
-                            <input type="password" id="reg-password" required class="w-full pl-10 pr-10 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm" placeholder="Tạo mật khẩu an toàn">
+                            <input type="password" id="reg-password" required class="w-full pl-10 pr-12 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm" placeholder="Tạo mật khẩu an toàn">
+                            <button type="button" onclick="togglePassword('reg-password', 'reg-eye')" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-primary transition-colors focus:outline-none">
+                                <i id="reg-eye" class="fa-regular fa-eye"></i>
+                            </button>
                         </div>
                     </div>
 
-                    <!-- Thông báo trạng thái -->
-                    <div id="reg-msg" class="text-sm mb-4 hidden rounded-lg p-3"></div>
-
-                    <button type="submit" id="btn-register" class="w-full bg-secondary hover:bg-slate-800 text-white font-semibold py-3.5 rounded-xl transition-colors shadow-md flex items-center justify-center">
+                    <button type="submit" id="btn-register" class="w-full bg-secondary hover:bg-slate-800 text-white font-semibold py-3.5 rounded-xl transition-colors shadow-md flex items-center justify-center mt-2">
                         <span class="mr-2">Tạo Tài Khoản</span>
                         <div class="loader" id="loader-register"></div>
                     </button>
@@ -193,8 +219,11 @@
             const tabReg = document.getElementById('tab-register');
             
             // Reset messages
-            document.getElementById('login-msg').classList.add('hidden');
-            document.getElementById('reg-msg').classList.add('hidden');
+            document.getElementById('login-email').value = '';
+            document.getElementById('login-password').value = '';
+            document.getElementById('reg-name').value = '';
+            document.getElementById('reg-email').value = '';
+            document.getElementById('reg-password').value = '';
 
             if (tab === 'login') {
                 loginForm.classList.remove('hidden');
@@ -226,13 +255,12 @@
             event.preventDefault();
             
             if(APPS_SCRIPT_URL === 'THAY_URL_WEB_APP_CUA_BAN_VAO_DAY') {
-                showMessage(action, false, "Lỗi: Bạn chưa cấu hình APPS_SCRIPT_URL trong mã HTML.");
+                showToast("Lỗi: Bạn chưa cấu hình APPS_SCRIPT_URL.", "error");
                 return;
             }
 
             const loader = document.getElementById(`loader-${action}`);
             const btnText = document.querySelector(`#btn-${action} span`);
-            const msgBox = document.getElementById(`${action}-msg`);
             
             // Lấy dữ liệu form
             let payload = { action: action };
@@ -260,22 +288,27 @@
                 const result = await response.json();
                 
                 if(result.success) {
-                    showMessage(action, true, result.message);
+                    showToast(result.message, "success");
                     if(action === 'login') {
-                        // Chuyển hướng hoặc lưu session khi đăng nhập thành công
+                        const userData = {
+                            name: result.name,
+                            email: payload.email,
+                            loginTime: new Date().getTime()
+                        };
+                        localStorage.setItem('mytool_user', JSON.stringify(userData));
+                        
                         setTimeout(() => {
-                            alert(`Xin chào ${result.name}! Đang chuyển hướng về trang chủ...`);
                             window.location.href = 'index.html';
-                        }, 1000);
+                        }, 1200);
                     } else {
                         // Đăng ký thành công -> Chuyển sang form đăng nhập
                         setTimeout(() => { switchTab('login'); }, 1500);
                     }
                 } else {
-                    showMessage(action, false, result.message);
+                    showToast(result.message, "error");
                 }
             } catch (error) {
-                showMessage(action, false, "Lỗi kết nối đến máy chủ. Vui lòng thử lại!");
+                showToast("Lỗi kết nối đến máy chủ. Vui lòng thử lại!", "error");
                 console.error(error);
             } finally {
                 // Tắt loading
@@ -284,16 +317,47 @@
             }
         }
 
-        function showMessage(action, isSuccess, text) {
-            const msgBox = document.getElementById(`${action}-msg`);
-            msgBox.textContent = text;
-            msgBox.classList.remove('hidden', 'bg-emerald-50', 'text-emerald-600', 'bg-red-50', 'text-red-600');
+        function togglePassword(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
             
-            if(isSuccess) {
-                msgBox.classList.add('bg-emerald-50', 'text-emerald-600');
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
             } else {
-                msgBox.classList.add('bg-red-50', 'text-red-600');
+                input.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
             }
+        }
+
+        function showToast(message, type = "success") {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            
+            const iconColor = type === 'success' ? 'text-emerald-500' : 'text-red-500';
+            const iconClass = type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation';
+            
+            toast.innerHTML = `
+                <i class="fa-solid ${iconClass} ${iconColor} text-xl mr-3"></i>
+                <div>
+                    <h4 class="text-sm font-bold text-slate-800">${type === 'success' ? 'Thành công' : 'Thất bại'}</h4>
+                    <p class="text-xs text-slate-500 mt-0.5">${message}</p>
+                </div>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Trigger animation
+            setTimeout(() => toast.classList.add('show'), 10);
+            
+            // Xóa toast sau 3.5s
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300); // Đợi animation kết thúc mới remove
+            }, 3500);
         }
     </script>
 </body>
