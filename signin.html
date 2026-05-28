@@ -4,8 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đăng nhập / Đăng ký - My Tool</title>
+    <link rel="icon" href="https://i.pinimg.com/736x/58/98/19/58981979f44731d95ab25aad9a7c88cb.jpg" type="image/jpeg">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://i.pinimg.com/736x/58/98/19/58981979f44731d95ab25aad9a7c88cb.jpg">   
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Script bảo mật Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    
     <script>
         tailwind.config = {
             theme: {
@@ -24,6 +29,7 @@
         }
     </script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Be Vietnam Pro', sans-serif; background-color: #f8fafc; }
         .glass-panel {
             background: rgba(255, 255, 255, 0.9);
@@ -197,10 +203,10 @@
 
             <!-- Nút Social -->
             <div class="mt-6 grid grid-cols-2 gap-4">
-                <button type="button" class="flex items-center justify-center py-2.5 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors text-sm font-medium text-slate-600">
-                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5 mr-2" alt="Google"> Google
-                </button>
-                <button type="button" class="flex items-center justify-center py-2.5 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors text-sm font-medium text-slate-600">
+                <!-- Khu vực render nút Google chính thức -->
+                <div id="googleBtnContainer" class="w-full h-[42px] flex items-center justify-center rounded-xl overflow-hidden"></div>
+                
+                <button type="button" class="flex items-center justify-center py-2.5 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors text-sm font-medium text-slate-600 h-[42px]">
                     <i class="fa-brands fa-github text-lg mr-2"></i> Github
                 </button>
             </div>
@@ -208,8 +214,102 @@
     </div>
 
     <script>
-        // BƯỚC QUAN TRỌNG: Thay link này bằng URL Web App Google Apps Script của bạn sau khi Deploy
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzCjU9ituWj17HYwg0jKcgSq_iRFhmIyREOcEgLzynzYjgzSYRJXKsH0bk3Gl_FJow/exec';
+        // BƯỚC QUAN TRỌNG 1: Thay link này bằng URL Web App Google Apps Script của bạn
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw44S_FnJVWjlBlKp3RhpXkf7DmOxL4a0DFBJVzNP0jVRSe2IdLFtc-lpUtaD3ufVPhdw/exec';
+        
+        // BƯỚC QUAN TRỌNG 2: Thay Client ID của bạn để dùng được Google Sign-In
+        // Truy cập Google Cloud Console -> APIs & Services -> Credentials để tạo OAuth Client ID
+        const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
+
+        // Khởi tạo Google Sign-in khi load trang
+        window.onload = function () {
+            // 🔔 Xin quyền hiển thị thông báo đẩy (Push Notification) của trình duyệt
+            if ("Notification" in window) {
+                if (Notification.permission !== "granted" && Notification.permission !== "denied") {
+                    Notification.requestPermission();
+                }
+            }
+
+            if (typeof google !== 'undefined') {
+                google.accounts.id.initialize({
+                    client_id: GOOGLE_CLIENT_ID,
+                    callback: handleGoogleLogin
+                });
+                
+                google.accounts.id.renderButton(
+                    document.getElementById("googleBtnContainer"),
+                    { 
+                        theme: "outline", 
+                        size: "large", 
+                        type: "standard", 
+                        width: "100%",
+                        text: "signin_with",
+                        shape: "rectangular"
+                    }
+                );
+            }
+        };
+
+        // Hàm xử lý sau khi Google trả về kết quả đăng nhập thành công
+        async function handleGoogleLogin(response) {
+            try {
+                // Giải mã Token JWT của Google để lấy Tên và Email
+                const payload = parseJwt(response.credential);
+                const userEmail = payload.email;
+                const userName = payload.name;
+                
+                showToast("Đang đồng bộ dữ liệu với Google...", "success");
+
+                // Lưu dữ liệu vào Sheet
+                let apiPayload = {
+                    action: 'google_login',
+                    email: userEmail,
+                    name: userName
+                };
+
+                // Gửi về backend (Không đợi để tránh block UI, nhưng vẫn fetch)
+                fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(apiPayload),
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+                });
+
+                // 🔔 Hiển thị thông báo đẩy hệ thống (Push Notification)
+                if ("Notification" in window && Notification.permission === "granted") {
+                    new Notification("My Tool", {
+                        body: `Chào mừng ${userName} quay trở lại!`,
+                        icon: "https://i.pinimg.com/736x/58/98/19/58981979f44731d95ab25aad9a7c88cb.jpg"
+                    });
+                }
+
+                // Lưu session trên trình duyệt và chuyển hướng
+                const userData = {
+                    name: userName,
+                    email: userEmail,
+                    loginTime: new Date().getTime(),
+                    provider: 'Google'
+                };
+                localStorage.setItem('mytool_user', JSON.stringify(userData));
+                
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+
+            } catch (error) {
+                console.error(error);
+                showToast("Lỗi khi xử lý đăng nhập Google", "error");
+            }
+        }
+
+        // Hàm hỗ trợ giải mã JWT Token
+        function parseJwt(token) {
+            var base64Url = token.split('.')[1];
+            var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+        }
 
         // Xử lý chuyển tab Đăng nhập/Đăng ký
         function switchTab(tab) {
@@ -250,7 +350,7 @@
             }
         }
 
-        // Xử lý Gửi Form
+        // Xử lý Gửi Form Thủ Công
         async function handleFormSubmit(event, action) {
             event.preventDefault();
             
@@ -262,7 +362,6 @@
             const loader = document.getElementById(`loader-${action}`);
             const btnText = document.querySelector(`#btn-${action} span`);
             
-            // Lấy dữ liệu form
             let payload = { action: action };
             if(action === 'login') {
                 payload.email = document.getElementById('login-email').value;
@@ -273,12 +372,10 @@
                 payload.password = document.getElementById('reg-password').value;
             }
 
-            // Hiển thị loading
             loader.style.display = 'block';
             btnText.style.opacity = '0';
             
             try {
-                // Gửi request POST dạng text/plain để tránh lỗi CORS Preflight của Google Apps Script
                 const response = await fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
                     body: JSON.stringify(payload),
@@ -289,11 +386,21 @@
                 
                 if(result.success) {
                     showToast(result.message, "success");
+                    
+                    // 🔔 Hiển thị thông báo đẩy hệ thống (Push Notification)
+                    if ("Notification" in window && Notification.permission === "granted") {
+                        new Notification("My Tool", {
+                            body: action === 'register' ? "Chúc mừng bạn đã đăng ký thành công! Hãy kiểm tra hộp thư email nhé." : "Đăng nhập thành công!",
+                            icon: "https://i.pinimg.com/736x/58/98/19/58981979f44731d95ab25aad9a7c88cb.jpg"
+                        });
+                    }
+
                     if(action === 'login') {
                         const userData = {
                             name: result.name,
                             email: payload.email,
-                            loginTime: new Date().getTime()
+                            loginTime: new Date().getTime(),
+                            provider: 'Local'
                         };
                         localStorage.setItem('mytool_user', JSON.stringify(userData));
                         
@@ -301,7 +408,6 @@
                             window.location.href = 'index.html';
                         }, 1200);
                     } else {
-                        // Đăng ký thành công -> Chuyển sang form đăng nhập
                         setTimeout(() => { switchTab('login'); }, 1500);
                     }
                 } else {
@@ -311,7 +417,6 @@
                 showToast("Lỗi kết nối đến máy chủ. Vui lòng thử lại!", "error");
                 console.error(error);
             } finally {
-                // Tắt loading
                 loader.style.display = 'none';
                 btnText.style.opacity = '1';
             }
@@ -350,13 +455,11 @@
             
             container.appendChild(toast);
             
-            // Trigger animation
             setTimeout(() => toast.classList.add('show'), 10);
             
-            // Xóa toast sau 3.5s
             setTimeout(() => {
                 toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 300); // Đợi animation kết thúc mới remove
+                setTimeout(() => toast.remove(), 300);
             }, 3500);
         }
     </script>
