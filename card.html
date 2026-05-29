@@ -5,11 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Đổi Thẻ Cào Lấy Tiền</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <script src="/_sdk/element_sdk.js"></script>
-  <script src="/_sdk/data_sdk.js"></script>
   <style>
     * { font-family: Arial, sans-serif; }
-    body { background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); }
+    body { background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); box-sizing: border-box; }
     .card-option:checked + label { border-color: #cf0106; background: #fff0f0; }
     .tab-active { background: linear-gradient(135deg, #cf0106 0%, #a80005 100%); color: white; box-shadow: 0 4px 15px rgba(207, 1, 6, 0.4); }
     @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
@@ -19,52 +17,75 @@
     .status-failed { background: #f8d7da; color: #721c24; }
     header { background: linear-gradient(135deg, #cf0106 0%, #a80005 100%) !important; box-shadow: 0 8px 20px rgba(207, 1, 6, 0.3); }
   </style>
-  <style>body { box-sizing: border-box; }</style>
- <script src="/_sdk/telemetry_sdk.js"></script></head>
+ </head>
  <body class="h-full">
-  <div id="app" class="h-full w-full overflow-auto bg-gradient-to-br from-gray-900 via-gray-800 to-black"><!-- Header -->
+  <div id="app" class="h-full w-full overflow-auto bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+   
    <header class="text-white py-8 px-4 shadow-2xl">
     <div class="max-w-4xl mx-auto">
      <h1 id="site-title" class="text-3xl md:text-4xl font-bold text-center">ĐỔI THẺ CÀO LẤY TIỀN</h1>
      <p class="text-center text-gray-300 mt-2">Nhanh chóng • An toàn • Uy tín</p>
     </div>
-   </header><!-- Tab Navigation -->
+   </header>
+   
    <div class="max-w-4xl mx-auto px-4 mt-6">
-    <div class="flex bg-white rounded-xl shadow-md p-1.5 gap-1"><button onclick="switchTab('customer')" id="tab-customer" class="flex-1 py-3 px-4 rounded-lg font-semibold transition-all tab-active"> BÁN THẺ </button> <button onclick="switchTab('history')" id="tab-history" class="flex-1 py-3 px-4 rounded-lg font-semibold transition-all hover:bg-gray-100"> LỊCH SỬ </button> <button onclick="switchTab('admin')" id="tab-admin" class="flex-1 py-3 px-4 rounded-lg font-semibold transition-all hover:bg-gray-100"> QUẢN TRỊ </button>
+    <div class="flex bg-white rounded-xl shadow-md p-1.5 gap-1">
+        <button onclick="switchTab('customer')" id="tab-customer" class="flex-1 py-3 px-4 rounded-lg font-semibold transition-all tab-active"> BÁN THẺ </button> 
+        <button onclick="switchTab('history')" id="tab-history" class="flex-1 py-3 px-4 rounded-lg font-semibold transition-all hover:bg-gray-100"> LỊCH SỬ </button> 
+        <button onclick="switchTab('admin')" id="tab-admin" class="flex-1 py-3 px-4 rounded-lg font-semibold transition-all hover:bg-gray-100"> QUẢN TRỊ </button>
     </div>
-   </div><!-- Customer Panel -->
+   </div>
+   
    <div id="panel-customer" class="max-w-4xl mx-auto px-4 py-6">
-    <div class="bg-white rounded-2xl shadow-2xl p-6 md:p-8 animate-slide"><!-- Discount Display -->
+    <div class="bg-white rounded-2xl shadow-2xl p-6 md:p-8 animate-slide">
+     
      <div class="bg-gradient-to-r from-red-50 to-red-100 border-2 border-cf0106 rounded-xl p-4 mb-6">
       <div class="flex items-center justify-between">
-       <div class="flex items-center gap-2"><span class="font-semibold text-red-800">TỶ LỆ CHIẾT KHẤU HIỆN TẠI:</span>
-       </div><span id="current-discount" class="text-2xl font-bold text-red-600">12%</span>
+       <div class="flex items-center gap-2"><span class="font-semibold text-red-800">TỶ LỆ CHIẾT KHẤU HIỆN TẠI:</span></div>
+       <span id="current-discount" class="text-2xl font-bold text-red-600">12%</span>
       </div>
       <p class="text-red-700 text-sm mt-2">Bạn sẽ nhận được <span id="receive-rate" class="font-semibold">88%</span> giá trị thẻ</p>
-     </div><!-- Card Type Selection -->
-     <div class="mb-6"><label class="block text-gray-800 font-semibold mb-3">CHỌN NHÀ MẠNG</label> <input type="text" id="card-type" placeholder="Nhập tên nhà mạng (Viettel, Mobifone...)" class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-red-500 focus:outline-none transition-all bg-white">
-     </div><!-- Card Value Selection -->
+     </div>
+     
+     <div class="mb-6"><label class="block text-gray-800 font-semibold mb-3">CHỌN NHÀ MẠNG</label> <input type="text" id="card-type" placeholder="Nhập tên nhà mạng (Viettel, Mobifone...)" class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-red-500 focus:outline-none transition-all bg-white"></div>
+     
      <div class="mb-6"><label class="block text-gray-800 font-semibold mb-3">MỆNH GIÁ THẺ</label>
-      <div class="grid grid-cols-3 md:grid-cols-6 gap-2"><button type="button" onclick="selectValue(10000)" class="value-btn bg-gray-100 hover:bg-red-100 border-2 border-transparent hover:border-red-500 rounded-lg py-3 font-semibold transition-all">10.000</button> <button type="button" onclick="selectValue(20000)" class="value-btn bg-gray-100 hover:bg-red-100 border-2 border-transparent hover:border-red-500 rounded-lg py-3 font-semibold transition-all">20.000</button> <button type="button" onclick="selectValue(50000)" class="value-btn bg-gray-100 hover:bg-red-100 border-2 border-transparent hover:border-red-500 rounded-lg py-3 font-semibold transition-all">50.000</button> <button type="button" onclick="selectValue(100000)" class="value-btn bg-gray-100 hover:bg-red-100 border-2 border-transparent hover:border-red-500 rounded-lg py-3 font-semibold transition-all">100.000</button> <button type="button" onclick="selectValue(200000)" class="value-btn bg-gray-100 hover:bg-red-100 border-2 border-transparent hover:border-red-500 rounded-lg py-3 font-semibold transition-all">200.000</button> <button type="button" onclick="selectValue(500000)" class="value-btn bg-gray-100 hover:bg-red-100 border-2 border-transparent hover:border-red-500 rounded-lg py-3 font-semibold transition-all">500.000</button>
+      <div class="grid grid-cols-3 md:grid-cols-6 gap-2">
+        <button type="button" onclick="selectValue(10000)" class="value-btn bg-gray-100 hover:bg-red-100 border-2 border-transparent hover:border-red-500 rounded-lg py-3 font-semibold transition-all">10.000</button> 
+        <button type="button" onclick="selectValue(20000)" class="value-btn bg-gray-100 hover:bg-red-100 border-2 border-transparent hover:border-red-500 rounded-lg py-3 font-semibold transition-all">20.000</button> 
+        <button type="button" onclick="selectValue(50000)" class="value-btn bg-gray-100 hover:bg-red-100 border-2 border-transparent hover:border-red-500 rounded-lg py-3 font-semibold transition-all">50.000</button> 
+        <button type="button" onclick="selectValue(100000)" class="value-btn bg-gray-100 hover:bg-red-100 border-2 border-transparent hover:border-red-500 rounded-lg py-3 font-semibold transition-all">100.000</button> 
+        <button type="button" onclick="selectValue(200000)" class="value-btn bg-gray-100 hover:bg-red-100 border-2 border-transparent hover:border-red-500 rounded-lg py-3 font-semibold transition-all">200.000</button> 
+        <button type="button" onclick="selectValue(500000)" class="value-btn bg-gray-100 hover:bg-red-100 border-2 border-transparent hover:border-red-500 rounded-lg py-3 font-semibold transition-all">500.000</button>
       </div><input type="hidden" id="card-value" value="">
-     </div><!-- Card Info -->
+     </div>
+     
      <div class="grid md:grid-cols-2 gap-4 mb-6">
-      <div><label class="block text-gray-800 font-semibold mb-2">SỐ SERIAL</label> <input type="text" id="card-serial" placeholder="Nhập số serial thẻ" class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-red-500 focus:outline-none transition-all bg-white">
-      </div>
-      <div><label class="block text-gray-800 font-semibold mb-2">MÃ THẺ</label> <input type="text" id="card-code" placeholder="Nhập mã thẻ cào" class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-red-500 focus:outline-none transition-all bg-white">
-      </div>
-     </div><!-- Bank Info -->
+      <div><label class="block text-gray-800 font-semibold mb-2">SỐ SERIAL</label> <input type="text" id="card-serial" placeholder="Nhập số serial thẻ" class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-red-500 focus:outline-none transition-all bg-white"></div>
+      <div><label class="block text-gray-800 font-semibold mb-2">MÃ THẺ</label> <input type="text" id="card-code" placeholder="Nhập mã thẻ cào" class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-red-500 focus:outline-none transition-all bg-white"></div>
+     </div>
+     
      <div class="bg-gray-50 rounded-xl p-5 mb-6 border border-gray-200">
       <h3 class="font-semibold text-gray-800 mb-4">THÔNG TIN NHẬN TIỀN</h3>
       <div class="grid md:grid-cols-3 gap-4">
-       <div><label class="block text-gray-600 text-sm mb-1">CHỌN NGÂN HÀNG</label> <select id="bank-name" class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-red-500 focus:outline-none bg-white"> <option value="">Chọn ngân hàng</option> <option value="Ngân Hàng Thương Mại Cổ Phần Ngoại Thương Việt Nam">Vietcombank</option> <option value="Ngân Hàng Thương Mại Cổ Phần Kỹ Thương Việt Nam">Techcombank</option> <option value="Ngân Hàng Thương Mại Cổ Phần Đầu Tư Và Phát Triển Việt Nam">BIDV</option> <option value="Ngân Hàng Nông Nghiệp Và Phát Triển Nông Thôn Việt Nam">Agribank</option> <option value="Ngân Hàng Thương Mại Cổ Phần Quân Đội">MB Bank</option> <option value="Ngân Hàng Thương Mại Cổ Phần Á Châu">ACB</option> <option value="Ngân Hàng Thương Mại Cổ Phần Phương Đông">TPBank</option> <option value="Ngân Hàng Thương Mại Cổ Phần Sài Gòn">Sacombank</option> <option value="Ngân Hàng Thương Mại Cổ Phần Quốc Tế Việt Nam">VIB</option> <option value="Ngân Hàng Thương Mại Cổ Phần Hàng Hải">MSB</option> <option value="Ngân Hàng Thương Mại Cổ Phần Việt Nam Thương Tín">Vietbank</option> <option value="Ngân Hàng Thương Mại Cổ Phần Xuất Nhập Khẩu Việt Nam">Eximbank</option> <option value="Ngân Hàng Thương Mại Cổ Phần Công Thương Việt Nam">Vietinbank</option> <option value="Ngân Hàng Thương Mại Cổ Phần An Bình">ABBANK</option> <option value="Ngân Hàng Thương Mại Cổ Phần Xây Dựng Việt Nam">CB Bank</option> <option value="Ngân Hàng Thương Mại Cổ Phần Phát Triển Nhà Thành Phố Hồ Chí Minh">HD Bank</option> <option value="Ngân Hàng Thương Mại Cổ Phần Liên Việt Postbank">LienVietPostBank</option> <option value="Ngân Hàng Thương Mại Cổ Phần Kiên Long">Kienlongbank</option> <option value="Ngân Hàng Thương Mại Cổ Phần Bắc Á">BAC A BANK</option> <option value="Ngân Hàng Thương Mại Cổ Phần Đông Nam Á">Sea Bank</option> <option value="Ngân Hàng Thương Mại Cổ Phần Tiên Phong">Tien Phong Bank</option> <option value="Ngân Hàng Thương Mại Cổ Phần Phúc Thịnh">VPBank</option> <option value="Ngân Hàng Thương Mại Cổ Phần Bản Việt">BaoVietBank</option> </select>
+       <div><label class="block text-gray-600 text-sm mb-1">CHỌN NGÂN HÀNG</label> 
+        <select id="bank-name" class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-red-500 focus:outline-none bg-white"> 
+            <option value="">Chọn ngân hàng</option> 
+            <option value="Vietcombank">Vietcombank</option> 
+            <option value="Techcombank">Techcombank</option> 
+            <option value="BIDV">BIDV</option> 
+            <option value="Agribank">Agribank</option> 
+            <option value="MB Bank">MB Bank</option> 
+            <option value="ACB">ACB</option> 
+            <option value="TPBank">TPBank</option> 
+            <option value="Sacombank">Sacombank</option> 
+        </select>
        </div>
-       <div><label class="block text-gray-600 text-sm mb-1">SỐ TÀI KHOẢN</label> <input type="text" id="account-number" placeholder="Nhập số tài khoản" class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-red-500 focus:outline-none bg-white">
-       </div>
-       <div><label class="block text-gray-600 text-sm mb-1">TÊN CHỦ TÀI KHOẢN</label> <input type="text" id="account-name" placeholder="Nhập tên chủ tài khoản" class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-red-500 focus:outline-none bg-white">
-       </div>
+       <div><label class="block text-gray-600 text-sm mb-1">SỐ TÀI KHOẢN</label> <input type="text" id="account-number" placeholder="Nhập số tài khoản" class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-red-500 focus:outline-none bg-white"></div>
+       <div><label class="block text-gray-600 text-sm mb-1">TÊN CHỦ TÀI KHOẢN</label> <input type="text" id="account-name" placeholder="Nhập tên chủ tài khoản" class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-red-500 focus:outline-none bg-white"></div>
       </div>
-     </div><!-- Preview -->
+     </div>
+     
      <div id="preview-box" class="hidden bg-red-50 border-2 border-red-300 rounded-xl p-5 mb-6">
       <h3 class="font-semibold text-red-800 mb-3">SỐ TIỀN BẠN SẼ NHẬN:</h3>
       <div class="flex items-center justify-between">
@@ -77,10 +98,17 @@
         <p id="preview-receive" class="text-3xl font-bold text-red-600">0 VND</p>
        </div>
       </div>
-     </div><!-- Submit Button --> <button id="submit-btn" onclick="submitCard()" class="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold py-4 px-6 rounded-xl shadow-lg transform hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"> <span id="submit-text">GỬI THẺ NGAY</span> <span id="submit-loading" class="hidden">Đang xử lý...</span> </button> <!-- Message -->
-     <div id="message" class="hidden mt-4 p-4 rounded-xl text-center font-semibold"></div>
+     </div>
+     
+     <button id="submit-btn" onclick="submitCard()" class="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold py-4 px-6 rounded-xl shadow-lg transform hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"> 
+        <span id="submit-text">GỬI THẺ NGAY</span> 
+        <span id="submit-loading" class="hidden">Đang xử lý...</span> 
+    </button> 
+    
+    <div id="message" class="hidden mt-4 p-4 rounded-xl text-center font-semibold"></div>
     </div>
-   </div><!-- History Panel -->
+   </div>
+   
    <div id="panel-history" class="hidden max-w-4xl mx-auto px-4 py-6">
     <div class="bg-white rounded-2xl shadow-2xl p-6 animate-slide">
      <h2 class="text-xl font-bold text-gray-800 mb-4">LỊCH SỬ GIAO DỊCH</h2>
@@ -88,118 +116,96 @@
       <p class="text-gray-500 text-center py-8">Chưa có giao dịch nào</p>
      </div>
     </div>
-   </div><!-- Admin Panel -->
+   </div>
+   
    <div id="panel-admin" class="hidden max-w-4xl mx-auto px-4 py-6">
     <div class="bg-white rounded-2xl shadow-2xl p-6 animate-slide">
-     <h2 class="text-xl font-bold text-gray-800 mb-6">BẢNG ĐIỀU KHIỂN QUẢN TRỊ</h2><!-- Password Protection -->
+     <h2 class="text-xl font-bold text-gray-800 mb-6">BẢNG ĐIỀU KHIỂN QUẢN TRỊ</h2>
+     
      <div id="admin-password-section" class="bg-red-50 rounded-xl p-6 mb-6 border-2 border-red-300">
       <h3 class="font-semibold text-gray-800 mb-4">NHẬP MẬT KHẨU QUẢN TRỊ</h3>
       <div class="flex gap-2">
-       <input type="password" id="admin-password" placeholder="Nhập mật khẩu quản trị" class="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-red-500 focus:outline-none"> <button onclick="validateAdminPassword()" class="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-3 px-6 rounded-xl transition-all"> ĐĂNG NHẬP </button>
+       <input type="password" id="admin-password" placeholder="Nhập mật khẩu quản trị" class="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-red-500 focus:outline-none"> 
+       <button onclick="validateAdminPassword()" class="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-3 px-6 rounded-xl transition-all"> ĐĂNG NHẬP </button>
       </div>
-     </div><!-- Admin Controls (Hidden by default) -->
+     </div>
+     
      <div id="admin-controls" class="hidden">
-      <!-- Discount Setting -->
+      
       <div class="bg-gradient-to-r from-red-50 to-red-100 rounded-xl p-6 mb-6 border-2 border-red-300">
        <h3 class="font-semibold text-gray-800 mb-4">CÀI ĐẶT TỶ LỆ CHIẾT KHẤU</h3>
-       <div class="flex items-center gap-4"><input type="range" id="discount-slider" min="5" max="30" value="12" class="flex-1 h-3 rounded-lg appearance-none bg-gray-300 cursor-pointer" oninput="updateDiscountPreview()">
-        <div class="bg-white px-4 py-2 rounded-lg shadow border min-w-[80px] text-center"><span id="discount-preview" class="text-2xl font-bold text-red-600">12</span> <span class="text-gray-600">%</span>
+       <div class="flex items-center gap-4">
+        <input type="range" id="discount-slider" min="5" max="30" value="12" class="flex-1 h-3 rounded-lg appearance-none bg-gray-300 cursor-pointer" oninput="updateDiscountPreview()">
+        <div class="bg-white px-4 py-2 rounded-lg shadow border min-w-[80px] text-center">
+            <span id="discount-preview" class="text-2xl font-bold text-red-600">12</span> <span class="text-gray-600">%</span>
         </div>
        </div>
-       <div class="flex justify-between text-sm text-gray-500 mt-2"><span>5%</span> <span>30%</span>
-       </div><button onclick="saveDiscount()" class="mt-4 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-2 px-6 rounded-lg transition-all"> LƯU TỶ LỆ </button>
-      </div><!-- Transaction Management -->
+       <div class="flex justify-between text-sm text-gray-500 mt-2">
+           <span>5%</span> <span>30%</span>
+       </div>
+       <button onclick="saveDiscount()" class="mt-4 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-2 px-6 rounded-lg transition-all"> LƯU TỶ LỆ </button>
+      </div>
+      
       <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
        <h3 class="font-semibold text-gray-800 mb-4">QUẢN LÝ GIAO DỊCH</h3>
        <div id="admin-transactions" class="space-y-3">
         <p class="text-gray-500 text-center py-4">Chưa có giao dịch nào</p>
        </div>
-      </div><button onclick="logoutAdmin()" class="mt-6 w-full bg-gray-400 hover:bg-gray-500 text-white font-semibold py-2 px-6 rounded-lg transition-all"> ĐĂNG XUẤT </button>
+      </div>
+      <button onclick="logoutAdmin()" class="mt-6 w-full bg-gray-400 hover:bg-gray-500 text-white font-semibold py-2 px-6 rounded-lg transition-all"> ĐĂNG XUẤT </button>
      </div>
     </div>
    </div>
   </div>
+
   <script>
-    // Config and State
-    const defaultConfig = {
+    // CẤU HÌNH API
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbwoYji3_EAkPWsJFfOaJqg2V71WGyMpjjLAtoxO3yyAuWFUdj6kJpXdctQzQri5w2G6sg/exec";
+    const ADMIN_PASSWORD = '729903';
+
+    let config = {
       site_title: 'ĐỔI THẺ CÀO LẤY TIỀN',
       submit_button_text: 'GỬI THẺ NGAY',
-      discount_rate: 12,
-      primary_color: '#cf0106',
-      secondary_color: '#fff0f0',
-      text_color: '#1f1f1f',
-      accent_color: '#a80005',
-      surface_color: '#ffffff'
+      discount_rate: 12
     };
 
-    const ADMIN_PASSWORD = '729903';
-    let config = { ...defaultConfig };
     let transactions = [];
     let selectedValue = 0;
     let adminLoggedIn = false;
 
-    // Initialize Element SDK
-    window.elementSdk.init({
-      defaultConfig,
-      onConfigChange: async (newConfig) => {
-        config = { ...defaultConfig, ...newConfig };
-        document.getElementById('site-title').textContent = config.site_title;
-        document.getElementById('submit-text').textContent = config.submit_button_text;
-        updateDiscountDisplay();
-      },
-      mapToCapabilities: (cfg) => ({
-        recolorables: [
-          {
-            get: () => cfg.primary_color || defaultConfig.primary_color,
-            set: (v) => { cfg.primary_color = v; window.elementSdk.setConfig({ primary_color: v }); }
-          },
-          {
-            get: () => cfg.secondary_color || defaultConfig.secondary_color,
-            set: (v) => { cfg.secondary_color = v; window.elementSdk.setConfig({ secondary_color: v }); }
-          },
-          {
-            get: () => cfg.text_color || defaultConfig.text_color,
-            set: (v) => { cfg.text_color = v; window.elementSdk.setConfig({ text_color: v }); }
-          },
-          {
-            get: () => cfg.accent_color || defaultConfig.accent_color,
-            set: (v) => { cfg.accent_color = v; window.elementSdk.setConfig({ accent_color: v }); }
-          },
-          {
-            get: () => cfg.surface_color || defaultConfig.surface_color,
-            set: (v) => { cfg.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); }
-          }
-        ],
-        borderables: [],
-        fontEditable: undefined,
-        fontSizeable: undefined
-      }),
-      mapToEditPanelValues: (cfg) => new Map([
-        ['site_title', cfg.site_title || defaultConfig.site_title],
-        ['submit_button_text', cfg.submit_button_text || defaultConfig.submit_button_text]
-      ])
+    // Khởi tạo UI
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('site-title').textContent = config.site_title;
+      document.getElementById('submit-text').textContent = config.submit_button_text;
+      updateDiscountDisplay();
+      fetchTransactions(); // Tải dữ liệu lần đầu
+
+      const passwordInput = document.getElementById('admin-password');
+      if (passwordInput) {
+        passwordInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') validateAdminPassword();
+        });
+      }
     });
 
-    // Data SDK Handler
-    const dataHandler = {
-      onDataChanged(data) {
-        transactions = data;
-        renderHistory();
-        if (adminLoggedIn) {
-          renderAdminTransactions();
+    // Lấy danh sách giao dịch từ Backend
+    async function fetchTransactions() {
+      try {
+        const response = await fetch(`${GAS_URL}?action=get_transactions`);
+        const result = await response.json();
+        
+        if (result.success) {
+          transactions = result.data || [];
+          renderHistory();
+          if (adminLoggedIn) {
+            renderAdminTransactions();
+          }
         }
+      } catch (error) {
+        console.error("Lỗi lấy dữ liệu:", error);
       }
-    };
+    }
 
-    // Initialize Data SDK
-    (async () => {
-      const result = await window.dataSdk.init(dataHandler);
-      if (!result.isOk) {
-        console.error('Failed to initialize Data SDK');
-      }
-    })();
-
-    // Admin Password Validation
     function validateAdminPassword() {
       const input = document.getElementById('admin-password').value;
       if (input === ADMIN_PASSWORD) {
@@ -208,23 +214,21 @@
         document.getElementById('admin-controls').classList.remove('hidden');
         renderAdminTransactions();
         updateDiscountDisplay();
-        showMessage('✓ Đăng nhập thành công', 'success');
+        showMessage('Đăng nhập thành công', 'success');
       } else {
-        showMessage('✗ Mật khẩu sai', 'error');
+        showMessage('Mật khẩu sai', 'error');
         document.getElementById('admin-password').value = '';
       }
     }
 
-    // Admin Logout
     function logoutAdmin() {
       adminLoggedIn = false;
       document.getElementById('admin-password').value = '';
       document.getElementById('admin-password-section').classList.remove('hidden');
       document.getElementById('admin-controls').classList.add('hidden');
-      showMessage('✓ Đã đăng xuất', 'success');
+      showMessage('Đã đăng xuất', 'success');
     }
 
-    // Tab Switching
     function switchTab(tab) {
       const tabs = ['customer', 'history', 'admin'];
       tabs.forEach(t => {
@@ -235,9 +239,10 @@
       document.getElementById(`panel-${tab}`).classList.remove('hidden');
       document.getElementById(`tab-${tab}`).classList.add('tab-active');
       document.getElementById(`tab-${tab}`).classList.remove('hover:bg-gray-100');
+      
+      if(tab === 'history') fetchTransactions(); // Cập nhật dữ liệu khi vào tab lịch sử
     }
 
-    // Value Selection
     function selectValue(value) {
       selectedValue = value;
       document.getElementById('card-value').value = value;
@@ -253,49 +258,39 @@
       updatePreview();
     }
 
-    // Update Preview
     function updatePreview() {
       if (selectedValue > 0) {
-        const discount = config.discount_rate || defaultConfig.discount_rate;
-        const receive = selectedValue * (100 - discount) / 100;
-        
+        const receive = selectedValue * (100 - config.discount_rate) / 100;
         document.getElementById('preview-box').classList.remove('hidden');
         document.getElementById('preview-value').textContent = formatCurrency(selectedValue);
-        document.getElementById('preview-discount').textContent = discount + '%';
+        document.getElementById('preview-discount').textContent = config.discount_rate + '%';
         document.getElementById('preview-receive').textContent = formatCurrency(receive);
       }
     }
 
-    // Update Discount Display
     function updateDiscountDisplay() {
-      const discount = config.discount_rate || defaultConfig.discount_rate;
-      document.getElementById('current-discount').textContent = discount + '%';
-      document.getElementById('receive-rate').textContent = (100 - discount) + '%';
-      document.getElementById('discount-slider').value = discount;
-      document.getElementById('discount-preview').textContent = discount;
+      document.getElementById('current-discount').textContent = config.discount_rate + '%';
+      document.getElementById('receive-rate').textContent = (100 - config.discount_rate) + '%';
+      document.getElementById('discount-slider').value = config.discount_rate;
+      document.getElementById('discount-preview').textContent = config.discount_rate;
       updatePreview();
     }
 
-    // Update Discount Preview (slider)
     function updateDiscountPreview() {
       const value = document.getElementById('discount-slider').value;
       document.getElementById('discount-preview').textContent = value;
     }
 
-    // Save Discount
     function saveDiscount() {
-      const newDiscount = parseInt(document.getElementById('discount-slider').value);
-      config.discount_rate = newDiscount;
+      config.discount_rate = parseInt(document.getElementById('discount-slider').value);
       updateDiscountDisplay();
-      showMessage('✓ Đã lưu tỷ lệ chiết khấu: ' + newDiscount + '%', 'success');
+      showMessage('Đã lưu tỷ lệ chiết khấu: ' + config.discount_rate + '%', 'success');
     }
 
-    // Format Currency
     function formatCurrency(amount) {
       return new Intl.NumberFormat('vi-VN').format(amount) + ' VND';
     }
 
-    // Show Message
     function showMessage(text, type) {
       const msg = document.getElementById('message');
       msg.textContent = text;
@@ -307,12 +302,9 @@
       }
       msg.classList.remove('hidden');
       
-      setTimeout(() => {
-        msg.classList.add('hidden');
-      }, 5000);
+      setTimeout(() => msg.classList.add('hidden'), 5000);
     }
 
-    // Submit Card
     async function submitCard() {
       const cardType = document.getElementById('card-type').value.trim();
       const cardSerial = document.getElementById('card-serial').value.trim();
@@ -322,57 +314,26 @@
       const accountNumber = document.getElementById('account-number').value.trim();
       const accountName = document.getElementById('account-name').value.trim();
 
-      // Validation
-      if (!cardType) {
-        showMessage('✗ Vui lòng nhập tên nhà mạng', 'error');
-        return;
-      }
-      if (!cardValue) {
-        showMessage('✗ Vui lòng chọn mệnh giá thẻ', 'error');
-        return;
-      }
-      if (!cardSerial || cardSerial.length < 10) {
-        showMessage('✗ Số serial không hợp lệ (tối thiểu 10 ký tự)', 'error');
-        return;
-      }
-      if (!cardCode || cardCode.length < 10) {
-        showMessage('✗ Mã thẻ không hợp lệ (tối thiểu 10 ký tự)', 'error');
-        return;
-      }
-      if (!bankName) {
-        showMessage('✗ Vui lòng chọn ngân hàng', 'error');
-        return;
-      }
-      if (!accountNumber || accountNumber.length < 6) {
-        showMessage('✗ Số tài khoản không hợp lệ', 'error');
-        return;
-      }
-      if (!accountName) {
-        showMessage('✗ Vui lòng nhập tên chủ tài khoản', 'error');
-        return;
-      }
+      if (!cardType) return showMessage('Vui lòng nhập tên nhà mạng', 'error');
+      if (!cardValue) return showMessage('Vui lòng chọn mệnh giá thẻ', 'error');
+      if (!cardSerial || cardSerial.length < 10) return showMessage('Số serial không hợp lệ', 'error');
+      if (!cardCode || cardCode.length < 10) return showMessage('Mã thẻ không hợp lệ', 'error');
+      if (!bankName) return showMessage('Vui lòng chọn ngân hàng', 'error');
+      if (!accountNumber || accountNumber.length < 6) return showMessage('Số tài khoản không hợp lệ', 'error');
+      if (!accountName) return showMessage('Vui lòng nhập tên chủ tài khoản', 'error');
 
-      // Check limit
-      if (transactions.length >= 999) {
-        showMessage('✗ Hệ thống đã đạt giới hạn giao dịch. Vui lòng liên hệ admin.', 'error');
-        return;
-      }
-
-      // Show loading
       document.getElementById('submit-btn').disabled = true;
       document.getElementById('submit-text').classList.add('hidden');
       document.getElementById('submit-loading').classList.remove('hidden');
 
-      const discount = config.discount_rate || defaultConfig.discount_rate;
-      const actualAmount = cardValue * (100 - discount) / 100;
-
+      const actualAmount = cardValue * (100 - config.discount_rate) / 100;
       const newTransaction = {
         id: Date.now().toString(),
         card_type: cardType,
         card_serial: cardSerial,
         card_code: cardCode,
         card_value: cardValue,
-        discount_rate: discount,
+        discount_rate: config.discount_rate,
         actual_amount: actualAmount,
         bank_name: bankName,
         account_number: accountNumber,
@@ -381,34 +342,41 @@
         created_at: new Date().toISOString()
       };
 
-      const result = await window.dataSdk.create(newTransaction);
-
-      // Hide loading
-      document.getElementById('submit-btn').disabled = false;
-      document.getElementById('submit-text').classList.remove('hidden');
-      document.getElementById('submit-loading').classList.add('hidden');
-
-      if (result.isOk) {
-        showMessage('✓ Gửi thẻ thành công! Tiền sẽ được chuyển trong 1-5 phút.', 'success');
-        // Reset form
-        document.getElementById('card-type').value = '';
-        document.getElementById('card-serial').value = '';
-        document.getElementById('card-code').value = '';
-        document.getElementById('bank-name').value = '';
-        document.getElementById('account-number').value = '';
-        document.getElementById('account-name').value = '';
-        document.getElementById('preview-box').classList.add('hidden');
-        selectedValue = 0;
-        document.querySelectorAll('.value-btn').forEach(btn => {
-          btn.classList.remove('bg-red-500', 'text-white', 'border-red-500');
-          btn.classList.add('bg-gray-100');
+      try {
+        const response = await fetch(GAS_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'create', payload: newTransaction })
         });
-      } else {
-        showMessage('✗ Có lỗi xảy ra. Vui lòng thử lại!', 'error');
+        const result = await response.json();
+
+        if (result.success) {
+          showMessage('Gửi thẻ thành công! Tiền sẽ được chuyển trong 1-5 phút.', 'success');
+          fetchTransactions(); 
+          
+          document.getElementById('card-type').value = '';
+          document.getElementById('card-serial').value = '';
+          document.getElementById('card-code').value = '';
+          document.getElementById('bank-name').value = '';
+          document.getElementById('account-number').value = '';
+          document.getElementById('account-name').value = '';
+          document.getElementById('preview-box').classList.add('hidden');
+          selectedValue = 0;
+          document.querySelectorAll('.value-btn').forEach(btn => {
+            btn.classList.remove('bg-red-500', 'text-white', 'border-red-500');
+            btn.classList.add('bg-gray-100');
+          });
+        } else {
+          showMessage('Có lỗi từ máy chủ. Vui lòng thử lại!', 'error');
+        }
+      } catch (err) {
+        showMessage('Lỗi mạng. Vui lòng kiểm tra lại!', 'error');
+      } finally {
+        document.getElementById('submit-btn').disabled = false;
+        document.getElementById('submit-text').classList.remove('hidden');
+        document.getElementById('submit-loading').classList.add('hidden');
       }
     }
 
-    // Render History
     function renderHistory() {
       const container = document.getElementById('history-list');
       
@@ -440,7 +408,6 @@
       `).join('');
     }
 
-    // Render Admin Transactions
     function renderAdminTransactions() {
       const container = document.getElementById('admin-transactions');
       
@@ -482,69 +449,59 @@
       `).join('');
     }
 
-    // Update Transaction Status
     async function updateStatus(backendId, newStatus) {
       const tx = transactions.find(t => t.__backendId === backendId);
       if (!tx || tx.status !== 'pending') return;
 
-      const updatedTx = { ...tx, status: newStatus };
-      const result = await window.dataSdk.update(updatedTx);
-      
-      if (!result.isOk) {
-        showMessage('✗ Không thể cập nhật trạng thái', 'error');
+      try {
+        const response = await fetch(GAS_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'update_status', id: backendId, status: newStatus })
+        });
+        const result = await response.json();
+        
+        if (result.success) {
+          fetchTransactions();
+        } else {
+          showMessage('Lỗi cập nhật trạng thái', 'error');
+        }
+      } catch (e) {
+        showMessage('Lỗi kết nối', 'error');
       }
     }
 
-    // Delete Transaction
     async function deleteTransaction(backendId) {
-      const tx = transactions.find(t => t.__backendId === backendId);
-      if (!tx) return;
-
-      const result = await window.dataSdk.delete(tx);
-      
-      if (!result.isOk) {
-        showMessage('✗ Không thể xóa giao dịch', 'error');
+      if (!confirm("Bạn có chắc chắn muốn xóa giao dịch này?")) return;
+      try {
+        const response = await fetch(GAS_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'delete', id: backendId })
+        });
+        const result = await response.json();
+        
+        if (result.success) {
+          fetchTransactions();
+        } else {
+          showMessage('Lỗi xóa giao dịch', 'error');
+        }
+      } catch (e) {
+        showMessage('Lỗi kết nối', 'error');
       }
     }
 
-    // Helper Functions
     function getStatusClass(status) {
-      const classes = {
-        'pending': 'status-pending',
-        'success': 'status-success',
-        'failed': 'status-failed'
-      };
+      const classes = { 'pending': 'status-pending', 'success': 'status-success', 'failed': 'status-failed' };
       return classes[status] || 'status-pending';
     }
 
     function getStatusText(status) {
-      const texts = {
-        'pending': 'Đang xử lý',
-        'success': 'Thành công',
-        'failed': 'Thất bại'
-      };
+      const texts = { 'pending': 'Đang xử lý', 'success': 'Thành công', 'failed': 'Thất bại' };
       return texts[status] || status;
     }
 
     function formatDate(dateStr) {
-      const date = new Date(dateStr);
-      return date.toLocaleString('vi-VN');
+      return new Date(dateStr).toLocaleString('vi-VN');
     }
-
-    // Initial setup
-    updateDiscountDisplay();
-
-    // Handle enter key in password field
-    document.addEventListener('DOMContentLoaded', () => {
-      const passwordInput = document.getElementById('admin-password');
-      if (passwordInput) {
-        passwordInput.addEventListener('keypress', (e) => {
-          if (e.key === 'Enter') {
-            validateAdminPassword();
-          }
-        });
-      }
-    });
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a031cab01e43fdbc',t:'MTc4MDAxODgzMw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ </body>
 </html>
