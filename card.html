@@ -3,7 +3,7 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hệ Thống Giao Dịch</title>
+  <title>Hệ Thống Giao Dịch Số</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,8 +20,6 @@
     input::placeholder { font-weight: 300; color: #9ca3af; }
     .pin-input { letter-spacing: 0.5em; font-size: 1.5rem; text-align: center; }
     .pin-input::placeholder { letter-spacing: normal; font-size: 1rem; }
-    
-    /* Ẩn scrollbar cho navigation ngang */
     .scrollbar-hide::-webkit-scrollbar { display: none; }
     .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
@@ -60,7 +58,7 @@
    <header class="text-white py-8 px-4 shadow-xl relative">
     <div class="max-w-4xl mx-auto relative flex flex-col items-center">
      <button onclick="userLogout()" class="absolute right-0 top-0 text-sm font-light text-red-200 hover:text-white bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg transition-all tracking-wide">Đăng xuất</button>
-     <h1 class="text-3xl md:text-4xl font-medium text-center tracking-tight">HỆ TRỤC GIAO DỊCH</h1>
+     <h1 class="text-3xl md:text-4xl font-medium text-center tracking-tight">HỆ THỐNG GIAO DỊCH SỐ</h1>
      <p class="text-center text-red-100/80 mt-3 font-light text-sm tracking-wide">
          Định danh: <span id="display-phone" class="font-medium text-white pr-2 border-r border-red-300/30 mr-2"></span> 
          Số dư khả dụng: <span id="display-balance" class="font-medium text-white">0 ₫</span>
@@ -71,7 +69,7 @@
    <div class="max-w-4xl mx-auto px-4 mt-6">
     <div class="flex bg-white rounded-xl shadow-md p-1.5 gap-1 overflow-x-auto scrollbar-hide">
         <button onclick="switchTab('customer')" id="tab-customer" class="flex-1 py-3 px-3 rounded-lg font-medium transition-all tab-active text-sm tracking-wide whitespace-nowrap">BÁN THẺ CÀO</button> 
-        <button onclick="switchTab('deposit')" id="tab-deposit" class="flex-1 py-3 px-3 rounded-lg font-medium transition-all hover:bg-gray-100 text-gray-600 text-sm tracking-wide whitespace-nowrap">NẠP TIỀN</button> 
+        <button onclick="switchTab('deposit')" id="tab-deposit" class="flex-1 py-3 px-3 rounded-lg font-medium transition-all hover:bg-gray-100 text-gray-600 text-sm tracking-wide whitespace-nowrap">NẠP TIỀN CK</button> 
         <button onclick="switchTab('store')" id="tab-store" class="flex-1 py-3 px-3 rounded-lg font-medium transition-all hover:bg-gray-100 text-gray-600 text-sm tracking-wide whitespace-nowrap">MUA THẺ</button> 
         <button onclick="switchTab('withdraw')" id="tab-withdraw" class="flex-1 py-3 px-3 rounded-lg font-medium transition-all hover:bg-gray-100 text-gray-600 text-sm tracking-wide whitespace-nowrap">RÚT TIỀN</button> 
         <button onclick="switchTab('history')" id="tab-history" class="flex-1 py-3 px-3 rounded-lg font-medium transition-all hover:bg-gray-100 text-gray-600 text-sm tracking-wide whitespace-nowrap">LỊCH SỬ</button> 
@@ -79,7 +77,6 @@
     </div>
    </div>
    
-   <!-- PANEL: BÁN THẺ CÀO (NẠP THẺ VÀO HỆ THỐNG) -->
    <div id="panel-customer" class="max-w-4xl mx-auto px-4 py-6">
     <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 animate-slide">
      <div class="bg-gradient-to-r from-red-50 to-red-100/50 border border-red-200 rounded-xl p-4 mb-6">
@@ -92,7 +89,7 @@
      
      <div class="mb-6">
         <label class="block text-gray-700 font-medium mb-2 text-sm tracking-wide uppercase">Nhà mạng cung cấp</label> 
-        <input type="text" id="card-type" placeholder="Nhập tên nhà mạng (Ví dụ: Viettel, Mobifone, Vinaphone...)" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none transition-all bg-white text-sm">
+        <input type="text" id="card-type" placeholder="Nhập tên nhà mạng (Ví dụ: Viettel, Mobifone...)" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none transition-all bg-white text-sm">
      </div>
      
      <div class="mb-6">
@@ -141,18 +138,21 @@
     </div>
    </div>
 
-   <!-- PANEL: NẠP TIỀN CHUYỂN KHOẢN -->
    <div id="panel-deposit" class="hidden max-w-4xl mx-auto px-4 py-6">
     <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 animate-slide">
-     <h2 class="text-lg font-medium text-gray-800 mb-6 tracking-wide border-b border-gray-100 pb-4">HƯỚNG DẪN NẠP TIỀN VÀO VÍ</h2>
+     <h2 class="text-lg font-medium text-gray-800 mb-6 tracking-wide border-b border-gray-100 pb-4">NẠP TIỀN VÀO HỆ THỐNG</h2>
      
-     <div class="bg-slate-50/50 rounded-xl p-6 border border-slate-200">
-         <p class="text-gray-600 mb-6 text-[13px] font-light leading-relaxed">Để nạp tiền thanh toán mua thẻ trên hệ thống, quý khách vui lòng chuyển khoản theo thông tin bên dưới. Hệ thống hoặc quản trị viên sẽ kiểm tra và cộng số dư vào tài khoản của quý khách trong thời gian sớm nhất. Xin lưu ý ghi đúng nội dung chuyển khoản.</p>
+     <div class="bg-slate-50/50 rounded-xl p-6 border border-slate-200 mb-6">
+         <p class="text-gray-600 mb-6 text-[13px] font-light leading-relaxed">Vui lòng chuyển khoản theo thông tin bên dưới và điền dữ liệu xác nhận để hệ thống đối soát cộng số dư.</p>
          
          <div class="space-y-4">
              <div class="flex justify-between items-center border-b border-gray-100 pb-3">
-                 <span class="text-gray-500 text-xs tracking-wide uppercase">Ngân hàng thụ hưởng</span>
-                 <span class="text-gray-800 font-medium text-sm">MB Bank (Ngân hàng Quân Đội)</span>
+                 <span class="text-gray-500 text-xs tracking-wide uppercase">Hình thức</span>
+                 <span class="text-gray-800 font-medium text-sm">Chuyển khoản (CK)</span>
+             </div>
+             <div class="flex justify-between items-center border-b border-gray-100 pb-3">
+                 <span class="text-gray-500 text-xs tracking-wide uppercase">Ngân hàng</span>
+                 <span class="text-gray-800 font-medium text-sm">MB Bank</span>
              </div>
              <div class="flex justify-between items-center border-b border-gray-100 pb-3">
                  <span class="text-gray-500 text-xs tracking-wide uppercase">Chủ tài khoản</span>
@@ -160,18 +160,35 @@
              </div>
              <div class="flex justify-between items-center border-b border-gray-100 pb-3">
                  <span class="text-gray-500 text-xs tracking-wide uppercase">Số tài khoản</span>
-                 <span class="text-emerald-600 font-semibold text-lg tracking-widest">4499123123</span>
+                 <span class="text-emerald-600 font-medium text-lg tracking-widest">4499123123</span>
              </div>
              <div class="flex justify-between items-center pt-1">
-                 <span class="text-gray-500 text-xs tracking-wide uppercase">Nội dung chuyển khoản</span>
+                 <span class="text-gray-500 text-xs tracking-wide uppercase">Nội dung</span>
                  <span class="text-red-600 font-medium text-sm bg-red-50 px-3 py-1 rounded">NAP <span id="deposit-phone-placeholder"></span></span>
              </div>
          </div>
      </div>
+
+     <div class="grid md:grid-cols-2 gap-4 mb-6">
+         <div>
+             <label class="block text-gray-700 font-medium mb-2 text-sm tracking-wide uppercase">Số tiền đã chuyển</label> 
+             <input type="number" id="deposit-amount" placeholder="Nhập số tiền" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none transition-all bg-white text-sm">
+         </div>
+         <div>
+             <label class="block text-gray-700 font-medium mb-2 text-sm tracking-wide uppercase">Mã giao dịch</label> 
+             <input type="text" id="deposit-ref" placeholder="Mã tham chiếu / Nội dung" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none transition-all bg-white text-sm">
+         </div>
+     </div>
+
+     <button id="deposit-btn" onclick="submitDeposit()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium tracking-wide py-4 px-6 rounded-xl shadow-md transform hover:-translate-y-0.5 transition-all disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none"> 
+         <span id="deposit-text">XÁC NHẬN ĐÃ CHUYỂN KHOẢN</span> 
+         <span id="deposit-loading" class="hidden">ĐANG THỰC THI...</span> 
+     </button> 
+     
+     <div id="deposit-message" class="hidden mt-4 p-4 rounded-xl text-center text-sm font-medium"></div>
     </div>
    </div>
 
-   <!-- PANEL: CỬA HÀNG MUA THẺ -->
    <div id="panel-store" class="hidden max-w-4xl mx-auto px-4 py-6">
     <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 animate-slide">
      <h2 class="text-lg font-medium text-gray-800 mb-6 tracking-wide border-b border-gray-100 pb-4">CỬA HÀNG THẺ SỐ</h2>
@@ -182,7 +199,6 @@
     </div>
    </div>
 
-   <!-- PANEL: RÚT TIỀN -->
    <div id="panel-withdraw" class="hidden max-w-4xl mx-auto px-4 py-6">
     <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 animate-slide">
      <h2 class="text-lg font-medium text-gray-800 mb-6 tracking-wide border-b border-gray-100 pb-4">YÊU CẦU GIẢI NGÂN</h2>
@@ -221,7 +237,6 @@
     </div>
    </div>
    
-   <!-- PANEL: LỊCH SỬ -->
    <div id="panel-history" class="hidden max-w-4xl mx-auto px-4 py-6">
     <div class="bg-white rounded-2xl shadow-lg p-6 animate-slide">
      <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
@@ -231,17 +246,18 @@
      
      <div class="mb-4 flex border-b border-gray-100 overflow-x-auto scrollbar-hide">
          <button onclick="toggleHistory('cards')" id="btn-hist-cards" class="pb-3 px-4 font-medium text-red-600 border-b-2 border-red-600 text-sm tracking-wide whitespace-nowrap">BÁN THẺ</button>
+         <button onclick="toggleHistory('deposits')" id="btn-hist-deposits" class="pb-3 px-4 font-medium text-gray-400 hover:text-gray-600 text-sm tracking-wide whitespace-nowrap">NẠP TIỀN CK</button>
          <button onclick="toggleHistory('orders')" id="btn-hist-orders" class="pb-3 px-4 font-medium text-gray-400 hover:text-gray-600 text-sm tracking-wide whitespace-nowrap">ĐƠN MUA</button>
          <button onclick="toggleHistory('withdraws')" id="btn-hist-withdraws" class="pb-3 px-4 font-medium text-gray-400 hover:text-gray-600 text-sm tracking-wide whitespace-nowrap">RÚT TIỀN</button>
      </div>
 
      <div id="history-cards-list" class="space-y-3"></div>
+     <div id="history-deposits-list" class="space-y-3 hidden"></div>
      <div id="history-orders-list" class="space-y-3 hidden"></div>
      <div id="history-withdraws-list" class="space-y-3 hidden"></div>
     </div>
    </div>
    
-   <!-- PANEL: QUẢN TRỊ -->
    <div id="panel-admin" class="hidden max-w-4xl mx-auto px-4 py-6">
     <div class="bg-white rounded-2xl shadow-lg p-6 animate-slide">
      <h2 class="text-lg font-medium text-gray-800 mb-6 tracking-wide border-b border-gray-100 pb-4">GIAO DIỆN KIỂM SOÁT</h2>
@@ -268,11 +284,13 @@
       
       <div class="mb-4 flex border-b border-gray-100 overflow-x-auto scrollbar-hide">
          <button onclick="toggleAdminTab('cards')" id="btn-admin-cards" class="pb-3 px-4 font-medium text-red-600 border-b-2 border-red-600 text-sm tracking-wide whitespace-nowrap">BÁN THẺ</button>
+         <button onclick="toggleAdminTab('deposits')" id="btn-admin-deposits" class="pb-3 px-4 font-medium text-gray-400 hover:text-gray-600 text-sm tracking-wide whitespace-nowrap">NẠP TIỀN CK</button>
          <button onclick="toggleAdminTab('orders')" id="btn-admin-orders" class="pb-3 px-4 font-medium text-gray-400 hover:text-gray-600 text-sm tracking-wide whitespace-nowrap">ĐƠN HÀNG</button>
          <button onclick="toggleAdminTab('withdraws')" id="btn-admin-withdraws" class="pb-3 px-4 font-medium text-gray-400 hover:text-gray-600 text-sm tracking-wide whitespace-nowrap">GIẢI NGÂN</button>
       </div>
 
       <div id="admin-cards-list" class="space-y-3"></div>
+      <div id="admin-deposits-list" class="space-y-3 hidden"></div>
       <div id="admin-orders-list" class="space-y-3 hidden"></div>
       <div id="admin-withdraws-list" class="space-y-3 hidden"></div>
 
@@ -283,11 +301,11 @@
   </div>
 
   <script>
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbykxI61dOFv72hDMIDKqlwWsAKp8qWj4xj3IAzAlow7xUncyhjZ2O2v_elSi3cTrgejlQ/exec";
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbwNGwodTrT5iGG4hA9UCw6A_vxlsSj4LhzCKjjUzfGujTp8KfoMRtnAuwcH7YvEy8ioow/exec";
     const ADMIN_PASSWORD = '729903';
 
     let config = { discount_rate: 12 };
-    let dataCache = { balance: 0, products: [], cards: [], withdrawals: [], orders: [] };
+    let dataCache = { balance: 0, products: [], cards: [], withdrawals: [], orders: [], deposits: [] };
     let selectedValue = 0;
     let adminLoggedIn = false;
     let pollingTimer = null;
@@ -394,7 +412,7 @@
         document.getElementById('auth-view').classList.remove('hidden', 'opacity-0', 'pointer-events-none');
         
         if(adminLoggedIn) logoutAdmin();
-        dataCache = { balance: 0, products: [], cards: [], withdrawals: [], orders: [] };
+        dataCache = { balance: 0, products: [], cards: [], withdrawals: [], orders: [], deposits: [] };
     }
 
     async function fetchTransactions(isSilent = false) {
@@ -433,7 +451,7 @@
       if(pollingTimer) clearInterval(pollingTimer);
       pollingTimer = setInterval(() => {
         const activeTab = document.querySelector('.tab-active').id;
-        if (activeTab === 'tab-history' || activeTab === 'tab-withdraw' || (activeTab === 'tab-admin' && adminLoggedIn)) {
+        if (['tab-history', 'tab-withdraw', 'tab-deposit'].includes(activeTab) || (activeTab === 'tab-admin' && adminLoggedIn)) {
           fetchTransactions(true);
         }
       }, 10000); 
@@ -477,18 +495,18 @@
       activeBtn.classList.add('tab-active');
       activeBtn.classList.remove('hover:bg-gray-100', 'text-gray-600');
       
-      if(tab === 'history' || tab === 'withdraw' || tab === 'store') fetchTransactions(true); 
+      if(['history', 'withdraw', 'store', 'deposit'].includes(tab)) fetchTransactions(true); 
     }
 
     function toggleHistory(type) {
-        ['cards', 'orders', 'withdraws'].forEach(t => {
+        ['cards', 'deposits', 'orders', 'withdraws'].forEach(t => {
             document.getElementById(`btn-hist-${t}`).className = t === type ? "pb-3 px-4 font-medium text-red-600 border-b-2 border-red-600 text-sm tracking-wide whitespace-nowrap" : "pb-3 px-4 font-medium text-gray-400 hover:text-gray-600 text-sm tracking-wide whitespace-nowrap";
             document.getElementById(`history-${t}-list`).classList.toggle('hidden', t !== type);
         });
     }
 
     function toggleAdminTab(type) {
-        ['cards', 'orders', 'withdraws'].forEach(t => {
+        ['cards', 'deposits', 'orders', 'withdraws'].forEach(t => {
             document.getElementById(`btn-admin-${t}`).className = t === type ? "pb-3 px-4 font-medium text-red-600 border-b-2 border-red-600 text-sm tracking-wide whitespace-nowrap" : "pb-3 px-4 font-medium text-gray-400 hover:text-gray-600 text-sm tracking-wide whitespace-nowrap";
             document.getElementById(`admin-${t}-list`).classList.toggle('hidden', t !== type);
         });
@@ -616,7 +634,7 @@
         const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'submit_card', phone: currentUserPhone, payload: payload }) });
         const result = await res.json();
         if (result.success) {
-          showFeedback('card-message', 'Đã lưu trữ hồ sơ thẻ cào.', false);
+          showFeedback('card-message', 'Đã lưu trữ hồ sơ nạp thẻ.', false);
           fetchTransactions(true); 
           document.getElementById('card-type').value = '';
           document.getElementById('card-serial').value = '';
@@ -632,6 +650,40 @@
         btn.disabled = false;
         document.getElementById('submit-text').classList.remove('hidden');
         document.getElementById('submit-loading').classList.add('hidden');
+      }
+    }
+
+    async function submitDeposit() {
+      const btn = document.getElementById('deposit-btn');
+      if (btn.disabled) return;
+
+      const amt = parseFloat(document.getElementById('deposit-amount').value);
+      const ref = document.getElementById('deposit-ref').value.trim();
+
+      if (!amt || amt <= 0) return showFeedback('deposit-message', 'Số dư chuyển khoản không hợp lệ.', true);
+      if (!ref) return showFeedback('deposit-message', 'Vui lòng cung cấp mã tham chiếu.', true);
+
+      btn.disabled = true;
+      document.getElementById('deposit-text').classList.add('hidden');
+      document.getElementById('deposit-loading').classList.remove('hidden');
+
+      const payload = { id: Date.now().toString(), amount: amt, ref: ref };
+
+      try {
+        const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'submit_deposit', phone: currentUserPhone, payload: payload }) });
+        const result = await res.json();
+        if (result.success) {
+          showFeedback('deposit-message', 'Đã gửi yêu cầu đối soát số dư.', false);
+          document.getElementById('deposit-amount').value = '';
+          document.getElementById('deposit-ref').value = '';
+          fetchTransactions(true); 
+        } else {
+            showFeedback('deposit-message', 'Dữ liệu bị từ chối từ máy chủ.', true);
+        }
+      } catch (err) {} finally {
+        btn.disabled = false;
+        document.getElementById('deposit-text').classList.remove('hidden');
+        document.getElementById('deposit-loading').classList.add('hidden');
       }
     }
 
@@ -676,12 +728,14 @@
 
     function renderHistory() {
       const cList = document.getElementById('history-cards-list');
-      const wList = document.getElementById('history-withdraws-list');
+      const dList = document.getElementById('history-deposits-list');
       const oList = document.getElementById('history-orders-list');
+      const wList = document.getElementById('history-withdraws-list');
       
       const cards = [...dataCache.cards].sort((a, b) => new Date(b.date) - new Date(a.date));
-      const withdraws = [...dataCache.withdraws].sort((a, b) => new Date(b.date) - new Date(a.date));
+      const deposits = [...dataCache.deposits].sort((a, b) => new Date(b.date) - new Date(a.date));
       const orders = [...dataCache.orders].sort((a, b) => new Date(b.date) - new Date(a.date));
+      const withdraws = [...dataCache.withdraws].sort((a, b) => new Date(b.date) - new Date(a.date));
       
       cList.innerHTML = cards.length === 0 ? '<p class="text-gray-400 text-center py-6 font-light text-sm">Trống.</p>' : cards.map(tx => `
         <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
@@ -693,6 +747,20 @@
             <p>Mệnh giá: <span class="font-medium text-gray-700">${formatCurrency(tx.value)}</span></p>
             <p>Khấu trừ: <span class="text-gray-700">${tx.discount}%</span></p>
             <p class="col-span-2">Cộng ví: <span class="font-medium text-emerald-600">${formatCurrency(tx.receive)}</span></p>
+          </div>
+          <p class="text-[11px] text-gray-400 mt-3 pt-3 border-t border-gray-50">${formatDate(tx.date)}</p>
+        </div>
+      `).join('');
+
+      dList.innerHTML = deposits.length === 0 ? '<p class="text-gray-400 text-center py-6 font-light text-sm">Trống.</p>' : deposits.map(tx => `
+        <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+          <div class="flex justify-between items-start mb-2">
+            <span class="font-medium text-gray-800">Nạp tiền CK</span>
+            <span class="px-3 py-1 rounded-full text-[11px] font-medium tracking-wide uppercase ${getStatusClass(tx.status)}">${getStatusText(tx.status)}</span>
+          </div>
+          <div class="grid grid-cols-1 gap-y-1.5 text-[13px] text-gray-500 font-light mt-2">
+            <p>Số tiền: <span class="font-medium text-emerald-600">${formatCurrency(tx.amount)}</span></p>
+            <p>Mã GD: <span class="text-gray-700">${tx.ref}</span></p>
           </div>
           <p class="text-[11px] text-gray-400 mt-3 pt-3 border-t border-gray-50">${formatDate(tx.date)}</p>
         </div>
@@ -728,10 +796,12 @@
 
     function renderAdminTransactions() {
       const cList = document.getElementById('admin-cards-list');
+      const dList = document.getElementById('admin-deposits-list');
       const oList = document.getElementById('admin-orders-list');
       const wList = document.getElementById('admin-withdraws-list');
       
       const cards = [...dataCache.cards].sort((a, b) => new Date(b.date) - new Date(a.date));
+      const deposits = [...dataCache.deposits].sort((a, b) => new Date(b.date) - new Date(a.date));
       const orders = [...dataCache.orders].sort((a, b) => new Date(b.date) - new Date(a.date));
       const withdraws = [...dataCache.withdraws].sort((a, b) => new Date(b.date) - new Date(a.date));
       
@@ -757,6 +827,26 @@
         </div>
       `).join('');
 
+      dList.innerHTML = deposits.length === 0 ? '<p class="text-gray-400 text-center py-6 font-light text-sm">Trống.</p>' : deposits.map(tx => `
+        <div class="bg-white rounded-xl p-5 border border-gray-200 shadow-sm transition-all">
+          <div class="flex justify-between items-start mb-3 border-b border-gray-50 pb-3">
+            <div>
+              <span class="font-medium text-gray-800">Nạp tiền CK</span>
+              <span class="block text-xs font-medium text-indigo-600/70 mt-0.5">${tx.phone}</span>
+            </div>
+            <span class="px-3 py-1 rounded-full text-[11px] font-medium tracking-wide uppercase ${getStatusClass(tx.status)}">${getStatusText(tx.status)}</span>
+          </div>
+          <div class="text-[13px] text-gray-600 mb-4 space-y-1.5 font-light">
+            <p>Số tiền nạp: <span class="font-medium text-emerald-600">${formatCurrency(tx.amount)}</span></p>
+            <p>Mã GD: <span class="font-mono text-xs bg-gray-100 px-2 py-0.5 rounded text-gray-800">${tx.ref}</span></p>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="adminAction('${tx.id}', 'deposit', 'success')" class="flex-1 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 py-2 rounded-lg text-[13px] font-medium transition-all ${tx.status !== 'pending' ? 'opacity-50 pointer-events-none' : ''}">Duyệt cộng tiền</button>
+            <button onclick="adminAction('${tx.id}', 'deposit', 'failed')" class="flex-1 bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 py-2 rounded-lg text-[13px] font-medium transition-all ${tx.status !== 'pending' ? 'opacity-50 pointer-events-none' : ''}">Từ chối</button>
+          </div>
+        </div>
+      `).join('');
+
       oList.innerHTML = orders.length === 0 ? '<p class="text-gray-400 text-center py-6 font-light text-sm">Trống.</p>' : orders.map(tx => `
         <div class="bg-white rounded-xl p-5 border border-gray-200 shadow-sm transition-all">
           <div class="flex justify-between items-start mb-3 border-b border-gray-50 pb-3">
@@ -771,7 +861,7 @@
           </div>
           <div class="flex gap-2">
             <button onclick="adminAction('${tx.id}', 'order', 'success')" class="flex-1 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 py-2 rounded-lg text-[13px] font-medium transition-all ${tx.status !== 'pending' ? 'opacity-50 pointer-events-none' : ''}">Hoàn tất xuất</button>
-            <button onclick="adminAction('${tx.id}', 'order', 'failed')" class="flex-1 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 py-2 rounded-lg text-[13px] font-medium transition-all ${tx.status !== 'pending' ? 'opacity-50 pointer-events-none' : ''}">Hoàn tiền</button>
+            <button onclick="adminAction('${tx.id}', 'order', 'failed')" class="flex-1 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 py-2 rounded-lg text-[13px] font-medium transition-all ${tx.status !== 'pending' ? 'opacity-50 pointer-events-none' : ''}">Hủy & Hoàn tiền</button>
           </div>
         </div>
       `).join('');
@@ -793,7 +883,7 @@
           </div>
           <div class="flex gap-2">
             <button onclick="adminAction('${tx.id}', 'withdraw', 'success')" class="flex-1 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 py-2 rounded-lg text-[13px] font-medium transition-all ${tx.status !== 'pending' ? 'opacity-50 pointer-events-none' : ''}">Hoàn tất</button>
-            <button onclick="adminAction('${tx.id}', 'withdraw', 'failed')" class="flex-1 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 py-2 rounded-lg text-[13px] font-medium transition-all ${tx.status !== 'pending' ? 'opacity-50 pointer-events-none' : ''}">Hủy - Trả tiền</button>
+            <button onclick="adminAction('${tx.id}', 'withdraw', 'failed')" class="flex-1 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 py-2 rounded-lg text-[13px] font-medium transition-all ${tx.status !== 'pending' ? 'opacity-50 pointer-events-none' : ''}">Hủy & Trả tiền</button>
           </div>
         </div>
       `).join('');
