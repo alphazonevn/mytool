@@ -3,7 +3,7 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>THẺ GIÁ TỐT</title>
+  <title>Hệ Thống Giao Dịch</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,12 +20,16 @@
     input::placeholder { font-weight: 300; color: #9ca3af; }
     .pin-input { letter-spacing: 0.5em; font-size: 1.5rem; text-align: center; }
     .pin-input::placeholder { letter-spacing: normal; font-size: 1rem; }
+    
+    /* Ẩn scrollbar cho navigation ngang */
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+    .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
  </head>
  <body class="h-full text-slate-800">
 
   <div id="auth-view" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-95 p-4 backdrop-blur-md transition-all duration-300">
-      <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-sm w-full">
+      <div class="bg-white rounded-3xl shadow-xl p-8 max-w-sm w-full">
           <h2 class="text-2xl font-medium text-gray-800 text-center mb-1 tracking-wide">Định danh hệ thống</h2>
           <p class="text-gray-500 text-sm text-center mb-6 font-light">Sử dụng số điện thoại và mã PIN 6 số</p>
           
@@ -53,10 +57,9 @@
 
   <div id="app" class="h-full w-full overflow-auto bg-gradient-to-br from-gray-900 via-gray-800 to-black hidden">
    
-   <header class="text-white py-8 px-4 shadow-2xl relative">
+   <header class="text-white py-8 px-4 shadow-xl relative">
     <div class="max-w-4xl mx-auto relative flex flex-col items-center">
      <button onclick="userLogout()" class="absolute right-0 top-0 text-sm font-light text-red-200 hover:text-white bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg transition-all tracking-wide">Đăng xuất</button>
-     <span class="text-xs tracking-widest uppercase mb-2 opacity-80 font-medium">Alpha Zone Vietnam</span>
      <h1 class="text-3xl md:text-4xl font-medium text-center tracking-tight">HỆ TRỤC GIAO DỊCH</h1>
      <p class="text-center text-red-100/80 mt-3 font-light text-sm tracking-wide">
          Định danh: <span id="display-phone" class="font-medium text-white pr-2 border-r border-red-300/30 mr-2"></span> 
@@ -66,17 +69,19 @@
    </header>
    
    <div class="max-w-4xl mx-auto px-4 mt-6">
-    <div class="flex bg-white rounded-xl shadow-md p-1.5 gap-1 overflow-x-auto">
-        <button onclick="switchTab('customer')" id="tab-customer" class="flex-1 py-3 px-2 rounded-lg font-medium transition-all tab-active text-sm tracking-wide whitespace-nowrap">NẠP TIỀN</button> 
-        <button onclick="switchTab('store')" id="tab-store" class="flex-1 py-3 px-2 rounded-lg font-medium transition-all hover:bg-gray-100 text-gray-600 text-sm tracking-wide whitespace-nowrap">MUA THẺ</button> 
-        <button onclick="switchTab('withdraw')" id="tab-withdraw" class="flex-1 py-3 px-2 rounded-lg font-medium transition-all hover:bg-gray-100 text-gray-600 text-sm tracking-wide whitespace-nowrap">RÚT TIỀN</button> 
-        <button onclick="switchTab('history')" id="tab-history" class="flex-1 py-3 px-2 rounded-lg font-medium transition-all hover:bg-gray-100 text-gray-600 text-sm tracking-wide whitespace-nowrap">LỊCH SỬ</button> 
-        <button onclick="switchTab('admin')" id="tab-admin" class="flex-1 py-3 px-2 rounded-lg font-medium transition-all hover:bg-gray-100 text-gray-600 text-sm tracking-wide whitespace-nowrap hidden">QUẢN TRỊ</button>
+    <div class="flex bg-white rounded-xl shadow-md p-1.5 gap-1 overflow-x-auto scrollbar-hide">
+        <button onclick="switchTab('customer')" id="tab-customer" class="flex-1 py-3 px-3 rounded-lg font-medium transition-all tab-active text-sm tracking-wide whitespace-nowrap">BÁN THẺ CÀO</button> 
+        <button onclick="switchTab('deposit')" id="tab-deposit" class="flex-1 py-3 px-3 rounded-lg font-medium transition-all hover:bg-gray-100 text-gray-600 text-sm tracking-wide whitespace-nowrap">NẠP TIỀN</button> 
+        <button onclick="switchTab('store')" id="tab-store" class="flex-1 py-3 px-3 rounded-lg font-medium transition-all hover:bg-gray-100 text-gray-600 text-sm tracking-wide whitespace-nowrap">MUA THẺ</button> 
+        <button onclick="switchTab('withdraw')" id="tab-withdraw" class="flex-1 py-3 px-3 rounded-lg font-medium transition-all hover:bg-gray-100 text-gray-600 text-sm tracking-wide whitespace-nowrap">RÚT TIỀN</button> 
+        <button onclick="switchTab('history')" id="tab-history" class="flex-1 py-3 px-3 rounded-lg font-medium transition-all hover:bg-gray-100 text-gray-600 text-sm tracking-wide whitespace-nowrap">LỊCH SỬ</button> 
+        <button onclick="switchTab('admin')" id="tab-admin" class="flex-1 py-3 px-3 rounded-lg font-medium transition-all hover:bg-gray-100 text-gray-600 text-sm tracking-wide whitespace-nowrap hidden">QUẢN TRỊ</button>
     </div>
    </div>
    
+   <!-- PANEL: BÁN THẺ CÀO (NẠP THẺ VÀO HỆ THỐNG) -->
    <div id="panel-customer" class="max-w-4xl mx-auto px-4 py-6">
-    <div class="bg-white rounded-2xl shadow-2xl p-6 md:p-8 animate-slide">
+    <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 animate-slide">
      <div class="bg-gradient-to-r from-red-50 to-red-100/50 border border-red-200 rounded-xl p-4 mb-6">
       <div class="flex items-center justify-between">
        <div class="flex items-center gap-2"><span class="font-medium text-red-800 text-sm tracking-wide">TỶ LỆ KHẤU TRỪ</span></div>
@@ -87,7 +92,7 @@
      
      <div class="mb-6">
         <label class="block text-gray-700 font-medium mb-2 text-sm tracking-wide uppercase">Nhà mạng cung cấp</label> 
-        <input type="text" id="card-type" placeholder="Cung cấp thông tin nhà mạng" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none transition-all bg-white text-sm">
+        <input type="text" id="card-type" placeholder="Nhập tên nhà mạng (Ví dụ: Viettel, Mobifone, Vinaphone...)" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-red-500 focus:ring-2 focus:ring-red-100 focus:outline-none transition-all bg-white text-sm">
      </div>
      
      <div class="mb-6">
@@ -128,7 +133,7 @@
      </div>
      
      <button id="submit-btn" onclick="submitCard()" class="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-medium tracking-wide py-4 px-6 rounded-xl shadow-md transform hover:-translate-y-0.5 transition-all disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none"> 
-        <span id="submit-text">GỬI YÊU CẦU NẠP</span> 
+        <span id="submit-text">BÁN THẺ NGAY</span> 
         <span id="submit-loading" class="hidden">ĐANG THỰC THI...</span> 
     </button> 
     
@@ -136,8 +141,39 @@
     </div>
    </div>
 
+   <!-- PANEL: NẠP TIỀN CHUYỂN KHOẢN -->
+   <div id="panel-deposit" class="hidden max-w-4xl mx-auto px-4 py-6">
+    <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 animate-slide">
+     <h2 class="text-lg font-medium text-gray-800 mb-6 tracking-wide border-b border-gray-100 pb-4">HƯỚNG DẪN NẠP TIỀN VÀO VÍ</h2>
+     
+     <div class="bg-slate-50/50 rounded-xl p-6 border border-slate-200">
+         <p class="text-gray-600 mb-6 text-[13px] font-light leading-relaxed">Để nạp tiền thanh toán mua thẻ trên hệ thống, quý khách vui lòng chuyển khoản theo thông tin bên dưới. Hệ thống hoặc quản trị viên sẽ kiểm tra và cộng số dư vào tài khoản của quý khách trong thời gian sớm nhất. Xin lưu ý ghi đúng nội dung chuyển khoản.</p>
+         
+         <div class="space-y-4">
+             <div class="flex justify-between items-center border-b border-gray-100 pb-3">
+                 <span class="text-gray-500 text-xs tracking-wide uppercase">Ngân hàng thụ hưởng</span>
+                 <span class="text-gray-800 font-medium text-sm">MB Bank (Ngân hàng Quân Đội)</span>
+             </div>
+             <div class="flex justify-between items-center border-b border-gray-100 pb-3">
+                 <span class="text-gray-500 text-xs tracking-wide uppercase">Chủ tài khoản</span>
+                 <span class="text-gray-800 font-medium text-sm uppercase">NGUYEN LE TRI</span>
+             </div>
+             <div class="flex justify-between items-center border-b border-gray-100 pb-3">
+                 <span class="text-gray-500 text-xs tracking-wide uppercase">Số tài khoản</span>
+                 <span class="text-emerald-600 font-semibold text-lg tracking-widest">4499123123</span>
+             </div>
+             <div class="flex justify-between items-center pt-1">
+                 <span class="text-gray-500 text-xs tracking-wide uppercase">Nội dung chuyển khoản</span>
+                 <span class="text-red-600 font-medium text-sm bg-red-50 px-3 py-1 rounded">NAP <span id="deposit-phone-placeholder"></span></span>
+             </div>
+         </div>
+     </div>
+    </div>
+   </div>
+
+   <!-- PANEL: CỬA HÀNG MUA THẺ -->
    <div id="panel-store" class="hidden max-w-4xl mx-auto px-4 py-6">
-    <div class="bg-white rounded-2xl shadow-2xl p-6 md:p-8 animate-slide">
+    <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 animate-slide">
      <h2 class="text-lg font-medium text-gray-800 mb-6 tracking-wide border-b border-gray-100 pb-4">CỬA HÀNG THẺ SỐ</h2>
      <div id="store-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
          <p class="text-gray-400 text-center py-6 font-light text-sm col-span-2">Đang tải danh mục sản phẩm...</p>
@@ -146,8 +182,9 @@
     </div>
    </div>
 
+   <!-- PANEL: RÚT TIỀN -->
    <div id="panel-withdraw" class="hidden max-w-4xl mx-auto px-4 py-6">
-    <div class="bg-white rounded-2xl shadow-2xl p-6 md:p-8 animate-slide">
+    <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 animate-slide">
      <h2 class="text-lg font-medium text-gray-800 mb-6 tracking-wide border-b border-gray-100 pb-4">YÊU CẦU GIẢI NGÂN</h2>
      
      <div class="bg-slate-50/50 rounded-xl p-5 mb-6 border border-slate-200">
@@ -184,15 +221,16 @@
     </div>
    </div>
    
+   <!-- PANEL: LỊCH SỬ -->
    <div id="panel-history" class="hidden max-w-4xl mx-auto px-4 py-6">
-    <div class="bg-white rounded-2xl shadow-2xl p-6 animate-slide">
+    <div class="bg-white rounded-2xl shadow-lg p-6 animate-slide">
      <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
         <h2 class="text-lg font-medium text-gray-800 tracking-wide">TRUY XUẤT LỊCH SỬ</h2>
         <span id="sync-indicator" class="text-xs text-gray-400 hidden font-light tracking-wide">Đang đồng bộ dữ liệu</span>
      </div>
      
-     <div class="mb-4 flex border-b border-gray-100 overflow-x-auto">
-         <button onclick="toggleHistory('cards')" id="btn-hist-cards" class="pb-3 px-4 font-medium text-red-600 border-b-2 border-red-600 text-sm tracking-wide whitespace-nowrap">NẠP TIỀN</button>
+     <div class="mb-4 flex border-b border-gray-100 overflow-x-auto scrollbar-hide">
+         <button onclick="toggleHistory('cards')" id="btn-hist-cards" class="pb-3 px-4 font-medium text-red-600 border-b-2 border-red-600 text-sm tracking-wide whitespace-nowrap">BÁN THẺ</button>
          <button onclick="toggleHistory('orders')" id="btn-hist-orders" class="pb-3 px-4 font-medium text-gray-400 hover:text-gray-600 text-sm tracking-wide whitespace-nowrap">ĐƠN MUA</button>
          <button onclick="toggleHistory('withdraws')" id="btn-hist-withdraws" class="pb-3 px-4 font-medium text-gray-400 hover:text-gray-600 text-sm tracking-wide whitespace-nowrap">RÚT TIỀN</button>
      </div>
@@ -203,8 +241,9 @@
     </div>
    </div>
    
+   <!-- PANEL: QUẢN TRỊ -->
    <div id="panel-admin" class="hidden max-w-4xl mx-auto px-4 py-6">
-    <div class="bg-white rounded-2xl shadow-2xl p-6 animate-slide">
+    <div class="bg-white rounded-2xl shadow-lg p-6 animate-slide">
      <h2 class="text-lg font-medium text-gray-800 mb-6 tracking-wide border-b border-gray-100 pb-4">GIAO DIỆN KIỂM SOÁT</h2>
      
      <div id="admin-password-section" class="bg-slate-50 rounded-xl p-6 mb-6 border border-slate-200">
@@ -227,10 +266,10 @@
        <button onclick="saveDiscount()" class="mt-5 bg-slate-800 hover:bg-slate-900 text-white font-medium py-2.5 px-6 rounded-xl transition-all text-sm tracking-wide"> CẬP NHẬT BIẾN SỐ </button>
       </div>
       
-      <div class="mb-4 flex border-b border-gray-100 overflow-x-auto">
-         <button onclick="toggleAdminTab('cards')" id="btn-admin-cards" class="pb-3 px-4 font-medium text-red-600 border-b-2 border-red-600 text-sm tracking-wide whitespace-nowrap">HỒ SƠ NẠP THẺ</button>
+      <div class="mb-4 flex border-b border-gray-100 overflow-x-auto scrollbar-hide">
+         <button onclick="toggleAdminTab('cards')" id="btn-admin-cards" class="pb-3 px-4 font-medium text-red-600 border-b-2 border-red-600 text-sm tracking-wide whitespace-nowrap">BÁN THẺ</button>
          <button onclick="toggleAdminTab('orders')" id="btn-admin-orders" class="pb-3 px-4 font-medium text-gray-400 hover:text-gray-600 text-sm tracking-wide whitespace-nowrap">ĐƠN HÀNG</button>
-         <button onclick="toggleAdminTab('withdraws')" id="btn-admin-withdraws" class="pb-3 px-4 font-medium text-gray-400 hover:text-gray-600 text-sm tracking-wide whitespace-nowrap">HỒ SƠ GIẢI NGÂN</button>
+         <button onclick="toggleAdminTab('withdraws')" id="btn-admin-withdraws" class="pb-3 px-4 font-medium text-gray-400 hover:text-gray-600 text-sm tracking-wide whitespace-nowrap">GIẢI NGÂN</button>
       </div>
 
       <div id="admin-cards-list" class="space-y-3"></div>
@@ -331,8 +370,8 @@
             document.getElementById('auth-view').classList.add('hidden');
             document.getElementById('app').classList.remove('hidden');
             document.getElementById('display-phone').textContent = currentUserPhone;
+            document.getElementById('deposit-phone-placeholder').textContent = currentUserPhone;
             
-            // Xử lý nút quản trị ẩn/hiện nếu là admin account
             if(currentUserPhone === 'admin' || currentUserPhone === '000000') {
                  document.getElementById('tab-admin').classList.remove('hidden');
             }
@@ -426,7 +465,7 @@
     }
 
     function switchTab(tab) {
-      const tabs = ['customer', 'store', 'withdraw', 'history', 'admin'];
+      const tabs = ['customer', 'deposit', 'store', 'withdraw', 'history', 'admin'];
       tabs.forEach(t => {
         document.getElementById(`panel-${t}`).classList.add('hidden');
         document.getElementById(`tab-${t}`).classList.remove('tab-active');
@@ -577,7 +616,7 @@
         const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'submit_card', phone: currentUserPhone, payload: payload }) });
         const result = await res.json();
         if (result.success) {
-          showFeedback('card-message', 'Đã lưu trữ hồ sơ nạp thẻ.', false);
+          showFeedback('card-message', 'Đã lưu trữ hồ sơ thẻ cào.', false);
           fetchTransactions(true); 
           document.getElementById('card-type').value = '';
           document.getElementById('card-serial').value = '';
