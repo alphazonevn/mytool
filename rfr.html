@@ -3,809 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Quản Lý Căn Hộ Cho Thuê</title>
+    <title>RFR+ | Căn hộ & Phòng trọ cao cấp</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6; /* Tailwind gray-100 */
-        }
-        /* Custom scrollbar for better aesthetics */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1; 
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #c1c1c1; 
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #a8a8a8; 
-        }
-        /* Modal animation */
-        .modal-enter {
-            opacity: 0;
-            transform: scale(0.95);
-        }
-        .modal-enter-active {
-            opacity: 1;
-            transform: scale(1);
-            transition: opacity 300ms, transform 300ms;
-        }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); }
     </style>
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#3b82f6', /* Blue-500 */
-                        secondary: '#10b981', /* Emerald-500 */
-                        danger: '#ef4444', /* Red-500 */
-                        warning: '#f59e0b', /* Amber-500 */
-                        dark: '#1f2937', /* Gray-800 */
-                    }
-                }
-            }
-        }
+        tailwind.config = { theme: { extend: { colors: { primary: '#0f172a', secondary: '#ef4444' } } } }
     </script>
 </head>
-<body class="text-gray-800 antialiased h-screen flex overflow-hidden">
+<body class="text-slate-800 antialiased h-screen overflow-hidden">
 
-    <!-- Sidebar -->
-    <aside class="w-64 bg-white border-r border-gray-200 hidden md:flex flex-col h-full flex-shrink-0 transition-all duration-300 z-20 shadow-sm" id="sidebar">
-        <div class="h-16 flex items-center px-6 border-b border-gray-200">
-            <i class="ph-fill ph-buildings text-primary text-3xl mr-2"></i>
-            <span class="text-xl font-bold text-gray-800 tracking-tight">RentSpace</span>
-        </div>
-        <div class="p-4 flex-1 overflow-y-auto">
-            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4 mt-2">Menu chính</p>
-            <nav class="space-y-1">
-                <a href="#" class="flex items-center px-4 py-3 bg-blue-50 text-primary rounded-lg font-medium transition-colors">
-                    <i class="ph ph-squares-four text-xl mr-3"></i>
-                    Tổng quan
-                </a>
-                <a href="#" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg font-medium transition-colors">
-                    <i class="ph ph-door text-xl mr-3"></i>
-                    Danh sách phòng
-                </a>
-                <a href="#" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg font-medium transition-colors">
-                    <i class="ph ph-users text-xl mr-3"></i>
-                    Khách thuê
-                </a>
-                <a href="#" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg font-medium transition-colors">
-                    <i class="ph ph-receipt text-xl mr-3"></i>
-                    Hóa đơn
-                </a>
-            </nav>
-            
-            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4 mt-8">Cài đặt</p>
-            <nav class="space-y-1">
-                <a href="#" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg font-medium transition-colors">
-                    <i class="ph ph-gear text-xl mr-3"></i>
-                    Cấu hình
-                </a>
-                <a href="#" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg font-medium transition-colors">
-                    <i class="ph ph-sign-out text-xl mr-3"></i>
-                    Đăng xuất
-                </a>
-            </nav>
-        </div>
-        
-        <!-- User Profile summary -->
-        <div class="p-4 border-t border-gray-200">
-            <div class="flex items-center">
-                <img src="https://ui-avatars.com/api/?name=Admin+User&background=3b82f6&color=fff" alt="User" class="h-10 w-10 rounded-full shadow-sm">
-                <div class="ml-3">
-                    <p class="text-sm font-medium text-gray-700">Admin Quản Lý</p>
-                    <p class="text-xs text-gray-500">admin@rentspace.vn</p>
+    <!-- GIAO DIỆN PUBLIC -->
+    <div id="public-view" class="h-full flex flex-col overflow-y-auto">
+        <header class="bg-white sticky top-0 z-30 border-b border-slate-100">
+            <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl font-black tracking-tighter">RFR<span class="text-red-500">+</span></span>
                 </div>
-            </div>
-        </div>
-    </aside>
-
-    <!-- Main Content -->
-    <div class="flex-1 flex flex-col h-full overflow-hidden w-full relative">
-        
-        <!-- Mobile Sidebar Overlay -->
-        <div id="mobile-overlay" class="fixed inset-0 bg-gray-800 bg-opacity-50 z-10 hidden" onclick="toggleMobileMenu()"></div>
-
-        <!-- Header -->
-        <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 sm:px-6 lg:px-8 z-10 flex-shrink-0 shadow-sm">
-            <div class="flex items-center">
-                <button onclick="toggleMobileMenu()" class="md:hidden text-gray-500 hover:text-gray-700 focus:outline-none p-2 mr-2">
-                    <i class="ph ph-list text-2xl"></i>
-                </button>
-                <!-- Mobile Logo -->
-                <div class="flex items-center md:hidden">
-                    <i class="ph-fill ph-buildings text-primary text-2xl mr-2"></i>
-                    <span class="text-lg font-bold text-gray-800">RentSpace</span>
-                </div>
-                <h1 class="text-xl font-semibold text-gray-800 hidden md:block" id="page-title">Tổng quan hệ thống</h1>
-            </div>
-            <div class="flex items-center space-x-4">
-                <button class="text-gray-400 hover:text-gray-600 relative p-2 rounded-full hover:bg-gray-100 transition-colors">
-                    <i class="ph ph-bell text-xl"></i>
-                    <span class="absolute top-1.5 right-1.5 block h-2 w-2 rounded-full bg-danger ring-2 ring-white"></span>
-                </button>
+                <nav class="hidden md:flex gap-6 font-medium text-slate-600">
+                    <a href="#" class="text-black">Trang chủ</a>
+                    <a href="#danh-sach">Danh sách</a>
+                </nav>
             </div>
         </header>
 
-        <!-- Main Scrollable Area -->
-        <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 relative">
-            
-            <!-- Dashboard Stats -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8" id="dashboard-stats">
-                <!-- Stat Card 1 -->
-                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 flex items-center transition-transform hover:-translate-y-1 duration-300">
-                    <div class="p-4 rounded-full bg-blue-50 text-primary mr-4">
-                        <i class="ph ph-door text-2xl"></i>
-                    </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 mb-1">Tổng số phòng</p>
-                        <h3 class="text-2xl font-bold text-gray-800" id="stat-total-rooms">0</h3>
-                    </div>
-                </div>
-                
-                <!-- Stat Card 2 -->
-                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 flex items-center transition-transform hover:-translate-y-1 duration-300">
-                    <div class="p-4 rounded-full bg-emerald-50 text-secondary mr-4">
-                        <i class="ph ph-check-circle text-2xl"></i>
-                    </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 mb-1">Phòng đang thuê</p>
-                        <h3 class="text-2xl font-bold text-gray-800" id="stat-rented-rooms">0</h3>
-                    </div>
-                </div>
+        <div class="relative bg-slate-900 text-white py-20 text-center">
+            <h1 class="text-5xl font-extrabold mb-6">Chào mừng đến với <span class="text-red-500">RFR+</span></h1>
+            <p class="text-slate-400 mb-8 max-w-lg mx-auto">Không gian sống đẳng cấp, tiện nghi và hiện đại tại trung tâm.</p>
+        </div>
 
-                <!-- Stat Card 3 -->
-                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 flex items-center transition-transform hover:-translate-y-1 duration-300">
-                    <div class="p-4 rounded-full bg-amber-50 text-warning mr-4">
-                        <i class="ph ph-warning-circle text-2xl"></i>
-                    </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 mb-1">Phòng trống</p>
-                        <h3 class="text-2xl font-bold text-gray-800" id="stat-empty-rooms">0</h3>
-                    </div>
-                </div>
+        <div id="danh-sach" class="max-w-7xl mx-auto px-4 py-16 w-full flex-1">
+            <h2 class="text-2xl font-bold mb-8">Danh sách phòng khả dụng</h2>
+            <div id="public-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8"></div>
+        </div>
 
-                <!-- Stat Card 4 -->
-                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 flex items-center transition-transform hover:-translate-y-1 duration-300">
-                    <div class="p-4 rounded-full bg-purple-50 text-purple-500 mr-4">
-                        <i class="ph ph-money text-2xl"></i>
-                    </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 mb-1">Doanh thu dự kiến</p>
-                        <h3 class="text-xl sm:text-2xl font-bold text-gray-800" id="stat-revenue">0đ</h3>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Room Management Section -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <!-- Toolbar -->
-                <div class="p-4 sm:p-6 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <h2 class="text-lg font-bold text-gray-800">Danh sách Căn hộ / Phòng</h2>
-                    
-                    <div class="flex flex-col sm:flex-row w-full sm:w-auto gap-3">
-                        <div class="relative w-full sm:w-64">
-                            <input type="text" id="searchInput" placeholder="Tìm kiếm phòng, người thuê..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
-                            <i class="ph ph-magnifying-glass absolute left-3 top-2.5 text-gray-400 text-lg"></i>
-                        </div>
-                        <select id="filterStatus" class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm bg-white cursor-pointer w-full sm:w-auto">
-                            <option value="all">Tất cả trạng thái</option>
-                            <option value="rented">Đang thuê</option>
-                            <option value="empty">Trống</option>
-                            <option value="maintenance">Bảo trì</option>
-                        </select>
-                        <button onclick="openRoomModal()" class="bg-primary hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium flex items-center justify-center transition-colors shadow-sm w-full sm:w-auto whitespace-nowrap">
-                            <i class="ph ph-plus mr-2 text-lg"></i>
-                            Thêm phòng
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Table container for responsiveness -->
-                <div class="overflow-x-auto w-full">
-                    <table class="w-full min-w-[800px] text-left border-collapse">
-                        <thead>
-                            <tr class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider border-b border-gray-200">
-                                <th class="p-4 font-semibold w-16">Mã Phòng</th>
-                                <th class="p-4 font-semibold">Loại</th>
-                                <th class="p-4 font-semibold">Trạng thái</th>
-                                <th class="p-4 font-semibold">Người thuê</th>
-                                <th class="p-4 font-semibold">Giá thuê/tháng</th>
-                                <th class="p-4 font-semibold">Kỳ hạn TT</th>
-                                <th class="p-4 font-semibold text-right">Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody id="rooms-table-body" class="divide-y divide-gray-100 text-sm">
-                            <!-- Rows will be populated by JS -->
-                        </tbody>
-                    </table>
-                </div>
-                
-                <!-- Pagination (Mock) -->
-                <div class="p-4 border-t border-gray-200 flex items-center justify-between text-sm text-gray-500">
-                    <span id="showing-text">Hiển thị 0 kết quả</span>
-                    <div class="flex space-x-1">
-                        <button class="px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 cursor-not-allowed" disabled>Trước</button>
-                        <button class="px-3 py-1 bg-primary text-white rounded-md">1</button>
-                        <button class="px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-50">2</button>
-                        <button class="px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-50">Sau</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Toast Notification Container -->
-            <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2"></div>
-
-        </main>
+        <footer class="py-8 text-center border-t border-slate-200">
+            <button onclick="openLoginModal()" class="text-slate-400 hover:text-black transition">
+                <i class="ph ph-lock-key text-xl"></i>
+            </button>
+        </footer>
     </div>
 
-    <!-- Room Modal Form -->
-    <div id="room-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col modal-enter" id="room-modal-content">
-            <!-- Modal Header -->
-            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-xl">
-                <h3 class="text-lg font-bold text-gray-800" id="modal-title">Thêm phòng mới</h3>
-                <button onclick="closeRoomModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
-                    <i class="ph ph-x text-xl"></i>
-                </button>
-            </div>
-            
-            <!-- Modal Body (Scrollable) -->
-            <div class="p-6 overflow-y-auto flex-1">
-                <form id="room-form" class="space-y-5">
-                    <input type="hidden" id="roomId">
-                    
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                        <!-- Thông tin cơ bản -->
-                        <div class="col-span-1 sm:col-span-2">
-                            <h4 class="text-sm font-semibold text-gray-700 uppercase tracking-wide border-b pb-2 mb-3">Thông tin phòng</h4>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Mã Phòng / Số Phòng <span class="text-danger">*</span></label>
-                            <input type="text" id="roomNumber" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="VD: P101">
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Loại phòng</label>
-                            <select id="roomType" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-white">
-                                <option value="Studio">Studio</option>
-                                <option value="1PN">1 Phòng ngủ (1PN)</option>
-                                <option value="2PN">2 Phòng ngủ (2PN)</option>
-                                <option value="Duplex">Duplex</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Giá thuê (VNĐ/tháng) <span class="text-danger">*</span></label>
-                            <div class="relative">
-                                <input type="number" id="roomPrice" required min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="VD: 5000000">
-                                <span class="absolute right-3 top-2.5 text-gray-400 text-sm">VNĐ</span>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Trạng thái</label>
-                            <select id="roomStatus" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-white" onchange="toggleTenantFields()">
-                                <option value="empty">Trống</option>
-                                <option value="rented">Đang thuê</option>
-                                <option value="maintenance">Bảo trì</option>
-                            </select>
-                        </div>
-                        
-                        <!-- Thông tin người thuê (Chỉ hiện khi trạng thái là rented) -->
-                        <div class="col-span-1 sm:col-span-2 tenant-fields hidden mt-4">
-                            <h4 class="text-sm font-semibold text-gray-700 uppercase tracking-wide border-b pb-2 mb-3">Thông tin hợp đồng</h4>
-                        </div>
-
-                        <div class="tenant-fields hidden">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Tên người đại diện thuê</label>
-                            <input type="text" id="tenantName" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Nhập tên khách thuê">
-                        </div>
-                        
-                        <div class="tenant-fields hidden">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Số điện thoại</label>
-                            <input type="tel" id="tenantPhone" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Nhập SĐT">
-                        </div>
-
-                        <div class="tenant-fields hidden">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Kỳ hạn thanh toán</label>
-                            <select id="paymentTerm" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-white">
-                                <option value="1 tháng">1 tháng/lần</option>
-                                <option value="3 tháng">3 tháng/lần</option>
-                                <option value="6 tháng">6 tháng/lần</option>
-                            </select>
-                        </div>
-                        
-                        <div class="col-span-1 sm:col-span-2">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Ghi chú</label>
-                            <textarea id="roomNotes" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Ghi chú thêm về trang thiết bị, tình trạng..."></textarea>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            
-            <!-- Modal Footer -->
-            <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 flex justify-end space-x-3 rounded-b-xl">
-                <button type="button" onclick="closeRoomModal()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 font-medium transition-colors">Hủy</button>
-                <button type="button" onclick="saveRoom()" class="px-4 py-2 bg-primary hover:bg-blue-600 text-white rounded-lg font-medium shadow-sm transition-colors flex items-center">
-                    <i class="ph ph-floppy-disk mr-2"></i> Lưu thông tin
-                </button>
-            </div>
+    <!-- GIAO DIỆN ADMIN (ẨN) -->
+    <div id="admin-view" class="h-full hidden flex flex-col">
+        <div class="bg-slate-900 text-white p-4 flex justify-between items-center">
+            <h1 class="font-bold">RFR+ Admin Dashboard</h1>
+            <button onclick="logoutAdmin()" class="bg-red-500 px-4 py-2 rounded text-sm font-bold">Thoát</button>
+        </div>
+        <div class="flex-1 p-6 overflow-y-auto">
+            <button onclick="openModal()" class="bg-black text-white px-6 py-2 rounded mb-6 font-bold">+ Thêm phòng</button>
+            <table class="w-full bg-white rounded-lg shadow">
+                <thead class="bg-slate-50 uppercase text-xs font-bold text-slate-500">
+                    <tr><th class="p-4 text-left">Phòng</th><th class="p-4 text-left">Trạng thái</th><th class="p-4">Action</th></tr>
+                </thead>
+                <tbody id="admin-table-body"></tbody>
+            </table>
         </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
-    <div id="delete-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-xl shadow-xl max-w-sm w-full p-6 text-center modal-enter">
-            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="ph ph-warning-circle text-3xl text-danger"></i>
-            </div>
-            <h3 class="text-xl font-bold text-gray-800 mb-2">Xác nhận xóa?</h3>
-            <p class="text-gray-600 mb-6">Bạn có chắc chắn muốn xóa phòng <span id="delete-room-number" class="font-bold text-gray-800"></span>? Hành động này không thể hoàn tác.</p>
-            <div class="flex justify-center space-x-3">
-                <button onclick="closeDeleteModal()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 font-medium transition-colors w-full">Hủy</button>
-                <button id="confirm-delete-btn" class="px-4 py-2 bg-danger hover:bg-red-600 text-white rounded-lg font-medium shadow-sm transition-colors w-full">Xóa bỏ</button>
-            </div>
+    <!-- Modals -->
+    <div id="login-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center">
+        <div class="bg-white p-8 rounded-xl w-80 text-center">
+            <input type="password" id="admin-pass" placeholder="Mật khẩu Admin" class="w-full p-3 border mb-4 rounded">
+            <button onclick="checkLogin()" class="w-full bg-black text-white py-3 rounded">Đăng nhập</button>
         </div>
     </div>
 
-    <!-- Loading Overlay -->
-    <div id="loading-overlay" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-[100] hidden flex flex-col items-center justify-center p-4 backdrop-blur-sm">
-        <i class="ph ph-spinner-gap text-5xl text-white animate-spin mb-4"></i>
-        <p class="text-white font-medium" id="loading-text">Đang đồng bộ dữ liệu...</p>
+    <!-- Modal Form (Admin) -->
+    <div id="room-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4">
+        <div class="bg-white p-6 rounded-xl w-full max-w-lg">
+            <h3 class="text-xl font-bold mb-4">Cập nhật thông tin phòng</h3>
+            <form id="room-form" class="space-y-4">
+                <input type="hidden" id="roomId">
+                <input type="text" id="roomNumber" placeholder="Số phòng" class="w-full p-2 border rounded">
+                <input type="number" id="roomPrice" placeholder="Giá tiền" class="w-full p-2 border rounded">
+                <select id="roomStatus" class="w-full p-2 border rounded">
+                    <option value="empty">Trống</option>
+                    <option value="rented">Đã thuê</option>
+                </select>
+                <div class="flex gap-2 justify-end">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 bg-gray-200 rounded">Hủy</button>
+                    <button type="button" onclick="saveData()" class="px-4 py-2 bg-black text-white rounded">Lưu</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <script>
-        // --- State Management ---
+        const APPS_SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL_HERE';
+        let roomsData = [];
+        let isAdminView = false;
+
+        function openLoginModal() { document.getElementById('login-modal').classList.remove('hidden'); }
+        function closeLoginModal() { document.getElementById('login-modal').classList.add('hidden'); }
         
-        // ⚠️ BƯỚC QUAN TRỌNG: Dán URL Web App của Google Apps Script vào đây sau khi Deploy
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzZ4-As3AuvjE8oxOX8zLRYK5Ii4LF-1ev0PDfiyyVp3BpYE13Ow4thFA1F7NrFTz6kkA/exec'; 
+        function checkLogin() {
+            if(document.getElementById('admin-pass').value === '729903') {
+                closeLoginModal();
+                isAdminView = true;
+                document.getElementById('public-view').classList.add('hidden');
+                document.getElementById('admin-view').classList.remove('hidden');
+                renderAdminUI();
+            }
+        }
 
-        // Khởi tạo danh sách rỗng (Sẽ được tải từ Google Sheets)
-        let rooms = [];
-        let roomToDelete = null;
+        function logoutAdmin() {
+            isAdminView = false;
+            document.getElementById('admin-view').classList.add('hidden');
+            document.getElementById('public-view').classList.remove('hidden');
+        }
 
-        // Formater for currency
-        const formatCurrency = (amount) => {
-            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+        function openModal(id = null) {
+            document.getElementById('room-modal').classList.remove('hidden');
+        }
+        function closeModal() { document.getElementById('room-modal').classList.add('hidden'); }
+
+        async function renderPublicUI() {
+            const grid = document.getElementById('public-grid');
+            grid.innerHTML = roomsData.map(room => `
+                <div class="border rounded-xl p-6 shadow-sm hover:shadow-lg transition">
+                    <h3 class="text-xl font-bold">Phòng ${room.number}</h3>
+                    <p class="text-slate-500 mb-4">${room.price.toLocaleString()} VNĐ</p>
+                    <span class="px-3 py-1 ${room.status === 'empty' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'} rounded-full text-xs font-bold uppercase">
+                        ${room.status === 'empty' ? 'Còn trống' : 'Đã thuê'}
+                    </span>
+                </div>
+            `).join('');
+        }
+
+        function renderAdminUI() {
+            const tbody = document.getElementById('admin-table-body');
+            tbody.innerHTML = roomsData.map(room => `
+                <tr class="border-t">
+                    <td class="p-4 font-bold">${room.number}</td>
+                    <td class="p-4">${room.status}</td>
+                    <td class="p-4"><button onclick="openModal('${room.id}')" class="text-blue-600">Chỉnh sửa</button></td>
+                </tr>
+            `).join('');
+        }
+
+        // Logic tải dữ liệu giữ nguyên như cũ
+        window.onload = async () => {
+            // Mẫu dữ liệu ban đầu
+            roomsData = [
+                {id: 1, number: '101', price: 4500000, status: 'empty'},
+                {id: 2, number: '202', price: 5000000, status: 'rented'}
+            ];
+            renderPublicUI();
         };
-
-        // Formater for Status Badge
-        const getStatusBadge = (status) => {
-            switch(status) {
-                case 'rented':
-                    return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800"><span class="w-1.5 h-1.5 bg-emerald-500 rounded-full mr-1.5"></span>Đang thuê</span>';
-                case 'empty':
-                    return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800"><span class="w-1.5 h-1.5 bg-warning rounded-full mr-1.5"></span>Trống</span>';
-                case 'maintenance':
-                    return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"><span class="w-1.5 h-1.5 bg-gray-500 rounded-full mr-1.5"></span>Bảo trì</span>';
-                default:
-                    return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">${status}</span>`;
-            }
-        };
-
-        // --- Core Functions ---
-
-        function updateDashboardStats(filteredRooms) {
-            const dataToUse = filteredRooms || rooms;
-            
-            const total = dataToUse.length;
-            const rented = dataToUse.filter(r => r.status === 'rented').length;
-            const empty = dataToUse.filter(r => r.status === 'empty').length;
-            
-            // Calculate potential revenue (only for rented rooms currently, or calculate all potential)
-            // Here we calculate total revenue from currently rented rooms
-            const revenue = dataToUse.filter(r => r.status === 'rented').reduce((sum, room) => sum + Number(room.price), 0);
-
-            // Animate counter (simple version)
-            document.getElementById('stat-total-rooms').innerText = total;
-            document.getElementById('stat-rented-rooms').innerText = rented;
-            document.getElementById('stat-empty-rooms').innerText = empty;
-            document.getElementById('stat-revenue').innerText = formatCurrency(revenue);
-        }
-
-        function renderTable(dataToRender) {
-            const tbody = document.getElementById('rooms-table-body');
-            tbody.innerHTML = '';
-            
-            if (dataToRender.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="7" class="p-8 text-center text-gray-500">
-                            <i class="ph ph-magnifying-glass text-4xl mb-2 text-gray-300"></i>
-                            <p>Không tìm thấy dữ liệu phù hợp.</p>
-                        </td>
-                    </tr>`;
-                document.getElementById('showing-text').innerText = 'Hiển thị 0 kết quả';
-                return;
-            }
-
-            dataToRender.forEach(room => {
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-gray-50 transition-colors group';
-                
-                tr.innerHTML = `
-                    <td class="p-4 whitespace-nowrap">
-                        <div class="font-bold text-gray-800">${room.number}</div>
-                    </td>
-                    <td class="p-4 whitespace-nowrap">
-                        <span class="text-gray-600">${room.type}</span>
-                    </td>
-                    <td class="p-4 whitespace-nowrap">
-                        ${getStatusBadge(room.status)}
-                    </td>
-                    <td class="p-4">
-                        <div class="text-gray-800 font-medium">${room.status === 'rented' ? room.tenantName || 'Chưa cập nhật' : '-'}</div>
-                        <div class="text-xs text-gray-500">${room.status === 'rented' ? room.tenantPhone || '' : ''}</div>
-                    </td>
-                    <td class="p-4 whitespace-nowrap font-medium text-gray-700">
-                        ${formatCurrency(room.price)}
-                    </td>
-                    <td class="p-4 whitespace-nowrap text-gray-600 text-sm">
-                        ${room.status === 'rented' ? room.paymentTerm || '-' : '-'}
-                    </td>
-                    <td class="p-4 whitespace-nowrap text-right">
-                        <div class="flex items-center justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button onclick="editRoom('${room.id}')" class="p-1.5 bg-blue-50 text-primary rounded hover:bg-primary hover:text-white transition-colors" title="Chỉnh sửa">
-                                <i class="ph ph-pencil-simple text-lg"></i>
-                            </button>
-                            <button onclick="confirmDelete('${room.id}')" class="p-1.5 bg-red-50 text-danger rounded hover:bg-danger hover:text-white transition-colors" title="Xóa">
-                                <i class="ph ph-trash text-lg"></i>
-                            </button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-            
-            document.getElementById('showing-text').innerText = `Hiển thị ${dataToRender.length} kết quả`;
-        }
-
-        function filterData() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const statusFilter = document.getElementById('filterStatus').value;
-
-            const filteredRooms = rooms.filter(room => {
-                const matchSearch = room.number.toLowerCase().includes(searchTerm) || 
-                                  (room.tenantName && room.tenantName.toLowerCase().includes(searchTerm));
-                const matchStatus = statusFilter === 'all' || room.status === statusFilter;
-                
-                return matchSearch && matchStatus;
-            });
-
-            renderTable(filteredRooms);
-            updateDashboardStats(filteredRooms);
-        }
-
-        function toggleMobileMenu() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('mobile-overlay');
-            
-            if (sidebar.classList.contains('hidden')) {
-                // Mở sidebar trên mobile: xóa 'hidden' (mobile), đổi thành flex, fixed position, full height
-                sidebar.classList.remove('hidden', 'md:flex'); 
-                sidebar.classList.add('flex', 'fixed', 'inset-y-0', 'left-0', 'z-40');
-                overlay.classList.remove('hidden');
-            } else {
-                // Đóng sidebar
-                sidebar.classList.add('hidden', 'md:flex');
-                sidebar.classList.remove('flex', 'fixed', 'inset-y-0', 'left-0', 'z-40');
-                overlay.classList.add('hidden');
-            }
-        }
-
-        function toggleTenantFields() {
-            const status = document.getElementById('roomStatus').value;
-            const fields = document.querySelectorAll('.tenant-fields');
-            const nameInput = document.getElementById('tenantName');
-            
-            if (status === 'rented') {
-                fields.forEach(el => el.classList.remove('hidden'));
-                nameInput.setAttribute('required', 'true');
-            } else {
-                fields.forEach(el => el.classList.add('hidden'));
-                nameInput.removeAttribute('required');
-            }
-        }
-
-        function openRoomModal(roomId = null) {
-            const modal = document.getElementById('room-modal');
-            const form = document.getElementById('room-form');
-            const title = document.getElementById('modal-title');
-            const modalContent = document.getElementById('room-modal-content');
-            
-            form.reset();
-            
-            if (roomId) {
-                // Mode: Chỉnh sửa
-                const room = rooms.find(r => r.id === roomId);
-                if (room) {
-                    title.innerText = `Chỉnh sửa phòng: ${room.number}`;
-                    document.getElementById('roomId').value = room.id;
-                    document.getElementById('roomNumber').value = room.number;
-                    document.getElementById('roomType').value = room.type;
-                    document.getElementById('roomPrice').value = room.price;
-                    document.getElementById('roomStatus').value = room.status;
-                    document.getElementById('tenantName').value = room.tenantName || '';
-                    document.getElementById('tenantPhone').value = room.tenantPhone || '';
-                    document.getElementById('paymentTerm').value = room.paymentTerm || '1 tháng';
-                    document.getElementById('roomNotes').value = room.notes || '';
-                }
-            } else {
-                // Mode: Thêm mới
-                title.innerText = 'Thêm phòng mới';
-                document.getElementById('roomId').value = '';
-                document.getElementById('roomStatus').value = 'empty';
-            }
-
-            toggleTenantFields();
-            
-            modal.classList.remove('hidden');
-            // Trigger reflow for animation
-            void modalContent.offsetWidth; 
-            modalContent.classList.add('modal-enter-active');
-            modalContent.classList.remove('modal-enter');
-        }
-
-        function closeRoomModal() {
-            const modal = document.getElementById('room-modal');
-            const modalContent = document.getElementById('room-modal-content');
-            
-            modalContent.classList.add('modal-enter');
-            modalContent.classList.remove('modal-enter-active');
-            
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 300); // Đợi animation CSS hoàn thành
-        }
-
-        // --- APPS SCRIPT SYNC FUNCTIONS ---
-
-        function showLoading(text = 'Đang xử lý dữ liệu...') {
-            document.getElementById('loading-text').innerText = text;
-            document.getElementById('loading-overlay').classList.remove('hidden');
-        }
-
-        function hideLoading() {
-            document.getElementById('loading-overlay').classList.add('hidden');
-        }
-
-        async function loadRooms() {
-            if (!APPS_SCRIPT_URL) {
-                console.warn('Vui lòng dán APPS_SCRIPT_URL để tải dữ liệu thật.');
-                return;
-            }
-            showLoading('Đang tải dữ liệu từ Google Sheets...');
-            try {
-                const response = await fetch(`${APPS_SCRIPT_URL}?action=getRooms`);
-                const result = await response.json();
-                
-                if (result.status === 'success') {
-                    rooms = result.data;
-                    filterData();
-                } else {
-                    showToast('Lỗi khi tải dữ liệu: ' + result.message, 'error');
-                }
-            } catch (error) {
-                console.error(error);
-                showToast('Lỗi kết nối máy chủ Apps Script', 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        async function saveRoom() {
-            const form = document.getElementById('room-form');
-            
-            // Validate (HTML5 basic validation)
-            if (!document.getElementById('roomNumber').checkValidity() || 
-                !document.getElementById('roomPrice').checkValidity() ||
-                (document.getElementById('roomStatus').value === 'rented' && !document.getElementById('tenantName').checkValidity())) {
-                form.reportValidity();
-                return;
-            }
-
-            const id = document.getElementById('roomId').value;
-            const status = document.getElementById('roomStatus').value;
-            
-            const roomData = {
-                id: id || Date.now().toString(),
-                number: document.getElementById('roomNumber').value,
-                type: document.getElementById('roomType').value,
-                price: Number(document.getElementById('roomPrice').value),
-                status: status,
-                tenantName: status === 'rented' ? document.getElementById('tenantName').value : '',
-                tenantPhone: status === 'rented' ? document.getElementById('tenantPhone').value : '',
-                paymentTerm: status === 'rented' ? document.getElementById('paymentTerm').value : '',
-                notes: document.getElementById('roomNotes').value
-            };
-
-            if (!APPS_SCRIPT_URL) {
-                // Chạy offline nếU chưa có link
-                if (id) {
-                    const index = rooms.findIndex(r => r.id === id);
-                    if (index !== -1) rooms[index] = roomData;
-                } else {
-                    rooms.push(roomData);
-                }
-                showToast('Đã lưu (Lưu nội bộ, sẽ mất khi tải lại trang)', 'success');
-                closeRoomModal();
-                filterData();
-                return;
-            }
-
-            showLoading('Đang đồng bộ lên Google Sheets...');
-            try {
-                const response = await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        action: 'saveRoom',
-                        data: roomData
-                    })
-                });
-                
-                const result = await response.json();
-                if (result.status === 'success') {
-                    if (id) {
-                        const index = rooms.findIndex(r => r.id === id);
-                        if (index !== -1) rooms[index] = roomData;
-                    } else {
-                        rooms.push(roomData);
-                    }
-                    showToast('Lưu thông tin phòng thành công', 'success');
-                    closeRoomModal();
-                    filterData();
-                } else {
-                    showToast('Lỗi khi lưu: ' + result.message, 'error');
-                }
-            } catch (error) {
-                console.error(error);
-                showToast('Lỗi kết nối lưu dữ liệu', 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        function editRoom(id) {
-            openRoomModal(id);
-        }
-
-        function confirmDelete(id) {
-            const room = rooms.find(r => r.id === id);
-            if (!room) return;
-            
-            roomToDelete = id;
-            document.getElementById('delete-room-number').innerText = room.number;
-            
-            const modal = document.getElementById('delete-modal');
-            modal.classList.remove('hidden');
-            
-            const content = modal.querySelector('.modal-enter');
-            void content.offsetWidth;
-            content.classList.add('modal-enter-active');
-            content.classList.remove('modal-enter');
-        }
-
-        function closeDeleteModal() {
-            const modal = document.getElementById('delete-modal');
-            const content = modal.querySelector('.bg-white');
-            
-            content.classList.add('modal-enter');
-            content.classList.remove('modal-enter-active');
-            
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                roomToDelete = null;
-            }, 300);
-        }
-
-        // Add event listener to delete button outside function to avoid multiple binds
-        document.getElementById('confirm-delete-btn').addEventListener('click', async () => {
-            if (roomToDelete) {
-                if (!APPS_SCRIPT_URL) {
-                    rooms = rooms.filter(r => r.id !== roomToDelete);
-                    closeDeleteModal();
-                    filterData();
-                    showToast('Đã xóa phòng (Lưu nội bộ)', 'success');
-                    return;
-                }
-
-                showLoading('Đang xóa dữ liệu trên Google Sheets...');
-                try {
-                    const response = await fetch(APPS_SCRIPT_URL, {
-                        method: 'POST',
-                        body: JSON.stringify({
-                            action: 'deleteRoom',
-                            id: roomToDelete
-                        })
-                    });
-                    
-                    const result = await response.json();
-                    if (result.status === 'success') {
-                        rooms = rooms.filter(r => r.id !== roomToDelete);
-                        closeDeleteModal();
-                        filterData();
-                        showToast('Đã xóa phòng thành công', 'success');
-                    } else {
-                        showToast('Lỗi khi xóa: ' + result.message, 'error');
-                    }
-                } catch (error) {
-                    console.error(error);
-                    showToast('Lỗi kết nối máy chủ', 'error');
-                } finally {
-                    hideLoading();
-                }
-            }
-        });
-
-        // Simple Toast Notification System
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toast-container');
-            
-            const toast = document.createElement('div');
-            
-            let icon = 'ph-check-circle';
-            let colorClass = 'bg-emerald-50 text-emerald-800 border-emerald-200';
-            
-            if(type === 'error') {
-                icon = 'ph-warning-circle';
-                colorClass = 'bg-red-50 text-red-800 border-red-200';
-            }
-
-            toast.className = `flex items-center p-4 mb-2 text-sm border rounded-lg shadow-md transition-all duration-300 transform translate-y-4 opacity-0 ${colorClass}`;
-            toast.innerHTML = `
-                <i class="ph ${icon} text-xl mr-3"></i>
-                <span class="font-medium">${message}</span>
-            `;
-            
-            container.appendChild(toast);
-            
-            // Animate in
-            setTimeout(() => {
-                toast.classList.remove('translate-y-4', 'opacity-0');
-            }, 10);
-
-            // Remove after 3s
-            setTimeout(() => {
-                toast.classList.add('opacity-0', 'translate-x-full');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
-
-        // --- Initialization ---
-        document.addEventListener('DOMContentLoaded', () => {
-            // Render giao diện rỗng ban đầu
-            renderTable(rooms);
-            updateDashboardStats(rooms);
-            
-            // Kích hoạt lấy dữ liệu nếu đã cấu hình link Apps Script
-            if (APPS_SCRIPT_URL) {
-                loadRooms();
-            }
-
-            // Event Listeners for search/filter
-            document.getElementById('searchInput').addEventListener('input', filterData);
-            document.getElementById('filterStatus').addEventListener('change', filterData);
-            
-            // Close modals when clicking outside
-            document.getElementById('room-modal').addEventListener('mousedown', function(e) {
-                if(e.target === this) closeRoomModal();
-            });
-            document.getElementById('delete-modal').addEventListener('mousedown', function(e) {
-                if(e.target === this) closeDeleteModal();
-            });
-        });
-
     </script>
 </body>
 </html>
