@@ -69,7 +69,7 @@
   <div id="root"></div>
 
   <script type="text/babel">
-    const { useState, useEffect, useMemo } = React;
+    const { useState, useEffect, useMemo, useRef } = React;
 
     // --- CẤU HÌNH API ---
     const API_URL = "https://script.google.com/macros/s/AKfycbzK0XowOvBy3f2q_JpTzCivtP83TgmcIQGimtmppM8XJ4eRtXcVm4WPBs-FanObODjF/exec";
@@ -116,6 +116,7 @@
             if (result.status === 'success' && result.data && result.data.length > 0) {
               setTemplates(result.data);
               setActiveId(result.data[0].id);
+              if(result.data[0].vars) setVars(result.data[0].vars);
             } else {
               setTemplates(defaultTemplates);
               setActiveId(defaultTemplates[0].id);
@@ -130,10 +131,12 @@
           });
       }, []);
 
+      // Đồng bộ nội dung & biến khi đổi Tab
       useEffect(() => {
         if (activeTemplate) {
           setEditSubject(activeTemplate.subject);
           setEditBody(activeTemplate.body);
+          if (activeTemplate.vars) setVars(activeTemplate.vars);
         }
       }, [activeId, templates.length]);
 
@@ -142,12 +145,33 @@
         setTimeout(() => setToast(null), 3000);
       };
 
+      // Xử lý Thêm / Xóa Biến Động
+      const handleAddVar = () => {
+          const varName = prompt("Nhập tên trường dữ liệu mới (Ví dụ: [Số Điện Thoại]):");
+          if (varName && varName.trim() !== '') {
+              const formattedName = varName.startsWith('[') && varName.endsWith(']') ? varName : `[${varName}]`;
+              if (!vars.hasOwnProperty(formattedName)) {
+                  setVars(prev => ({ ...prev, [formattedName]: '' }));
+              }
+          }
+      };
+
+      const handleRemoveVar = (keyToRemove) => {
+          if (confirm(`Hệ thống sẽ xóa biến ${keyToRemove}. Tiếp tục?`)) {
+              setVars(prev => {
+                  const newVars = { ...prev };
+                  delete newVars[keyToRemove];
+                  return newVars;
+              });
+          }
+      };
+
       const renderContent = (content) => {
         if(!content) return '';
         let result = content;
         Object.keys(vars).forEach(key => {
           const regex = new RegExp(key.replace(/\[/g, '\\[').replace(/\]/g, '\\]'), 'g');
-          result = result.replace(regex, vars[key]);
+          result = result.replace(regex, vars[key] || key); // Nếu biến rỗng, giữ nguyên tên
         });
         return result;
       };
@@ -155,10 +179,10 @@
       const renderedSubject = useMemo(() => renderContent(editSubject), [editSubject, vars]);
       const renderedBody = useMemo(() => renderContent(editBody), [editBody, vars]);
 
-      // LƯU API
+      // LƯU API (Bao gồm cập nhật vars hiện tại vào template)
       const handleSave = () => {
         if(!activeTemplate) return;
-        const updatedTemplate = { id: activeId, name: activeTemplate.name, subject: editSubject, body: editBody };
+        const updatedTemplate = { id: activeId, name: activeTemplate.name, subject: editSubject, body: editBody, vars: vars };
         setTemplates(prev => prev.map(t => t.id === activeId ? updatedTemplate : t));
         showToast('Đang khởi tạo gói tin lưu trữ...', 'info');
 
@@ -177,9 +201,10 @@
 
       const handleAddTemplate = () => {
         const newId = Date.now().toString();
-        const newTemplate = { id: newId, name: 'Bản thảo mới', subject: 'Tiêu đề thư...', body: '<h1>Nội dung</h1>' };
+        const newTemplate = { id: newId, name: 'Bản thảo mới', subject: 'Tiêu đề thư...', body: '<h1>Nội dung</h1>', vars: {} };
         setTemplates([...templates, newTemplate]);
         setActiveId(newId);
+        setVars({});
       };
 
       const handleSendGmail = () => {
@@ -200,7 +225,7 @@
         }, 800);
       };
 
-      // Loading State giống MMO
+      // Loading State
       if (isLoading) {
         return (
           <div className="h-screen w-full flex items-center justify-center">
@@ -223,7 +248,7 @@
             </div>
           )}
 
-          {/* HEADER (MMO Style) */}
+          {/* HEADER */}
           <header className="text-white py-8 px-4 shadow-2xl relative">
               <div className="max-w-6xl mx-auto relative flex flex-col md:flex-row items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
@@ -238,7 +263,7 @@
               </div>
           </header>
 
-          {/* TABS (Danh sách mẫu thư) */}
+          {/* TABS */}
           <div className="max-w-6xl mx-auto px-4 mt-6 w-full">
               <div className="flex bg-white rounded-xl shadow-md p-1.5 gap-1 overflow-x-auto scrollbar-hide">
                   {templates.map(t => (
@@ -293,21 +318,31 @@
                       </div>
                   </div>
 
-                  {/* Variables */}
+                  {/* Variables Manager */}
                   <div className="bg-gradient-to-r from-red-50 to-red-100 border-2 border-[#cf0106] rounded-xl p-5 mb-8">
-                      <span className="text-[10px] font-normal text-red-800 uppercase tracking-widest block mb-4">Mảng biến động (Auto-inject)</span>
-                      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                      <span className="text-[10px] font-normal text-red-800 uppercase tracking-widest block mb-4">Mảng biến động (Đầu vào)</span>
+                      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
                           {Object.keys(vars).map(key => (
-                              <div key={key}>
+                              <div key={key} className="relative group">
                                   <label className="block text-[10px] font-light text-gray-500 mb-1.5 uppercase tracking-wider">{key}</label>
                                   <input 
                                     type="text" 
                                     value={vars[key]} 
                                     onChange={(e) => setVars(prev => ({ ...prev, [key]: e.target.value }))}
-                                    className="w-full bg-white border border-red-200 rounded-lg px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-red-500 transition-colors shadow-sm"
+                                    className="w-full bg-white border border-red-200 rounded-lg pl-3 pr-8 py-2 text-sm text-gray-800 focus:outline-none focus:border-red-500 transition-colors shadow-sm"
                                   />
+                                  <button 
+                                    onClick={() => handleRemoveVar(key)}
+                                    className="absolute right-2 top-[24px] w-6 h-6 flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                                    title="Xóa trường này"
+                                  >✕</button>
                               </div>
                           ))}
+                          <div className="flex items-end">
+                              <button onClick={handleAddVar} className="h-[38px] w-full px-4 bg-white text-red-600 border border-dashed border-red-300 rounded-lg text-xs hover:bg-red-50 transition-colors font-light tracking-wide">
+                                  + Thêm vùng
+                              </button>
+                          </div>
                       </div>
                   </div>
 
@@ -336,10 +371,22 @@
 
                       {(viewMode === 'preview' || viewMode === 'split') && (
                           <div className="flex-1 flex flex-col relative">
-                              <label className="block text-[10px] font-light text-gray-400 mb-2 uppercase tracking-widest">Đầu ra hiển thị (Live)</label>
-                              <div className="flex-1 w-full bg-white border border-gray-200 rounded-xl p-5 overflow-y-auto shadow-sm">
-                                  <div dangerouslySetInnerHTML={{ __html: renderedBody }} />
-                              </div>
+                              <label className="flex items-center justify-between text-[10px] font-light text-gray-400 mb-2 uppercase tracking-widest">
+                                <span>Đầu ra hiển thị (Cho phép gõ trực tiếp)</span>
+                                <span className="text-[9px] text-red-500 normal-case tracking-normal hidden md:inline">*Cảnh báo: Việc sửa trực tiếp sẽ chèn đè chữ tĩnh lên các tham số biến.</span>
+                              </label>
+                              <div 
+                                className="flex-1 w-full bg-white border border-gray-200 rounded-xl p-5 overflow-y-auto shadow-sm outline-none focus:border-red-400 focus:ring-4 focus:ring-red-50 transition-all cursor-text"
+                                contentEditable={true}
+                                suppressContentEditableWarning={true}
+                                onBlur={(e) => {
+                                    if (e.target.innerHTML !== renderedBody) {
+                                        setEditBody(e.target.innerHTML);
+                                        showToast('Đồng bộ dữ liệu trực quan xuống mã HTML thành công.', 'success');
+                                    }
+                                }}
+                                dangerouslySetInnerHTML={{ __html: renderedBody }} 
+                              />
                           </div>
                       )}
 
