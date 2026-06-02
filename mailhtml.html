@@ -1,79 +1,135 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" class="h-full">
 <head>
     <link rel="icon" href="https://i.pinimg.com/736x/58/98/19/58981979f44731d95ab25aad9a7c88cb.jpg" alt="Logo" class="w-10 h-10 rounded-xl object-cover mr-3 shadow-md border border-slate-100 transition-transform group-hover:scale-105">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Advanced Email Studio - Quản trị Thư HTML</title>
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body { background-color: #0f172a; color: #e2e8f0; font-family: 'Inter', sans-serif; }
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: #1e293b; }
-    ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: #64748b; }
-    .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
-    .html-editor { font-family: 'Fira Code', monospace; tab-size: 2; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Email Studio - MMO Theme</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { font-family: Arial, sans-serif; }
+        body { 
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); 
+            box-sizing: border-box; 
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .tab-active { 
+            background: linear-gradient(135deg, #cf0106 0%, #a80005 100%); 
+            color: white !important; 
+            box-shadow: 0 4px 15px rgba(207, 1, 6, 0.4); 
+            border: none !important;
+        }
+        
+        @keyframes slideIn { 
+            from { opacity: 0; transform: translateY(-10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        .animate-slide { animation: slideIn 0.3s ease-out; }
+        
+        header { 
+            background: linear-gradient(135deg, #cf0106 0%, #a80005 100%) !important; 
+            box-shadow: 0 8px 20px rgba(207, 1, 6, 0.3); 
+        }
+
+        .glass-input {
+            background-color: #ffffff;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        .glass-input:focus {
+            border-color: #ef4444;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, #dc2626, #b91c1c);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(to right, #b91c1c, #991b1b);
+            transform: scale(1.02);
+        }
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+    </style>
 </head>
-<body>
+<body class="h-full w-full overflow-auto bg-gradient-to-br from-gray-900 via-gray-800 to-black">
   <div id="root"></div>
 
   <script type="text/babel">
     const { useState, useEffect, useMemo } = React;
 
-    // --- ICONS ---
-    const IconMail = () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>;
-    const IconEye = () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>;
-    const IconCode = () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>;
-    const IconSave = () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>;
-    const IconSend = () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>;
-    const IconPlus = () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>;
-    const IconCopy = () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>;
+    // --- CẤU HÌNH API ---
+    const API_URL = "https://script.google.com/macros/s/AKfycbzp1ITrXPGsBlDLXWQ2KW5HlVyHbPj1e1Wcvv05TNLe5P2pPaXK7Ta7wc2qTT24ODLx/exec";
 
-    // --- INITIAL DATA ---
-    const defaultTemplates = [
-      {
-        id: '1',
-        name: "Thư mời Phỏng vấn",
-        subject: "THƯ MỜI PHỎNG VẤN - [Vị Trí]",
-        body: `<div style="background:#0a0a0a; color:#fff; padding:40px; font-family:Arial, sans-serif;">
-  <h1 style="color:#00F2EA; text-transform:uppercase;">Thư Mời Phỏng Vấn</h1>
+    // --- MẶC ĐỊNH (PHÒNG KHI API LỖI) ---
+    const defaultTemplates = [{
+      id: '1', name: "Thư mời Phỏng vấn", subject: "THƯ MỜI PHỎNG VẤN - [Vị Trí]",
+      body: `<div style="background:#fafafa; color:#333; padding:40px; font-family:Arial, sans-serif; border: 1px solid #eee; border-radius: 8px; max-width: 600px; margin: 0 auto;">
+  <h1 style="color:#cf0106; text-transform:uppercase; font-weight: normal; letter-spacing: 1px;">Thư Mời Phỏng Vấn</h1>
   <p>Chào <strong>[Tên Ứng Viên]</strong>,</p>
   <p>Cảm ơn bạn đã ứng tuyển vị trí <strong>[Vị Trí]</strong>. Chúng tôi mời bạn tham gia phỏng vấn:</p>
-  <ul style="background:#111; padding:20px; border-radius:8px; list-style:none;">
-    <li><strong>Thời gian:</strong> [Giờ] ngày [Ngày]</li>
-    <li><strong>Địa điểm:</strong> [Địa Điểm]</li>
+  <ul style="background:#fff; padding:20px; border: 1px solid #e5e7eb; border-radius:8px; list-style:none;">
+    <li style="margin-bottom: 10px;"><strong style="color: #666;">Thời gian:</strong> [Giờ] ngày [Ngày]</li>
+    <li><strong style="color: #666;">Địa điểm:</strong> [Địa Điểm]</li>
   </ul>
-  <p>Vui lòng phản hồi email này để xác nhận.</p>
+  <p style="color: #666; font-size: 13px; margin-top: 20px;">Vui lòng phản hồi email này để xác nhận.</p>
 </div>`
-      }
-    ];
+    }];
 
     const App = () => {
-      const [templates, setTemplates] = useState(defaultTemplates);
-      const [activeId, setActiveId] = useState('1');
-      const [viewMode, setViewMode] = useState('split'); // split, code, preview
+      const [templates, setTemplates] = useState([]);
+      const [activeId, setActiveId] = useState(null);
+      const [viewMode, setViewMode] = useState('split');
       const [toast, setToast] = useState(null);
+      const [isLoading, setIsLoading] = useState(true);
 
-      // Variables state
       const [vars, setVars] = useState({
-        '[Tên Ứng Viên]': 'Anh Minh',
+        '[Tên Ứng Viên]': 'Anh Minh', 
         '[Vị Trí]': 'Frontend Developer',
-        '[Giờ]': '09:00 AM',
-        '[Ngày]': '20/11/2026',
+        '[Giờ]': '09:00 AM', 
+        '[Ngày]': '20/11/2026', 
         '[Địa Điểm]': 'Google Meet (Online)'
       });
 
-      const activeTemplate = templates.find(t => t.id === activeId) || templates[0];
-      
+      const activeTemplate = templates.find(t => t.id === activeId);
       const [editSubject, setEditSubject] = useState('');
       const [editBody, setEditBody] = useState('');
 
-      // Load active template data into editor
+      // TẢI DỮ LIỆU
+      useEffect(() => {
+        fetch(API_URL)
+          .then(res => res.json())
+          .then(result => {
+            if (result.status === 'success' && result.data && result.data.length > 0) {
+              setTemplates(result.data);
+              setActiveId(result.data[0].id);
+            } else {
+              setTemplates(defaultTemplates);
+              setActiveId(defaultTemplates[0].id);
+            }
+            setIsLoading(false);
+          })
+          .catch(err => {
+            setTemplates(defaultTemplates);
+            setActiveId(defaultTemplates[0].id);
+            setIsLoading(false);
+            showToast("Lỗi tải API. Đang dùng mẫu nội bộ.", "error");
+          });
+      }, []);
+
       useEffect(() => {
         if (activeTemplate) {
           setEditSubject(activeTemplate.subject);
@@ -81,13 +137,13 @@
         }
       }, [activeId, templates.length]);
 
-      const showToast = (msg) => {
-        setToast(msg);
+      const showToast = (msg, type = "info") => {
+        setToast({ msg, type });
         setTimeout(() => setToast(null), 3000);
       };
 
-      // Handle variable injection
       const renderContent = (content) => {
+        if(!content) return '';
         let result = content;
         Object.keys(vars).forEach(key => {
           const regex = new RegExp(key.replace(/\[/g, '\\[').replace(/\]/g, '\\]'), 'g');
@@ -99,21 +155,31 @@
       const renderedSubject = useMemo(() => renderContent(editSubject), [editSubject, vars]);
       const renderedBody = useMemo(() => renderContent(editBody), [editBody, vars]);
 
-      // Actions
+      // LƯU API
       const handleSave = () => {
-        setTemplates(prev => prev.map(t => t.id === activeId ? { ...t, subject: editSubject, body: editBody } : t));
-        showToast('Đã lưu mẫu thư thành công!');
+        if(!activeTemplate) return;
+        const updatedTemplate = { id: activeId, name: activeTemplate.name, subject: editSubject, body: editBody };
+        setTemplates(prev => prev.map(t => t.id === activeId ? updatedTemplate : t));
+        showToast('Đang khởi tạo gói tin lưu trữ...', 'info');
+
+        fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'SAVE', template: updatedTemplate }),
+          redirect: "follow"
+        })
+        .then(res => res.json())
+        .then(res => {
+          if(res.status === 'success') showToast('Cấu trúc đã lưu vào máy chủ.', 'success');
+        })
+        .catch(err => showToast('Lưu Offline thành công (Mất kết nối API)', 'warning'));
       };
 
       const handleAddTemplate = () => {
         const newId = Date.now().toString();
-        const newTemplate = { id: newId, name: 'Mẫu thư mới', subject: 'Tiêu đề thư...', body: '<h1>Nội dung HTML</h1>' };
+        const newTemplate = { id: newId, name: 'Bản thảo mới', subject: 'Tiêu đề thư...', body: '<h1>Nội dung</h1>' };
         setTemplates([...templates, newTemplate]);
         setActiveId(newId);
-      };
-
-      const handleVarChange = (key, value) => {
-        setVars(prev => ({ ...prev, [key]: value }));
       };
 
       const handleSendGmail = () => {
@@ -128,133 +194,158 @@
         document.execCommand('copy');
         sel.removeAllRanges(); document.body.removeChild(el);
 
-        showToast("Đã copy HTML. Đang mở Gmail...");
+        showToast("Dữ liệu lưu vào khay tạm. Mở dịch vụ Gmail...", "success");
         setTimeout(() => {
           window.open(`https://mail.google.com/mail/?view=cm&fs=1&su=${encodeURIComponent(renderedSubject)}`, '_blank');
         }, 800);
       };
 
+      // Loading State giống MMO
+      if (isLoading) {
+        return (
+          <div className="h-screen w-full flex items-center justify-center">
+             <div className="text-center">
+                <p className="text-white font-light text-sm uppercase tracking-widest">Đang truy xuất cơ sở dữ liệu...</p>
+             </div>
+          </div>
+        );
+      }
+
       return (
-        <div className="h-screen flex flex-col md:flex-row overflow-hidden">
+        <div className="min-h-screen flex flex-col pb-12">
           
-          {/* Sidebar */}
-          <aside className="w-full md:w-64 glass-panel flex flex-col border-r border-slate-700/50 flex-shrink-0">
-            <div className="p-4 border-b border-slate-700/50 flex items-center justify-between">
-              <h1 className="font-bold text-lg flex items-center text-indigo-400">
-                <IconMail /> <span className="ml-2">Email Studio</span>
-              </h1>
-            </div>
-            
-            <div className="flex-1 overflow-y-auto p-3 space-y-2">
-              <div className="text-xs font-semibold text-slate-500 uppercase mb-2 px-2">Danh sách Mẫu</div>
-              {templates.map(t => (
-                <button
-                  key={t.id}
-                  onClick={() => setActiveId(t.id)}
-                  className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all ${activeId === t.id ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-900/20' : 'text-slate-300 hover:bg-slate-800'}`}
-                >
-                  {t.name}
-                </button>
-              ))}
-            </div>
-            
-            <div className="p-3 border-t border-slate-700/50">
-              <button onClick={handleAddTemplate} className="w-full flex items-center justify-center py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-sm transition-colors border border-slate-600">
-                <IconPlus /> <span className="ml-1">Tạo mẫu mới</span>
-              </button>
-            </div>
-          </aside>
-
-          {/* Main Workspace */}
-          <main className="flex-1 flex flex-col min-w-0 h-full">
-            
-            {/* Top Toolbar & Variables */}
-            <header className="glass-panel p-4 border-b border-slate-700/50 flex flex-col gap-4 z-10 shadow-md">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <input 
-                  type="text" 
-                  value={activeTemplate?.name || ''} 
-                  onChange={(e) => setTemplates(prev => prev.map(t => t.id === activeId ? { ...t, name: e.target.value } : t))}
-                  className="bg-transparent border-none text-xl font-bold text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded px-2 w-64"
-                />
-                <div className="flex space-x-2">
-                  <button onClick={() => setViewMode('code')} className={`px-3 py-1.5 rounded text-sm flex items-center gap-1 ${viewMode === 'code' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}><IconCode/> Code</button>
-                  <button onClick={() => setViewMode('preview')} className={`px-3 py-1.5 rounded text-sm flex items-center gap-1 ${viewMode === 'preview' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}><IconEye/> Preview</button>
-                  <button onClick={() => setViewMode('split')} className={`px-3 py-1.5 rounded text-sm flex items-center gap-1 hidden md:flex ${viewMode === 'split' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}>Split</button>
-                  <div className="w-px h-8 bg-slate-700 mx-1"></div>
-                  <button onClick={handleSave} className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded text-sm flex items-center gap-1 transition-colors"><IconSave/> Lưu</button>
-                  <button onClick={handleSendGmail} className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded text-sm flex items-center gap-1 transition-colors"><IconSend/> Send qua Gmail</button>
-                </div>
-              </div>
-
-              {/* Smart Variables Box */}
-              <div className="bg-slate-900/50 border border-slate-700 rounded-lg p-3">
-                <div className="text-xs font-semibold text-slate-400 mb-2">BIẾN ĐỘNG (Tự động chèn vào Subject & Code)</div>
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-                  {Object.keys(vars).map(key => (
-                    <div key={key}>
-                      <label className="block text-[10px] text-slate-500 mb-1">{key}</label>
-                      <input 
-                        type="text" 
-                        value={vars[key]} 
-                        onChange={(e) => handleVarChange(key, e.target.value)}
-                        className="w-full bg-slate-800 border border-slate-600 rounded px-2 py-1 text-sm text-slate-200 focus:outline-none focus:border-indigo-500"
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Subject Editor */}
-              <div className="flex items-center gap-3">
-                <span className="text-sm font-semibold text-slate-400 whitespace-nowrap">Subject:</span>
-                <input 
-                  type="text" 
-                  value={editSubject}
-                  onChange={(e) => setEditSubject(e.target.value)}
-                  className="flex-1 bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500"
-                />
-              </div>
-            </header>
-
-            {/* Main Editor Area */}
-            <div className="flex-1 flex overflow-hidden bg-slate-950">
-              
-              {/* HTML Editor */}
-              {(viewMode === 'code' || viewMode === 'split') && (
-                <div className="flex-1 flex flex-col border-r border-slate-800 relative">
-                  <div className="absolute top-0 right-0 bg-slate-800 text-xs px-2 py-1 rounded-bl-lg text-slate-400 pointer-events-none">HTML RAW</div>
-                  <textarea 
-                    value={editBody}
-                    onChange={(e) => setEditBody(e.target.value)}
-                    spellCheck="false"
-                    className="flex-1 w-full p-4 bg-transparent text-emerald-400 html-editor text-sm focus:outline-none resize-none"
-                    placeholder="Viết mã HTML tại đây..."
-                  />
-                </div>
-              )}
-
-              {/* Live Preview */}
-              {(viewMode === 'preview' || viewMode === 'split') && (
-                <div className="flex-1 flex flex-col relative bg-[#0a0a0a]">
-                  <div className="absolute top-0 right-0 bg-slate-800 text-xs px-2 py-1 rounded-bl-lg text-slate-400 z-10 pointer-events-none">LIVE PREVIEW</div>
-                  <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
-                    {/* Rendered Output */}
-                    <div dangerouslySetInnerHTML={{ __html: renderedBody }} />
-                  </div>
-                </div>
-              )}
-            </div>
-          </main>
-
-          {/* Toast Notification */}
+          {/* TOAST */}
           {toast && (
-            <div className="fixed bottom-6 right-6 bg-indigo-600 text-white px-4 py-3 rounded-lg shadow-xl shadow-indigo-900/50 flex items-center animate-bounce z-50">
-              <svg className="w-5 h-5 text-white mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-              <span className="font-medium text-sm">{toast}</span>
+            <div className="fixed top-5 right-5 z-[100] flex flex-col gap-2 max-w-md w-full pointer-events-none">
+                <div className={`flex items-center p-4 rounded-xl text-[10px] font-light uppercase tracking-widest shadow-lg border animate-slide bg-white ${toast.type === 'success' ? 'border-green-200 text-green-800' : toast.type === 'error' ? 'border-red-200 text-red-800' : 'border-gray-200 text-gray-700'}`}>
+                    <span>{toast.msg}</span>
+                </div>
             </div>
           )}
 
+          {/* HEADER (MMO Style) */}
+          <header className="text-white py-8 px-4 shadow-2xl relative">
+              <div className="max-w-6xl mx-auto relative flex flex-col md:flex-row items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                      <div>
+                          <h1 className="text-2xl md:text-3xl font-normal tracking-wide uppercase">Email Studio</h1>
+                          <p className="text-sm text-red-100 uppercase tracking-widest font-light mt-1">Cơ sở dữ liệu biểu mẫu</p>
+                      </div>
+                  </div>
+                  <div className="bg-white/10 px-4 py-2 rounded-lg border border-white/20 text-xs font-light tracking-wide flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div> Đồng bộ API Live
+                  </div>
+              </div>
+          </header>
+
+          {/* TABS (Danh sách mẫu thư) */}
+          <div className="max-w-6xl mx-auto px-4 mt-6 w-full">
+              <div className="flex bg-white rounded-xl shadow-md p-1.5 gap-1 overflow-x-auto scrollbar-hide">
+                  {templates.map(t => (
+                      <button 
+                        key={t.id} 
+                        onClick={() => setActiveId(t.id)} 
+                        className={`flex-none whitespace-nowrap py-3 px-6 rounded-lg font-normal transition-all uppercase text-[11px] tracking-widest ${activeId === t.id ? 'tab-active' : 'text-gray-600 hover:bg-gray-100'}`}
+                      >
+                          {t.name}
+                      </button>
+                  ))}
+                  <button onClick={handleAddTemplate} className="flex-none whitespace-nowrap py-3 px-6 rounded-lg font-normal text-red-600 transition-all hover:bg-red-50 border border-dashed border-red-200 uppercase text-[11px] tracking-widest ml-1">
+                      + Khởi tạo vùng mới
+                  </button>
+              </div>
+          </div>
+
+          {/* MAIN WORKSPACE */}
+          <div className="max-w-6xl mx-auto px-4 py-6 w-full flex-1 flex flex-col">
+              <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 animate-slide flex-1 flex flex-col">
+                  
+                  {/* Info & Action Bar */}
+                  <div className="flex flex-col md:flex-row gap-6 mb-8">
+                      <div className="flex-1 space-y-4">
+                          <div>
+                              <label className="block text-xs font-light text-gray-500 mb-2 uppercase tracking-widest">Định danh hiển thị</label>
+                              <input 
+                                type="text" 
+                                value={activeTemplate?.name || ''} 
+                                onChange={(e) => setTemplates(prev => prev.map(t => t.id === activeId ? { ...t, name: e.target.value } : t))}
+                                className="w-full glass-input px-4 py-3 font-normal text-gray-800 text-sm tracking-wide" 
+                              />
+                          </div>
+                          <div>
+                              <label className="block text-xs font-light text-gray-500 mb-2 uppercase tracking-widest">Cấu trúc chủ đề (Subject)</label>
+                              <input 
+                                type="text" 
+                                value={editSubject}
+                                onChange={(e) => setEditSubject(e.target.value)}
+                                className="w-full glass-input px-4 py-3 font-normal text-gray-800 text-sm tracking-wide" 
+                              />
+                          </div>
+                      </div>
+                      
+                      <div className="flex flex-col gap-3 min-w-[200px] justify-end">
+                          <button onClick={handleSave} className="btn-primary py-3 px-8 rounded-xl font-normal text-xs uppercase tracking-widest shadow-lg text-center">
+                              Ghi đè cấu hình
+                          </button>
+                          <button onClick={handleSendGmail} className="py-3 px-8 bg-white border border-red-600 text-red-600 hover:bg-red-50 rounded-xl font-normal text-xs uppercase tracking-widest transition-all text-center">
+                              Đẩy qua Gmail
+                          </button>
+                      </div>
+                  </div>
+
+                  {/* Variables */}
+                  <div className="bg-gradient-to-r from-red-50 to-red-100 border-2 border-[#cf0106] rounded-xl p-5 mb-8">
+                      <span className="text-[10px] font-normal text-red-800 uppercase tracking-widest block mb-4">Mảng biến động (Auto-inject)</span>
+                      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                          {Object.keys(vars).map(key => (
+                              <div key={key}>
+                                  <label className="block text-[10px] font-light text-gray-500 mb-1.5 uppercase tracking-wider">{key}</label>
+                                  <input 
+                                    type="text" 
+                                    value={vars[key]} 
+                                    onChange={(e) => setVars(prev => ({ ...prev, [key]: e.target.value }))}
+                                    className="w-full bg-white border border-red-200 rounded-lg px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-red-500 transition-colors shadow-sm"
+                                  />
+                              </div>
+                          ))}
+                      </div>
+                  </div>
+
+                  {/* View Controls */}
+                  <div className="flex justify-center md:justify-start gap-2 mb-4 border-b border-gray-100 pb-4">
+                      <button onClick={() => setViewMode('code')} className={`px-5 py-2 text-xs font-light tracking-widest uppercase rounded-xl transition-all border ${viewMode === 'code' ? 'bg-red-50 border-red-200 text-red-700 font-normal shadow-sm' : 'bg-white border-transparent text-gray-500 hover:bg-gray-50'}`}>Mã nguồn</button>
+                      <button onClick={() => setViewMode('preview')} className={`px-5 py-2 text-xs font-light tracking-widest uppercase rounded-xl transition-all border ${viewMode === 'preview' ? 'bg-red-50 border-red-200 text-red-700 font-normal shadow-sm' : 'bg-white border-transparent text-gray-500 hover:bg-gray-50'}`}>Trực quan</button>
+                      <button onClick={() => setViewMode('split')} className={`hidden md:block px-5 py-2 text-xs font-light tracking-widest uppercase rounded-xl transition-all border ${viewMode === 'split' ? 'bg-red-50 border-red-200 text-red-700 font-normal shadow-sm' : 'bg-white border-transparent text-gray-500 hover:bg-gray-50'}`}>Phân mảnh</button>
+                  </div>
+
+                  {/* Editors */}
+                  <div className="flex-1 flex flex-col md:flex-row gap-6 min-h-[500px]">
+                      
+                      {(viewMode === 'code' || viewMode === 'split') && (
+                          <div className="flex-1 flex flex-col relative group">
+                              <label className="block text-[10px] font-light text-gray-400 mb-2 uppercase tracking-widest">Cấu trúc HTML (Raw)</label>
+                              <textarea 
+                                  value={editBody}
+                                  onChange={(e) => setEditBody(e.target.value)}
+                                  spellCheck="false"
+                                  className="flex-1 w-full bg-gray-50 border border-gray-200 rounded-xl p-5 text-gray-800 font-mono text-[13px] leading-relaxed focus:outline-none focus:border-red-400 focus:ring-4 focus:ring-red-50 transition-all resize-none shadow-inner"
+                                  placeholder="Nhập mã HTML..."
+                              />
+                          </div>
+                      )}
+
+                      {(viewMode === 'preview' || viewMode === 'split') && (
+                          <div className="flex-1 flex flex-col relative">
+                              <label className="block text-[10px] font-light text-gray-400 mb-2 uppercase tracking-widest">Đầu ra hiển thị (Live)</label>
+                              <div className="flex-1 w-full bg-white border border-gray-200 rounded-xl p-5 overflow-y-auto shadow-sm">
+                                  <div dangerouslySetInnerHTML={{ __html: renderedBody }} />
+                              </div>
+                          </div>
+                      )}
+
+                  </div>
+              </div>
+          </div>
         </div>
       );
     };
