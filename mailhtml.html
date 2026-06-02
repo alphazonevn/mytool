@@ -182,6 +182,14 @@
       // LƯU API (Bao gồm cập nhật vars hiện tại vào template)
       const handleSave = () => {
         if(!activeTemplate) return;
+        
+        // BẮT BUỘC NHẬP MẬT KHẨU TRƯỚC KHI LƯU
+        const password = window.prompt("Vui lòng nhập mật khẩu xác nhận ghi đè dữ liệu:");
+        if (password !== "729903") {
+            showToast('Sai mật khẩu. Đã hủy thao tác lưu.', 'error');
+            return;
+        }
+
         const updatedTemplate = { id: activeId, name: activeTemplate.name, subject: editSubject, body: editBody, vars: vars };
         setTemplates(prev => prev.map(t => t.id === activeId ? updatedTemplate : t));
         showToast('Đang khởi tạo gói tin lưu trữ...', 'info');
