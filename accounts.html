@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi" class="h-full">
 <head>
-    <link rel="icon" href="https://i.pinimg.com/736x/58/98/19/58981979f44731d95ab25aad9a7c88cb.jpg" alt="Logo" class="w-10 h-10 rounded-xl object-cover mr-3 shadow-md border border-slate-100 transition-transform group-hover:scale-105">
+        <link rel="icon" href="https://i.pinimg.com/736x/0c/81/aa/0c81aa73e7366631976e044b0ab523b4.jpg" alt="Logo" class="w-10 h-10 rounded-xl object-cover mr-3 shadow-md border border-slate-100 transition-transform group-hover:scale-105">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hệ thống phân phối kỹ thuật số | Giao diện quản trị</title>
@@ -16,80 +16,84 @@
         }
         
         body { 
-            background-color: #030303;
-            color: #e2e8f0;
+            background-color: #f8fafc;
+            color: #334155;
             position: relative;
             overflow-x: hidden;
         }
 
-        /* Ambient Background Glow */
         .ambient-glow-1 {
             position: fixed; top: -10%; left: -10%; width: 50vw; height: 50vw;
-            background: radial-gradient(circle, rgba(79,70,229,0.08) 0%, rgba(0,0,0,0) 70%);
+            background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, rgba(255,255,255,0) 70%);
             border-radius: 50%; filter: blur(60px); z-index: -1; pointer-events: none;
         }
         .ambient-glow-2 {
             position: fixed; bottom: -10%; right: -10%; width: 50vw; height: 50vw;
-            background: radial-gradient(circle, rgba(56,189,248,0.05) 0%, rgba(0,0,0,0) 70%);
+            background: radial-gradient(circle, rgba(236,72,153,0.1) 0%, rgba(255,255,255,0) 70%);
             border-radius: 50%; filter: blur(60px); z-index: -1; pointer-events: none;
+        }
+        .ambient-glow-3 {
+            position: fixed; top: 30%; left: 30%; width: 60vw; height: 60vw;
+            background: radial-gradient(circle, rgba(56,189,248,0.1) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%; filter: blur(80px); z-index: -1; pointer-events: none;
         }
 
         ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.02); }
+        ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.3); }
 
         .glass-panel {
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .hover-lift:hover {
             transform: translateY(-4px);
-            border-color: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.8), 0 0 20px 0 rgba(255,255,255,0.03);
-            background: rgba(255, 255, 255, 0.03);
+            border-color: rgba(255, 255, 255, 1);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.08), 0 0 20px 0 rgba(255,255,255,0.8);
+            background: rgba(255, 255, 255, 0.8);
         }
 
         .glass-input {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            color: #f8fafc;
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            color: #0f172a;
             transition: all 0.3s ease;
             outline: none;
         }
         .glass-input:focus {
-            border-color: rgba(255, 255, 255, 0.4);
-            background: rgba(0, 0, 0, 0.7);
-            box-shadow: 0 0 15px rgba(255,255,255,0.05);
+            border-color: rgba(0, 0, 0, 0.15);
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 15px rgba(0,0,0,0.03);
         }
 
         .tab-active { 
-            background: #ffffff !important; 
-            color: #000000 !important; 
-            box-shadow: 0 0 15px rgba(255,255,255,0.2);
+            background: #0f172a !important; 
+            color: #ffffff !important; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
         .btn-primary {
-            background: #ffffff;
-            color: #000000;
+            background: #0f172a;
+            color: #ffffff;
             transition: all 0.3s ease;
             border: 1px solid transparent;
             font-weight: 500;
         }
         .btn-primary:hover {
             background: transparent;
-            color: #ffffff;
-            border-color: #ffffff;
-            box-shadow: 0 0 20px rgba(255,255,255,0.1);
+            color: #0f172a;
+            border-color: #0f172a;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
         }
 
         .text-gradient {
-            background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #3b82f6 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -106,29 +110,30 @@
 
     <div class="ambient-glow-1"></div>
     <div class="ambient-glow-2"></div>
+    <div class="ambient-glow-3"></div>
 
     <div id="toast-container" class="fixed bottom-5 right-5 z-[100] flex flex-col gap-2 max-w-md w-full pointer-events-none"></div>
 
-    <header class="border-b border-white/5 sticky top-0 z-40 bg-black/40 backdrop-blur-xl supports-[backdrop-filter]:bg-black/20">
+    <header class="border-b border-slate-900/5 sticky top-0 z-40 bg-white/40 backdrop-blur-xl supports-[backdrop-filter]:bg-white/30">
         <div class="max-w-7xl mx-auto px-6 py-5 flex flex-col md:flex-row items-center justify-between gap-4">
             <div>
                 <h1 class="text-xl font-medium tracking-[0.2em] uppercase text-gradient">Digital Hub</h1>
-                <p class="text-[9px] text-gray-500 uppercase tracking-widest mt-1.5 flex items-center gap-2">
+                <p class="text-[9px] text-slate-500 uppercase tracking-widest mt-1.5 flex items-center gap-2">
                     <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
                     Operator: Anh Minh | Chức năng: Nói ít, làm nhiều
                 </p>
             </div>
-            <div id="connection-banner" class="bg-red-950/40 text-red-400 px-4 py-2 text-[10px] uppercase tracking-widest border border-red-500/20 backdrop-blur-sm shadow-[0_0_15px_rgba(239,68,68,0.1)]">
+            <div id="connection-banner" class="bg-red-50 text-red-600 px-4 py-2 text-[10px] uppercase tracking-widest border border-red-200 backdrop-blur-sm shadow-[0_0_15px_rgba(239,68,68,0.05)] rounded-sm">
                 Chưa đồng bộ API. Chạy Data Local.
             </div>
         </div>
     </header>
 
     <div class="max-w-7xl mx-auto px-6 mt-8">
-        <div class="flex gap-2 border-b border-white/10 pb-px overflow-x-auto scrollbar-hide">
-            <button onclick="switchTab('products')" id="tab-products" class="px-6 py-3.5 text-[11px] uppercase tracking-widest transition-all tab-active text-gray-500 hover:text-white">Cơ sở dữ liệu</button> 
-            <button onclick="switchTab('history')" id="tab-history" class="px-6 py-3.5 text-[11px] uppercase tracking-widest transition-all text-gray-500 hover:text-white">Truy xuất</button> 
-            <button onclick="checkPasswordAndOpenSettings()" id="tab-admin" class="px-6 py-3.5 text-[11px] uppercase tracking-widest transition-all text-gray-500 hover:text-white flex items-center gap-2">
+        <div class="flex gap-2 border-b border-slate-900/5 pb-px overflow-x-auto scrollbar-hide">
+            <button onclick="switchTab('products')" id="tab-products" class="px-6 py-3.5 text-[11px] uppercase tracking-widest transition-all tab-active text-slate-500 hover:text-slate-900 rounded-t-sm">Cơ sở dữ liệu</button> 
+            <button onclick="switchTab('history')" id="tab-history" class="px-6 py-3.5 text-[11px] uppercase tracking-widest transition-all text-slate-500 hover:text-slate-900 rounded-t-sm">Truy xuất</button> 
+            <button onclick="checkPasswordAndOpenSettings()" id="tab-admin" class="px-6 py-3.5 text-[11px] uppercase tracking-widest transition-all text-slate-500 hover:text-slate-900 flex items-center gap-2 rounded-t-sm">
                 Hệ thống
             </button>
         </div>
@@ -138,38 +143,38 @@
         <div class="glass-panel p-6 mb-8 flex flex-col md:flex-row items-center justify-between gap-6 rounded-sm">
             <div class="flex items-center gap-8">
                 <div>
-                    <span class="text-[9px] text-gray-500 uppercase tracking-widest block mb-1.5">Webhook IPN</span>
-                    <span class="text-sm font-light text-white tracking-widest flex items-center gap-2">
+                    <span class="text-[9px] text-slate-500 uppercase tracking-widest block mb-1.5">Webhook IPN</span>
+                    <span class="text-sm font-medium text-slate-800 tracking-widest flex items-center gap-2">
                         <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Active
                     </span>
                 </div>
-                <div class="w-px h-8 bg-white/10 hidden md:block"></div>
+                <div class="w-px h-8 bg-slate-900/10 hidden md:block"></div>
                 <div>
-                    <span class="text-[9px] text-gray-500 uppercase tracking-widest block mb-1.5">Tổng phân loại</span>
-                    <span id="stat-products" class="text-lg font-light text-gradient">0</span>
+                    <span class="text-[9px] text-slate-500 uppercase tracking-widest block mb-1.5">Tổng phân loại</span>
+                    <span id="stat-products" class="text-lg font-medium text-gradient">0</span>
                 </div>
             </div>
         </div>
 
         <div class="grid md:grid-cols-3 gap-6 mb-8">
             <div class="relative">
-                <input type="text" id="search-input" oninput="filterProducts()" placeholder="NHẬP TỪ KHÓA TRA CỨU..." class="w-full glass-input px-4 py-3.5 text-[11px] tracking-widest placeholder:text-gray-600">
+                <input type="text" id="search-input" oninput="filterProducts()" placeholder="NHẬP TỪ KHÓA TRA CỨU..." class="w-full glass-input px-4 py-3.5 text-[11px] tracking-widest placeholder:text-slate-400 rounded-sm">
             </div>
             <div>
-                <select id="filter-price" onchange="filterProducts()" class="w-full glass-input px-4 py-3.5 text-[11px] uppercase tracking-widest cursor-pointer appearance-none">
-                    <option value="all" class="bg-[#0a0a0a] text-white">Mọi phân khúc</option>
-                    <option value="under50" class="bg-[#0a0a0a] text-white">< 50.000 VNĐ</option>
-                    <option value="50to100" class="bg-[#0a0a0a] text-white">50.000 - 100.000 VNĐ</option>
-                    <option value="100to500" class="bg-[#0a0a0a] text-white">100.000 - 500.000 VNĐ</option>
-                    <option value="over500" class="bg-[#0a0a0a] text-white">> 500.000 VNĐ</option>
+                <select id="filter-price" onchange="filterProducts()" class="w-full glass-input px-4 py-3.5 text-[11px] uppercase tracking-widest cursor-pointer appearance-none rounded-sm">
+                    <option value="all" class="bg-white text-slate-800">Mọi phân khúc</option>
+                    <option value="under50" class="bg-white text-slate-800">< 50.000 VNĐ</option>
+                    <option value="50to100" class="bg-white text-slate-800">50.000 - 100.000 VNĐ</option>
+                    <option value="100to500" class="bg-white text-slate-800">100.000 - 500.000 VNĐ</option>
+                    <option value="over500" class="bg-white text-slate-800">> 500.000 VNĐ</option>
                 </select>
             </div>
             <div>
-                <select id="sort-order" onchange="filterProducts()" class="w-full glass-input px-4 py-3.5 text-[11px] uppercase tracking-widest cursor-pointer appearance-none">
-                    <option value="default" class="bg-[#0a0a0a] text-white">Cấu hình gốc</option>
-                    <option value="price_asc" class="bg-[#0a0a0a] text-white">Giá: Tăng dần</option>
-                    <option value="price_desc" class="bg-[#0a0a0a] text-white">Giá: Giảm dần</option>
-                    <option value="name_asc" class="bg-[#0a0a0a] text-white">Tên: A - Z</option>
+                <select id="sort-order" onchange="filterProducts()" class="w-full glass-input px-4 py-3.5 text-[11px] uppercase tracking-widest cursor-pointer appearance-none rounded-sm">
+                    <option value="default" class="bg-white text-slate-800">Cấu hình gốc</option>
+                    <option value="price_asc" class="bg-white text-slate-800">Giá: Tăng dần</option>
+                    <option value="price_desc" class="bg-white text-slate-800">Giá: Giảm dần</option>
+                    <option value="name_asc" class="bg-white text-slate-800">Tên: A - Z</option>
                 </select>
             </div>
         </div>
@@ -180,15 +185,15 @@
 
         <div id="loading-state" class="hidden py-32 text-center">
             <div class="w-8 h-8 mx-auto relative mb-6">
-                <div class="absolute inset-0 border-t-2 border-white/80 rounded-full animate-spin"></div>
-                <div class="absolute inset-2 border-r-2 border-gray-500 rounded-full animate-spin reverse-spin" style="animation-direction: reverse; animation-duration: 0.7s;"></div>
+                <div class="absolute inset-0 border-t-2 border-slate-800 rounded-full animate-spin"></div>
+                <div class="absolute inset-2 border-r-2 border-slate-400 rounded-full animate-spin reverse-spin" style="animation-direction: reverse; animation-duration: 0.7s;"></div>
             </div>
-            <p class="text-[10px] text-gray-500 uppercase tracking-[0.3em]">Đang truy xuất cơ sở dữ liệu...</p>
+            <p class="text-[10px] text-slate-500 uppercase tracking-[0.3em]">Đang truy xuất cơ sở dữ liệu...</p>
         </div>
 
         <div id="empty-state" class="hidden py-24 text-center glass-panel rounded-sm">
-            <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-4">Cấu trúc lưới trống. Không khớp với tham số.</p>
-            <button onclick="resetFilters()" class="text-[11px] text-white hover:text-gray-400 uppercase tracking-widest border-b border-white/30 hover:border-white transition-colors pb-1">Tái thiết lập</button>
+            <p class="text-[10px] text-slate-500 uppercase tracking-widest mb-4">Cấu trúc lưới trống. Không khớp với tham số.</p>
+            <button onclick="resetFilters()" class="text-[11px] text-slate-800 hover:text-slate-500 uppercase tracking-widest border-b border-slate-900/30 hover:border-slate-900 transition-colors pb-1">Tái thiết lập</button>
         </div>
 
         <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"></div>
@@ -197,14 +202,17 @@
     <div id="panel-history" class="hidden max-w-7xl mx-auto px-6 py-8 animate-fade">
         <div class="glass-panel p-8 md:p-12 rounded-sm">
             <div class="max-w-2xl mx-auto">
-                <div class="flex flex-col md:flex-row gap-4 mb-10">
-                    <input type="email" id="history-email-input" placeholder="ĐỊNH DANH LIÊN HỆ (EMAIL)..." class="flex-1 glass-input px-5 py-4 text-[11px] tracking-widest placeholder:text-gray-600">
-                    <button onclick="searchOrders()" id="btn-search-orders" class="btn-primary py-4 px-10 text-[11px] uppercase tracking-[0.2em]">Yêu cầu</button>
+                <div class="flex flex-col gap-2 mb-10">
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <input type="email" id="history-email-input" placeholder="ĐỊNH DANH LIÊN HỆ (EMAIL)..." class="flex-1 glass-input px-5 py-4 text-[11px] tracking-widest placeholder:text-slate-400 rounded-sm">
+                        <button onclick="searchOrders()" id="btn-search-orders" class="btn-primary py-4 px-10 text-[11px] uppercase tracking-[0.2em] rounded-sm shrink-0">Yêu cầu</button>
+                    </div>
+                    <p class="text-[9px] text-slate-400 tracking-widest uppercase ml-1 mt-1">* Mẹo: Thử nhập <span class="text-slate-700 font-medium select-all">test@gmail.com</span> để tra cứu dữ liệu Local.</p>
                 </div>
 
                 <div id="history-result" class="space-y-4">
-                    <div class="text-center py-16 border border-white/5 bg-white/[0.01]">
-                        <p class="text-[10px] text-gray-600 tracking-widest uppercase">Hệ thống đang chờ tham số đầu vào.</p>
+                    <div class="text-center py-16 border border-slate-900/5 bg-white/50 rounded-sm">
+                        <p class="text-[10px] text-slate-500 tracking-widest uppercase">Hệ thống đang chờ tham số đầu vào.</p>
                     </div>
                 </div>
             </div>
@@ -214,97 +222,97 @@
     <div id="panel-admin" class="hidden max-w-7xl mx-auto px-6 py-8 animate-fade">
         <div class="glass-panel p-8 md:p-12 rounded-sm max-w-3xl mx-auto">
             <div class="mb-8">
-                <div class="flex items-center gap-3 mb-6 border-b border-white/5 pb-6">
-                    <div class="w-2 h-2 bg-white rounded-full"></div>
-                    <p class="text-[11px] text-gray-300 uppercase tracking-widest">Định tuyến API Google Apps Script</p>
+                <div class="flex items-center gap-3 mb-6 border-b border-slate-900/5 pb-6">
+                    <div class="w-2 h-2 bg-slate-800 rounded-full"></div>
+                    <p class="text-[11px] text-slate-600 uppercase tracking-widest">Định tuyến API Google Apps Script</p>
                 </div>
                 
-                <label class="block text-[9px] text-gray-500 mb-2.5 uppercase tracking-widest">Endpoint URL</label>
-                <input type="url" id="settings-api-url" class="w-full glass-input px-5 py-4 text-xs mb-6 font-mono text-gray-300">
+                <label class="block text-[9px] text-slate-500 mb-2.5 uppercase tracking-widest">Endpoint URL</label>
+                <input type="url" id="settings-api-url" class="w-full glass-input px-5 py-4 text-xs mb-6 font-mono text-slate-700 rounded-sm">
                 
                 <div class="flex gap-4">
-                    <button onclick="saveSettings()" class="btn-primary py-3.5 px-8 text-[11px] uppercase tracking-widest">Ghi đè cấu hình</button>
-                    <button onclick="testConnection()" class="py-3.5 px-8 border border-white/10 hover:bg-white/5 text-gray-300 hover:text-white text-[11px] uppercase tracking-widest transition-all">Ping Kết Nối</button>
+                    <button onclick="saveSettings()" class="btn-primary py-3.5 px-8 text-[11px] uppercase tracking-widest rounded-sm">Ghi đè cấu hình</button>
+                    <button onclick="testConnection()" class="py-3.5 px-8 border border-slate-900/10 hover:bg-slate-900/5 text-slate-600 hover:text-slate-900 text-[11px] uppercase tracking-widest transition-all rounded-sm">Ping Kết Nối</button>
                 </div>
             </div>
 
-            <div id="test-connection-box" class="hidden p-6 border border-white/5 bg-black/40 rounded-sm">
-                <p id="test-connection-text" class="text-[11px] text-gray-400 tracking-widest font-mono"></p>
+            <div id="test-connection-box" class="hidden p-6 border border-slate-900/5 bg-white/50 rounded-sm">
+                <p id="test-connection-text" class="text-[11px] text-slate-600 tracking-widest font-mono"></p>
             </div>
         </div>
     </div>
 
-    <div id="buy-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl hidden transition-opacity">
-        <div class="glass-panel w-full max-w-lg p-8 md:p-10 relative animate-fade border border-white/10 shadow-2xl rounded-sm">
-            <button onclick="closeBuyModal()" class="absolute right-6 top-6 text-gray-500 hover:text-white text-[10px] uppercase tracking-widest transition-colors p-2">Đóng ✕</button>
+    <div id="buy-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/30 backdrop-blur-xl hidden transition-opacity">
+        <div class="glass-panel w-full max-w-lg p-8 md:p-10 relative animate-fade border border-white shadow-2xl rounded-sm">
+            <button onclick="closeBuyModal()" class="absolute right-6 top-6 text-slate-500 hover:text-slate-900 text-[10px] uppercase tracking-widest transition-colors p-2">Đóng ✕</button>
 
-            <span id="modal-category" class="inline-block text-[9px] text-gray-400 uppercase tracking-widest border border-white/10 px-3 py-1.5 mb-5 bg-white/5">Phân vùng</span>
-            <h3 id="modal-title" class="text-lg font-light text-white mb-6 pr-12 uppercase tracking-wide leading-relaxed text-gradient">Tên dữ liệu</h3>
+            <span id="modal-category" class="inline-block text-[9px] text-slate-500 uppercase tracking-widest border border-slate-900/10 px-3 py-1.5 mb-5 bg-white/50">Phân vùng</span>
+            <h3 id="modal-title" class="text-lg font-medium text-slate-900 mb-6 pr-12 uppercase tracking-wide leading-relaxed text-gradient">Tên dữ liệu</h3>
 
-            <div class="border-l-2 border-white/20 pl-5 mb-8">
-                <p id="modal-description" class="text-[11px] text-gray-400 whitespace-pre-line leading-relaxed text-justify"></p>
+            <div class="border-l-2 border-slate-300 pl-5 mb-8">
+                <p id="modal-description" class="text-[11px] text-slate-600 whitespace-pre-line leading-relaxed text-justify"></p>
             </div>
 
             <div class="space-y-4 mb-8">
-                <input type="text" id="customer-name" placeholder="TÊN KHÁCH HÀNG..." class="w-full glass-input px-5 py-3.5 text-[11px] tracking-widest">
+                <input type="text" id="customer-name" placeholder="TÊN KHÁCH HÀNG..." class="w-full glass-input px-5 py-3.5 text-[11px] tracking-widest rounded-sm">
                 <div class="grid grid-cols-2 gap-4">
-                    <input type="email" id="customer-email" placeholder="EMAIL NHẬN DỮ LIỆU..." class="w-full glass-input px-5 py-3.5 text-[11px] tracking-widest">
-                    <input type="tel" id="customer-phone" placeholder="SỐ ĐIỆN THOẠI..." class="w-full glass-input px-5 py-3.5 text-[11px] tracking-widest">
+                    <input type="email" id="customer-email" placeholder="EMAIL NHẬN DỮ LIỆU..." class="w-full glass-input px-5 py-3.5 text-[11px] tracking-widest rounded-sm">
+                    <input type="tel" id="customer-phone" placeholder="SỐ ĐIỆN THOẠI..." class="w-full glass-input px-5 py-3.5 text-[11px] tracking-widest rounded-sm">
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-6 bg-black/30 p-5 border border-white/5 mb-8">
+            <div class="grid grid-cols-2 gap-6 bg-white/40 p-5 border border-white mb-8 rounded-sm shadow-sm">
                 <div>
-                    <span class="block text-[9px] text-gray-500 mb-2 uppercase tracking-widest">Giá trị / Đơn vị</span>
-                    <div class="text-white text-sm tracking-widest mt-1">
-                        <span id="modal-price">0</span><span class="text-[10px] ml-1 text-gray-400">VNĐ</span>
+                    <span class="block text-[9px] text-slate-500 mb-2 uppercase tracking-widest">Giá trị / Đơn vị</span>
+                    <div class="text-slate-900 text-sm tracking-widest mt-1 font-medium">
+                        <span id="modal-price">0</span><span class="text-[10px] ml-1 text-slate-500">VNĐ</span>
                     </div>
                 </div>
                 <div>
-                    <span class="block text-[9px] text-gray-500 mb-2 uppercase tracking-widest">Số lượng</span>
-                    <div class="flex items-center border border-white/10 bg-black/50 h-[36px] w-28 rounded-sm overflow-hidden">
-                        <button onclick="changeQuantity(-1)" class="w-10 h-full hover:bg-white/10 text-gray-400 hover:text-white transition-colors">-</button>
-                        <input type="number" id="purchase-qty" value="1" min="1" onchange="validateQuantity()" class="w-full text-center bg-transparent border-none text-[11px] text-white focus:ring-0 p-0 outline-none appearance-none font-mono">
-                        <button onclick="changeQuantity(1)" class="w-10 h-full hover:bg-white/10 text-gray-400 hover:text-white transition-colors">+</button>
+                    <span class="block text-[9px] text-slate-500 mb-2 uppercase tracking-widest">Số lượng</span>
+                    <div class="flex items-center border border-slate-900/10 bg-white/60 h-[36px] w-28 rounded-sm overflow-hidden">
+                        <button onclick="changeQuantity(-1)" class="w-10 h-full hover:bg-slate-900/5 text-slate-600 hover:text-slate-900 transition-colors">-</button>
+                        <input type="number" id="purchase-qty" value="1" min="1" onchange="validateQuantity()" class="w-full text-center bg-transparent border-none text-[11px] text-slate-900 focus:ring-0 p-0 outline-none appearance-none font-mono">
+                        <button onclick="changeQuantity(1)" class="w-10 h-full hover:bg-slate-900/5 text-slate-600 hover:text-slate-900 transition-colors">+</button>
                     </div>
                 </div>
             </div>
 
-            <div class="pt-6 border-t border-white/10 flex items-center justify-between mt-auto">
+            <div class="pt-6 border-t border-slate-900/10 flex items-center justify-between mt-auto">
                 <div>
-                    <span class="text-[9px] text-gray-500 uppercase tracking-widest block mb-1">Tổng chi phí</span>
-                    <span id="modal-total" class="text-xl font-medium text-white tracking-widest">0 VNĐ</span>
+                    <span class="text-[9px] text-slate-500 uppercase tracking-widest block mb-1">Tổng chi phí</span>
+                    <span id="modal-total" class="text-xl font-medium text-slate-900 tracking-widest">0 VNĐ</span>
                 </div>
-                <button onclick="createOrderCheckout()" id="btn-submit-order" class="btn-primary py-3.5 px-10 text-[11px] uppercase tracking-widest">
+                <button onclick="createOrderCheckout()" id="btn-submit-order" class="btn-primary py-3.5 px-10 text-[11px] uppercase tracking-widest rounded-sm">
                     Khởi tạo
                 </button>
             </div>
         </div>
     </div>
 
-    <div id="payment-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90 backdrop-blur-2xl hidden">
-        <div class="glass-panel w-full max-w-sm p-10 text-center relative animate-fade border border-white/10 shadow-[0_0_50px_rgba(255,255,255,0.03)] rounded-sm">
-            <p class="text-[9px] text-gray-400 uppercase tracking-widest mb-3 flex items-center justify-center gap-2">
+    <div id="payment-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-2xl hidden">
+        <div class="glass-panel w-full max-w-sm p-10 text-center relative animate-fade border border-white shadow-[0_0_50px_rgba(0,0,0,0.05)] rounded-sm">
+            <p class="text-[9px] text-slate-500 uppercase tracking-widest mb-3 flex items-center justify-center gap-2">
                 <span class="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-pulse"></span> Phiên chờ thanh toán
             </p>
             
-            <div class="bg-white p-3 inline-block mb-8 relative rounded-sm shadow-xl">
+            <div class="bg-white p-3 inline-block mb-8 relative rounded-sm shadow-xl border border-slate-100">
                 <img id="payment-qr-img" src="" alt="QR" class="w-48 h-48 object-cover opacity-0 transition-opacity duration-500">
                 <div id="qr-loading" class="absolute inset-0 flex items-center justify-center bg-white">
-                    <div class="w-6 h-6 border-t-2 border-black rounded-full animate-spin"></div>
+                    <div class="w-6 h-6 border-t-2 border-slate-900 rounded-full animate-spin"></div>
                 </div>
             </div>
 
-            <div class="border border-white/5 bg-black/40 p-5 mb-8 text-left rounded-sm">
-                <div class="flex justify-between items-center mb-4 border-b border-white/5 pb-3">
-                    <span class="text-[10px] text-gray-500 uppercase tracking-widest">Định mức</span>
-                    <span id="payment-amount" class="text-sm text-white tracking-widest font-medium">0 VNĐ</span>
+            <div class="border border-white bg-white/50 p-5 mb-8 text-left rounded-sm shadow-sm">
+                <div class="flex justify-between items-center mb-4 border-b border-slate-900/5 pb-3">
+                    <span class="text-[10px] text-slate-500 uppercase tracking-widest">Định mức</span>
+                    <span id="payment-amount" class="text-sm text-slate-900 tracking-widest font-medium">0 VNĐ</span>
                 </div>
                 <div class="flex justify-between items-center">
-                    <span class="text-[10px] text-gray-500 uppercase tracking-widest">Cú pháp</span>
+                    <span class="text-[10px] text-slate-500 uppercase tracking-widest">Cú pháp</span>
                     <div class="flex items-center gap-3">
-                        <span id="payment-syntax" class="text-[11px] text-white tracking-widest font-mono bg-white/5 px-2 py-1">HD...</span>
-                        <button onclick="copyToClipboard('payment-syntax-hidden')" class="text-[9px] border border-white/20 hover:bg-white hover:text-black text-white px-2.5 py-1.5 uppercase tracking-widest transition-colors">Copy</button>
+                        <span id="payment-syntax" class="text-[11px] text-slate-800 tracking-widest font-mono bg-white px-2 py-1 border border-slate-900/5">HD...</span>
+                        <button onclick="copyToClipboard('payment-syntax-hidden')" class="text-[9px] border border-slate-900/20 hover:bg-slate-900 hover:text-white text-slate-700 px-2.5 py-1.5 uppercase tracking-widest transition-colors rounded-sm">Copy</button>
                         <input type="text" id="payment-syntax-hidden" class="sr-only">
                     </div>
                 </div>
@@ -312,54 +320,74 @@
 
             <div class="flex items-center justify-center gap-3 mb-6">
                 <div class="flex gap-1">
-                    <div class="w-1 h-1 rounded-full bg-gray-500 animate-bounce"></div>
-                    <div class="w-1 h-1 rounded-full bg-gray-500 animate-bounce" style="animation-delay: 0.1s"></div>
-                    <div class="w-1 h-1 rounded-full bg-gray-500 animate-bounce" style="animation-delay: 0.2s"></div>
+                    <div class="w-1 h-1 rounded-full bg-slate-400 animate-bounce"></div>
+                    <div class="w-1 h-1 rounded-full bg-slate-400 animate-bounce" style="animation-delay: 0.1s"></div>
+                    <div class="w-1 h-1 rounded-full bg-slate-400 animate-bounce" style="animation-delay: 0.2s"></div>
                 </div>
-                <p class="text-[9px] text-gray-500 tracking-widest uppercase">Đang chờ Webhook phản hồi...</p>
+                <p class="text-[9px] text-slate-500 tracking-widest uppercase">Đang chờ Webhook phản hồi...</p>
             </div>
 
             <div class="space-y-3">
-                <button onclick="triggerManualConfirm()" id="btn-manual-confirm" class="w-full py-3.5 bg-white text-black hover:bg-gray-200 text-[10px] font-medium uppercase tracking-[0.15em] transition-colors shadow-lg shadow-white/10">
+                <button onclick="triggerManualConfirm()" id="btn-manual-confirm" class="w-full py-3.5 bg-slate-900 text-white hover:bg-slate-800 text-[10px] font-medium uppercase tracking-[0.15em] transition-colors shadow-lg rounded-sm">
                     Xác nhận thủ công
                 </button>
-                <button onclick="cancelPayment()" class="w-full py-3.5 border border-transparent hover:border-white/10 text-gray-500 hover:text-white text-[10px] uppercase tracking-widest transition-colors">
+                <button onclick="cancelPayment()" class="w-full py-3.5 border border-transparent hover:border-slate-900/10 text-slate-500 hover:text-slate-900 text-[10px] uppercase tracking-widest transition-colors rounded-sm">
                     Hủy phiên
                 </button>
             </div>
         </div>
     </div>
 
-    <div id="success-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl hidden">
-        <div class="glass-panel w-full max-w-xl p-10 relative animate-fade border border-white/20 shadow-[0_0_60px_rgba(255,255,255,0.05)] rounded-sm">
-            <div class="text-center mb-8 border-b border-white/10 pb-6">
-                <div class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/20">
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                </div>
-                <p class="text-[9px] text-gray-400 uppercase tracking-[0.2em] mb-2">Trạng thái: 200 OK</p>
-                <h3 class="text-xl font-light text-gradient tracking-widest uppercase">Kích hoạt hoàn tất</h3>
+    <div id="success-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xl hidden">
+        <div class="glass-panel w-full max-w-xl p-10 relative animate-fade border border-white shadow-[0_0_60px_rgba(0,0,0,0.05)] rounded-sm">
+            <div class="text-center mb-8 border-b border-slate-900/10 pb-6">
+                <p class="text-[9px] text-slate-500 uppercase tracking-[0.2em] mb-2 mt-4">Trạng thái: 200 OK</p>
+                <h3 class="text-xl font-medium text-gradient tracking-widest uppercase">Kích hoạt hoàn tất</h3>
             </div>
 
-            <div class="border border-white/5 bg-black/60 p-6 mb-8 rounded-sm">
+            <div class="border border-white bg-white/60 p-6 mb-8 rounded-sm shadow-sm">
                 <div class="flex justify-between items-center mb-4">
-                    <p class="text-[9px] text-gray-500 uppercase tracking-widest">Dữ liệu phân bổ</p>
-                    <button onclick="copyToClipboard('delivered-data')" class="text-[9px] text-white hover:text-gray-300 uppercase tracking-widest underline underline-offset-4">Copy toàn bộ</button>
+                    <p class="text-[9px] text-slate-500 uppercase tracking-widest">Dữ liệu phân bổ</p>
+                    <button onclick="copyToClipboard('delivered-data')" class="text-[9px] text-slate-800 hover:text-slate-500 uppercase tracking-widest underline underline-offset-4">Copy toàn bộ</button>
                 </div>
-                <textarea id="delivered-data" readonly class="w-full h-32 bg-white/5 border border-white/5 p-4 text-white text-[11px] font-mono focus:outline-none focus:border-white/20 resize-none leading-relaxed transition-colors" spellcheck="false"></textarea>
+                <textarea id="delivered-data" readonly class="w-full h-32 bg-white/80 border border-slate-900/10 p-4 text-slate-800 text-[11px] font-mono focus:outline-none focus:border-slate-900/30 resize-none leading-relaxed transition-colors rounded-sm" spellcheck="false"></textarea>
             </div>
 
-            <button onclick="closeSuccessModal()" class="w-full btn-primary py-4 text-[11px] uppercase tracking-[0.2em]">
+            <button onclick="closeSuccessModal()" class="w-full btn-primary py-4 text-[11px] uppercase tracking-[0.2em] rounded-sm">
                 Đóng giao diện
             </button>
         </div>
     </div>
 
     <script>
+        // MOCK DATA FOR LOCAL TESTING
         const MOCK_PRODUCTS = [
             { id: "P001", name: "Netflix Premium UltraHD 1 Tháng (Cá nhân)", category: "Trực tuyến", price: 55000, description: "Phân giải 4K cao cấp nhất.\nTương thích đa nền tảng.\nChính sách 1 đổi 1 30 ngày.\nNghiêm cấm đổi thông tin.", image: "https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?w=600&auto=format&fit=crop&q=80" },
             { id: "P002", name: "Spotify Premium 12 Tháng", category: "Âm nhạc", price: 180000, description: "Nâng cấp chính chủ.\nBảo lưu danh sách phát.\nHiệu lực 12 tháng liên tục.", image: "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=600&auto=format&fit=crop&q=80" }
         ];
 
+        const MOCK_ORDERS = [
+            {
+                email: "test@gmail.com",
+                orderId: "DH-8X92M1",
+                timestamp: "04/06/2026 14:30:00",
+                productName: "Netflix Premium UltraHD 1 Tháng (Cá nhân)",
+                qty: 1,
+                price: 55000,
+                data: "Tài khoản: netflix_user_123@gmail.com\nMật khẩu: netflixPass2026\nProfile: 01"
+            },
+            {
+                email: "test@gmail.com",
+                orderId: "DH-2K19A7",
+                timestamp: "01/06/2026 09:15:22",
+                productName: "Spotify Premium 12 Tháng",
+                qty: 2,
+                price: 180000,
+                data: "Key 1: SPOT-1234-ABCD-5678\nKey 2: SPOT-9876-WXYZ-4321"
+            }
+        ];
+
+        // SYSTEM STATE
         let webAppUrl = "https://script.google.com/macros/s/AKfycbzSbsoV4ANkS6-vFqHROuSFRnLFvbGJ5iyC-Cw6KC00mI2lOIUO2h3nzWiPE8-beDV5xA/exec";
         let rawProducts = [];
         let filteredProducts = [];
@@ -371,12 +399,15 @@
         let activeOrderId = null;
         let customerData = { name: "", email: "", phone: "" };
 
+        // INITIALIZATION
         window.addEventListener('load', initApp);
 
         function initApp() {
             const banner = document.getElementById('connection-banner');
             document.getElementById('settings-api-url').value = webAppUrl;
 
+            // In typical setup, you verify if webAppUrl is a valid endpoint.
+            // For now we assume if it's set, we try. If it fails, fallback kicks in.
             if (webAppUrl) {
                 banner.classList.add('hidden');
                 fetchProductsFromAPI();
@@ -391,34 +422,15 @@
             const tabs = ['products', 'history', 'admin'];
             tabs.forEach(t => {
                 document.getElementById(`panel-${t}`).classList.add('hidden');
-                document.getElementById(`tab-${t}`).classList.remove('tab-active', 'text-black');
-                document.getElementById(`tab-${t}`).classList.add('text-gray-500');
+                document.getElementById(`tab-${t}`).classList.remove('tab-active', 'text-slate-900');
+                document.getElementById(`tab-${t}`).classList.add('text-slate-500');
             });
             document.getElementById(`panel-${tab}`).classList.remove('hidden');
             
-            // Allow subtle reflow animation
             setTimeout(() => {
-                document.getElementById(`tab-${tab}`).classList.add('tab-active', 'text-black');
-                document.getElementById(`tab-${tab}`).classList.remove('text-gray-500');
+                document.getElementById(`tab-${tab}`).classList.add('tab-active', 'text-slate-900');
+                document.getElementById(`tab-${tab}`).classList.remove('text-slate-500');
             }, 10);
-        }
-
-        async function fetchProductsFromAPI() {
-            if (!webAppUrl) return;
-            showLoading(true);
-            try {
-                const response = await fetch(`${webAppUrl}?action=getProducts`);
-                const data = await response.json();
-                if (data && data.status === "success") {
-                    rawProducts = data.data;
-                } else throw new Error();
-            } catch (error) {
-                showToast("Dữ liệu tuyến không phản hồi. Trả về cục bộ.", "warning");
-                rawProducts = JSON.parse(JSON.stringify(MOCK_PRODUCTS));
-            } finally {
-                renderApp();
-                showLoading(false);
-            }
         }
 
         function showLoading(isLoading) {
@@ -437,6 +449,25 @@
             document.getElementById('stat-products').innerText = rawProducts.length;
             renderCategories();
             filterProducts();
+        }
+
+        async function fetchProductsFromAPI() {
+            if (!webAppUrl) return;
+            showLoading(true);
+            try {
+                // Throws error immediately because URL is purposely malformed in example
+                const response = await fetch(`${webAppUrl}?action=getProducts`);
+                const data = await response.json();
+                if (data && data.status === "success") {
+                    rawProducts = data.data;
+                } else throw new Error();
+            } catch (error) {
+                showToast("Dữ liệu tuyến không phản hồi. Trả về cục bộ.", "warning");
+                rawProducts = JSON.parse(JSON.stringify(MOCK_PRODUCTS));
+            } finally {
+                renderApp();
+                showLoading(false);
+            }
         }
 
         function renderCategories() {
@@ -463,12 +494,12 @@
 
         function updateActiveCategoryUI() {
             document.querySelectorAll('.cat-chip').forEach(btn => {
-                btn.className = "cat-chip px-5 py-2.5 text-gray-400 border border-white/5 bg-white/5 text-[10px] tracking-[0.15em] uppercase hover:bg-white/10 transition-all rounded-full";
+                btn.className = "cat-chip px-5 py-2.5 text-slate-500 border border-slate-900/5 bg-white/50 text-[10px] tracking-[0.15em] uppercase hover:bg-white/80 transition-all rounded-full";
             });
             const targetId = selectedCategory === 'all' ? 'cat-all' : `cat-${encodeURIComponent(selectedCategory)}`;
             const activeBtn = document.getElementById(targetId);
             if (activeBtn) {
-                activeBtn.className = "cat-chip px-5 py-2.5 bg-white text-black border border-white text-[10px] tracking-[0.15em] uppercase transition-all rounded-full shadow-[0_0_15px_rgba(255,255,255,0.2)]";
+                activeBtn.className = "cat-chip px-5 py-2.5 bg-slate-900 text-white border border-slate-900 text-[10px] tracking-[0.15em] uppercase transition-all rounded-full shadow-[0_4px_15px_rgba(0,0,0,0.1)]";
             }
         }
 
@@ -519,23 +550,22 @@
 
             emptyState.classList.add('hidden');
             grid.innerHTML = filteredProducts.map((p, index) => {
-                // Add staggered animation delay
                 const delay = index * 0.05;
                 return `
                     <div class="glass-panel hover-lift flex flex-col group rounded-sm overflow-hidden" style="animation-delay: ${delay}s">
-                        <div class="aspect-video w-full overflow-hidden relative border-b border-white/10 bg-black">
-                            <div class="absolute inset-0 bg-gradient-to-t from-[#030303] via-transparent to-transparent z-10 opacity-80 group-hover:opacity-60 transition-opacity"></div>
-                            <img src="${p.image}" alt="Data" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out opacity-70 group-hover:opacity-100" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600'">
+                        <div class="aspect-video w-full overflow-hidden relative border-b border-white bg-slate-100">
+                            <div class="absolute inset-0 bg-gradient-to-t from-white/90 via-white/20 to-transparent z-10 opacity-90 group-hover:opacity-70 transition-opacity"></div>
+                            <img src="${p.image}" alt="Data" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out opacity-90 group-hover:opacity-100" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600'">
                         </div>
                         <div class="p-6 flex-1 flex flex-col justify-between relative z-20 -mt-8">
-                            <div class="bg-[#030303]/80 backdrop-blur-md p-4 border border-white/5 shadow-xl rounded-sm mb-4">
-                                <span class="text-[8px] text-gray-400 uppercase tracking-[0.2em] block mb-2">${p.category}</span>
-                                <h3 class="text-sm font-medium text-white uppercase tracking-wider mb-2 line-clamp-2 leading-snug">${p.name}</h3>
-                                <p class="text-[10px] text-gray-500 line-clamp-2 font-light whitespace-pre-line text-justify">${p.description}</p>
+                            <div class="bg-white/80 backdrop-blur-md p-4 border border-white shadow-sm rounded-sm mb-4">
+                                <span class="text-[8px] text-slate-500 uppercase tracking-[0.2em] block mb-2">${p.category}</span>
+                                <h3 class="text-sm font-medium text-slate-900 uppercase tracking-wider mb-2 line-clamp-2 leading-snug">${p.name}</h3>
+                                <p class="text-[10px] text-slate-600 line-clamp-2 font-light whitespace-pre-line text-justify">${p.description}</p>
                             </div>
                             <div class="flex items-center justify-between mt-auto px-2">
-                                <span class="text-[13px] text-white tracking-widest font-medium">${formatMoney(p.price)}đ</span>
-                                <button onclick="openBuyModal('${p.id}')" class="px-5 py-2.5 border border-white/10 hover:border-white hover:bg-white text-white hover:text-black text-[9px] uppercase tracking-widest transition-all rounded-sm shadow-lg">
+                                <span class="text-[13px] text-slate-900 tracking-widest font-medium">${formatMoney(p.price)}đ</span>
+                                <button onclick="openBuyModal('${p.id}')" class="px-5 py-2.5 border border-slate-900/10 hover:border-slate-900 hover:bg-slate-900 text-slate-700 hover:text-white text-[9px] uppercase tracking-widest transition-all rounded-sm shadow-sm">
                                     KHỞI TẠO
                                 </button>
                             </div>
@@ -725,38 +755,53 @@ Email: ${customerData.email}`;
             btn.disabled = true;
             btn.innerText = "ĐANG XỬ LÝ...";
 
+            let finalOrders = [];
+
             try {
+                // If the URL is explicitly broken or local-only, skip network delay
+                if(webAppUrl.includes("httpshttps") || !webAppUrl) throw new Error("Local Mode Switch");
+
                 const response = await fetch(`${webAppUrl}?action=getOrders&email=${encodeURIComponent(email)}`);
                 const resData = await response.json();
                 if (resData.status === "success") {
-                    if (!resData.data || resData.data.length === 0) {
-                        resultBox.innerHTML = `<div class="text-center py-16 border border-white/5 bg-white/[0.02] rounded-sm"><p class="text-[10px] text-gray-500 uppercase tracking-widest">Không có bản ghi hợp lệ.</p></div>`;
-                    } else {
-                        resultBox.innerHTML = resData.data.map((ord, idx) => `
-                            <div class="border border-white/5 bg-black/40 p-6 mb-4 rounded-sm hover:bg-black/60 transition-colors">
-                                <div class="flex justify-between border-b border-white/5 pb-4 mb-5">
-                                    <span class="text-[9px] text-gray-300 bg-white/10 px-3 py-1.5 tracking-widest rounded-sm">${ord.orderId}</span>
-                                    <span class="text-[10px] text-gray-500 flex items-center gap-2"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> ${ord.timestamp}</span>
-                                </div>
-                                <h4 class="text-[13px] font-medium text-white uppercase tracking-wider mb-3">${ord.productName}</h4>
-                                <div class="flex justify-between text-[11px] text-gray-400 mb-5 uppercase tracking-widest bg-white/5 p-3 rounded-sm border border-white/5">
-                                    <span>Số lượng: <span class="text-white">${ord.qty}</span></span>
-                                    <span class="text-white font-medium">${formatMoney(ord.price * ord.qty)} VNĐ</span>
-                                </div>
-                                <div>
-                                    <span class="text-[9px] text-gray-500 uppercase tracking-[0.15em] block mb-2">Chuỗi ký tự xuất</span>
-                                    <textarea id="history-txt-${idx}" readonly class="w-full h-16 bg-[#0a0a0a] border border-white/10 text-gray-300 text-[11px] font-mono focus:ring-1 focus:ring-white/30 p-3 resize-none outline-none rounded-sm transition-shadow" spellcheck="false">${ord.data}</textarea>
-                                </div>
-                            </div>
-                        `).join('');
-                    }
+                    finalOrders = resData.data;
                 } else throw new Error();
             } catch (err) {
-                resultBox.innerHTML = `<div class="text-center py-16 border border-red-500/20 bg-red-950/20 rounded-sm"><p class="text-[10px] text-red-400 uppercase tracking-widest shadow-red-500/20">Lỗi cấu trúc hoặc kết nối.</p></div>`;
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "YÊU CẦU";
+                // Fallback to MOCK_ORDERS
+                showToast("Kết nối API lỗi. Sử dụng bộ nhớ cục bộ (Mock Data).", "warning");
+                // Add tiny delay for realism
+                await new Promise(resolve => setTimeout(resolve, 500));
+                finalOrders = MOCK_ORDERS.filter(o => o.email.toLowerCase() === email.toLowerCase());
             }
+
+            // Render Results
+            if (!finalOrders || finalOrders.length === 0) {
+                resultBox.innerHTML = `<div class="text-center py-16 border border-slate-900/5 bg-white/50 rounded-sm"><p class="text-[10px] text-slate-500 uppercase tracking-widest">Không có bản ghi hợp lệ.</p></div>`;
+            } else {
+                resultBox.innerHTML = finalOrders.map((ord, idx) => `
+                    <div class="border border-white bg-white/60 p-6 mb-4 rounded-sm shadow-sm hover:bg-white/80 transition-colors">
+                        <div class="flex justify-between border-b border-slate-900/5 pb-4 mb-5">
+                            <span class="text-[9px] text-slate-700 bg-white px-3 py-1.5 tracking-widest rounded-sm border border-slate-100">${ord.orderId}</span>
+                            <span class="text-[10px] text-slate-500 flex items-center gap-2">${ord.timestamp}</span>
+                        </div>
+                        <h4 class="text-[13px] font-medium text-slate-900 uppercase tracking-wider mb-3">${ord.productName}</h4>
+                        <div class="flex justify-between text-[11px] text-slate-600 mb-5 uppercase tracking-widest bg-white/50 p-3 rounded-sm border border-slate-900/5">
+                            <span>Số lượng: <span class="text-slate-900">${ord.qty}</span></span>
+                            <span class="text-slate-900 font-medium">${formatMoney(ord.price * ord.qty)} VNĐ</span>
+                        </div>
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-[9px] text-slate-500 uppercase tracking-[0.15em]">Chuỗi ký tự xuất</span>
+                                <button onclick="copyToClipboard('history-txt-${idx}')" class="text-[9px] text-slate-800 hover:text-slate-500 uppercase tracking-widest underline underline-offset-4">Copy Dữ Liệu</button>
+                            </div>
+                            <textarea id="history-txt-${idx}" readonly class="w-full h-16 bg-white border border-slate-900/10 text-slate-700 text-[11px] font-mono focus:ring-1 focus:ring-slate-900/20 p-3 resize-none outline-none rounded-sm transition-shadow shadow-inner" spellcheck="false">${ord.data}</textarea>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            btn.disabled = false;
+            btn.innerText = "YÊU CẦU";
         }
 
         function checkPasswordAndOpenSettings() {
@@ -784,12 +829,12 @@ Email: ${customerData.email}`;
                 const response = await fetch(`${apiVal}?action=getProducts`);
                 const data = await response.json();
                 if (data && data.status === "success") {
-                    testBox.className = "p-6 border border-green-500/20 bg-green-950/20 mt-6 rounded-sm shadow-[0_0_20px_rgba(34,197,94,0.05)]";
-                    testText.innerHTML = `<span class="text-green-400 text-[11px] uppercase tracking-widest leading-relaxed">Status: 200 OK<br>Data Arrays: ${data.data.length} Nodes</span>`;
+                    testBox.className = "p-6 border border-green-200 bg-green-50 mt-6 rounded-sm shadow-sm";
+                    testText.innerHTML = `<span class="text-green-600 text-[11px] uppercase tracking-widest leading-relaxed">Status: 200 OK<br>Data Arrays: ${data.data.length} Nodes</span>`;
                 } else throw new Error();
             } catch (err) {
-                testBox.className = "p-6 border border-red-500/20 bg-red-950/20 mt-6 rounded-sm shadow-[0_0_20px_rgba(239,68,68,0.05)]";
-                testText.innerHTML = `<span class="text-red-400 text-[11px] uppercase tracking-widest">Connection Refused. Timeout or Invalid Route.</span>`;
+                testBox.className = "p-6 border border-red-200 bg-red-50 mt-6 rounded-sm shadow-sm";
+                testText.innerHTML = `<span class="text-red-500 text-[11px] uppercase tracking-widest">Connection Refused. Timeout or Invalid Route.</span>`;
             }
         }
 
@@ -797,10 +842,10 @@ Email: ${customerData.email}`;
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             
-            let styleClass = "bg-[#0a0a0a]/90 border-white/10 text-white backdrop-blur-xl shadow-2xl";
-            if (type === "success") styleClass = "bg-green-950/80 border-green-500/30 text-green-100 backdrop-blur-xl shadow-[0_5px_30px_rgba(34,197,94,0.15)]";
-            else if (type === "warning") styleClass = "bg-yellow-950/80 border-yellow-500/30 text-yellow-100 backdrop-blur-xl shadow-[0_5px_30px_rgba(234,179,8,0.15)]";
-            else if (type === "error") styleClass = "bg-red-950/80 border-red-500/30 text-red-100 backdrop-blur-xl shadow-[0_5px_30px_rgba(239,68,68,0.15)]";
+            let styleClass = "bg-white border-slate-200 text-slate-800 shadow-[0_5px_30px_rgba(0,0,0,0.08)]";
+            if (type === "success") styleClass = "bg-green-50 border-green-200 text-green-800 shadow-[0_5px_30px_rgba(34,197,94,0.1)]";
+            else if (type === "warning") styleClass = "bg-yellow-50 border-yellow-200 text-yellow-800 shadow-[0_5px_30px_rgba(234,179,8,0.1)]";
+            else if (type === "error") styleClass = "bg-red-50 border-red-200 text-red-800 shadow-[0_5px_30px_rgba(239,68,68,0.1)]";
 
             toast.className = `flex items-center p-4 text-[10px] uppercase tracking-[0.15em] border ${styleClass} transition-all duration-400 cubic-bezier(0.16, 1, 0.3, 1) transform translate-y-8 opacity-0 rounded-sm font-medium`;
             toast.innerHTML = `<span class="flex-1">${message}</span>`;
