@@ -1,218 +1,264 @@
 <!DOCTYPE html>
 <html lang="vi" class="h-full">
 <head>
-        <link rel="icon" href="https://static.vecteezy.com/system/resources/thumbnails/076/467/495/small/3d-user-profile-avatar-button-icon-in-yellow-isolated-on-transparent-background-png.png" alt="Logo" class="w-10 h-10 rounded-xl object-cover mr-3 shadow-md border border-slate-100 transition-transform group-hover:scale-105">
+    <link rel="icon" href="https://static.vecteezy.com/system/resources/thumbnails/076/467/495/small/3d-user-profile-avatar-button-icon-in-yellow-isolated-on-transparent-background-png.png" alt="Logo" class="w-10 h-10 rounded-xl object-cover mr-3 shadow-md border border-slate-200 transition-transform hover:scale-105">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ thống phân phối kỹ thuật số | Giao diện quản trị</title>
+    <title>Digital Hub | Hệ thống phân phối kỹ thuật số</title>
     <script src="https://cdn.tailwindcss.com/3.4.17"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@100;200;300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@100;200;300;400;500;600;700;800&display=swap');
 
         * { 
             font-family: 'Be Vietnam Pro', sans-serif; 
             box-sizing: border-box; 
             -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         
         body { 
-            background-color: #f8fafc;
-            color: #334155;
+            background-color: #f8fafc; /* Nền xám cực sáng (Slate-50) */
+            color: #0f172a; /* Chữ màu Slate-900 */
             position: relative;
             overflow-x: hidden;
+            min-height: 100vh;
         }
 
+        /* Lưới chấm bi (Dot Matrix) hiện đại */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 24px 24px;
+            z-index: -2;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        /* Ambient Glow sáng sủa, pastel nhẹ */
         .ambient-glow-1 {
             position: fixed; top: -10%; left: -10%; width: 50vw; height: 50vw;
-            background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, rgba(255,255,255,0) 70%);
-            border-radius: 50%; filter: blur(60px); z-index: -1; pointer-events: none;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%; filter: blur(80px); z-index: -1; pointer-events: none;
         }
         .ambient-glow-2 {
             position: fixed; bottom: -10%; right: -10%; width: 50vw; height: 50vw;
-            background: radial-gradient(circle, rgba(236,72,153,0.1) 0%, rgba(255,255,255,0) 70%);
-            border-radius: 50%; filter: blur(60px); z-index: -1; pointer-events: none;
-        }
-        .ambient-glow-3 {
-            position: fixed; top: 30%; left: 30%; width: 60vw; height: 60vw;
-            background: radial-gradient(circle, rgba(56,189,248,0.1) 0%, rgba(255,255,255,0) 70%);
+            background: radial-gradient(circle, rgba(167, 139, 250, 0.1) 0%, rgba(255,255,255,0) 70%);
             border-radius: 50%; filter: blur(80px); z-index: -1; pointer-events: none;
         }
 
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.02); }
-        ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.3); }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
+        /* Cấu trúc thẻ hiện đại (Bento) */
+        .bento-card {
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 24px;
         }
 
         .hover-lift:hover {
-            transform: translateY(-4px);
-            border-color: rgba(255, 255, 255, 1);
-            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.08), 0 0 20px 0 rgba(255,255,255,0.8);
-            background: rgba(255, 255, 255, 0.8);
+            transform: translateY(-4px) scale(1.005);
+            border-color: rgba(0, 0, 0, 0.08);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.08), 0 0 15px 0 rgba(0,0,0,0.02);
         }
 
-        .glass-input {
-            background: rgba(255, 255, 255, 0.5);
-            border: 1px solid rgba(0, 0, 0, 0.05);
+        /* Form Input Sáng sủa */
+        .modern-input {
+            background: #f1f5f9; /* Slate 100 */
+            border: 1px solid transparent;
             color: #0f172a;
             transition: all 0.3s ease;
             outline: none;
+            border-radius: 16px;
         }
-        .glass-input:focus {
-            border-color: rgba(0, 0, 0, 0.15);
-            background: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 0 15px rgba(0,0,0,0.03);
+        .modern-input:focus {
+            background: #ffffff;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
         }
+        .modern-input::placeholder { color: #94a3b8; }
 
+        /* Tabs Hiện đại */
         .tab-active { 
             background: #0f172a !important; 
             color: #ffffff !important; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 20px -10px rgba(15, 23, 42, 0.4);
         }
 
+        /* Nút bấm Đen tối giản cao cấp */
         .btn-primary {
             background: #0f172a;
             color: #ffffff;
-            transition: all 0.3s ease;
-            border: 1px solid transparent;
-            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
+            border-radius: 14px;
         }
         .btn-primary:hover {
-            background: transparent;
-            color: #0f172a;
+            background: #1e293b;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.2);
+        }
+        
+        .cat-chip-active {
+            background: #0f172a;
+            color: #ffffff;
             border-color: #0f172a;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
         }
 
         .text-gradient {
-            background: linear-gradient(135deg, #0f172a 0%, #3b82f6 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
         @keyframes fadeIn { 
-            from { opacity: 0; transform: translateY(10px); } 
+            from { opacity: 0; transform: translateY(15px); } 
             to { opacity: 1; transform: translateY(0); } 
         }
-        .animate-fade { animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .animate-fade { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     </style>
 </head>
 <body class="h-full w-full overflow-auto font-light">
 
     <div class="ambient-glow-1"></div>
     <div class="ambient-glow-2"></div>
-    <div class="ambient-glow-3"></div>
 
-    <div id="toast-container" class="fixed bottom-5 right-5 z-[100] flex flex-col gap-2 max-w-md w-full pointer-events-none"></div>
+    <div id="toast-container" class="fixed bottom-5 right-5 z-[100] flex flex-col gap-3 max-w-md w-full pointer-events-none"></div>
 
-    <header class="border-b border-slate-900/5 sticky top-0 z-40 bg-white/40 backdrop-blur-xl supports-[backdrop-filter]:bg-white/30">
-        <div class="max-w-7xl mx-auto px-6 py-5 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div>
-                <h1 class="text-xl font-medium tracking-[0.2em] uppercase text-gradient">Digital Hub</h1>
-                <p class="text-[9px] text-slate-500 uppercase tracking-widest mt-1.5 flex items-center gap-2">
-                    <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                    By My Tool
-                </p>
+    <!-- Header kính mờ nền trắng -->
+    <header class="border-b border-slate-200/60 sticky top-0 z-40 bg-white/70 backdrop-blur-xl">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <div class="w-2.5 h-8 bg-blue-600 rounded-full shadow-[0_0_15px_rgba(37,99,235,0.3)]"></div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-[0.1em] uppercase text-gradient">Digital Hub</h1>
+                    <p class="text-[9px] text-slate-500 uppercase tracking-[0.2em] mt-1 flex items-center gap-2 font-medium">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        Premium Light Interface
+                    </p>
+                </div>
             </div>
-            <div id="connection-banner" class="bg-red-50 text-red-600 px-4 py-2 text-[10px] uppercase tracking-widest border border-red-200 backdrop-blur-sm shadow-[0_0_15px_rgba(239,68,68,0.05)] rounded-sm">
+            <div id="connection-banner" class="bg-red-50 text-red-600 px-4 py-2.5 text-[10px] uppercase tracking-widest border border-red-100 rounded-xl font-semibold flex items-center gap-2 shadow-sm">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                 Chưa đồng bộ API. Chạy Data Local.
             </div>
         </div>
     </header>
 
+    <!-- Navigation Tabs -->
     <div class="max-w-7xl mx-auto px-6 mt-8">
-        <div class="flex gap-2 border-b border-slate-900/5 pb-px overflow-x-auto scrollbar-hide">
-            <button onclick="switchTab('products')" id="tab-products" class="px-6 py-3.5 text-[11px] uppercase tracking-widest transition-all tab-active text-slate-500 hover:text-slate-900 rounded-t-sm">Cơ sở dữ liệu</button> 
-            <button onclick="switchTab('history')" id="tab-history" class="px-6 py-3.5 text-[11px] uppercase tracking-widest transition-all text-slate-500 hover:text-slate-900 rounded-t-sm">Truy xuất</button> 
-            <button onclick="checkPasswordAndOpenSettings()" id="tab-admin" class="px-6 py-3.5 text-[11px] uppercase tracking-widest transition-all text-slate-500 hover:text-slate-900 flex items-center gap-2 rounded-t-sm">
+        <div class="flex gap-3 overflow-x-auto scrollbar-hide bg-white p-2 rounded-2xl shadow-sm border border-slate-100 max-w-fit">
+            <button onclick="switchTab('products')" id="tab-products" class="px-6 py-3 text-[11px] font-semibold uppercase tracking-widest transition-all tab-active rounded-xl text-slate-500 hover:text-slate-900">Kho Dữ Liệu</button> 
+            <button onclick="switchTab('history')" id="tab-history" class="px-6 py-3 text-[11px] font-semibold uppercase tracking-widest transition-all rounded-xl text-slate-500 hover:bg-slate-50 hover:text-slate-900">Truy Xuất</button> 
+            <button onclick="checkPasswordAndOpenSettings()" id="tab-admin" class="px-6 py-3 text-[11px] font-semibold uppercase tracking-widest transition-all rounded-xl text-slate-500 hover:bg-slate-50 hover:text-slate-900 flex items-center gap-2">
                 Hệ thống
             </button>
         </div>
     </div>
 
     <div id="panel-products" class="max-w-7xl mx-auto px-6 py-8 animate-fade">
-        <div class="glass-panel p-6 mb-8 flex flex-col md:flex-row items-center justify-between gap-6 rounded-sm">
-            <div class="flex items-center gap-8">
-                <div>
-                    <span class="text-[9px] text-slate-500 uppercase tracking-widest block mb-1.5">Webhook IPN</span>
-                    <span class="text-sm font-medium text-slate-800 tracking-widest flex items-center gap-2">
-                        <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Active
+        <!-- Thông số tổng quan -->
+        <div class="bento-card p-6 md:p-8 mb-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex items-center gap-8 relative z-10 w-full md:w-auto">
+                <div class="bg-slate-50 px-5 py-4 rounded-2xl border border-slate-100 flex-1 md:flex-none">
+                    <span class="text-[9px] text-slate-500 font-bold uppercase tracking-widest block mb-1">Status Webhook</span>
+                    <span class="text-sm font-bold text-slate-800 tracking-widest flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span> Online
                     </span>
                 </div>
-                <div class="w-px h-8 bg-slate-900/10 hidden md:block"></div>
-                <div>
-                    <span class="text-[9px] text-slate-500 uppercase tracking-widest block mb-1.5">Tổng phân loại</span>
-                    <span id="stat-products" class="text-lg font-medium text-gradient">0</span>
+                <div class="bg-slate-50 px-5 py-4 rounded-2xl border border-slate-100 flex-1 md:flex-none">
+                    <span class="text-[9px] text-slate-500 font-bold uppercase tracking-widest block mb-1">Tổng cấu trúc</span>
+                    <span id="stat-products" class="text-xl font-bold text-blue-600">0</span>
                 </div>
             </div>
+            <div class="w-full md:w-64">
+                 <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                     <div class="h-full bg-blue-500 w-full animate-pulse"></div>
+                 </div>
+                 <p class="text-[9px] text-slate-400 mt-2 text-right uppercase tracking-widest">Đồng bộ hoàn tất</p>
+            </div>
         </div>
 
-        <div class="grid md:grid-cols-3 gap-6 mb-8">
-            <div class="relative">
-                <input type="text" id="search-input" oninput="filterProducts()" placeholder="NHẬP TỪ KHÓA TRA CỨU..." class="w-full glass-input px-4 py-3.5 text-[11px] tracking-widest placeholder:text-slate-400 rounded-sm">
+        <!-- Thanh tìm kiếm & Lọc -->
+        <div class="grid md:grid-cols-3 gap-4 mb-8">
+            <div class="relative group">
+                <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-500 transition-colors">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+                <input type="text" id="search-input" oninput="filterProducts()" placeholder="Tìm kiếm tên, mô tả..." class="w-full modern-input pl-12 pr-5 py-4 text-[12px] font-medium tracking-wide">
             </div>
             <div>
-                <select id="filter-price" onchange="filterProducts()" class="w-full glass-input px-4 py-3.5 text-[11px] uppercase tracking-widest cursor-pointer appearance-none rounded-sm">
-                    <option value="all" class="bg-white text-slate-800">Mọi phân khúc</option>
-                    <option value="under50" class="bg-white text-slate-800">< 50.000 VNĐ</option>
-                    <option value="50to100" class="bg-white text-slate-800">50.000 - 100.000 VNĐ</option>
-                    <option value="100to500" class="bg-white text-slate-800">100.000 - 500.000 VNĐ</option>
-                    <option value="over500" class="bg-white text-slate-800">> 500.000 VNĐ</option>
+                <select id="filter-price" onchange="filterProducts()" class="w-full modern-input px-5 py-4 text-[11px] font-semibold uppercase tracking-widest cursor-pointer appearance-none">
+                    <option value="all">Mọi phân khúc</option>
+                    <option value="under50">< 50.000 VNĐ</option>
+                    <option value="50to100">50.000 - 100.000 VNĐ</option>
+                    <option value="100to500">100.000 - 500.000 VNĐ</option>
+                    <option value="over500">> 500.000 VNĐ</option>
                 </select>
             </div>
             <div>
-                <select id="sort-order" onchange="filterProducts()" class="w-full glass-input px-4 py-3.5 text-[11px] uppercase tracking-widest cursor-pointer appearance-none rounded-sm">
-                    <option value="default" class="bg-white text-slate-800">Cấu hình gốc</option>
-                    <option value="price_asc" class="bg-white text-slate-800">Giá: Tăng dần</option>
-                    <option value="price_desc" class="bg-white text-slate-800">Giá: Giảm dần</option>
-                    <option value="name_asc" class="bg-white text-slate-800">Tên: A - Z</option>
+                <select id="sort-order" onchange="filterProducts()" class="w-full modern-input px-5 py-4 text-[11px] font-semibold uppercase tracking-widest cursor-pointer appearance-none">
+                    <option value="default">Cấu hình gốc</option>
+                    <option value="price_asc">Giá: Tăng dần</option>
+                    <option value="price_desc">Giá: Giảm dần</option>
+                    <option value="name_asc">Tên: A - Z</option>
                 </select>
             </div>
         </div>
 
-        <div class="mb-10 flex flex-col md:flex-row items-start md:items-center gap-6">
-            <div id="category-container" class="flex flex-wrap gap-2"></div>
+        <!-- Phân loại Categories -->
+        <div class="mb-10 flex flex-col md:flex-row items-start md:items-center gap-4">
+            <div id="category-container" class="flex flex-wrap gap-2 bg-white p-1.5 rounded-2xl border border-slate-100 shadow-sm"></div>
         </div>
 
-        <div id="loading-state" class="hidden py-32 text-center">
-            <div class="w-8 h-8 mx-auto relative mb-6">
-                <div class="absolute inset-0 border-t-2 border-slate-800 rounded-full animate-spin"></div>
-                <div class="absolute inset-2 border-r-2 border-slate-400 rounded-full animate-spin reverse-spin" style="animation-direction: reverse; animation-duration: 0.7s;"></div>
+        <div id="loading-state" class="hidden py-32 text-center bento-card">
+            <div class="w-10 h-10 mx-auto relative mb-6">
+                <div class="absolute inset-0 border-4 border-slate-100 rounded-full"></div>
+                <div class="absolute inset-0 border-t-4 border-blue-600 rounded-full animate-spin"></div>
             </div>
-            <p class="text-[10px] text-slate-500 uppercase tracking-[0.3em]">Đang truy xuất cơ sở dữ liệu...</p>
+            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] animate-pulse">Đang nạp dữ liệu máy chủ...</p>
         </div>
 
-        <div id="empty-state" class="hidden py-24 text-center glass-panel rounded-sm">
-            <p class="text-[10px] text-slate-500 uppercase tracking-widest mb-4">Cấu trúc lưới trống. Không khớp với tham số.</p>
-            <button onclick="resetFilters()" class="text-[11px] text-slate-800 hover:text-slate-500 uppercase tracking-widest border-b border-slate-900/30 hover:border-slate-900 transition-colors pb-1">Tái thiết lập</button>
+        <div id="empty-state" class="hidden py-24 text-center bento-card">
+            <div class="w-16 h-16 bg-slate-50 text-slate-300 rounded-full flex items-center justify-center mx-auto mb-4 border border-slate-100">
+                <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" /></svg>
+            </div>
+            <p class="text-[11px] text-slate-500 font-bold uppercase tracking-widest mb-4">Không tìm thấy phân mảnh dữ liệu phù hợp.</p>
+            <button onclick="resetFilters()" class="text-[11px] text-blue-600 font-bold hover:text-blue-800 uppercase tracking-widest border-b-2 border-blue-200 hover:border-blue-600 transition-colors pb-1">Xóa bộ lọc</button>
         </div>
 
-        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+        <!-- Product Grid Bento Boxes -->
+        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
     </div>
 
     <div id="panel-history" class="hidden max-w-7xl mx-auto px-6 py-8 animate-fade">
-        <div class="glass-panel p-8 md:p-12 rounded-sm">
+        <div class="bento-card p-8 md:p-14">
             <div class="max-w-2xl mx-auto">
-                <div class="flex flex-col gap-2 mb-10">
-                    <div class="flex flex-col md:flex-row gap-4">
-                        <input type="email" id="history-email-input" placeholder="ĐỊNH DANH LIÊN HỆ (EMAIL)..." class="flex-1 glass-input px-5 py-4 text-[11px] tracking-widest placeholder:text-slate-400 rounded-sm">
-                        <button onclick="searchOrders()" id="btn-search-orders" class="btn-primary py-4 px-10 text-[11px] uppercase tracking-[0.2em] rounded-sm shrink-0">Yêu cầu</button>
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-bold text-slate-900 tracking-tight uppercase mb-3">Truy Xuất <span class="text-blue-600">Dữ Liệu</span></h2>
+                    <p class="text-[13px] text-slate-500 font-medium">Kiểm tra lịch sử tài nguyên số đã được cấp phát cho bạn.</p>
+                </div>
+                <div class="flex flex-col gap-3 mb-10">
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <input type="email" id="history-email-input" placeholder="Nhập địa chỉ Email mua hàng..." class="flex-1 modern-input px-6 py-4 text-[13px] font-medium shadow-sm">
+                        <button onclick="searchOrders()" id="btn-search-orders" class="btn-primary py-4 px-10 text-[12px] uppercase tracking-widest shrink-0">QUÉT DỮ LIỆU</button>
                     </div>
-                    <p class="text-[9px] text-slate-400 tracking-widest uppercase ml-1 mt-1">* Mẹo: Thử nhập <span class="text-slate-700 font-medium select-all">test@gmail.com</span> để tra cứu dữ liệu Local.</p>
+                    <p class="text-[10px] text-slate-400 font-medium uppercase tracking-widest mt-2 ml-2">
+                        * Mẹo: Thử nhập email mẫu <span class="text-slate-700 font-bold bg-slate-100 px-2 py-1 rounded select-all">test@gmail.com</span>
+                    </p>
                 </div>
 
-                <div id="history-result" class="space-y-4">
-                    <div class="text-center py-16 border border-slate-900/5 bg-white/50 rounded-sm">
-                        <p class="text-[10px] text-slate-500 tracking-widest uppercase">Hệ thống đang chờ tham số đầu vào.</p>
+                <div id="history-result" class="space-y-5">
+                    <div class="text-center py-20 border-2 border-dashed border-slate-200 bg-slate-50/50 rounded-3xl">
+                        <p class="text-[11px] text-slate-400 font-bold tracking-[0.2em] uppercase">Hệ thống đang chờ lệnh đầu vào.</p>
                     </div>
                 </div>
             </div>
@@ -220,143 +266,175 @@
     </div>
 
     <div id="panel-admin" class="hidden max-w-7xl mx-auto px-6 py-8 animate-fade">
-        <div class="glass-panel p-8 md:p-12 rounded-sm max-w-3xl mx-auto">
-            <div class="mb-8">
-                <div class="flex items-center gap-3 mb-6 border-b border-slate-900/5 pb-6">
-                    <div class="w-2 h-2 bg-slate-800 rounded-full"></div>
-                    <p class="text-[11px] text-slate-600 uppercase tracking-widest">Định tuyến API Google Apps Script</p>
-                </div>
-                
-                <label class="block text-[9px] text-slate-500 mb-2.5 uppercase tracking-widest">Endpoint URL</label>
-                <input type="url" id="settings-api-url" class="w-full glass-input px-5 py-4 text-xs mb-6 font-mono text-slate-700 rounded-sm">
-                
-                <div class="flex gap-4">
-                    <button onclick="saveSettings()" class="btn-primary py-3.5 px-8 text-[11px] uppercase tracking-widest rounded-sm">Ghi đè cấu hình</button>
-                    <button onclick="testConnection()" class="py-3.5 px-8 border border-slate-900/10 hover:bg-slate-900/5 text-slate-600 hover:text-slate-900 text-[11px] uppercase tracking-widest transition-all rounded-sm">Ping Kết Nối</button>
-                </div>
-            </div>
-
-            <div id="test-connection-box" class="hidden p-6 border border-slate-900/5 bg-white/50 rounded-sm">
-                <p id="test-connection-text" class="text-[11px] text-slate-600 tracking-widest font-mono"></p>
-            </div>
-        </div>
-    </div>
-
-    <div id="buy-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/30 backdrop-blur-xl hidden transition-opacity">
-        <div class="glass-panel w-full max-w-lg p-8 md:p-10 relative animate-fade border border-white shadow-2xl rounded-sm">
-            <button onclick="closeBuyModal()" class="absolute right-6 top-6 text-slate-500 hover:text-slate-900 text-[10px] uppercase tracking-widest transition-colors p-2">Đóng ✕</button>
-
-            <span id="modal-category" class="inline-block text-[9px] text-slate-500 uppercase tracking-widest border border-slate-900/10 px-3 py-1.5 mb-5 bg-white/50">Phân vùng</span>
-            <h3 id="modal-title" class="text-lg font-medium text-slate-900 mb-6 pr-12 uppercase tracking-wide leading-relaxed text-gradient">Tên dữ liệu</h3>
-
-            <div class="border-l-2 border-slate-300 pl-5 mb-8">
-                <p id="modal-description" class="text-[11px] text-slate-600 whitespace-pre-line leading-relaxed text-justify"></p>
-            </div>
-
-            <div class="space-y-4 mb-8">
-                <input type="text" id="customer-name" placeholder="TÊN KHÁCH HÀNG..." class="w-full glass-input px-5 py-3.5 text-[11px] tracking-widest rounded-sm">
-                <div class="grid grid-cols-2 gap-4">
-                    <input type="email" id="customer-email" placeholder="EMAIL NHẬN DỮ LIỆU..." class="w-full glass-input px-5 py-3.5 text-[11px] tracking-widest rounded-sm">
-                    <input type="tel" id="customer-phone" placeholder="SỐ ĐIỆN THOẠI..." class="w-full glass-input px-5 py-3.5 text-[11px] tracking-widest rounded-sm">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-6 bg-white/40 p-5 border border-white mb-8 rounded-sm shadow-sm">
-                <div>
-                    <span class="block text-[9px] text-slate-500 mb-2 uppercase tracking-widest">Giá trị / Đơn vị</span>
-                    <div class="text-slate-900 text-sm tracking-widest mt-1 font-medium">
-                        <span id="modal-price">0</span><span class="text-[10px] ml-1 text-slate-500">VNĐ</span>
-                    </div>
-                </div>
-                <div>
-                    <span class="block text-[9px] text-slate-500 mb-2 uppercase tracking-widest">Số lượng</span>
-                    <div class="flex items-center border border-slate-900/10 bg-white/60 h-[36px] w-28 rounded-sm overflow-hidden">
-                        <button onclick="changeQuantity(-1)" class="w-10 h-full hover:bg-slate-900/5 text-slate-600 hover:text-slate-900 transition-colors">-</button>
-                        <input type="number" id="purchase-qty" value="1" min="1" onchange="validateQuantity()" class="w-full text-center bg-transparent border-none text-[11px] text-slate-900 focus:ring-0 p-0 outline-none appearance-none font-mono">
-                        <button onclick="changeQuantity(1)" class="w-10 h-full hover:bg-slate-900/5 text-slate-600 hover:text-slate-900 transition-colors">+</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="pt-6 border-t border-slate-900/10 flex items-center justify-between mt-auto">
-                <div>
-                    <span class="text-[9px] text-slate-500 uppercase tracking-widest block mb-1">Tổng chi phí</span>
-                    <span id="modal-total" class="text-xl font-medium text-slate-900 tracking-widest">0 VNĐ</span>
-                </div>
-                <button onclick="createOrderCheckout()" id="btn-submit-order" class="btn-primary py-3.5 px-10 text-[11px] uppercase tracking-widest rounded-sm">
-                    Khởi tạo
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <div id="payment-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-2xl hidden">
-        <div class="glass-panel w-full max-w-sm p-10 text-center relative animate-fade border border-white shadow-[0_0_50px_rgba(0,0,0,0.05)] rounded-sm">
-            <p class="text-[9px] text-slate-500 uppercase tracking-widest mb-3 flex items-center justify-center gap-2">
-                <span class="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-pulse"></span> Phiên chờ thanh toán
-            </p>
+        <div class="bento-card p-8 md:p-14 max-w-3xl mx-auto relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-blue-50 rounded-full filter blur-[80px] pointer-events-none"></div>
             
-            <div class="bg-white p-3 inline-block mb-8 relative rounded-sm shadow-xl border border-slate-100">
-                <img id="payment-qr-img" src="" alt="QR" class="w-48 h-48 object-cover opacity-0 transition-opacity duration-500">
-                <div id="qr-loading" class="absolute inset-0 flex items-center justify-center bg-white">
-                    <div class="w-6 h-6 border-t-2 border-slate-900 rounded-full animate-spin"></div>
+            <div class="mb-8 relative z-10">
+                <div class="flex items-center gap-3 mb-8 border-b border-slate-100 pb-6">
+                    <div class="w-3 h-3 bg-slate-900 rounded-full"></div>
+                    <p class="text-[13px] text-slate-900 uppercase tracking-widest font-bold">Cấu hình Endpoint (Apps Script)</p>
                 </div>
-            </div>
-
-            <div class="border border-white bg-white/50 p-5 mb-8 text-left rounded-sm shadow-sm">
-                <div class="flex justify-between items-center mb-4 border-b border-slate-900/5 pb-3">
-                    <span class="text-[10px] text-slate-500 uppercase tracking-widest">Định mức</span>
-                    <span id="payment-amount" class="text-sm text-slate-900 tracking-widest font-medium">0 VNĐ</span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <span class="text-[10px] text-slate-500 uppercase tracking-widest">Cú pháp</span>
-                    <div class="flex items-center gap-3">
-                        <span id="payment-syntax" class="text-[11px] text-slate-800 tracking-widest font-mono bg-white px-2 py-1 border border-slate-900/5">HD...</span>
-                        <button onclick="copyToClipboard('payment-syntax-hidden')" class="text-[9px] border border-slate-900/20 hover:bg-slate-900 hover:text-white text-slate-700 px-2.5 py-1.5 uppercase tracking-widest transition-colors rounded-sm">Copy</button>
-                        <input type="text" id="payment-syntax-hidden" class="sr-only">
+                
+                <label class="block text-[10px] text-slate-500 mb-3 font-bold uppercase tracking-widest pl-2">URL Tuyến Dữ Liệu</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-400">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
                     </div>
+                    <input type="url" id="settings-api-url" class="w-full modern-input pl-12 pr-6 py-4 text-[13px] mb-8 font-mono text-slate-700 shadow-inner bg-slate-50 focus:bg-white">
+                </div>
+                
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button onclick="saveSettings()" class="btn-primary py-4 px-8 text-[12px] uppercase tracking-widest flex-1 justify-center flex items-center gap-2">
+                        Ghi đè cấu hình
+                    </button>
+                    <button onclick="testConnection()" class="py-4 px-8 bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-[12px] uppercase tracking-widest transition-all rounded-xl flex-1 justify-center flex items-center gap-2 shadow-sm">
+                        Ping Kết Nối
+                    </button>
                 </div>
             </div>
 
-            <div class="flex items-center justify-center gap-3 mb-6">
-                <div class="flex gap-1">
-                    <div class="w-1 h-1 rounded-full bg-slate-400 animate-bounce"></div>
-                    <div class="w-1 h-1 rounded-full bg-slate-400 animate-bounce" style="animation-delay: 0.1s"></div>
-                    <div class="w-1 h-1 rounded-full bg-slate-400 animate-bounce" style="animation-delay: 0.2s"></div>
-                </div>
-                <p class="text-[9px] text-slate-500 tracking-widest uppercase">Đang chờ Webhook phản hồi...</p>
-            </div>
-
-            <div class="space-y-3">
-                <button onclick="triggerManualConfirm()" id="btn-manual-confirm" class="w-full py-3.5 bg-slate-900 text-white hover:bg-slate-800 text-[10px] font-medium uppercase tracking-[0.15em] transition-colors shadow-lg rounded-sm flex flex-col items-center justify-center gap-1">
-                    <span>Gửi Hóa Đơn Zalo & Nhận Hàng</span>
-                    <span class="text-[7.5px] text-slate-400 font-normal tracking-widest normal-case">(Tự động tạo & copy hóa đơn)</span>
-                </button>
-                <button onclick="cancelPayment()" class="w-full py-3.5 border border-transparent hover:border-slate-900/10 text-slate-500 hover:text-slate-900 text-[10px] uppercase tracking-widest transition-colors rounded-sm">
-                    Hủy phiên
-                </button>
+            <div id="test-connection-box" class="hidden p-6 bg-slate-50 rounded-2xl relative z-10 border border-slate-200">
+                <p id="test-connection-text" class="text-[12px] text-slate-700 tracking-wider font-mono leading-relaxed"></p>
             </div>
         </div>
     </div>
 
-    <div id="success-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xl hidden">
-        <div class="glass-panel w-full max-w-xl p-10 relative animate-fade border border-white shadow-[0_0_60px_rgba(0,0,0,0.05)] rounded-sm">
-            <div class="text-center mb-8 border-b border-slate-900/10 pb-6">
-                <p class="text-[9px] text-slate-500 uppercase tracking-[0.2em] mb-2 mt-4">Trạng thái: 200 OK</p>
-                <h3 class="text-xl font-medium text-gradient tracking-widest uppercase">Kích hoạt hoàn tất</h3>
-            </div>
+    <!-- Checkout Modal -->
+    <div id="buy-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md hidden transition-all duration-300">
+        <div class="bg-white w-full max-w-xl p-8 md:p-10 relative animate-fade rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.15)] overflow-hidden">
+            <!-- Decorative light shape -->
+            <div class="absolute -top-20 -right-20 w-40 h-40 bg-blue-50 rounded-full filter blur-[40px] pointer-events-none"></div>
 
-            <div class="border border-white bg-white/60 p-6 mb-8 rounded-sm shadow-sm">
-                <div class="flex justify-between items-center mb-4">
-                    <p class="text-[9px] text-slate-500 uppercase tracking-widest">Dữ liệu phân bổ</p>
-                    <button onclick="copyToClipboard('delivered-data')" class="text-[9px] text-slate-800 hover:text-slate-500 uppercase tracking-widest underline underline-offset-4">Copy toàn bộ</button>
-                </div>
-                <textarea id="delivered-data" readonly class="w-full h-32 bg-white/80 border border-slate-900/10 p-4 text-slate-800 text-[11px] font-mono focus:outline-none focus:border-slate-900/30 resize-none leading-relaxed transition-colors rounded-sm" spellcheck="false"></textarea>
-            </div>
-
-            <button onclick="closeSuccessModal()" class="w-full btn-primary py-4 text-[11px] uppercase tracking-[0.2em] rounded-sm">
-                Đóng giao diện
+            <button onclick="closeBuyModal()" class="absolute right-6 top-6 text-slate-400 hover:text-slate-900 hover:rotate-90 transition-all p-2 z-20 rounded-full bg-slate-50 hover:bg-slate-100">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
+
+            <div class="relative z-10">
+                <span id="modal-category" class="inline-block text-[9px] font-bold text-blue-700 uppercase tracking-widest px-3 py-1.5 mb-5 bg-blue-50 rounded-md">Phân vùng</span>
+                <h3 id="modal-title" class="text-2xl font-bold text-slate-900 mb-6 pr-8 uppercase tracking-tight leading-snug">Tên dữ liệu</h3>
+
+                <div class="bg-slate-50 rounded-2xl p-5 mb-8 border border-slate-100">
+                    <p id="modal-description" class="text-[13px] text-slate-600 whitespace-pre-line leading-relaxed"></p>
+                </div>
+
+                <div class="space-y-4 mb-8">
+                    <input type="text" id="customer-name" placeholder="Họ và tên..." class="w-full modern-input px-6 py-4 text-[13px] font-medium">
+                    <div class="grid grid-cols-2 gap-4">
+                        <input type="email" id="customer-email" placeholder="Email nhận hàng..." class="w-full modern-input px-6 py-4 text-[13px] font-medium">
+                        <input type="tel" id="customer-phone" placeholder="Số Zalo..." class="w-full modern-input px-6 py-4 text-[13px] font-medium">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-6 mb-8">
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                        <span class="block text-[10px] text-slate-500 font-bold mb-2 uppercase tracking-widest">Đơn giá</span>
+                        <div class="text-slate-900 text-lg tracking-widest mt-1 font-bold">
+                            <span id="modal-price">0</span><span class="text-[11px] ml-1 text-slate-500 font-medium">VNĐ</span>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                        <span class="block text-[10px] text-slate-500 font-bold mb-2 uppercase tracking-widest">Số lượng</span>
+                        <div class="flex items-center bg-white h-[40px] w-full rounded-xl overflow-hidden border border-slate-200 shadow-sm">
+                            <button onclick="changeQuantity(-1)" class="w-12 h-full hover:bg-slate-50 text-slate-700 transition-colors font-bold text-lg">-</button>
+                            <input type="number" id="purchase-qty" value="1" min="1" onchange="validateQuantity()" class="w-full text-center bg-transparent border-none text-[14px] text-slate-900 focus:ring-0 p-0 outline-none appearance-none font-bold">
+                            <button onclick="changeQuantity(1)" class="w-12 h-full hover:bg-slate-50 text-slate-700 transition-colors font-bold text-lg">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-6 border-t border-slate-100 flex items-center justify-between mt-auto">
+                    <div>
+                        <span class="text-[10px] text-slate-500 font-bold uppercase tracking-widest block mb-1">Tổng thanh toán</span>
+                        <span id="modal-total" class="text-2xl font-black text-slate-900 tracking-tight">0 VNĐ</span>
+                    </div>
+                    <button onclick="createOrderCheckout()" id="btn-submit-order" class="btn-primary py-4 px-10 text-[13px] uppercase tracking-widest">
+                        Xác nhận
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div id="payment-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md hidden transition-all duration-300">
+        <div class="bg-white w-full max-w-sm p-10 text-center relative animate-fade rounded-[2rem] shadow-2xl">
+            <div class="relative z-10">
+                <div class="inline-flex items-center justify-center gap-2 bg-yellow-50 text-yellow-700 border border-yellow-200 px-4 py-2 rounded-full mb-8 shadow-sm">
+                    <span class="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></span>
+                    <span class="text-[10px] uppercase tracking-widest font-bold">Phiên giao dịch mã hóa</span>
+                </div>
+                
+                <div class="bg-white p-3 inline-block mb-8 relative rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-slate-100">
+                    <img id="payment-qr-img" src="" alt="QR" class="w-48 h-48 object-cover opacity-0 transition-opacity duration-500 rounded-xl">
+                    <div id="qr-loading" class="absolute inset-0 flex items-center justify-center bg-white rounded-xl">
+                        <div class="w-8 h-8 border-4 border-slate-100 border-t-slate-900 rounded-full animate-spin"></div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 border border-slate-100 p-5 mb-8 text-left rounded-2xl shadow-inner">
+                    <div class="flex justify-between items-center mb-4 border-b border-slate-200 pb-4">
+                        <span class="text-[11px] text-slate-500 font-bold uppercase tracking-widest">Định mức</span>
+                        <span id="payment-amount" class="text-sm text-slate-900 tracking-widest font-black">0 VNĐ</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-[11px] text-slate-500 font-bold uppercase tracking-widest">Nội dung CK</span>
+                        <div class="flex items-center gap-2">
+                            <span id="payment-syntax" class="text-[13px] text-slate-900 font-bold font-mono bg-white px-2.5 py-1.5 border border-slate-200 rounded-lg shadow-sm">HD...</span>
+                            <button onclick="copyToClipboard('payment-syntax-hidden')" class="text-[10px] bg-slate-900 text-white hover:bg-slate-800 font-bold px-3 py-2 uppercase tracking-widest transition-colors rounded-lg">Copy</button>
+                            <input type="text" id="payment-syntax-hidden" class="sr-only">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-center gap-3 mb-8">
+                    <div class="flex gap-1.5">
+                        <div class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-bounce"></div>
+                        <div class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-bounce" style="animation-delay: 0.1s"></div>
+                        <div class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-bounce" style="animation-delay: 0.2s"></div>
+                    </div>
+                    <p class="text-[10px] text-slate-600 tracking-widest font-bold uppercase">Hệ thống đang lắng nghe Webhook</p>
+                </div>
+
+                <div class="space-y-3">
+                    <button onclick="triggerManualConfirm()" id="btn-manual-confirm" class="w-full py-4 bg-slate-900 text-white hover:bg-slate-800 text-[11px] font-bold uppercase tracking-[0.15em] transition-colors rounded-xl flex flex-col items-center justify-center gap-1 shadow-lg">
+                        <span>Xác nhận thủ công (Zalo)</span>
+                        <span class="text-[9px] text-slate-300 font-medium tracking-widest normal-case">(Tự tạo bill & chuyển hướng)</span>
+                    </button>
+                    <button onclick="cancelPayment()" class="w-full py-4 border-2 border-slate-100 hover:bg-slate-50 text-slate-500 hover:text-slate-900 text-[11px] font-bold uppercase tracking-widest transition-colors rounded-xl">
+                        Hủy giao dịch
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md hidden transition-all duration-300">
+        <div class="bg-white w-full max-w-xl p-10 relative animate-fade rounded-[2rem] shadow-2xl border border-emerald-100">
+            <div class="relative z-10">
+                <div class="text-center mb-8 border-b border-slate-100 pb-8">
+                    <div class="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 border-2 border-emerald-100 shadow-sm">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                    </div>
+                    <p class="text-[11px] text-emerald-600 font-bold uppercase tracking-[0.3em] mb-2 font-mono">STATUS: 200 OK</p>
+                    <h3 class="text-2xl font-black text-slate-900 tracking-tight uppercase">Cấp phát thành công</h3>
+                </div>
+
+                <div class="bg-slate-50 border border-slate-200 p-6 mb-8 rounded-2xl shadow-inner">
+                    <div class="flex justify-between items-center mb-4">
+                        <p class="text-[11px] text-slate-600 font-bold uppercase tracking-widest">Khối dữ liệu an toàn</p>
+                        <button onclick="copyToClipboard('delivered-data')" class="text-[10px] text-white bg-slate-900 hover:bg-slate-800 font-bold uppercase tracking-widest px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                            Copy Data
+                        </button>
+                    </div>
+                    <textarea id="delivered-data" readonly class="w-full h-40 bg-white border border-slate-200 p-5 text-slate-800 text-[13px] font-mono font-medium focus:outline-none resize-none leading-relaxed transition-colors rounded-xl shadow-sm" spellcheck="false"></textarea>
+                </div>
+
+                <button onclick="closeSuccessModal()" class="w-full bg-slate-900 text-white hover:bg-slate-800 py-4 text-[13px] font-bold uppercase tracking-[0.2em] rounded-xl shadow-lg transition-all">
+                    Đóng phiên làm việc
+                </button>
+            </div>
         </div>
     </div>
 
@@ -364,31 +442,16 @@
         // MOCK DATA FOR LOCAL TESTING
         const MOCK_PRODUCTS = [
             { id: "P001", name: "Netflix Premium UltraHD 1 Tháng (Cá nhân)", category: "Trực tuyến", price: 55000, description: "Phân giải 4K cao cấp nhất.\nTương thích đa nền tảng.\nChính sách 1 đổi 1 30 ngày.\nNghiêm cấm đổi thông tin.", image: "https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?w=600&auto=format&fit=crop&q=80" },
-            { id: "P002", name: "Spotify Premium 12 Tháng", category: "Âm nhạc", price: 180000, description: "Nâng cấp chính chủ.\nBảo lưu danh sách phát.\nHiệu lực 12 tháng liên tục.", image: "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=600&auto=format&fit=crop&q=80" }
+            { id: "P002", name: "Spotify Premium 12 Tháng", category: "Âm nhạc", price: 180000, description: "Nâng cấp chính chủ.\nBảo lưu danh sách phát.\nHiệu lực 12 tháng liên tục.", image: "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=600&auto=format&fit=crop&q=80" },
+            { id: "P003", name: "Adobe Creative Cloud All App", category: "Phần mềm", price: 250000, description: "Cấp phép bản quyền Adobe Full Apps.\nBao gồm Photoshop, Premiere...\nUpdate chính hãng từ máy chủ Adobe.", image: "https://images.unsplash.com/photo-1626785774573-4b799315345d?w=600&auto=format&fit=crop&q=80" },
+            { id: "P004", name: "ChatGPT Plus (GPT-4) 1 Tháng", category: "Công cụ AI", price: 90000, description: "Truy cập Node GPT-4 cao cấp nhất.\nKèm Plugins & Web Browsing.\nTài khoản chia sẻ ổn định cao.", image: "https://images.unsplash.com/photo-1676299081847-824916de030a?w=600&auto=format&fit=crop&q=80" }
         ];
 
         const MOCK_ORDERS = [
-            {
-                email: "test@gmail.com",
-                orderId: "DH-8X92M1",
-                timestamp: "04/06/2026 14:30:00",
-                productName: "Netflix Premium UltraHD 1 Tháng (Cá nhân)",
-                qty: 1,
-                price: 55000,
-                data: "Tài khoản: netflix_user_123@gmail.com\nMật khẩu: netflixPass2026\nProfile: 01"
-            },
-            {
-                email: "test@gmail.com",
-                orderId: "DH-2K19A7",
-                timestamp: "01/06/2026 09:15:22",
-                productName: "Spotify Premium 12 Tháng",
-                qty: 2,
-                price: 180000,
-                data: "Key 1: SPOT-1234-ABCD-5678\nKey 2: SPOT-9876-WXYZ-4321"
-            }
+            { email: "test@gmail.com", orderId: "DH-8X92M1", timestamp: "04/06/2026 14:30:00", productName: "Netflix Premium UltraHD 1 Tháng (Cá nhân)", qty: 1, price: 55000, data: "User: netflix_node_1@hub.com\nPass: admin123\nProfile: 01 (PIN: 1111)" },
+            { email: "test@gmail.com", orderId: "DH-2K19A7", timestamp: "01/06/2026 09:15:22", productName: "Spotify Premium 12 Tháng", qty: 2, price: 180000, data: "Key 1: SPOT-1234-ABCD-5678\nKey 2: SPOT-9876-WXYZ-4321" }
         ];
 
-        // SYSTEM STATE
         let webAppUrl = "https://script.google.com/macros/s/AKfycbzSbsoV4ANkS6-vFqHROuSFRnLFvbGJ5iyC-Cw6KC00mI2lOIUO2h3nzWiPE8-beDV5xA/exec";
         let rawProducts = [];
         let filteredProducts = [];
@@ -396,20 +459,17 @@
         let currentProduct = null;
         let quantitySelected = 1;
         let pollingInterval = null;
-        
         let activeOrderId = null;
         let customerData = { name: "", email: "", phone: "" };
 
-        // INITIALIZATION
         window.addEventListener('load', initApp);
 
         function initApp() {
             const banner = document.getElementById('connection-banner');
             document.getElementById('settings-api-url').value = webAppUrl;
 
-            // In typical setup, you verify if webAppUrl is a valid endpoint.
-            // For now we assume if it's set, we try. If it fails, fallback kicks in.
-            if (webAppUrl) {
+            // Kiểm tra link giả lập để demo local
+            if (webAppUrl && !webAppUrl.includes("httpshttps")) {
                 banner.classList.add('hidden');
                 fetchProductsFromAPI();
             } else {
@@ -423,14 +483,16 @@
             const tabs = ['products', 'history', 'admin'];
             tabs.forEach(t => {
                 document.getElementById(`panel-${t}`).classList.add('hidden');
-                document.getElementById(`tab-${t}`).classList.remove('tab-active', 'text-slate-900');
-                document.getElementById(`tab-${t}`).classList.add('text-slate-500');
+                const tabEl = document.getElementById(`tab-${t}`);
+                tabEl.classList.remove('tab-active', 'text-slate-900', 'shadow-sm');
+                tabEl.classList.add('text-slate-500');
             });
             document.getElementById(`panel-${tab}`).classList.remove('hidden');
             
             setTimeout(() => {
-                document.getElementById(`tab-${tab}`).classList.add('tab-active', 'text-slate-900');
-                document.getElementById(`tab-${tab}`).classList.remove('text-slate-500');
+                const activeTab = document.getElementById(`tab-${tab}`);
+                activeTab.classList.add('tab-active', 'text-slate-900');
+                activeTab.classList.remove('text-slate-500');
             }, 10);
         }
 
@@ -456,15 +518,14 @@
             if (!webAppUrl) return;
             showLoading(true);
             try {
-                // Throws error immediately because URL is purposely malformed in example
                 const response = await fetch(`${webAppUrl}?action=getProducts`);
                 const data = await response.json();
-                if (data && data.status === "success") {
-                    rawProducts = data.data;
-                } else throw new Error();
+                if (data && data.status === "success") rawProducts = data.data;
+                else throw new Error();
             } catch (error) {
-                showToast("Dữ liệu tuyến không phản hồi. Trả về cục bộ.", "warning");
+                showToast("Endpoint timeout. Khởi động Mock Data nội bộ.", "warning");
                 rawProducts = JSON.parse(JSON.stringify(MOCK_PRODUCTS));
+                document.getElementById('connection-banner').classList.remove('hidden');
             } finally {
                 renderApp();
                 showLoading(false);
@@ -475,11 +536,11 @@
             const container = document.getElementById('category-container');
             const categories = [...new Set(rawProducts.map(p => p.category))];
             
-            container.innerHTML = `<button onclick="selectCategory('all')" id="cat-all" class="cat-chip px-5 py-2.5 text-[10px] tracking-[0.15em] uppercase transition-all border border-transparent rounded-full">Toàn bộ</button>`;
+            container.innerHTML = `<button onclick="selectCategory('all')" id="cat-all" class="cat-chip px-5 py-2.5 text-[11px] font-bold tracking-[0.1em] uppercase transition-all rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50">Tất cả Data</button>`;
             categories.forEach(cat => {
                 const btn = document.createElement('button');
                 btn.id = `cat-${encodeURIComponent(cat)}`;
-                btn.className = "cat-chip px-5 py-2.5 text-[10px] tracking-[0.15em] uppercase transition-all border border-transparent rounded-full";
+                btn.className = "cat-chip px-5 py-2.5 text-[11px] font-bold tracking-[0.1em] uppercase transition-all rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50";
                 btn.innerText = cat;
                 btn.onclick = () => selectCategory(cat);
                 container.appendChild(btn);
@@ -494,13 +555,13 @@
         }
 
         function updateActiveCategoryUI() {
-            document.querySelectorAll('.cat-chip').forEach(btn => {
-                btn.className = "cat-chip px-5 py-2.5 text-slate-500 border border-slate-900/5 bg-white/50 text-[10px] tracking-[0.15em] uppercase hover:bg-white/80 transition-all rounded-full";
+            document.querySelectorAll('#category-container button').forEach(btn => {
+                btn.className = "cat-chip px-5 py-2.5 text-[11px] font-bold tracking-[0.1em] uppercase transition-all rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50 bg-white";
             });
             const targetId = selectedCategory === 'all' ? 'cat-all' : `cat-${encodeURIComponent(selectedCategory)}`;
             const activeBtn = document.getElementById(targetId);
             if (activeBtn) {
-                activeBtn.className = "cat-chip px-5 py-2.5 bg-slate-900 text-white border border-slate-900 text-[10px] tracking-[0.15em] uppercase transition-all rounded-full shadow-[0_4px_15px_rgba(0,0,0,0.1)]";
+                activeBtn.className = "cat-chip-active px-5 py-2.5 text-[11px] font-bold tracking-[0.1em] uppercase transition-all rounded-xl border border-transparent";
             }
         }
 
@@ -511,9 +572,7 @@
 
             filteredProducts = rawProducts.filter(p => {
                 if (selectedCategory !== 'all' && p.category !== selectedCategory) return false;
-                if (query) {
-                    if (!p.name.toLowerCase().includes(query) && !p.description.toLowerCase().includes(query) && !p.category.toLowerCase().includes(query)) return false;
-                }
+                if (query && !p.name.toLowerCase().includes(query) && !p.description.toLowerCase().includes(query) && !p.category.toLowerCase().includes(query)) return false;
                 
                 const price = parseFloat(p.price);
                 if (priceFilter === "under50" && price >= 50000) return false;
@@ -553,21 +612,26 @@
             grid.innerHTML = filteredProducts.map((p, index) => {
                 const delay = index * 0.05;
                 return `
-                    <div class="glass-panel hover-lift flex flex-col group rounded-sm overflow-hidden" style="animation-delay: ${delay}s">
-                        <div class="aspect-video w-full overflow-hidden relative border-b border-white bg-slate-100">
-                            <div class="absolute inset-0 bg-gradient-to-t from-white/90 via-white/20 to-transparent z-10 opacity-90 group-hover:opacity-70 transition-opacity"></div>
-                            <img src="${p.image}" alt="Data" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out opacity-90 group-hover:opacity-100" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600'">
-                        </div>
-                        <div class="p-6 flex-1 flex flex-col justify-between relative z-20 -mt-8">
-                            <div class="bg-white/80 backdrop-blur-md p-4 border border-white shadow-sm rounded-sm mb-4">
-                                <span class="text-[8px] text-slate-500 uppercase tracking-[0.2em] block mb-2">${p.category}</span>
-                                <h3 class="text-sm font-medium text-slate-900 uppercase tracking-wider mb-2 line-clamp-2 leading-snug">${p.name}</h3>
-                                <p class="text-[10px] text-slate-600 line-clamp-2 font-light whitespace-pre-line text-justify">${p.description}</p>
+                    <div class="bento-card hover-lift flex flex-col group overflow-hidden" style="animation-delay: ${delay}s">
+                        <div class="aspect-video w-full overflow-hidden relative border-b border-slate-100 bg-slate-50">
+                            <!-- Thiết kế ảnh sạch sẽ, không phủ màu đen -->
+                            <img src="${p.image}" alt="Data" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600'">
+                            <div class="absolute top-3 right-3 z-20">
+                                <span class="px-3 py-1.5 bg-white/90 backdrop-blur-md border border-slate-200 text-[9px] font-bold text-slate-800 uppercase tracking-widest rounded-lg shadow-sm">${p.category}</span>
                             </div>
-                            <div class="flex items-center justify-between mt-auto px-2">
-                                <span class="text-[13px] text-slate-900 tracking-widest font-medium">${formatMoney(p.price)}đ</span>
-                                <button onclick="openBuyModal('${p.id}')" class="px-5 py-2.5 border border-slate-900/10 hover:border-slate-900 hover:bg-slate-900 text-slate-700 hover:text-white text-[9px] uppercase tracking-widest transition-all rounded-sm shadow-sm">
-                                    KHỞI TẠO
+                        </div>
+                        <div class="p-6 flex-1 flex flex-col justify-between relative z-20 bg-white">
+                            <div class="mb-6">
+                                <h3 class="text-base font-bold text-slate-900 uppercase tracking-wide mb-3 line-clamp-2 leading-snug group-hover:text-blue-600 transition-colors duration-300">${p.name}</h3>
+                                <p class="text-[12px] text-slate-500 line-clamp-3 font-medium whitespace-pre-line text-justify leading-relaxed">${p.description}</p>
+                            </div>
+                            <div class="flex items-center justify-between pt-5 border-t border-slate-100 mt-auto">
+                                <div>
+                                    <span class="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Đơn vị giá</span>
+                                    <span class="text-[15px] text-slate-900 tracking-tight font-black">${formatMoney(p.price)}<span class="text-[11px] text-slate-500 ml-1 font-bold">đ</span></span>
+                                </div>
+                                <button onclick="openBuyModal('${p.id}')" class="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white text-[10px] font-bold uppercase tracking-widest transition-all rounded-xl shadow-md hover:shadow-lg">
+                                    THIẾT LẬP
                                 </button>
                             </div>
                         </div>
@@ -627,7 +691,7 @@
             const phone = document.getElementById('customer-phone').value.trim();
 
             if (!name || !email || !phone) return showToast("Trường thông tin trống.", "warning");
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showToast("Sai định dạng Email.", "warning");
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showToast("Lỗi định dạng Email.", "warning");
 
             customerData = { name, email, phone };
 
@@ -639,15 +703,7 @@
             try {
                 const response = await fetch(webAppUrl, {
                     method: 'POST',
-                    body: new URLSearchParams({ 
-                        action: 'createOrder', 
-                        productId: currentProduct.id, 
-                        price: currentProduct.price, 
-                        email: email, 
-                        name: name,
-                        phone: phone,
-                        qty: quantitySelected 
-                    })
+                    body: new URLSearchParams({ action: 'createOrder', productId: currentProduct.id, price: currentProduct.price, email, name, phone, qty: quantitySelected })
                 });
                 const resData = await response.json();
                 if (resData.status === "success") {
@@ -655,7 +711,7 @@
                     openPaymentModal(resData.orderId, resData.amount, resData.paymentSyntax);
                 } else throw new Error();
             } catch (err) {
-                showToast("Endpoint lỗi phản hồi.", "error");
+                showToast("Gateway không phản hồi.", "error");
             } finally {
                 btn.disabled = false;
                 btn.innerText = originalText;
@@ -683,29 +739,12 @@
 
         function triggerManualConfirm() {
             if (!activeOrderId) return;
-            
             const btn = document.getElementById('btn-manual-confirm');
             const originalHTML = btn.innerHTML;
             btn.innerHTML = "<span>ĐANG TẠO HÓA ĐƠN...</span>";
 
             const totalAmount = currentProduct.price * quantitySelected;
-            
-            /* Logic lại phần hóa đơn (Invoice Format) gọn gàng, chuyên nghiệp */
-            const message = `🧾 HÓA ĐƠN ĐẶT HÀNG - DIGITAL HUB 🧾
-═════════════════════════════
-Mã giao dịch : ${activeOrderId}
-Sản phẩm     : ${currentProduct.name}
-Số lượng     : ${quantitySelected}
-Thành tiền   : ${formatMoney(totalAmount)} VNĐ
-Trạng thái   : Đã thanh toán (Chờ cấp phát)
-═════════════════════════════
-👤 THÔNG TIN KHÁCH HÀNG:
-- Tên KH     : ${customerData.name}
-- SĐT/Zalo   : ${customerData.phone}
-- Email      : ${customerData.email}
-═════════════════════════════
-📌 Ghi chú: 
-Tôi đã thanh toán thành công. Vui lòng kiểm tra và gửi tài khoản/dữ liệu cho tôi qua tin nhắn này.`;
+            const message = `🧾 HÓA ĐƠN ĐẶT HÀNG - DIGITAL HUB 🧾\n═════════════════════════════\nMã giao dịch : ${activeOrderId}\nSản phẩm     : ${currentProduct.name}\nSố lượng     : ${quantitySelected}\nThành tiền   : ${formatMoney(totalAmount)} VNĐ\nTrạng thái   : Đã thanh toán (Chờ cấp phát)\n═════════════════════════════\n👤 THÔNG TIN KHÁCH HÀNG:\n- Tên KH     : ${customerData.name}\n- SĐT/Zalo   : ${customerData.phone}\n- Email      : ${customerData.email}\n═════════════════════════════\n📌 Ghi chú: \nTôi đã thanh toán thành công. Vui lòng kiểm tra và gửi tài khoản/dữ liệu cho tôi qua tin nhắn này.`;
 
             const tempInput = document.createElement("textarea");
             tempInput.value = message;
@@ -714,16 +753,14 @@ Tôi đã thanh toán thành công. Vui lòng kiểm tra và gửi tài khoản/
             document.execCommand("copy");
             document.body.removeChild(tempInput);
 
-            showToast("Đã tạo Hóa Đơn & Lưu vào bộ nhớ tạm.", "success");
+            showToast("Đã lưu Invoice vào Clipboard.", "success");
 
             setTimeout(() => {
                 window.open("https://zalo.me/0879342346", "_blank");
                 document.getElementById('payment-modal').classList.add('hidden');
                 activeOrderId = null;
-                btn.innerHTML = originalHTML; // Trả lại UI ban đầu
-                
-                // Hướng dẫn chốt lại rõ ràng
-                showToast("Vui lòng DÁN (Ctrl+V) hóa đơn vào Zalo kèm BIÊN LAI CHUYỂN KHOẢN để nhận hàng.", "info");
+                btn.innerHTML = originalHTML;
+                showToast("Vui lòng gửi (Ctrl+V) Invoice kèm Ủy nhiệm chi Zalo.", "info");
             }, 1200);
         }
 
@@ -731,7 +768,7 @@ Tôi đã thanh toán thành công. Vui lòng kiểm tra và gửi tài khoản/
             if (pollingInterval) clearInterval(pollingInterval);
             activeOrderId = null;
             document.getElementById('payment-modal').classList.add('hidden');
-            showToast("Đã ngắt phiên dịch vụ.", "info");
+            showToast("Phiên giao dịch bị hủy.", "info");
         }
 
         function startPaymentPolling(orderId) {
@@ -759,93 +796,95 @@ Tôi đã thanh toán thành công. Vui lòng kiểm tra và gửi tài khoản/
 
         async function searchOrders() {
             const email = document.getElementById('history-email-input').value.trim();
-            if (!email) return showToast("Thiếu tham số bắt buộc.", "warning");
+            if (!email) return showToast("Tham số truy vấn trống.", "warning");
 
             const btn = document.getElementById('btn-search-orders');
             const resultBox = document.getElementById('history-result');
             btn.disabled = true;
-            btn.innerText = "ĐANG XỬ LÝ...";
+            btn.innerText = "SCANNING...";
 
             let finalOrders = [];
 
             try {
-                // If the URL is explicitly broken or local-only, skip network delay
                 if(webAppUrl.includes("httpshttps") || !webAppUrl) throw new Error("Local Mode Switch");
-
                 const response = await fetch(`${webAppUrl}?action=getOrders&email=${encodeURIComponent(email)}`);
                 const resData = await response.json();
-                if (resData.status === "success") {
-                    finalOrders = resData.data;
-                } else throw new Error();
+                if (resData.status === "success") finalOrders = resData.data;
+                else throw new Error();
             } catch (err) {
-                // Fallback to MOCK_ORDERS
-                showToast("Kết nối API lỗi. Sử dụng bộ nhớ cục bộ (Mock Data).", "warning");
-                // Add tiny delay for realism
-                await new Promise(resolve => setTimeout(resolve, 500));
+                showToast("Chạy trên Sandbox Local.", "warning");
+                await new Promise(resolve => setTimeout(resolve, 600));
                 finalOrders = MOCK_ORDERS.filter(o => o.email.toLowerCase() === email.toLowerCase());
             }
 
-            // Render Results
             if (!finalOrders || finalOrders.length === 0) {
-                resultBox.innerHTML = `<div class="text-center py-16 border border-slate-900/5 bg-white/50 rounded-sm"><p class="text-[10px] text-slate-500 uppercase tracking-widest">Không có bản ghi hợp lệ.</p></div>`;
+                resultBox.innerHTML = `<div class="text-center py-20 border-2 border-dashed border-red-200 bg-red-50 rounded-3xl"><p class="text-[11px] text-red-500 font-bold tracking-widest uppercase font-mono">Lỗi 404: Không có phân mảnh dữ liệu.</p></div>`;
             } else {
                 resultBox.innerHTML = finalOrders.map((ord, idx) => `
-                    <div class="border border-white bg-white/60 p-6 mb-4 rounded-sm shadow-sm hover:bg-white/80 transition-colors">
-                        <div class="flex justify-between border-b border-slate-900/5 pb-4 mb-5">
-                            <span class="text-[9px] text-slate-700 bg-white px-3 py-1.5 tracking-widest rounded-sm border border-slate-100">${ord.orderId}</span>
-                            <span class="text-[10px] text-slate-500 flex items-center gap-2">${ord.timestamp}</span>
-                        </div>
-                        <h4 class="text-[13px] font-medium text-slate-900 uppercase tracking-wider mb-3">${ord.productName}</h4>
-                        <div class="flex justify-between text-[11px] text-slate-600 mb-5 uppercase tracking-widest bg-white/50 p-3 rounded-sm border border-slate-900/5">
-                            <span>Số lượng: <span class="text-slate-900">${ord.qty}</span></span>
-                            <span class="text-slate-900 font-medium">${formatMoney(ord.price * ord.qty)} VNĐ</span>
-                        </div>
-                        <div>
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-[9px] text-slate-500 uppercase tracking-[0.15em]">Chuỗi ký tự xuất</span>
-                                <button onclick="copyToClipboard('history-txt-${idx}')" class="text-[9px] text-slate-800 hover:text-slate-500 uppercase tracking-widest underline underline-offset-4">Copy Dữ Liệu</button>
+                    <div class="bg-white p-7 mb-5 rounded-3xl border border-slate-200 shadow-sm">
+                        <div class="relative z-10">
+                            <div class="flex justify-between border-b border-slate-100 pb-5 mb-5">
+                                <span class="text-[11px] text-slate-800 bg-slate-100 px-4 py-2 font-bold tracking-widest rounded-xl border border-slate-200 font-mono">${ord.orderId}</span>
+                                <span class="text-[11px] text-slate-500 font-semibold flex items-center gap-2 font-mono">${ord.timestamp}</span>
                             </div>
-                            <textarea id="history-txt-${idx}" readonly class="w-full h-16 bg-white border border-slate-900/10 text-slate-700 text-[11px] font-mono focus:ring-1 focus:ring-slate-900/20 p-3 resize-none outline-none rounded-sm transition-shadow shadow-inner" spellcheck="false">${ord.data}</textarea>
+                            <h4 class="text-[15px] font-black text-slate-900 uppercase tracking-tight mb-4">${ord.productName}</h4>
+                            <div class="flex justify-between text-[12px] text-slate-700 mb-6 font-bold uppercase tracking-widest bg-slate-50 p-4 rounded-xl border border-slate-200 shadow-inner">
+                                <span>Multipliers: <span class="text-slate-900 font-black">x${ord.qty}</span></span>
+                                <span class="text-blue-600 font-black">${formatMoney(ord.price * ord.qty)} VNĐ</span>
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-center mb-3">
+                                    <span class="text-[10px] text-slate-500 font-bold uppercase tracking-widest flex items-center gap-2">
+                                        <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                        Payload Data
+                                    </span>
+                                    <button onclick="copyToClipboard('history-txt-${idx}')" class="text-[10px] text-white bg-slate-900 hover:bg-slate-800 uppercase tracking-widest px-4 py-2 rounded-lg shadow-md transition-colors font-bold">Copy Extract</button>
+                                </div>
+                                <textarea id="history-txt-${idx}" readonly class="w-full h-24 bg-white border border-slate-200 text-slate-800 text-[13px] font-mono font-medium p-4 resize-none rounded-xl shadow-inner focus:border-blue-500 outline-none" spellcheck="false">${ord.data}</textarea>
+                            </div>
                         </div>
                     </div>
                 `).join('');
             }
 
             btn.disabled = false;
-            btn.innerText = "YÊU CẦU";
+            btn.innerText = "QUÉT DỮ LIỆU";
         }
 
         function checkPasswordAndOpenSettings() {
-            const password = prompt("Auth Code (System Bypass):");
+            const password = prompt("Admin Root Override (PIN):");
             if (password === "729903") switchTab('admin');
-            else if (password !== null) showToast("Access Denied.", "error");
+            else if (password !== null) showToast("Access Denied: Lỗi xác thực.", "error");
         }
 
         function saveSettings() {
             webAppUrl = document.getElementById('settings-api-url').value.trim();
-            showToast("Tham số ghi đè thành công.", "success");
+            showToast("Core: Cập nhật biến môi trường thành công.", "success");
             initApp();
         }
 
         async function testConnection() {
             const apiVal = document.getElementById('settings-api-url').value.trim();
-            if (!apiVal) return showToast("Endpoint Null.", "warning");
+            if (!apiVal) return showToast("Trường URL rỗng.", "warning");
 
             const testBox = document.getElementById('test-connection-box');
             const testText = document.getElementById('test-connection-text');
-            testBox.classList.remove('hidden');
-            testText.innerHTML = "PING...";
+            testBox.classList.remove('hidden', 'bg-red-50', 'border-red-200', 'bg-green-50', 'border-green-200');
+            testBox.classList.add('bg-blue-50', 'border-blue-200');
+            testText.innerHTML = "<span class='animate-pulse text-blue-600 font-bold'>Pinging host...</span>";
 
             try {
                 const response = await fetch(`${apiVal}?action=getProducts`);
                 const data = await response.json();
                 if (data && data.status === "success") {
-                    testBox.className = "p-6 border border-green-200 bg-green-50 mt-6 rounded-sm shadow-sm";
-                    testText.innerHTML = `<span class="text-green-600 text-[11px] uppercase tracking-widest leading-relaxed">Status: 200 OK<br>Data Arrays: ${data.data.length} Nodes</span>`;
+                    testBox.classList.replace('bg-blue-50', 'bg-green-50');
+                    testBox.classList.replace('border-blue-200', 'border-green-200');
+                    testText.innerHTML = `<span class="text-green-700 font-bold">Response: 200 OK<br>Handshake: Success<br>Active Nodes: ${data.data.length}</span>`;
                 } else throw new Error();
             } catch (err) {
-                testBox.className = "p-6 border border-red-200 bg-red-50 mt-6 rounded-sm shadow-sm";
-                testText.innerHTML = `<span class="text-red-500 text-[11px] uppercase tracking-widest">Connection Refused. Timeout or Invalid Route.</span>`;
+                testBox.classList.replace('bg-blue-50', 'bg-red-50');
+                testBox.classList.replace('border-blue-200', 'border-red-200');
+                testText.innerHTML = `<span class="text-red-600 font-bold">ERR_CONNECTION_REFUSED<br>Target machine actively refused it.</span>`;
             }
         }
 
@@ -853,22 +892,29 @@ Tôi đã thanh toán thành công. Vui lòng kiểm tra và gửi tài khoản/
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             
-            let styleClass = "bg-white border-slate-200 text-slate-800 shadow-[0_5px_30px_rgba(0,0,0,0.08)]";
-            if (type === "success") styleClass = "bg-green-50 border-green-200 text-green-800 shadow-[0_5px_30px_rgba(34,197,94,0.1)]";
-            else if (type === "warning") styleClass = "bg-yellow-50 border-yellow-200 text-yellow-800 shadow-[0_5px_30px_rgba(234,179,8,0.1)]";
-            else if (type === "error") styleClass = "bg-red-50 border-red-200 text-red-800 shadow-[0_5px_30px_rgba(239,68,68,0.1)]";
+            let styleClass = "bg-white border-slate-200 text-slate-800 shadow-[0_15px_40px_rgba(0,0,0,0.1)]";
+            let icon = `<svg class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+            
+            if (type === "success") {
+                styleClass = "bg-emerald-50 border-emerald-200 text-emerald-900 shadow-[0_15px_40px_rgba(16,185,129,0.15)]";
+                icon = `<svg class="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg>`;
+            } else if (type === "warning") {
+                styleClass = "bg-yellow-50 border-yellow-200 text-yellow-900 shadow-[0_15px_40px_rgba(234,179,8,0.15)]";
+                icon = `<svg class="w-5 h-5 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>`;
+            } else if (type === "error") {
+                styleClass = "bg-red-50 border-red-200 text-red-900 shadow-[0_15px_40px_rgba(239,68,68,0.15)]";
+                icon = `<svg class="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" /></svg>`;
+            }
 
-            toast.className = `flex items-center p-4 text-[10px] uppercase tracking-[0.15em] border ${styleClass} transition-all duration-400 cubic-bezier(0.16, 1, 0.3, 1) transform translate-y-8 opacity-0 rounded-sm font-medium`;
-            toast.innerHTML = `<span class="flex-1">${message}</span>`;
+            toast.className = `flex items-center gap-3 p-4 text-[11px] uppercase font-bold tracking-[0.1em] border ${styleClass} transition-all duration-500 cubic-bezier(0.16, 1, 0.3, 1) transform translate-x-10 opacity-0 rounded-2xl`;
+            toast.innerHTML = `${icon}<span class="flex-1 mt-0.5">${message}</span>`;
             container.appendChild(toast);
 
-            requestAnimationFrame(() => {
-                toast.classList.remove('translate-y-8', 'opacity-0');
-            });
+            requestAnimationFrame(() => { toast.classList.remove('translate-x-10', 'opacity-0'); });
 
             setTimeout(() => {
-                toast.classList.add('opacity-0', 'translate-y-2');
-                setTimeout(() => toast.remove(), 400);
+                toast.classList.add('opacity-0', 'translate-x-10');
+                setTimeout(() => toast.remove(), 500);
             }, 4000);
         }
 
@@ -883,7 +929,7 @@ Tôi đã thanh toán thành công. Vui lòng kiểm tra và gửi tài khoản/
             } else {
                 el.select(); document.execCommand('copy');
             }
-            showToast("Đã sao chép vào Clipboard.", "success");
+            showToast("Hệ thống: Payload đã copy vào bộ nhớ.", "success");
         }
     </script>
 </body>
