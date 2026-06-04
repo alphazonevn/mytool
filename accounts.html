@@ -6,10 +6,10 @@
     <title>Hệ thống phân phối kỹ thuật số | Giao diện quản trị</title>
     <script src="https://cdn.tailwindcss.com/3.4.17"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;300;400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@100;300;400;500;600;700&display=swap');
 
         * { 
-            font-family: 'JetBrains Mono', monospace; 
+            font-family: 'Be Vietnam Pro', sans-serif; 
             box-sizing: border-box; 
             -webkit-font-smoothing: antialiased;
         }
@@ -76,7 +76,7 @@
     <header class="border-b border-white/10 sticky top-0 z-40 bg-black/50 backdrop-blur-md">
         <div class="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div>
-                <h1 class="text-xl font-light tracking-[0.2em] uppercase text-white">MY TOOL - ACCOUNTS</h1>
+                <h1 class="text-xl font-light tracking-[0.2em] uppercase text-white">Digital Hub</h1>
                 <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Operator: Anh Minh | Chức năng: Nói ít, làm nhiều</p>
             </div>
             <div id="connection-banner" class="bg-red-900/30 text-red-400 px-4 py-2 text-[10px] uppercase tracking-widest border border-red-500/20">
@@ -312,14 +312,16 @@
             { id: "P002", name: "Spotify Premium 12 Tháng", category: "Âm nhạc", price: 180000, description: "Nâng cấp chính chủ.\nBảo lưu danh sách phát.\nHiệu lực 12 tháng liên tục.", image: "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=600&auto=format&fit=crop&q=80", stock: 25 }
         ];
 
-        let webAppUrl = "https://script.google.com/macros/s/AKfycbxueESjJmSsRw7lRJBMNhnci3_jejyGFU8viaDmi92d1AQkBesZ_QqfymIersM5ox0hKA/exec";
+        let webAppUrl = "https://script.google.com/macros/s/AKfycbybgZTKi0aRM0nsmRVzOVjl57awn0ZgYlvCzY_tEdkgkjadNGjUbd_svWWfQoD9Oq8jUw/exec";
         let rawProducts = [];
         let filteredProducts = [];
         let selectedCategory = "all";
         let currentProduct = null;
         let quantitySelected = 1;
         let pollingInterval = null;
-        let activeOrderId = null; // Lưu Order ID hiện tại
+        
+        let activeOrderId = null;
+        let customerData = { name: "", email: "", phone: "" };
 
         window.addEventListener('load', initApp);
 
@@ -559,6 +561,8 @@
             if (!name || !email || !phone) return showToast("Trường thông tin trống.", "warning");
             if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showToast("Sai định dạng Email.", "warning");
 
+            customerData = { name, email, phone };
+
             const btn = document.getElementById('btn-submit-order');
             const originalText = btn.innerText;
             btn.disabled = true;
@@ -609,36 +613,40 @@
             startPaymentPolling(orderId);
         }
 
-        async function triggerManualConfirm() {
+        function triggerManualConfirm() {
             if (!activeOrderId) return;
             
             const btn = document.getElementById('btn-manual-confirm');
-            const originalText = btn.innerText;
-            btn.disabled = true;
-            btn.innerText = "ĐANG XÁC THỰC...";
+            btn.innerText = "ĐANG ĐỊNH TUYẾN ZALO...";
 
-            try {
-                const response = await fetch(webAppUrl, {
-                    method: 'POST',
-                    body: new URLSearchParams({ action: 'confirmPayment', orderId: activeOrderId })
-                });
-                const data = await response.json();
-                
-                if (data.status === "success") {
-                    if (pollingInterval) clearInterval(pollingInterval);
-                    document.getElementById('payment-modal').classList.add('hidden');
-                    document.getElementById('delivered-data').value = data.deliveredData;
-                    document.getElementById('success-modal').classList.remove('hidden');
-                    fetchProductsFromAPI(); 
-                } else {
-                    showToast("Xác thực thất bại.", "error");
-                }
-            } catch (err) {
-                showToast("Lỗi kết nối máy chủ.", "error");
-            } finally {
-                btn.disabled = false;
-                btn.innerText = originalText;
-            }
+            const totalAmount = currentProduct.price * quantitySelected;
+            const message = `[YÊU CẦU KIỂM TRA THANH TOÁN]
+Mã giao dịch: ${activeOrderId}
+Sản phẩm: ${currentProduct.name}
+Số lượng: ${quantitySelected}
+Tổng tiền: ${formatMoney(totalAmount)} VNĐ
+
+-- Thông tin khách hàng --
+Tên: ${customerData.name}
+SĐT: ${customerData.phone}
+Email: ${customerData.email}`;
+
+            const tempInput = document.createElement("textarea");
+            tempInput.value = message;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+
+            showToast("Đã sao chép biểu mẫu. Chuyển hướng Zalo...", "success");
+
+            setTimeout(() => {
+                window.open("https://zalo.me/0879342346", "_blank");
+                document.getElementById('payment-modal').classList.add('hidden');
+                activeOrderId = null;
+                btn.innerText = "XÁC NHẬN ĐÃ CHUYỂN KHOẢN";
+                showToast("Vui lòng Dán (Ctrl+V) tin nhắn vào Zalo để gửi cho Admin.", "info");
+            }, 1000);
         }
 
         function cancelPayment() {
