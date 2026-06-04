@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="vi" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ thống phân phối kỹ thuật số | Giao diện quản trị</title>
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;300;400;500&display=swap');
+
+        * { 
+            font-family: 'JetBrains Mono', monospace; 
+            box-sizing: border-box; 
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        body { 
+            background-color: #050505;
+            background-image: radial-gradient(circle at 50% 0%, #1a1a2e 0%, #050505 70%);
+            background-attachment: fixed;
+            color: #e2e8f0;
+        }
+
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .glass-input {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #f8fafc;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        .glass-input:focus {
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .tab-active { 
+            background: #ffffff !important; 
+            color: #000000 !important; 
+        }
+
+        .btn-primary {
+            background: #ffffff;
+            color: #000000;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        .btn-primary:hover {
+            background: transparent;
+            color: #ffffff;
+            border-color: #ffffff;
+        }
+
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(5px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        .animate-fade { animation: fadeIn 0.4s ease-out forwards; }
+    </style>
+</head>
+<body class="h-full w-full overflow-auto">
+
+    <div id="toast-container" class="fixed bottom-5 right-5 z-[100] flex flex-col gap-2 max-w-md w-full pointer-events-none"></div>
+
+    <header class="border-b border-white/10 sticky top-0 z-40 bg-black/50 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div>
+                <h1 class="text-xl font-light tracking-[0.2em] uppercase text-white">MY TOOL - ACCOUNTS</h1>
+                <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Operator: Anh Minh | Chức năng: Nói ít, làm nhiều</p>
+            </div>
+            <div id="connection-banner" class="bg-red-900/30 text-red-400 px-4 py-2 text-[10px] uppercase tracking-widest border border-red-500/20">
+                Chưa đồng bộ API. Chạy Data Local.
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-6 mt-8">
+        <div class="flex gap-2 border-b border-white/10 pb-px overflow-x-auto scrollbar-hide">
+            <button onclick="switchTab('products')" id="tab-products" class="px-6 py-3 text-xs uppercase tracking-widest transition-all tab-active text-gray-500 hover:text-white">Cơ sở dữ liệu</button> 
+            <button onclick="switchTab('history')" id="tab-history" class="px-6 py-3 text-xs uppercase tracking-widest transition-all text-gray-500 hover:text-white">Truy xuất</button> 
+            <button onclick="checkPasswordAndOpenSettings()" id="tab-admin" class="px-6 py-3 text-xs uppercase tracking-widest transition-all text-gray-500 hover:text-white">Hệ thống</button>
+        </div>
+    </div>
+
+    <div id="panel-products" class="max-w-7xl mx-auto px-6 py-8 animate-fade">
+        <div class="glass-panel p-6 mb-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex items-center gap-6">
+                <div>
+                    <span class="text-[10px] text-gray-500 uppercase tracking-widest block mb-1">Webhook IPN</span>
+                    <span class="text-sm font-light text-white tracking-widest">Active</span>
+                </div>
+                <div class="w-px h-8 bg-white/10 hidden md:block"></div>
+                <div>
+                    <span class="text-[10px] text-gray-500 uppercase tracking-widest block mb-1">Tổng phân loại</span>
+                    <span id="stat-products" class="text-sm font-light text-white">0</span>
+                </div>
+                <div class="w-px h-8 bg-white/10 hidden md:block"></div>
+                <div>
+                    <span class="text-[10px] text-gray-500 uppercase tracking-widest block mb-1">Không gian lưu trữ</span>
+                    <span id="stat-stock" class="text-sm font-light text-white">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-6 mb-8">
+            <div>
+                <input type="text" id="search-input" oninput="filterProducts()" placeholder="Nhập từ khóa tra cứu..." class="w-full glass-input px-4 py-3 text-xs uppercase tracking-widest">
+            </div>
+            <div>
+                <select id="filter-price" onchange="filterProducts()" class="w-full glass-input px-4 py-3 text-xs uppercase tracking-widest cursor-pointer appearance-none">
+                    <option value="all" class="bg-black text-white">Mọi phân khúc</option>
+                    <option value="under50" class="bg-black text-white">< 50.000 VNĐ</option>
+                    <option value="50to100" class="bg-black text-white">50.000 - 100.000 VNĐ</option>
+                    <option value="100to500" class="bg-black text-white">100.000 - 500.000 VNĐ</option>
+                    <option value="over500" class="bg-black text-white">> 500.000 VNĐ</option>
+                </select>
+            </div>
+            <div>
+                <select id="sort-order" onchange="filterProducts()" class="w-full glass-input px-4 py-3 text-xs uppercase tracking-widest cursor-pointer appearance-none">
+                    <option value="default" class="bg-black text-white">Cấu hình gốc</option>
+                    <option value="price_asc" class="bg-black text-white">Giá: Tăng dần</option>
+                    <option value="price_desc" class="bg-black text-white">Giá: Giảm dần</option>
+                    <option value="name_asc" class="bg-black text-white">Tên: A - Z</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="mb-8 flex flex-col md:flex-row items-start md:items-center gap-6">
+            <label class="flex items-center gap-3 cursor-pointer group">
+                <input type="checkbox" id="filter-instock" onchange="filterProducts()" class="appearance-none w-4 h-4 border border-white/30 checked:bg-white checked:border-white transition-all cursor-pointer">
+                <span class="text-[10px] uppercase tracking-widest text-gray-400 group-hover:text-white transition-colors">Ẩn phân vùng trống</span>
+            </label>
+            <div class="w-full md:w-px h-px md:h-6 bg-white/10"></div>
+            <div id="category-container" class="flex flex-wrap gap-2"></div>
+        </div>
+
+        <div id="loading-state" class="hidden py-24 text-center">
+            <div class="w-8 h-8 border-t-2 border-white mx-auto animate-spin mb-4"></div>
+            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Đang truy xuất cơ sở dữ liệu...</p>
+        </div>
+
+        <div id="empty-state" class="hidden py-24 text-center glass-panel">
+            <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-4">Cấu trúc lưới trống. Không khớp với tham số.</p>
+            <button onclick="resetFilters()" class="text-xs text-white hover:text-gray-400 uppercase tracking-widest underline underline-offset-4">Tái thiết lập</button>
+        </div>
+
+        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+    </div>
+
+    <div id="panel-history" class="hidden max-w-7xl mx-auto px-6 py-8 animate-fade">
+        <div class="glass-panel p-8">
+            <div class="flex flex-col md:flex-row gap-4 mb-8">
+                <input type="email" id="history-email-input" placeholder="Định danh liên hệ (Email)..." class="flex-1 glass-input px-4 py-3 text-xs uppercase tracking-widest">
+                <button onclick="searchOrders()" id="btn-search-orders" class="btn-primary py-3 px-8 text-xs uppercase tracking-widest">Yêu cầu dữ liệu</button>
+            </div>
+
+            <div id="history-result" class="space-y-4">
+                <div class="text-center py-12 border border-white/5 bg-white/5">
+                    <p class="text-[10px] text-gray-500 tracking-widest uppercase">Đợi tham số để thiết lập truy vấn.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="panel-admin" class="hidden max-w-7xl mx-auto px-6 py-8 animate-fade">
+        <div class="glass-panel p-8">
+            <div class="mb-8">
+                <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-4 border-b border-white/10 pb-4">Định tuyến API Google Apps Script</p>
+                <label class="block text-[10px] text-gray-500 mb-2 uppercase tracking-widest">Endpoint URL</label>
+                <input type="url" id="settings-api-url" class="w-full glass-input px-4 py-3 text-xs mb-4">
+                
+                <div class="flex gap-4">
+                    <button onclick="saveSettings()" class="btn-primary py-3 px-6 text-xs uppercase tracking-widest">Ghi đè cấu hình</button>
+                    <button onclick="testConnection()" class="py-3 px-6 border border-white/20 hover:bg-white/10 text-white text-xs uppercase tracking-widest transition-all">Ping Kết Nối</button>
+                </div>
+            </div>
+
+            <div id="test-connection-box" class="hidden p-5 border border-white/10 bg-black">
+                <p id="test-connection-text" class="text-xs text-gray-400 tracking-widest"></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="buy-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden">
+        <div class="glass-panel w-full max-w-lg p-8 relative animate-fade border border-white/20">
+            <button onclick="closeBuyModal()" class="absolute right-6 top-6 text-gray-500 hover:text-white text-xs uppercase tracking-widest transition-colors">Đóng</button>
+
+            <span id="modal-category" class="inline-block text-[10px] text-gray-400 uppercase tracking-widest border border-white/10 px-2 py-1 mb-4">Phân vùng</span>
+            <h3 id="modal-title" class="text-base font-light text-white mb-6 pr-12 uppercase tracking-wide">Tên dữ liệu</h3>
+
+            <div class="border-l border-white/20 pl-4 mb-6">
+                <p id="modal-description" class="text-[11px] text-gray-400 whitespace-pre-line leading-relaxed text-justify"></p>
+            </div>
+
+            <div class="space-y-4 mb-6">
+                <input type="text" id="customer-name" placeholder="Tên khách hàng..." class="w-full glass-input px-4 py-3 text-xs uppercase tracking-widest">
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="email" id="customer-email" placeholder="Email nhận dữ liệu..." class="w-full glass-input px-4 py-3 text-xs uppercase tracking-widest">
+                    <input type="tel" id="customer-phone" placeholder="Số điện thoại..." class="w-full glass-input px-4 py-3 text-xs uppercase tracking-widest">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <span class="block text-[10px] text-gray-500 mb-2 uppercase tracking-widest">Giá trị đơn vị</span>
+                    <div class="border border-white/10 bg-black/50 px-4 py-3 text-white text-xs tracking-widest">
+                        <span id="modal-price">0</span><span class="text-[10px] ml-1">VNĐ</span>
+                    </div>
+                </div>
+                <div>
+                    <span class="flex justify-between block text-[10px] text-gray-500 mb-2 uppercase tracking-widest">
+                        Dung lượng <span id="modal-stock" class="text-white">(0)</span>
+                    </span>
+                    <div class="flex items-center border border-white/10 bg-black/50 h-[42px]">
+                        <button onclick="changeQuantity(-1)" class="w-10 h-full hover:bg-white/10 text-gray-400 hover:text-white transition-colors">-</button>
+                        <input type="number" id="purchase-qty" value="1" min="1" onchange="validateQuantity()" class="w-full text-center bg-transparent border-none text-xs text-white focus:ring-0 p-0 outline-none appearance-none">
+                        <button onclick="changeQuantity(1)" class="w-10 h-full hover:bg-white/10 text-gray-400 hover:text-white transition-colors">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-white/10 flex items-center justify-between">
+                <div>
+                    <span class="text-[10px] text-gray-500 uppercase tracking-widest block mb-1">Tổng chi phí</span>
+                    <span id="modal-total" class="text-lg font-light text-white tracking-widest">0 VNĐ</span>
+                </div>
+                <button onclick="createOrderCheckout()" id="btn-submit-order" class="btn-primary py-3 px-8 text-xs uppercase tracking-widest">
+                    Khởi tạo
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="payment-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90 backdrop-blur-lg hidden">
+        <div class="glass-panel w-full max-w-sm p-8 text-center relative animate-fade border border-white/20">
+            <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-2">Phiên chờ thanh toán</p>
+            
+            <div class="bg-white p-2 inline-block mb-6 relative">
+                <img id="payment-qr-img" src="" alt="QR" class="w-48 h-48 object-cover opacity-0 transition-opacity duration-300">
+                <div id="qr-loading" class="absolute inset-0 flex items-center justify-center bg-white">
+                    <div class="w-5 h-5 border-t-2 border-black animate-spin"></div>
+                </div>
+            </div>
+
+            <div class="border border-white/10 bg-black/50 p-4 mb-6 text-left">
+                <div class="flex justify-between items-center mb-3 border-b border-white/10 pb-2">
+                    <span class="text-[10px] text-gray-500 uppercase tracking-widest">Định mức</span>
+                    <span id="payment-amount" class="text-xs text-white tracking-widest">0 VNĐ</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-[10px] text-gray-500 uppercase tracking-widest">Cú pháp</span>
+                    <div class="flex items-center gap-2">
+                        <span id="payment-syntax" class="text-xs text-white tracking-widest">HD...</span>
+                        <button onclick="copyToClipboard('payment-syntax-hidden')" class="text-[9px] border border-white/20 hover:bg-white/10 text-white px-2 py-1 uppercase tracking-widest transition-colors">Copy</button>
+                        <input type="text" id="payment-syntax-hidden" class="sr-only">
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <div class="w-2 h-2 rounded-full bg-white animate-pulse"></div>
+                <p class="text-[9px] text-gray-500 tracking-widest uppercase">Đang chờ Webhook phản hồi...</p>
+            </div>
+
+            <div class="space-y-3 mt-6">
+                <button onclick="triggerManualConfirm()" id="btn-manual-confirm" class="w-full py-3 bg-white text-black hover:bg-gray-200 text-[10px] uppercase tracking-widest transition-colors">
+                    Xác nhận đã chuyển khoản
+                </button>
+                <button onclick="cancelPayment()" class="w-full py-3 border border-white/10 hover:bg-white/5 text-gray-400 hover:text-white text-[10px] uppercase tracking-widest transition-colors">
+                    Hủy phiên
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="success-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90 backdrop-blur-lg hidden">
+        <div class="glass-panel w-full max-w-xl p-8 relative animate-fade border border-white/20">
+            <div class="text-center mb-8 border-b border-white/10 pb-6">
+                <p class="text-[10px] text-white uppercase tracking-widest mb-2">Trạng thái: 200 OK</p>
+                <h3 class="text-lg font-light text-white tracking-widest uppercase">Kích hoạt hoàn tất</h3>
+            </div>
+
+            <div class="border border-white/10 bg-black/50 p-5 mb-8">
+                <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-3">Dữ liệu phân bổ</p>
+                <textarea id="delivered-data" readonly class="w-full h-32 bg-transparent border-none text-white text-xs focus:outline-none resize-none leading-relaxed" spellcheck="false"></textarea>
+                
+                <button onclick="copyToClipboard('delivered-data')" class="w-full mt-4 py-3 border border-white/20 hover:bg-white/10 text-white text-[10px] uppercase tracking-widest transition-colors">
+                    Lưu trữ bộ nhớ
+                </button>
+            </div>
+
+            <button onclick="closeSuccessModal()" class="w-full btn-primary py-3 text-[10px] uppercase tracking-widest">
+                Đóng giao diện
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const MOCK_PRODUCTS = [
+            { id: "P001", name: "Netflix Premium UltraHD 1 Tháng (Cá nhân)", category: "Trực tuyến", price: 55000, description: "Phân giải 4K cao cấp nhất.\nTương thích đa nền tảng.\nChính sách 1 đổi 1 30 ngày.\nNghiêm cấm đổi thông tin.", image: "https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?w=600&auto=format&fit=crop&q=80", stock: 12 },
+            { id: "P002", name: "Spotify Premium 12 Tháng", category: "Âm nhạc", price: 180000, description: "Nâng cấp chính chủ.\nBảo lưu danh sách phát.\nHiệu lực 12 tháng liên tục.", image: "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=600&auto=format&fit=crop&q=80", stock: 25 }
+        ];
+
+        let webAppUrl = "https://script.google.com/macros/s/AKfycbxueESjJmSsRw7lRJBMNhnci3_jejyGFU8viaDmi92d1AQkBesZ_QqfymIersM5ox0hKA/exec";
+        let rawProducts = [];
+        let filteredProducts = [];
+        let selectedCategory = "all";
+        let currentProduct = null;
+        let quantitySelected = 1;
+        let pollingInterval = null;
+        let activeOrderId = null; // Lưu Order ID hiện tại
+
+        window.addEventListener('load', initApp);
+
+        function initApp() {
+            const banner = document.getElementById('connection-banner');
+            document.getElementById('settings-api-url').value = webAppUrl;
+
+            if (webAppUrl) {
+                banner.classList.add('hidden');
+                fetchProductsFromAPI();
+            } else {
+                banner.classList.remove('hidden');
+                rawProducts = JSON.parse(JSON.stringify(MOCK_PRODUCTS));
+                renderApp();
+            }
+        }
+
+        function switchTab(tab) {
+            const tabs = ['products', 'history', 'admin'];
+            tabs.forEach(t => {
+                document.getElementById(`panel-${t}`).classList.add('hidden');
+                document.getElementById(`tab-${t}`).classList.remove('tab-active', 'text-black');
+                document.getElementById(`tab-${t}`).classList.add('text-gray-500');
+            });
+            document.getElementById(`panel-${tab}`).classList.remove('hidden');
+            document.getElementById(`tab-${tab}`).classList.add('tab-active', 'text-black');
+            document.getElementById(`tab-${tab}`).classList.remove('text-gray-500');
+        }
+
+        async function fetchProductsFromAPI() {
+            if (!webAppUrl) return;
+            showLoading(true);
+            try {
+                const response = await fetch(`${webAppUrl}?action=getProducts`);
+                const data = await response.json();
+                if (data && data.status === "success") {
+                    rawProducts = data.data;
+                } else throw new Error();
+            } catch (error) {
+                showToast("Dữ liệu tuyến không phản hồi. Trả về cục bộ.", "warning");
+                rawProducts = JSON.parse(JSON.stringify(MOCK_PRODUCTS));
+            } finally {
+                renderApp();
+                showLoading(false);
+            }
+        }
+
+        function showLoading(isLoading) {
+            const grid = document.getElementById('product-grid');
+            const loading = document.getElementById('loading-state');
+            if (isLoading) {
+                grid.classList.add('hidden');
+                loading.classList.remove('hidden');
+            } else {
+                grid.classList.remove('hidden');
+                loading.classList.add('hidden');
+            }
+        }
+
+        function renderApp() {
+            document.getElementById('stat-products').innerText = rawProducts.length;
+            document.getElementById('stat-stock').innerText = rawProducts.reduce((sum, item) => sum + parseInt(item.stock || 0), 0);
+            renderCategories();
+            filterProducts();
+        }
+
+        function renderCategories() {
+            const container = document.getElementById('category-container');
+            const categories = [...new Set(rawProducts.map(p => p.category))];
+            
+            container.innerHTML = `<button onclick="selectCategory('all')" id="cat-all" class="cat-chip px-4 py-2 text-[10px] tracking-widest uppercase transition-all border border-transparent">Toàn bộ</button>`;
+            categories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.id = `cat-${encodeURIComponent(cat)}`;
+                btn.className = "cat-chip px-4 py-2 text-[10px] tracking-widest uppercase transition-all border border-transparent";
+                btn.innerText = cat;
+                btn.onclick = () => selectCategory(cat);
+                container.appendChild(btn);
+            });
+            updateActiveCategoryUI();
+        }
+
+        function selectCategory(categoryName) {
+            selectedCategory = categoryName;
+            updateActiveCategoryUI();
+            filterProducts();
+        }
+
+        function updateActiveCategoryUI() {
+            document.querySelectorAll('.cat-chip').forEach(btn => {
+                btn.className = "cat-chip px-4 py-2 text-gray-500 border border-white/10 text-[10px] tracking-widest uppercase hover:bg-white/5 transition-all";
+            });
+            const targetId = selectedCategory === 'all' ? 'cat-all' : `cat-${encodeURIComponent(selectedCategory)}`;
+            const activeBtn = document.getElementById(targetId);
+            if (activeBtn) {
+                activeBtn.className = "cat-chip px-4 py-2 bg-white text-black border border-white text-[10px] tracking-widest uppercase transition-all";
+            }
+        }
+
+        function filterProducts() {
+            const query = document.getElementById('search-input').value.toLowerCase().trim();
+            const priceFilter = document.getElementById('filter-price').value;
+            const inStockOnly = document.getElementById('filter-instock').checked;
+            const sortOrder = document.getElementById('sort-order').value;
+
+            filteredProducts = rawProducts.filter(p => {
+                if (selectedCategory !== 'all' && p.category !== selectedCategory) return false;
+                if (query) {
+                    if (!p.name.toLowerCase().includes(query) && !p.description.toLowerCase().includes(query) && !p.category.toLowerCase().includes(query)) return false;
+                }
+                if (inStockOnly && parseInt(p.stock) <= 0) return false;
+                
+                const price = parseFloat(p.price);
+                if (priceFilter === "under50" && price >= 50000) return false;
+                if (priceFilter === "50to100" && (price < 50000 || price > 100000)) return false;
+                if (priceFilter === "100to500" && (price < 100000 || price > 500000)) return false;
+                if (priceFilter === "over500" && price <= 500000) return false;
+                return true;
+            });
+
+            if (sortOrder === 'price_asc') filteredProducts.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+            else if (sortOrder === 'price_desc') filteredProducts.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+            else if (sortOrder === 'name_asc') filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
+
+            renderProductGrid();
+        }
+
+        function resetFilters() {
+            document.getElementById('search-input').value = "";
+            document.getElementById('filter-price').value = "all";
+            document.getElementById('sort-order').value = "default";
+            document.getElementById('filter-instock').checked = false;
+            selectedCategory = "all";
+            updateActiveCategoryUI();
+            filterProducts();
+        }
+
+        function renderProductGrid() {
+            const grid = document.getElementById('product-grid');
+            const emptyState = document.getElementById('empty-state');
+
+            if (filteredProducts.length === 0) {
+                grid.innerHTML = "";
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            grid.innerHTML = filteredProducts.map(p => {
+                const inStock = parseInt(p.stock) > 0;
+                return `
+                    <div class="glass-panel flex flex-col group ${!inStock && 'opacity-50 grayscale'}">
+                        <div class="aspect-video w-full overflow-hidden relative border-b border-white/5">
+                            <img src="${p.image}" alt="Data" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out opacity-80" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600'">
+                            <span class="absolute top-4 left-4 px-2 py-1 text-[8px] uppercase tracking-widest bg-black/80 backdrop-blur-md text-white border border-white/10">
+                                ${inStock ? `Sẵn sàng: ${p.stock}` : 'TRỐNG'}
+                            </span>
+                        </div>
+                        <div class="p-5 flex-1 flex flex-col justify-between">
+                            <div>
+                                <span class="text-[8px] text-gray-500 uppercase tracking-widest block mb-2">${p.category}</span>
+                                <h3 class="text-xs font-light text-white uppercase tracking-wider mb-2 line-clamp-2">${p.name}</h3>
+                                <p class="text-[10px] text-gray-500 line-clamp-3 mb-6 font-light whitespace-pre-line text-justify">${p.description}</p>
+                            </div>
+                            <div class="flex items-center justify-between border-t border-white/5 pt-4 mt-auto">
+                                <span class="text-sm text-white tracking-widest">${formatMoney(p.price)}đ</span>
+                                ${inStock ? `
+                                    <button onclick="openBuyModal('${p.id}')" class="px-4 py-2 border border-white/20 hover:bg-white text-white hover:text-black text-[9px] uppercase tracking-widest transition-colors">
+                                        KHỞI TẠO
+                                    </button>
+                                ` : `
+                                    <span class="px-4 py-2 border border-white/5 text-gray-600 text-[9px] uppercase tracking-widest">
+                                        NULL
+                                    </span>
+                                `}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openBuyModal(productId) {
+            currentProduct = rawProducts.find(p => p.id === productId);
+            if (!currentProduct) return;
+
+            document.getElementById('modal-title').innerText = currentProduct.name;
+            document.getElementById('modal-category').innerText = currentProduct.category;
+            document.getElementById('modal-description').innerText = currentProduct.description;
+            document.getElementById('modal-price').innerText = formatMoney(currentProduct.price);
+            document.getElementById('modal-stock').innerText = `(${currentProduct.stock})`;
+            
+            quantitySelected = 1;
+            document.getElementById('purchase-qty').value = quantitySelected;
+            updatePurchaseTotal();
+
+            document.getElementById('buy-modal').classList.remove('hidden');
+        }
+
+        function closeBuyModal() {
+            document.getElementById('buy-modal').classList.add('hidden');
+        }
+
+        function changeQuantity(change) {
+            if (!currentProduct) return;
+            const newQty = quantitySelected + change;
+            const maxStock = parseInt(currentProduct.stock);
+            if (newQty >= 1 && newQty <= maxStock) {
+                quantitySelected = newQty;
+                document.getElementById('purchase-qty').value = quantitySelected;
+                updatePurchaseTotal();
+            } else if (newQty > maxStock) showToast(`Limit max: ${maxStock}`, "warning");
+        }
+
+        function validateQuantity() {
+            if (!currentProduct) return;
+            const input = document.getElementById('purchase-qty');
+            let val = parseInt(input.value);
+            const maxStock = parseInt(currentProduct.stock);
+            if (isNaN(val) || val < 1) val = 1;
+            else if (val > maxStock) val = maxStock;
+            quantitySelected = val;
+            input.value = quantitySelected;
+            updatePurchaseTotal();
+        }
+
+        function updatePurchaseTotal() {
+            if (!currentProduct) return;
+            document.getElementById('modal-total').innerText = `${formatMoney(currentProduct.price * quantitySelected)} VNĐ`;
+        }
+
+        async function createOrderCheckout() {
+            const name = document.getElementById('customer-name').value.trim();
+            const email = document.getElementById('customer-email').value.trim();
+            const phone = document.getElementById('customer-phone').value.trim();
+
+            if (!name || !email || !phone) return showToast("Trường thông tin trống.", "warning");
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showToast("Sai định dạng Email.", "warning");
+
+            const btn = document.getElementById('btn-submit-order');
+            const originalText = btn.innerText;
+            btn.disabled = true;
+            btn.innerText = "ĐANG XỬ LÝ...";
+
+            try {
+                const response = await fetch(webAppUrl, {
+                    method: 'POST',
+                    body: new URLSearchParams({ 
+                        action: 'createOrder', 
+                        productId: currentProduct.id, 
+                        price: currentProduct.price, 
+                        email: email, 
+                        name: name,
+                        phone: phone,
+                        qty: quantitySelected 
+                    })
+                });
+                const resData = await response.json();
+                if (resData.status === "success") {
+                    closeBuyModal();
+                    openPaymentModal(resData.orderId, resData.amount, resData.paymentSyntax);
+                } else throw new Error();
+            } catch (err) {
+                showToast("Endpoint lỗi phản hồi.", "error");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = originalText;
+            }
+        }
+
+        function openPaymentModal(orderId, amount, syntax) {
+            activeOrderId = orderId;
+            document.getElementById('payment-amount').innerText = formatMoney(amount) + ' VNĐ';
+            document.getElementById('payment-syntax').innerText = syntax;
+            document.getElementById('payment-syntax-hidden').value = syntax;
+
+            const qrUrl = `https://img.vietqr.io/image/MB-0123456789-compact2.png?amount=${amount}&addInfo=${encodeURIComponent(syntax)}&accountName=DIGITAL_HUB`;
+            const qrImg = document.getElementById('payment-qr-img');
+            const qrLoading = document.getElementById('qr-loading');
+            
+            qrImg.classList.remove('opacity-100');
+            qrLoading.classList.remove('hidden');
+            qrImg.src = qrUrl;
+            qrImg.onload = () => { qrLoading.classList.add('hidden'); qrImg.classList.add('opacity-100'); };
+
+            document.getElementById('payment-modal').classList.remove('hidden');
+            startPaymentPolling(orderId);
+        }
+
+        async function triggerManualConfirm() {
+            if (!activeOrderId) return;
+            
+            const btn = document.getElementById('btn-manual-confirm');
+            const originalText = btn.innerText;
+            btn.disabled = true;
+            btn.innerText = "ĐANG XÁC THỰC...";
+
+            try {
+                const response = await fetch(webAppUrl, {
+                    method: 'POST',
+                    body: new URLSearchParams({ action: 'confirmPayment', orderId: activeOrderId })
+                });
+                const data = await response.json();
+                
+                if (data.status === "success") {
+                    if (pollingInterval) clearInterval(pollingInterval);
+                    document.getElementById('payment-modal').classList.add('hidden');
+                    document.getElementById('delivered-data').value = data.deliveredData;
+                    document.getElementById('success-modal').classList.remove('hidden');
+                    fetchProductsFromAPI(); 
+                } else {
+                    showToast("Xác thực thất bại.", "error");
+                }
+            } catch (err) {
+                showToast("Lỗi kết nối máy chủ.", "error");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = originalText;
+            }
+        }
+
+        function cancelPayment() {
+            if (pollingInterval) clearInterval(pollingInterval);
+            activeOrderId = null;
+            document.getElementById('payment-modal').classList.add('hidden');
+            showToast("Đã ngắt phiên dịch vụ.", "info");
+        }
+
+        function startPaymentPolling(orderId) {
+            let attempt = 0;
+            pollingInterval = setInterval(async () => {
+                attempt++;
+                try {
+                    const res = await fetch(`${webAppUrl}?action=checkOrderStatus&orderId=${orderId}`);
+                    const data = await res.json();
+                    if (data.status === "success" && data.orderStatus === "Paid") {
+                        clearInterval(pollingInterval);
+                        document.getElementById('payment-modal').classList.add('hidden');
+                        document.getElementById('delivered-data').value = data.deliveredData;
+                        document.getElementById('success-modal').classList.remove('hidden');
+                        fetchProductsFromAPI(); 
+                    }
+                } catch (err) {}
+                if (attempt >= 100) cancelPayment();
+            }, 3000); 
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('success-modal').classList.add('hidden');
+        }
+
+        async function searchOrders() {
+            const email = document.getElementById('history-email-input').value.trim();
+            if (!email) return showToast("Thiếu tham số bắt buộc.", "warning");
+
+            const btn = document.getElementById('btn-search-orders');
+            const resultBox = document.getElementById('history-result');
+            btn.disabled = true;
+            btn.innerText = "ĐANG TRUY XUẤT...";
+
+            try {
+                const response = await fetch(`${webAppUrl}?action=getOrders&email=${encodeURIComponent(email)}`);
+                const resData = await response.json();
+                if (resData.status === "success") {
+                    if (!resData.data || resData.data.length === 0) {
+                        resultBox.innerHTML = `<div class="text-center py-12 border border-white/5 bg-white/5"><p class="text-[10px] text-gray-500 uppercase tracking-widest">Không có bản ghi hợp lệ.</p></div>`;
+                    } else {
+                        resultBox.innerHTML = resData.data.map((ord, idx) => `
+                            <div class="border border-white/10 bg-black/50 p-6 mb-4">
+                                <div class="flex justify-between border-b border-white/5 pb-3 mb-4">
+                                    <span class="text-[10px] text-gray-400 bg-white/10 px-2 py-1 tracking-widest">${ord.orderId}</span>
+                                    <span class="text-[10px] text-gray-500">${ord.timestamp}</span>
+                                </div>
+                                <h4 class="text-xs font-light text-white uppercase tracking-wider mb-2">${ord.productName}</h4>
+                                <div class="flex justify-between text-[10px] text-gray-400 mb-4 uppercase tracking-widest">
+                                    <span>SL: ${ord.qty}</span>
+                                    <span class="text-white">${formatMoney(ord.price * ord.qty)} VNĐ</span>
+                                </div>
+                                <div class="border border-white/10 bg-black p-4">
+                                    <span class="text-[8px] text-gray-500 uppercase tracking-widest block mb-2">Chuỗi ký tự xuất</span>
+                                    <textarea id="history-txt-${idx}" readonly class="w-full h-12 bg-transparent border-none text-white text-xs focus:ring-0 p-0 resize-none outline-none" spellcheck="false">${ord.data}</textarea>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                } else throw new Error();
+            } catch (err) {
+                resultBox.innerHTML = `<div class="text-center py-12 border border-red-500/20 bg-red-900/10"><p class="text-[10px] text-red-400 uppercase tracking-widest">Lỗi cấu trúc hoặc kết nối.</p></div>`;
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "YÊU CẦU DỮ LIỆU";
+            }
+        }
+
+        function checkPasswordAndOpenSettings() {
+            const password = prompt("Auth Code (System Bypass):");
+            if (password === "729903") switchTab('admin');
+            else if (password !== null) showToast("Access Denied.", "error");
+        }
+
+        function saveSettings() {
+            webAppUrl = document.getElementById('settings-api-url').value.trim();
+            showToast("Tham số ghi đè thành công.", "success");
+            initApp();
+        }
+
+        async function testConnection() {
+            const apiVal = document.getElementById('settings-api-url').value.trim();
+            if (!apiVal) return showToast("Endpoint Null.", "warning");
+
+            const testBox = document.getElementById('test-connection-box');
+            const testText = document.getElementById('test-connection-text');
+            testBox.classList.remove('hidden');
+            testText.innerHTML = "PING...";
+
+            try {
+                const response = await fetch(`${apiVal}?action=getProducts`);
+                const data = await response.json();
+                if (data && data.status === "success") {
+                    testBox.className = "p-5 border border-white/20 bg-white/5 mt-4";
+                    testText.innerHTML = `<span class="text-white text-[10px] uppercase tracking-widest">Tín hiệu: 200 OK<br>Tổng mảng: ${data.data.length}</span>`;
+                } else throw new Error();
+            } catch (err) {
+                testBox.className = "p-5 border border-red-500/20 bg-red-900/10 mt-4";
+                testText.innerHTML = `<span class="text-red-400 text-[10px] uppercase tracking-widest">Connection Refused.</span>`;
+            }
+        }
+
+        function showToast(message, type = "info") {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            let styleClass = "bg-white/10 border-white/20 text-white backdrop-blur-md";
+            if (type === "success") styleClass = "bg-white/10 border-white/50 text-white";
+            else if (type === "warning") styleClass = "bg-black border-white/30 text-white";
+            else if (type === "error") styleClass = "bg-red-900/50 border-red-500/50 text-red-200";
+
+            toast.className = `flex items-center p-4 text-[10px] uppercase tracking-widest border ${styleClass} transition-all duration-300 transform translate-x-full opacity-0`;
+            toast.innerHTML = `<span class="flex-1">${message}</span>`;
+            container.appendChild(toast);
+
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-x-full', 'opacity-0');
+            });
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-x-full');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function formatMoney(num) { return Number(num).toLocaleString('vi-VN'); }
+
+        function copyToClipboard(id) {
+            const el = document.getElementById(id);
+            if (el.type === 'hidden' || el.classList.contains('sr-only')) {
+                el.type = 'text'; el.classList.remove('sr-only');
+                el.select(); document.execCommand('copy');
+                el.type = 'hidden'; el.classList.add('sr-only');
+            } else {
+                el.select(); document.execCommand('copy');
+            }
+            showToast("Đã nạp vào bộ nhớ tạm.", "success");
+        }
+    </script>
+</body>
+</html>
