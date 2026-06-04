@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi" class="h-full">
 <head>
-        <link rel="icon" href="https://img.magnific.com/free-vector/branding-identity-corporate-vector-logo-letter-m-design_460848-13901.jpg?semt=ais_hybrid&w=740&q=80" alt="Logo" class="w-10 h-10 rounded-xl object-cover mr-3 shadow-md border border-slate-100 transition-transform group-hover:scale-105">
+        <link rel="icon" href="https://i.pinimg.com/736x/0c/81/aa/0c81aa73e7366631976e044b0ab523b4.jpg" alt="Logo" class="w-10 h-10 rounded-xl object-cover mr-3 shadow-md border border-slate-100 transition-transform group-hover:scale-105">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hệ thống phân phối kỹ thuật số | Giao diện quản trị</title>
@@ -328,8 +328,9 @@
             </div>
 
             <div class="space-y-3">
-                <button onclick="triggerManualConfirm()" id="btn-manual-confirm" class="w-full py-3.5 bg-slate-900 text-white hover:bg-slate-800 text-[10px] font-medium uppercase tracking-[0.15em] transition-colors shadow-lg rounded-sm">
-                    Xác nhận thủ công
+                <button onclick="triggerManualConfirm()" id="btn-manual-confirm" class="w-full py-3.5 bg-slate-900 text-white hover:bg-slate-800 text-[10px] font-medium uppercase tracking-[0.15em] transition-colors shadow-lg rounded-sm flex flex-col items-center justify-center gap-1">
+                    <span>Gửi Hóa Đơn Zalo & Nhận Hàng</span>
+                    <span class="text-[7.5px] text-slate-400 font-normal tracking-widest normal-case">(Tự động tạo & copy hóa đơn)</span>
                 </button>
                 <button onclick="cancelPayment()" class="w-full py-3.5 border border-transparent hover:border-slate-900/10 text-slate-500 hover:text-slate-900 text-[10px] uppercase tracking-widest transition-colors rounded-sm">
                     Hủy phiên
@@ -684,19 +685,27 @@
             if (!activeOrderId) return;
             
             const btn = document.getElementById('btn-manual-confirm');
-            btn.innerText = "ĐANG ĐỊNH TUYẾN ZALO...";
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = "<span>ĐANG TẠO HÓA ĐƠN...</span>";
 
             const totalAmount = currentProduct.price * quantitySelected;
-            const message = `[YÊU CẦU KIỂM TRA THANH TOÁN]
-Mã giao dịch: ${activeOrderId}
-Sản phẩm: ${currentProduct.name}
-Số lượng: ${quantitySelected}
-Tổng tiền: ${formatMoney(totalAmount)} VNĐ
-
--- Thông tin khách hàng --
-Tên: ${customerData.name}
-SĐT: ${customerData.phone}
-Email: ${customerData.email}`;
+            
+            /* Logic lại phần hóa đơn (Invoice Format) gọn gàng, chuyên nghiệp */
+            const message = `🧾 HÓA ĐƠN ĐẶT HÀNG - DIGITAL HUB 🧾
+═════════════════════════════
+Mã giao dịch : ${activeOrderId}
+Sản phẩm     : ${currentProduct.name}
+Số lượng     : ${quantitySelected}
+Thành tiền   : ${formatMoney(totalAmount)} VNĐ
+Trạng thái   : Đã thanh toán (Chờ cấp phát)
+═════════════════════════════
+👤 THÔNG TIN KHÁCH HÀNG:
+- Tên KH     : ${customerData.name}
+- SĐT/Zalo   : ${customerData.phone}
+- Email      : ${customerData.email}
+═════════════════════════════
+📌 Ghi chú: 
+Tôi đã thanh toán thành công. Vui lòng kiểm tra và gửi tài khoản/dữ liệu cho tôi qua tin nhắn này.`;
 
             const tempInput = document.createElement("textarea");
             tempInput.value = message;
@@ -705,15 +714,17 @@ Email: ${customerData.email}`;
             document.execCommand("copy");
             document.body.removeChild(tempInput);
 
-            showToast("Đã sao chép biểu mẫu. Chuyển hướng Zalo...", "success");
+            showToast("Đã tạo Hóa Đơn & Lưu vào bộ nhớ tạm.", "success");
 
             setTimeout(() => {
                 window.open("https://zalo.me/0879342346", "_blank");
                 document.getElementById('payment-modal').classList.add('hidden');
                 activeOrderId = null;
-                btn.innerText = "XÁC NHẬN THỦ CÔNG";
-                showToast("Vui lòng Dán (Ctrl+V) tin nhắn vào Zalo để gửi cho Admin.", "info");
-            }, 1000);
+                btn.innerHTML = originalHTML; // Trả lại UI ban đầu
+                
+                // Hướng dẫn chốt lại rõ ràng
+                showToast("Vui lòng DÁN (Ctrl+V) hóa đơn vào Zalo kèm BIÊN LAI CHUYỂN KHOẢN để nhận hàng.", "info");
+            }, 1200);
         }
 
         function cancelPayment() {
