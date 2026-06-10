@@ -224,11 +224,10 @@
         setVars({});
       };
 
-      // TÍNH NĂNG GỬI MAIL ĐA NỀN TẢNG
+      // TÍNH NĂNG GỬI MAIL ĐA NỀN TẢNG (RICH TEXT)
       const handleSendWebmail = (provider) => {
         if(!activeTemplate) return;
 
-        // 1. Sao chép HTML (Rich Text) vào Clipboard
         const el = document.createElement('div');
         el.innerHTML = renderedBody;
         el.style.position = 'absolute'; el.style.left = '-9999px';
@@ -240,7 +239,6 @@
         document.execCommand('copy');
         sel.removeAllRanges(); document.body.removeChild(el);
 
-        // 2. Xác định URL Mở Webmail
         let url = '';
         let platformName = '';
         
@@ -261,10 +259,25 @@
 
         showToast(`Đã sao chép thiết kế. Đang mở ${platformName}, hãy nhấn Ctrl+V để dán nội dung!`, "success");
         
-        // 3. Mở tab mới
         setTimeout(() => {
           window.open(url, '_blank');
         }, 1000);
+      };
+
+      // TÍNH NĂNG ĐẨY TÙY CHỈNH (MÃ HTML)
+      const handleCustomPush = () => {
+        if (!activeTemplate) return;
+
+        navigator.clipboard.writeText(renderedBody)
+            .then(() => {
+                showToast("Đã sao chép mã HTML! Đang mở hệ thống đích...", "success");
+                setTimeout(() => {
+                    window.open("https://alphazone.io.vn/mailtool.html", '_blank');
+                }, 500);
+            })
+            .catch(err => {
+                showToast("Lỗi khi sao chép mã nguồn HTML.", "error");
+            });
       };
 
       if (isLoading) {
@@ -380,6 +393,9 @@
                                   </button>
                                   <button onClick={() => handleSendWebmail('yahoo')} className="py-2.5 px-6 bg-purple-500/5 border border-purple-500/30 text-purple-400 hover:bg-purple-500/10 hover:border-purple-500/50 rounded-xl font-medium text-[10px] uppercase tracking-widest transition-all text-center">
                                       Gửi qua Yahoo
+                                  </button>
+                                  <button onClick={handleCustomPush} className="py-2.5 px-6 bg-emerald-500/5 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 hover:border-emerald-500/50 rounded-xl font-medium text-[10px] uppercase tracking-widest transition-all text-center mt-1">
+                                      Đẩy tùy chỉnh
                                   </button>
                               </div>
                           </div>
