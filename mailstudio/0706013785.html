@@ -99,21 +99,6 @@
     // --- CẤU HÌNH API ---
     const API_URL = "https://script.google.com/macros/s/AKfycbxw-j0MAu4t_wAFEQVmQ615yFKRrIfnee39F37dtn2RkWMzAXW6wTRu8c025KPuRmfk/exec";
 
-    // --- MẶC ĐỊNH (PHÒNG KHI API LỖI) ---
-    const defaultTemplates = [{
-      id: '1', name: "Thư mời Phỏng vấn", subject: "THƯ MỜI PHỎNG VẤN - [Vị Trí]",
-      body: `<div style="background:#fafafa; color:#333; padding:40px; font-family:Arial, sans-serif; border: 1px solid #eee; border-radius: 8px; max-width: 600px; margin: 0 auto;">
-  <h1 style="color:#cf0106; text-transform:uppercase; font-weight: normal; letter-spacing: 1px;">Thư Mời Phỏng Vấn</h1>
-  <p>Chào <strong>[Tên Ứng Viên]</strong>,</p>
-  <p>Cảm ơn bạn đã ứng tuyển vị trí <strong>[Vị Trí]</strong>. Chúng tôi mời bạn tham gia phỏng vấn:</p>
-  <ul style="background:#fff; padding:20px; border: 1px solid #e5e7eb; border-radius:8px; list-style:none;">
-    <li style="margin-bottom: 10px;"><strong style="color: #666;">Thời gian:</strong> [Giờ] ngày [Ngày]</li>
-    <li><strong style="color: #666;">Địa điểm:</strong> [Địa Điểm]</li>
-  </ul>
-  <p style="color: #666; font-size: 13px; margin-top: 20px;">Vui lòng phản hồi email này để xác nhận.</p>
-</div>`
-    }];
-
     const App = () => {
       const [templates, setTemplates] = useState([]);
       const [activeId, setActiveId] = useState(null);
@@ -121,19 +106,13 @@
       const [toast, setToast] = useState(null);
       const [isLoading, setIsLoading] = useState(true);
 
-      const [vars, setVars] = useState({
-        '[Tên Ứng Viên]': 'Anh Minh', 
-        '[Vị Trí]': 'Frontend Developer',
-        '[Giờ]': '09:00 AM', 
-        '[Ngày]': '20/11/2026', 
-        '[Địa Điểm]': 'Google Meet (Online)'
-      });
-
-      const activeTemplate = templates.find(t => t.id === activeId);
+      const [vars, setVars] = useState({});
       const [editSubject, setEditSubject] = useState('');
       const [editBody, setEditBody] = useState('');
 
-      // TẢI DỮ LIỆU
+      const activeTemplate = templates.find(t => t.id === activeId);
+
+      // TẢI DỮ LIỆU TỪ API
       useEffect(() => {
         fetch(API_URL)
           .then(res => res.json())
@@ -143,16 +122,20 @@
               setActiveId(result.data[0].id);
               if(result.data[0].vars) setVars(result.data[0].vars);
             } else {
-              setTemplates(defaultTemplates);
-              setActiveId(defaultTemplates[0].id);
+              // KHI CHƯA CÓ DỮ LIỆU: Bỏ default template, set mảng rỗng
+              setTemplates([]);
+              setActiveId(null);
+              setVars({});
             }
             setIsLoading(false);
           })
           .catch(err => {
-            setTemplates(defaultTemplates);
-            setActiveId(defaultTemplates[0].id);
+             // LỖI KẾT NỐI: CŨng trả về mảng rỗng thay vì nạp template có sẵn
+            setTemplates([]);
+            setActiveId(null);
+            setVars({});
             setIsLoading(false);
-            showToast("Lỗi tải API. Đang dùng mẫu nội bộ.", "error");
+            showToast("Chưa có dữ liệu từ máy chủ hoặc lỗi kết nối.", "warning");
           });
       }, []);
 
@@ -162,6 +145,11 @@
           setEditSubject(activeTemplate.subject);
           setEditBody(activeTemplate.body);
           if (activeTemplate.vars) setVars(activeTemplate.vars);
+        } else {
+          // Xóa trắng input nếu không có tab nào được chọn
+          setEditSubject('');
+          setEditBody('');
+          setVars({});
         }
       }, [activeId, templates.length]);
 
@@ -233,13 +221,20 @@
 
       const handleAddTemplate = () => {
         const newId = Date.now().toString();
-        const newTemplate = { id: newId, name: 'Bản thảo mới', subject: 'Tiêu đề thư...', body: '<h1>Nội dung</h1>', vars: {} };
+        const newTemplate = { 
+            id: newId, 
+            name: 'Bản thảo mới', 
+            subject: 'Tiêu đề thư...', 
+            body: `<div style="background:#fafafa; color:#333; padding:40px; font-family:Arial, sans-serif; border: 1px solid #eee; border-radius: 8px; max-width: 600px; margin: 0 auto;">\n  <h1 style="color:#cf0106;">Tiêu đề</h1>\n  <p>Nội dung thư...</p>\n</div>`, 
+            vars: {} 
+        };
         setTemplates([...templates, newTemplate]);
         setActiveId(newId);
         setVars({});
       };
 
       const handleSendGmail = () => {
+        if(!activeTemplate) return;
         const el = document.createElement('div');
         el.innerHTML = renderedBody;
         el.style.position = 'absolute'; el.style.left = '-9999px';
@@ -322,122 +317,138 @@
                   {/* Subtle Background Glow inside Panel */}
                   <div className="absolute top-0 right-0 w-96 h-96 bg-red-600/5 rounded-full blur-[100px] pointer-events-none"></div>
 
-                  {/* Info & Action Bar */}
-                  <div className="flex flex-col md:flex-row gap-6 mb-10 relative z-10">
-                      <div className="flex-1 space-y-5">
-                          <div>
-                              <label className="block text-[10px] font-light text-gray-400 mb-2.5 uppercase tracking-[0.15em]">Định danh hiển thị</label>
-                              <input 
-                                type="text" 
-                                value={activeTemplate?.name || ''} 
-                                onChange={(e) => setTemplates(prev => prev.map(t => t.id === activeId ? { ...t, name: e.target.value } : t))}
-                                className="w-full glass-input px-5 py-3.5 font-light text-white text-[15px] tracking-wide" 
-                              />
-                          </div>
-                          <div>
-                              <label className="block text-[10px] font-light text-gray-400 mb-2.5 uppercase tracking-[0.15em]">Cấu trúc chủ đề (Subject)</label>
-                              <input 
-                                type="text" 
-                                value={editSubject}
-                                onChange={(e) => setEditSubject(e.target.value)}
-                                className="w-full glass-input px-5 py-3.5 font-light text-white text-[15px] tracking-wide" 
-                              />
-                          </div>
-                      </div>
-                      
-                      <div className="flex flex-col gap-3 min-w-[220px] justify-end">
-                          <button onClick={handleSave} className="btn-primary py-3.5 px-8 rounded-xl font-medium text-[11px] uppercase tracking-widest text-center shadow-lg">
-                              Ghi đè cấu hình
-                          </button>
-                          <button onClick={handleSendGmail} className="py-3.5 px-8 bg-black/20 backdrop-blur-md border border-red-500/50 text-red-500 hover:bg-red-500/10 hover:border-red-500 hover:text-red-400 rounded-xl font-medium text-[11px] uppercase tracking-widest transition-all text-center">
-                              Đẩy qua Gmail
+                  {/* KHI KHÔNG CÓ TEMPLATE NÀO */}
+                  {templates.length === 0 ? (
+                      <div className="flex-1 flex flex-col items-center justify-center text-gray-500 min-h-[400px] relative z-10">
+                          <svg className="w-16 h-16 mb-4 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M3 19v-8.93a2 2 0 01.89-1.664l7-4.666a2 2 0 012.22 0l7 4.666A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5m0 0l-1.14.76a2 2 0 01-2.22 0l-1.14-.76" />
+                          </svg>
+                          <p className="text-[12px] uppercase tracking-[0.2em] mb-2 text-white/50">Hệ thống chưa có dữ liệu mẫu thư</p>
+                          <p className="text-[11px] font-light text-gray-500 mb-6">Hãy khởi tạo vùng dữ liệu mới để bắt đầu thiết kế nội dung.</p>
+                          <button onClick={handleAddTemplate} className="px-8 py-3.5 bg-red-600/10 text-red-500 rounded-xl border border-red-500/30 hover:bg-red-600/20 hover:text-red-400 transition-all uppercase text-[11px] font-medium tracking-widest shadow-[0_0_15px_rgba(220,38,38,0.1)]">
+                              + Khởi tạo mẫu mới
                           </button>
                       </div>
-                  </div>
-
-                  {/* Variables Manager */}
-                  <div className="bg-red-950/20 border border-red-900/30 rounded-2xl p-6 mb-10 relative z-10">
-                      <span className="text-[10px] font-medium text-red-400/80 uppercase tracking-[0.2em] block mb-5 flex items-center gap-2">
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
-                          Mảng biến động (Đầu vào)
-                      </span>
-                      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-5">
-                          {Object.keys(vars).map(key => (
-                              <div key={key} className="relative group">
-                                  <label className="block text-[10px] font-light text-gray-400 mb-2 uppercase tracking-widest">{key}</label>
-                                  <input 
-                                    type="text" 
-                                    value={vars[key]} 
-                                    onChange={(e) => setVars(prev => ({ ...prev, [key]: e.target.value }))}
-                                    className="w-full bg-black/40 border border-white/5 rounded-xl pl-4 pr-10 py-3 text-[13px] font-light text-white focus:outline-none focus:border-red-500/50 focus:bg-black/60 transition-all"
-                                  />
-                                  <button 
-                                    onClick={() => handleRemoveVar(key)}
-                                    className="absolute right-2 top-[28px] w-7 h-7 flex items-center justify-center text-gray-500 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
-                                    title="Xóa trường này"
-                                  >✕</button>
+                  ) : (
+                      /* KHI CÓ TEMPLATE - HIỂN THỊ EDITOR BÌNH THƯỜNG */
+                      <>
+                          {/* Info & Action Bar */}
+                          <div className="flex flex-col md:flex-row gap-6 mb-10 relative z-10">
+                              <div className="flex-1 space-y-5">
+                                  <div>
+                                      <label className="block text-[10px] font-light text-gray-400 mb-2.5 uppercase tracking-[0.15em]">Định danh hiển thị</label>
+                                      <input 
+                                          type="text" 
+                                          value={activeTemplate?.name || ''} 
+                                          onChange={(e) => setTemplates(prev => prev.map(t => t.id === activeId ? { ...t, name: e.target.value } : t))}
+                                          className="w-full glass-input px-5 py-3.5 font-light text-white text-[15px] tracking-wide" 
+                                      />
+                                  </div>
+                                  <div>
+                                      <label className="block text-[10px] font-light text-gray-400 mb-2.5 uppercase tracking-[0.15em]">Cấu trúc chủ đề (Subject)</label>
+                                      <input 
+                                          type="text" 
+                                          value={editSubject}
+                                          onChange={(e) => setEditSubject(e.target.value)}
+                                          className="w-full glass-input px-5 py-3.5 font-light text-white text-[15px] tracking-wide" 
+                                      />
+                                  </div>
                               </div>
-                          ))}
-                          <div className="flex items-end">
-                              <button onClick={handleAddVar} className="h-[46px] w-full px-4 bg-transparent text-red-400/80 border border-dashed border-red-500/30 rounded-xl text-[11px] hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/50 transition-all font-light tracking-widest uppercase">
-                                  + Thêm vùng
-                              </button>
+                              
+                              <div className="flex flex-col gap-3 min-w-[220px] justify-end">
+                                  <button onClick={handleSave} className="btn-primary py-3.5 px-8 rounded-xl font-medium text-[11px] uppercase tracking-widest text-center shadow-lg">
+                                      Ghi đè cấu hình
+                                  </button>
+                                  <button onClick={handleSendGmail} className="py-3.5 px-8 bg-black/20 backdrop-blur-md border border-red-500/50 text-red-500 hover:bg-red-500/10 hover:border-red-500 hover:text-red-400 rounded-xl font-medium text-[11px] uppercase tracking-widest transition-all text-center">
+                                      Đẩy qua Gmail
+                                  </button>
+                              </div>
                           </div>
-                      </div>
-                  </div>
 
-                  {/* View Controls */}
-                  <div className="flex justify-center md:justify-start gap-3 mb-6 border-b border-white/5 pb-5 relative z-10">
-                      <button onClick={() => setViewMode('code')} className={`px-6 py-2.5 text-[10px] font-medium tracking-[0.2em] uppercase rounded-xl transition-all border ${viewMode === 'code' ? 'bg-red-500/10 border-red-500/30 text-red-400 shadow-[0_0_15px_rgba(220,38,38,0.1)]' : 'bg-black/20 border-white/5 text-gray-500 hover:text-gray-300 hover:bg-white/5'}`}>Mã nguồn</button>
-                      <button onClick={() => setViewMode('preview')} className={`px-6 py-2.5 text-[10px] font-medium tracking-[0.2em] uppercase rounded-xl transition-all border ${viewMode === 'preview' ? 'bg-red-500/10 border-red-500/30 text-red-400 shadow-[0_0_15px_rgba(220,38,38,0.1)]' : 'bg-black/20 border-white/5 text-gray-500 hover:text-gray-300 hover:bg-white/5'}`}>Trực quan</button>
-                      <button onClick={() => setViewMode('split')} className={`hidden md:block px-6 py-2.5 text-[10px] font-medium tracking-[0.2em] uppercase rounded-xl transition-all border ${viewMode === 'split' ? 'bg-red-500/10 border-red-500/30 text-red-400 shadow-[0_0_15px_rgba(220,38,38,0.1)]' : 'bg-black/20 border-white/5 text-gray-500 hover:text-gray-300 hover:bg-white/5'}`}>Phân mảnh</button>
-                  </div>
-
-                  {/* Editors */}
-                  <div className="flex-1 flex flex-col md:flex-row gap-6 min-h-[500px] relative z-10">
-                      
-                      {(viewMode === 'code' || viewMode === 'split') && (
-                          <div className="flex-1 flex flex-col relative group">
-                              <label className="block text-[10px] font-light text-gray-400 mb-3 uppercase tracking-[0.15em] flex items-center gap-2">
-                                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
-                                 Cấu trúc HTML (Raw)
-                              </label>
-                              <textarea 
-                                  value={editBody}
-                                  onChange={(e) => setEditBody(e.target.value)}
-                                  spellCheck="false"
-                                  className="flex-1 w-full bg-[#0a0a0a]/80 border border-white/10 rounded-2xl p-6 text-emerald-400/90 font-mono text-[13px] leading-relaxed focus:outline-none focus:border-red-500/50 transition-all resize-none shadow-inner custom-scrollbar"
-                                  placeholder="Nhập mã HTML..."
-                                  style={{ scrollbarColor: '#334155 transparent', scrollbarWidth: 'thin' }}
-                              />
+                          {/* Variables Manager */}
+                          <div className="bg-red-950/20 border border-red-900/30 rounded-2xl p-6 mb-10 relative z-10">
+                              <span className="text-[10px] font-medium text-red-400/80 uppercase tracking-[0.2em] block mb-5 flex items-center gap-2">
+                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                                  Mảng biến động (Đầu vào)
+                              </span>
+                              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-5">
+                                  {Object.keys(vars).map(key => (
+                                      <div key={key} className="relative group">
+                                          <label className="block text-[10px] font-light text-gray-400 mb-2 uppercase tracking-widest">{key}</label>
+                                          <input 
+                                              type="text" 
+                                              value={vars[key]} 
+                                              onChange={(e) => setVars(prev => ({ ...prev, [key]: e.target.value }))}
+                                              className="w-full bg-black/40 border border-white/5 rounded-xl pl-4 pr-10 py-3 text-[13px] font-light text-white focus:outline-none focus:border-red-500/50 focus:bg-black/60 transition-all"
+                                          />
+                                          <button 
+                                              onClick={() => handleRemoveVar(key)}
+                                              className="absolute right-2 top-[28px] w-7 h-7 flex items-center justify-center text-gray-500 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
+                                              title="Xóa trường này"
+                                          >✕</button>
+                                      </div>
+                                  ))}
+                                  <div className="flex items-end">
+                                      <button onClick={handleAddVar} className="h-[46px] w-full px-4 bg-transparent text-red-400/80 border border-dashed border-red-500/30 rounded-xl text-[11px] hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/50 transition-all font-light tracking-widest uppercase">
+                                          + Thêm vùng
+                                      </button>
+                                  </div>
+                              </div>
                           </div>
-                      )}
 
-                      {(viewMode === 'preview' || viewMode === 'split') && (
-                          <div className="flex-1 flex flex-col relative">
-                              <label className="flex items-center justify-between text-[10px] font-light text-gray-400 mb-3 uppercase tracking-[0.15em]">
-                                  <span className="flex items-center gap-2">
-                                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                                    Đầu ra hiển thị
-                                  </span>
-                                  <span className="text-[9px] text-red-400/70 normal-case tracking-normal hidden md:inline">*Cảnh báo: Sửa trực tiếp sẽ ghi đè tham số.</span>
-                              </label>
-                              <div 
-                                className="flex-1 w-full preview-content border border-white/10 rounded-2xl p-6 overflow-y-auto shadow-sm outline-none focus:ring-2 focus:ring-red-500/30 transition-all cursor-text"
-                                contentEditable={true}
-                                suppressContentEditableWarning={true}
-                                onBlur={(e) => {
-                                    if (e.target.innerHTML !== renderedBody) {
-                                        setEditBody(e.target.innerHTML);
-                                        showToast('Đồng bộ dữ liệu trực quan xuống mã HTML thành công.', 'success');
-                                    }
-                                }}
-                                dangerouslySetInnerHTML={{ __html: renderedBody }} 
-                              />
+                          {/* View Controls */}
+                          <div className="flex justify-center md:justify-start gap-3 mb-6 border-b border-white/5 pb-5 relative z-10">
+                              <button onClick={() => setViewMode('code')} className={`px-6 py-2.5 text-[10px] font-medium tracking-[0.2em] uppercase rounded-xl transition-all border ${viewMode === 'code' ? 'bg-red-500/10 border-red-500/30 text-red-400 shadow-[0_0_15px_rgba(220,38,38,0.1)]' : 'bg-black/20 border-white/5 text-gray-500 hover:text-gray-300 hover:bg-white/5'}`}>Mã nguồn</button>
+                              <button onClick={() => setViewMode('preview')} className={`px-6 py-2.5 text-[10px] font-medium tracking-[0.2em] uppercase rounded-xl transition-all border ${viewMode === 'preview' ? 'bg-red-500/10 border-red-500/30 text-red-400 shadow-[0_0_15px_rgba(220,38,38,0.1)]' : 'bg-black/20 border-white/5 text-gray-500 hover:text-gray-300 hover:bg-white/5'}`}>Trực quan</button>
+                              <button onClick={() => setViewMode('split')} className={`hidden md:block px-6 py-2.5 text-[10px] font-medium tracking-[0.2em] uppercase rounded-xl transition-all border ${viewMode === 'split' ? 'bg-red-500/10 border-red-500/30 text-red-400 shadow-[0_0_15px_rgba(220,38,38,0.1)]' : 'bg-black/20 border-white/5 text-gray-500 hover:text-gray-300 hover:bg-white/5'}`}>Phân mảnh</button>
                           </div>
-                      )}
 
-                  </div>
+                          {/* Editors */}
+                          <div className="flex-1 flex flex-col md:flex-row gap-6 min-h-[500px] relative z-10">
+                              
+                              {(viewMode === 'code' || viewMode === 'split') && (
+                                  <div className="flex-1 flex flex-col relative group">
+                                      <label className="block text-[10px] font-light text-gray-400 mb-3 uppercase tracking-[0.15em] flex items-center gap-2">
+                                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                                          Cấu trúc HTML (Raw)
+                                      </label>
+                                      <textarea 
+                                          value={editBody}
+                                          onChange={(e) => setEditBody(e.target.value)}
+                                          spellCheck="false"
+                                          className="flex-1 w-full bg-[#0a0a0a]/80 border border-white/10 rounded-2xl p-6 text-emerald-400/90 font-mono text-[13px] leading-relaxed focus:outline-none focus:border-red-500/50 transition-all resize-none shadow-inner custom-scrollbar"
+                                          placeholder="Nhập mã HTML..."
+                                          style={{ scrollbarColor: '#334155 transparent', scrollbarWidth: 'thin' }}
+                                      />
+                                  </div>
+                              )}
+
+                              {(viewMode === 'preview' || viewMode === 'split') && (
+                                  <div className="flex-1 flex flex-col relative">
+                                      <label className="flex items-center justify-between text-[10px] font-light text-gray-400 mb-3 uppercase tracking-[0.15em]">
+                                          <span className="flex items-center gap-2">
+                                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                              Đầu ra hiển thị
+                                          </span>
+                                          <span className="text-[9px] text-red-400/70 normal-case tracking-normal hidden md:inline">*Cảnh báo: Sửa trực tiếp sẽ ghi đè tham số.</span>
+                                      </label>
+                                      <div 
+                                          className="flex-1 w-full preview-content border border-white/10 rounded-2xl p-6 overflow-y-auto shadow-sm outline-none focus:ring-2 focus:ring-red-500/30 transition-all cursor-text"
+                                          contentEditable={true}
+                                          suppressContentEditableWarning={true}
+                                          onBlur={(e) => {
+                                              if (e.target.innerHTML !== renderedBody) {
+                                                  setEditBody(e.target.innerHTML);
+                                                  showToast('Đồng bộ dữ liệu trực quan xuống mã HTML thành công.', 'success');
+                                              }
+                                          }}
+                                          dangerouslySetInnerHTML={{ __html: renderedBody }} 
+                                      />
+                                  </div>
+                              )}
+                          </div>
+                      </>
+                  )}
               </div>
           </div>
         </div>
