@@ -1,633 +1,666 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  PieChart, Pie, Cell
-} from 'recharts';
-import { 
-  LayoutDashboard, Home, Users, DollarSign, Settings, 
-  Bell, Search, Plus, Filter, MoreVertical, CheckCircle, 
-  Clock, XCircle, Wrench, UserCheck, Wallet, ChevronDown, MapPin
-} from 'lucide-react';
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RFR+ Quản lý phòng cho thuê</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Tùy chỉnh thanh cuộn */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .tab-transition { transition: all 0.2s ease-in-out; }
+    </style>
+</head>
+<body class="flex h-screen bg-slate-50 font-sans text-slate-900 overflow-hidden">
 
-const INITIAL_ROOMS = [
-  { id: 'P101', name: 'Phòng 101', building: 'Tòa A - Quận 7', type: 'Studio', price: 5500000, area: 25, status: 'rented', ctvId: 'CTV01', tenant: 'Nguyễn Văn A' },
-  { id: 'P102', name: 'Phòng 102', building: 'Tòa A - Quận 7', type: '1PN', price: 7000000, area: 35, status: 'vacant', ctvId: null, tenant: null },
-  { id: 'P103', name: 'Phòng 103', building: 'Tòa A - Quận 7', type: 'Studio', price: 5000000, area: 20, status: 'deposited', ctvId: 'CTV02', tenant: 'Trần Thị B' },
-  { id: 'P201', name: 'Phòng 201', building: 'Tòa B - Quận 4', type: '2PN', price: 12000000, area: 55, status: 'rented', ctvId: 'CTV01', tenant: 'Lê Hoàng C' },
-  { id: 'P202', name: 'Phòng 202', building: 'Tòa B - Quận 4', type: '1PN', price: 8500000, area: 40, status: 'maintenance', ctvId: null, tenant: null },
-  { id: 'P203', name: 'Phòng 203', building: 'Tòa B - Quận 4', type: 'Studio', price: 6000000, area: 28, status: 'vacant', ctvId: null, tenant: null },
-  { id: 'P301', name: 'Phòng 301', building: 'Tòa C - Bình Thạnh', type: 'Duplex', price: 8000000, area: 35, status: 'vacant', ctvId: null, tenant: null },
-  { id: 'P302', name: 'Phòng 302', building: 'Tòa C - Bình Thạnh', type: 'Studio', price: 4500000, area: 18, status: 'rented', ctvId: 'CTV03', tenant: 'Phạm D' },
-];
-
-const INITIAL_CTVS = [
-  { id: 'CTV01', name: 'Trương Tuấn', phone: '0901234567', deals: 12, commission: 15000000, status: 'active' },
-  { id: 'CTV02', name: 'Lê Mai', phone: '0912345678', deals: 5, commission: 6500000, status: 'active' },
-  { id: 'CTV03', name: 'Nguyễn Kiên', phone: '0923456789', deals: 8, commission: 9000000, status: 'active' },
-];
-
-const REVENUE_DATA = [
-  { month: 'T1', revenue: 45, commission: 5 },
-  { month: 'T2', revenue: 52, commission: 6 },
-  { month: 'T3', revenue: 48, commission: 4 },
-  { month: 'T4', revenue: 61, commission: 8 },
-  { month: 'T5', revenue: 59, commission: 7 },
-  { month: 'T6', revenue: 65, commission: 9 },
-];
-
-const STATUS_COLORS = {
-  vacant: { label: 'Trống', color: 'bg-emerald-100 text-emerald-700 border-emerald-200', icon: CheckCircle, chartColor: '#10b981' },
-  rented: { label: 'Đang thuê', color: 'bg-blue-100 text-blue-700 border-blue-200', icon: Home, chartColor: '#3b82f6' },
-  deposited: { label: 'Đã cọc', color: 'bg-amber-100 text-amber-700 border-amber-200', icon: Clock, chartColor: '#f59e0b' },
-  maintenance: { label: 'Bảo trì', color: 'bg-slate-100 text-slate-700 border-slate-200', icon: Wrench, chartColor: '#64748b' }
-};
-
-// URL WEB APP CỦA GOOGLE APPS SCRIPT (Thay thế bằng URL của bạn sau khi Deploy AppScript)
-const APP_SCRIPT_URL = ''; 
-
-const Card = ({ children, className = '' }) => (
-  <div className={`bg-white rounded-xl border border-slate-200 shadow-sm ${className}`}>
-    {children}
-  </div>
-);
-
-const Badge = ({ status }) => {
-  const config = STATUS_COLORS[status] || STATUS_COLORS.vacant;
-  const Icon = config.icon;
-  return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${config.color}`}>
-      <Icon className="w-3.5 h-3.5" />
-      {config.label}
-    </span>
-  );
-};
-
-export default function RFRPlus() {
-  const [role, setRole] = useState('seller'); // 'seller' hoặc 'ctv'
-  const [activeTab, setActiveTab] = useState('dashboard');
-  const [rooms, setRooms] = useState(INITIAL_ROOMS);
-  const [ctvs, setCtvs] = useState(INITIAL_CTVS);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [isLoading, setIsLoading] = useState(false);
-  const [syncMessage, setSyncMessage] = useState('');
-
-  // CTV hiện tại (Mô phỏng khi đăng nhập là CTV)
-  const currentCtvId = 'CTV01'; 
-
-  // Đồng bộ dữ liệu từ Google Sheets khi khởi chạy
-  useEffect(() => {
-    if (!APP_SCRIPT_URL) return;
-
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch(`${APP_SCRIPT_URL}?action=getData`);
-        const result = await response.json();
-        if (result.success) {
-          if (result.rooms && result.rooms.length > 0) setRooms(result.rooms);
-          if (result.ctvs && result.ctvs.length > 0) setCtvs(result.ctvs);
-        }
-      } catch (error) {
-        console.error("Lỗi kết nối AppScript:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
-
-  const dashboardStats = useMemo(() => {
-    if (role === 'seller') {
-      const totalRooms = rooms.length;
-      const vacantRooms = rooms.filter(r => r.status === 'vacant').length;
-      const rentedRooms = rooms.filter(r => r.status === 'rented').length;
-      const totalRevenue = rooms.filter(r => r.status === 'rented').reduce((sum, r) => sum + r.price, 0);
-      
-      const pieData = [
-        { name: 'Trống', value: vacantRooms, color: STATUS_COLORS.vacant.chartColor },
-        { name: 'Đang thuê', value: rentedRooms, color: STATUS_COLORS.rented.chartColor },
-        { name: 'Đã cọc', value: rooms.filter(r => r.status === 'deposited').length, color: STATUS_COLORS.deposited.chartColor },
-        { name: 'Bảo trì', value: rooms.filter(r => r.status === 'maintenance').length, color: STATUS_COLORS.maintenance.chartColor },
-      ];
-
-      return { totalRooms, vacantRooms, rentedRooms, totalRevenue, pieData };
-    } else {
-      // Góc nhìn CTV
-      const currentCtv = ctvs.find(c => c.id === currentCtvId);
-      const vacantRooms = rooms.filter(r => r.status === 'vacant').length;
-      const myDeals = rooms.filter(r => r.ctvId === currentCtvId).length;
-      
-      return { 
-        vacantRooms, 
-        deals: currentCtv?.deals || 0, 
-        commission: currentCtv?.commission || 0,
-        myActiveDeals: myDeals
-      };
-    }
-  }, [rooms, role, ctvs]);
-
-  const filteredRooms = useMemo(() => {
-    return rooms.filter(room => {
-      const matchesSearch = room.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                            room.building.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesStatus = statusFilter === 'all' || room.status === statusFilter;
-      
-      // Nếu là CTV, ưu tiên xem phòng trống và phòng của mình
-      if (role === 'ctv' && activeTab === 'rooms') {
-          return matchesSearch && matchesStatus && (room.status === 'vacant' || room.ctvId === currentCtvId);
-      }
-      
-      return matchesSearch && matchesStatus;
-    });
-  }, [rooms, searchQuery, statusFilter, role, activeTab]);
-
-  const handleBookRoom = async (roomId) => {
-    if(window.confirm("Bạn muốn xác nhận cọc phòng này?")) {
-      const ctvAssigned = role === 'ctv' ? currentCtvId : null;
-      
-      // 1. Cập nhật UI ngay lập tức để người dùng không phải đợi (Optimistic Update)
-      setRooms(rooms.map(r => 
-        r.id === roomId 
-          ? { ...r, status: 'deposited', ctvId: ctvAssigned || r.ctvId } 
-          : r
-      ));
-
-      // 2. Gửi request lên AppScript để lưu vào Google Sheets
-      if (APP_SCRIPT_URL) {
-        setSyncMessage('Đang đồng bộ...');
-        try {
-          await fetch(APP_SCRIPT_URL, {
-            method: 'POST',
-            // Sử dụng text/plain để tránh lỗi CORS Preflight (OPTIONS) của Google App Script
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({
-              action: 'bookRoom',
-              roomId: roomId,
-              ctvId: ctvAssigned,
-              status: 'deposited'
-            })
-          });
-          // Thành công
-        } catch (error) {
-          console.error("Lỗi đồng bộ:", error);
-          alert("Lỗi đồng bộ với máy chủ. Vui lòng kiểm tra lại kết nối.");
-        } finally {
-          setSyncMessage('');
-        }
-      }
-    }
-  };
-
-  return (
-    <div className="flex h-screen bg-slate-50 font-sans text-slate-900">
-      {/* Sidebar */}
-      <aside className="w-64 bg-indigo-900 text-white flex flex-col shadow-xl z-10">
-        <div className="p-6 flex items-center gap-3 border-b border-indigo-800">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-xl flex items-center justify-center font-bold text-xl shadow-lg">
-            R+
-          </div>
-          <div>
-            <h1 className="font-bold text-lg tracking-wide">RFR+ Space</h1>
-            <p className="text-indigo-300 text-xs">Quản lý phòng cho thuê</p>
-          </div>
+    <!-- Sidebar -->
+    <aside class="w-64 bg-indigo-900 text-white flex flex-col shadow-xl z-10 flex-shrink-0 transition-all duration-300">
+        <div class="p-6 flex items-center gap-3 border-b border-indigo-800">
+            <div class="w-10 h-10 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-xl flex items-center justify-center font-bold text-xl shadow-lg">
+                R+
+            </div>
+            <div>
+                <h1 class="font-bold text-lg tracking-wide">RFR+ Space</h1>
+                <p class="text-indigo-300 text-xs" id="sidebar-role-text">Quản lý hệ thống</p>
+            </div>
         </div>
         
-        <nav className="flex-1 py-6 px-4 space-y-2">
-          <button 
-            onClick={() => setActiveTab('dashboard')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'dashboard' ? 'bg-indigo-800 text-white shadow-inner' : 'text-indigo-200 hover:bg-indigo-800/50 hover:text-white'}`}
-          >
-            <LayoutDashboard size={20} />
-            <span className="font-medium">Tổng quan</span>
-          </button>
-          
-          <button 
-            onClick={() => setActiveTab('rooms')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'rooms' ? 'bg-indigo-800 text-white shadow-inner' : 'text-indigo-200 hover:bg-indigo-800/50 hover:text-white'}`}
-          >
-            <Home size={20} />
-            <span className="font-medium">{role === 'seller' ? 'Quản lý Phòng' : 'Tìm Phòng Trống'}</span>
-          </button>
-
-          {role === 'seller' && (
-            <button 
-              onClick={() => setActiveTab('ctvs')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'ctvs' ? 'bg-indigo-800 text-white shadow-inner' : 'text-indigo-200 hover:bg-indigo-800/50 hover:text-white'}`}
-            >
-              <Users size={20} />
-              <span className="font-medium">Quản lý CTV</span>
-            </button>
-          )}
-
-          <div className="pt-6 mt-6 border-t border-indigo-800">
-             <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-indigo-200 hover:bg-indigo-800/50 hover:text-white transition-colors">
-              <Settings size={20} />
-              <span className="font-medium">Cài đặt</span>
-            </button>
-          </div>
+        <nav class="flex-1 py-6 px-4 space-y-2" id="sidebar-nav">
+            <!-- Nút menu sẽ được render bằng JS -->
         </nav>
-      </aside>
+    </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col overflow-hidden">
-        {/* Header */}
-        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 z-0">
-          <div className="flex items-center gap-4">
-            <h2 className="text-xl font-semibold text-slate-800">
-              {activeTab === 'dashboard' && 'Bảng điều khiển'}
-              {activeTab === 'rooms' && 'Danh sách phòng'}
-              {activeTab === 'ctvs' && 'Cộng tác viên'}
-            </h2>
-            
-            {/* Hiển thị trạng thái đồng bộ */}
-            {isLoading && (
-              <span className="flex items-center gap-2 px-3 py-1 bg-indigo-50 text-indigo-600 text-xs font-medium rounded-full">
-                <Clock size={14} className="animate-spin" /> Đang tải dữ liệu...
-              </span>
-            )}
-            {syncMessage && (
-              <span className="flex items-center gap-2 px-3 py-1 bg-amber-50 text-amber-600 text-xs font-medium rounded-full">
-                <Clock size={14} className="animate-spin" /> {syncMessage}
-              </span>
-            )}
-          </div>
-
-          <div className="flex items-center gap-6">
-            {/* Role Switcher (Dành cho Demo) */}
-            <div className="flex items-center bg-slate-100 p-1 rounded-lg border border-slate-200">
-              <button 
-                onClick={() => setRole('seller')}
-                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${role === 'seller' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-              >
-                Góc nhìn Quản lý
-              </button>
-              <button 
-                onClick={() => { setRole('ctv'); if(activeTab === 'ctvs') setActiveTab('dashboard'); }}
-                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${role === 'ctv' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-              >
-                Góc nhìn CTV
-              </button>
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col overflow-hidden">
+        <!-- Header -->
+        <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 z-0 flex-shrink-0 shadow-sm">
+            <div class="flex items-center gap-4">
+                <h2 class="text-xl font-semibold text-slate-800" id="header-title">Bảng điều khiển</h2>
+                
+                <div id="sync-status" class="hidden items-center gap-2 px-3 py-1 bg-indigo-50 text-indigo-600 text-xs font-medium rounded-full">
+                    <i data-lucide="clock" class="w-3.5 h-3.5 animate-spin"></i> <span id="sync-text">Đang tải dữ liệu...</span>
+                </div>
             </div>
 
-            <button className="relative text-slate-400 hover:text-slate-600">
-              <Bell size={20} />
-              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full"></span>
-            </button>
-            
-            <div className="flex items-center gap-3 border-l border-slate-200 pl-6">
-              <div className="w-9 h-9 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold">
-                {role === 'seller' ? 'AD' : 'CT'}
-              </div>
-              <div className="text-sm">
-                <p className="font-semibold text-slate-700">{role === 'seller' ? 'Admin System' : 'Trương Tuấn'}</p>
-                <p className="text-slate-500 text-xs">{role === 'seller' ? 'Quản lý chi nhánh' : 'Cộng tác viên (CTV01)'}</p>
-              </div>
+            <div class="flex items-center gap-6">
+                <!-- Role Switcher -->
+                <div class="flex items-center bg-slate-100 p-1 rounded-lg border border-slate-200">
+                    <button onclick="setRole('seller')" id="btn-role-seller" class="px-3 py-1.5 text-sm font-medium rounded-md transition-all bg-white text-indigo-600 shadow-sm">
+                        Góc nhìn Quản lý
+                    </button>
+                    <button onclick="setRole('ctv')" id="btn-role-ctv" class="px-3 py-1.5 text-sm font-medium rounded-md transition-all text-slate-500 hover:text-slate-700">
+                        Góc nhìn CTV
+                    </button>
+                </div>
+                
+                <button class="relative text-slate-400 hover:text-slate-600">
+                    <i data-lucide="bell" class="w-5 h-5"></i>
+                    <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full"></span>
+                </button>
+
+                <div class="flex items-center gap-3 border-l border-slate-200 pl-6">
+                    <div id="user-avatar" class="w-9 h-9 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold">
+                        AD
+                    </div>
+                    <div class="text-sm">
+                        <p id="user-name" class="font-semibold text-slate-700">Admin System</p>
+                        <p id="user-desc" class="text-slate-500 text-xs">Quản lý chi nhánh</p>
+                    </div>
+                </div>
             </div>
-          </div>
         </header>
 
-        {/* Scrollable Content */}
-        <div className="flex-1 overflow-auto p-8 bg-slate-50">
-          
-          {}
-          {activeTab === 'dashboard' && (
-            <div className="space-y-6">
-              {role === 'seller' ? (
-                <>
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <Card className="p-6 border-l-4 border-l-indigo-500">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="text-sm font-medium text-slate-500 mb-1">Tổng số phòng</p>
-                          <h3 className="text-3xl font-bold text-slate-800">{dashboardStats.totalRooms}</h3>
-                        </div>
-                        <div className="p-3 bg-indigo-50 text-indigo-600 rounded-lg"><Home size={24} /></div>
-                      </div>
-                    </Card>
-                    <Card className="p-6 border-l-4 border-l-emerald-500">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="text-sm font-medium text-slate-500 mb-1">Phòng trống</p>
-                          <h3 className="text-3xl font-bold text-slate-800">{dashboardStats.vacantRooms}</h3>
-                        </div>
-                        <div className="p-3 bg-emerald-50 text-emerald-600 rounded-lg"><CheckCircle size={24} /></div>
-                      </div>
-                    </Card>
-                    <Card className="p-6 border-l-4 border-l-amber-500">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="text-sm font-medium text-slate-500 mb-1">Tỷ lệ lấp đầy</p>
-                          <h3 className="text-3xl font-bold text-slate-800">
-                            {Math.round((dashboardStats.rentedRooms / dashboardStats.totalRooms) * 100)}%
-                          </h3>
-                        </div>
-                        <div className="p-3 bg-amber-50 text-amber-600 rounded-lg"><UserCheck size={24} /></div>
-                      </div>
-                    </Card>
-                    <Card className="p-6 border-l-4 border-l-blue-500">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="text-sm font-medium text-slate-500 mb-1">Doanh thu dự kiến (Tháng)</p>
-                          <h3 className="text-2xl font-bold text-slate-800">
-                            {(dashboardStats.totalRevenue).toLocaleString()}đ
-                          </h3>
-                        </div>
-                        <div className="p-3 bg-blue-50 text-blue-600 rounded-lg"><DollarSign size={24} /></div>
-                      </div>
-                    </Card>
-                  </div>
+        <!-- Scrollable Content -->
+        <div class="flex-1 overflow-auto p-8 bg-slate-50" id="main-content">
+            <!-- Nội dung thay đổi theo Tab -->
+        </div>
+    </main>
 
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <Card className="p-6 lg:col-span-2">
-                      <h3 className="text-lg font-semibold text-slate-800 mb-6">Biểu đồ doanh thu & Hoa hồng (Triệu VND)</h3>
-                      <div className="h-72">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <BarChart data={REVENUE_DATA} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                            <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{fill: '#64748b'}} />
-                            <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748b'}} />
-                            <Tooltip cursor={{fill: '#f1f5f9'}} contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}} />
-                            <Legend wrapperStyle={{paddingTop: '20px'}}/>
-                            <Bar dataKey="revenue" name="Doanh thu" fill="#4f46e5" radius={[4, 4, 0, 0]} barSize={32} />
-                            <Bar dataKey="commission" name="Chi hoa hồng CTV" fill="#f59e0b" radius={[4, 4, 0, 0]} barSize={32} />
-                          </BarChart>
-                        </ResponsiveContainer>
-                      </div>
-                    </Card>
+    <script>
+        // --- 1. CẤU HÌNH & HẰNG SỐ ---
+        const APP_SCRIPT_URL = ''; // URL WEB APP CỦA GOOGLE APPS SCRIPT
+        const CURRENT_CTV_ID = 'CTV01'; 
 
-                    <Card className="p-6">
-                      <h3 className="text-lg font-semibold text-slate-800 mb-6">Trạng thái phòng</h3>
-                      <div className="h-60 flex justify-center">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <PieChart>
-                            <Pie
-                              data={dashboardStats.pieData}
-                              cx="50%"
-                              cy="50%"
-                              innerRadius={60}
-                              outerRadius={80}
-                              paddingAngle={5}
-                              dataKey="value"
-                            >
-                              {dashboardStats.pieData.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={entry.color} />
-                              ))}
-                            </Pie>
-                            <Tooltip />
-                          </PieChart>
-                        </ResponsiveContainer>
-                      </div>
-                      <div className="grid grid-cols-2 gap-4 mt-4">
-                        {dashboardStats.pieData.map((item, idx) => (
-                          <div key={idx} className="flex items-center gap-2">
-                            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
-                            <span className="text-sm text-slate-600">{item.name}: <span className="font-semibold">{item.value}</span></span>
-                          </div>
-                        ))}
-                      </div>
-                    </Card>
-                  </div>
-                </>
-              ) : (
-                // Dashboard CTV
-                <>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <Card className="p-6 border-l-4 border-l-emerald-500">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="text-sm font-medium text-slate-500 mb-1">Phòng đang trống</p>
-                          <h3 className="text-3xl font-bold text-slate-800">{dashboardStats.vacantRooms}</h3>
-                          <p className="text-xs text-emerald-600 mt-2">Sẵn sàng để tư vấn</p>
-                        </div>
-                        <div className="p-3 bg-emerald-50 text-emerald-600 rounded-lg"><Home size={24} /></div>
-                      </div>
-                    </Card>
-                    <Card className="p-6 border-l-4 border-l-blue-500">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="text-sm font-medium text-slate-500 mb-1">Giao dịch của tôi</p>
-                          <h3 className="text-3xl font-bold text-slate-800">{dashboardStats.deals}</h3>
-                          <p className="text-xs text-slate-500 mt-2">{dashboardStats.myActiveDeals} khách đang thuê</p>
-                        </div>
-                        <div className="p-3 bg-blue-50 text-blue-600 rounded-lg"><CheckCircle size={24} /></div>
-                      </div>
-                    </Card>
-                    <Card className="p-6 border-l-4 border-l-indigo-500">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="text-sm font-medium text-slate-500 mb-1">Tổng hoa hồng</p>
-                          <h3 className="text-2xl font-bold text-slate-800">
-                            {dashboardStats.commission.toLocaleString()}đ
-                          </h3>
-                          <p className="text-xs text-indigo-600 mt-2">Đã thanh toán 100%</p>
-                        </div>
-                        <div className="p-3 bg-indigo-50 text-indigo-600 rounded-lg"><Wallet size={24} /></div>
-                      </div>
-                    </Card>
-                  </div>
-                  
-                  {/* Gợi ý cho CTV */}
-                  <h3 className="text-lg font-semibold text-slate-800 mt-8 mb-4">Phòng trống gợi ý hôm nay</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {rooms.filter(r => r.status === 'vacant').slice(0, 3).map(room => (
-                      <Card key={room.id} className="overflow-hidden group hover:shadow-md transition-shadow">
-                        <div className="h-32 bg-slate-200 relative">
-                           <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
-                           <Badge status={room.status} className="absolute top-3 right-3" />
-                           <h4 className="absolute bottom-3 left-4 text-white font-bold text-lg">{room.name}</h4>
-                        </div>
-                        <div className="p-4 space-y-3">
-                           <p className="flex items-center text-sm text-slate-600 gap-2"><MapPin size={16} className="text-slate-400"/> {room.building}</p>
-                           <p className="flex items-center text-sm text-slate-600 gap-2"><Home size={16} className="text-slate-400"/> {room.type} - {room.area}m²</p>
-                           <div className="pt-3 flex items-center justify-between border-t border-slate-100">
-                             <span className="font-bold text-indigo-600">{room.price.toLocaleString()} đ/th</span>
-                             <button onClick={() => {setActiveTab('rooms'); setSearchQuery(room.name);}} className="text-sm font-medium text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100">
-                               Chi tiết
-                             </button>
-                           </div>
-                        </div>
-                      </Card>
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
-          )}
+        const INITIAL_ROOMS = [
+            { id: 'P101', name: 'Phòng 101', building: 'Tòa A - Quận 7', type: 'Studio', price: 5500000, area: 25, status: 'rented', ctvId: 'CTV01', tenant: 'Nguyễn Văn A' },
+            { id: 'P102', name: 'Phòng 102', building: 'Tòa A - Quận 7', type: '1PN', price: 7000000, area: 35, status: 'vacant', ctvId: null, tenant: null },
+            { id: 'P103', name: 'Phòng 103', building: 'Tòa A - Quận 7', type: 'Studio', price: 5000000, area: 20, status: 'deposited', ctvId: 'CTV02', tenant: 'Trần Thị B' },
+            { id: 'P201', name: 'Phòng 201', building: 'Tòa B - Quận 4', type: '2PN', price: 12000000, area: 55, status: 'rented', ctvId: 'CTV01', tenant: 'Lê Hoàng C' },
+            { id: 'P202', name: 'Phòng 202', building: 'Tòa B - Quận 4', type: '1PN', price: 8500000, area: 40, status: 'maintenance', ctvId: null, tenant: null },
+            { id: 'P203', name: 'Phòng 203', building: 'Tòa B - Quận 4', type: 'Studio', price: 6000000, area: 28, status: 'vacant', ctvId: null, tenant: null },
+            { id: 'P301', name: 'Phòng 301', building: 'Tòa C - Bình Thạnh', type: 'Duplex', price: 8000000, area: 35, status: 'vacant', ctvId: null, tenant: null },
+            { id: 'P302', name: 'Phòng 302', building: 'Tòa C - Bình Thạnh', type: 'Studio', price: 4500000, area: 18, status: 'rented', ctvId: 'CTV03', tenant: 'Phạm D' },
+        ];
 
-          {}
-          {activeTab === 'rooms' && (
-            <div className="space-y-6">
-              {/* Header Actions */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                    <input 
-                      type="text" 
-                      placeholder="Tìm tên phòng, tòa nhà..." 
-                      className="pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 w-64 text-sm"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                  </div>
-                  <div className="relative">
-                    <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                    <select 
-                      className="pl-10 pr-8 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm appearance-none bg-white"
-                      value={statusFilter}
-                      onChange={(e) => setStatusFilter(e.target.value)}
-                    >
-                      <option value="all">Tất cả trạng thái</option>
-                      <option value="vacant">Trống</option>
-                      <option value="rented">Đang thuê</option>
-                      <option value="deposited">Đã cọc</option>
-                      <option value="maintenance">Bảo trì</option>
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
-                  </div>
+        const INITIAL_CTVS = [
+            { id: 'CTV01', name: 'Trương Tuấn', phone: '0901234567', deals: 12, commission: 15000000, status: 'active' },
+            { id: 'CTV02', name: 'Lê Mai', phone: '0912345678', deals: 5, commission: 6500000, status: 'active' },
+            { id: 'CTV03', name: 'Nguyễn Kiên', phone: '0923456789', deals: 8, commission: 9000000, status: 'active' },
+        ];
+
+        const REVENUE_DATA = [
+            { month: 'T1', revenue: 45, commission: 5 },
+            { month: 'T2', revenue: 52, commission: 6 },
+            { month: 'T3', revenue: 48, commission: 4 },
+            { month: 'T4', revenue: 61, commission: 8 },
+            { month: 'T5', revenue: 59, commission: 7 },
+            { month: 'T6', revenue: 65, commission: 9 },
+        ];
+
+        const STATUS_CONFIG = {
+            vacant: { label: 'Trống', color: 'bg-emerald-100 text-emerald-700 border-emerald-200', icon: 'check-circle', hex: '#10b981' },
+            rented: { label: 'Đang thuê', color: 'bg-blue-100 text-blue-700 border-blue-200', icon: 'home', hex: '#3b82f6' },
+            deposited: { label: 'Đã cọc', color: 'bg-amber-100 text-amber-700 border-amber-200', icon: 'clock', hex: '#f59e0b' },
+            maintenance: { label: 'Bảo trì', color: 'bg-slate-100 text-slate-700 border-slate-200', icon: 'wrench', hex: '#64748b' }
+        };
+
+        // --- 2. QUẢN LÝ TRẠNG THÁI (STATE) ---
+        let state = {
+            role: 'seller', // 'seller' hoặc 'ctv'
+            activeTab: 'dashboard',
+            searchQuery: '',
+            statusFilter: 'all',
+            rooms: [...INITIAL_ROOMS],
+            ctvs: [...INITIAL_CTVS],
+            isLoading: false,
+            syncMessage: ''
+        };
+
+        let barChartInstance = null;
+        let pieChartInstance = null;
+
+        // --- 3. KẾT NỐI API (GOOGLE APPS SCRIPT) ---
+        async function fetchInitialData() {
+            if (!APP_SCRIPT_URL) return;
+
+            setSyncStatus(true, "Đang tải dữ liệu...");
+            try {
+                const response = await fetch(`${APP_SCRIPT_URL}?action=getData`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    if (result.rooms && result.rooms.length > 0) state.rooms = result.rooms;
+                    if (result.ctvs && result.ctvs.length > 0) state.ctvs = result.ctvs;
+                }
+            } catch (error) {
+                console.error("Lỗi kết nối AppScript:", error);
+            } finally {
+                setSyncStatus(false, "");
+                renderApp();
+            }
+        }
+
+        async function handleBookRoom(roomId) {
+            if(!confirm("Bạn muốn xác nhận cọc phòng này?")) return;
+
+            const ctvAssigned = state.role === 'ctv' ? CURRENT_CTV_ID : null;
+            
+            // Cập nhật giao diện ngay lập tức (Optimistic Update)
+            state.rooms = state.rooms.map(r => 
+                r.id === roomId ? { ...r, status: 'deposited', ctvId: ctvAssigned || r.ctvId } : r
+            );
+            renderMainContent();
+
+            // Gửi dữ liệu đồng bộ
+            if (APP_SCRIPT_URL) {
+                setSyncStatus(true, 'Đang đồng bộ...');
+                try {
+                    await fetch(APP_SCRIPT_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({
+                            action: 'bookRoom',
+                            roomId: roomId,
+                            ctvId: ctvAssigned,
+                            status: 'deposited'
+                        })
+                    });
+                } catch (error) {
+                    console.error("Lỗi đồng bộ:", error);
+                    alert("Lỗi đồng bộ với máy chủ. Vui lòng kiểm tra lại kết nối.");
+                } finally {
+                    setSyncStatus(false, '');
+                }
+            }
+        }
+
+        // --- 4. CÁC HÀM XỬ LÝ SỰ KIỆN ---
+        window.setRole = function(role) {
+            state.role = role;
+            if (role === 'ctv' && state.activeTab === 'ctvs') {
+                state.activeTab = 'dashboard';
+            }
+            renderApp();
+        }
+
+        window.setTab = function(tab) {
+            state.activeTab = tab;
+            renderApp();
+        }
+
+        window.setSearchQuery = function(val) {
+            state.searchQuery = val;
+            renderMainContent();
+        }
+
+        window.setStatusFilter = function(val) {
+            state.statusFilter = val;
+            renderMainContent();
+        }
+
+        // --- 5. TIỆN ÍCH GIAO DIỆN ---
+        function setSyncStatus(isLoading, msg) {
+            state.isLoading = isLoading;
+            state.syncMessage = msg;
+            
+            const el = document.getElementById('sync-status');
+            const textEl = document.getElementById('sync-text');
+            
+            if (isLoading || msg) {
+                textEl.innerText = msg;
+                el.classList.remove('hidden');
+                el.classList.add('flex');
+            } else {
+                el.classList.add('hidden');
+                el.classList.remove('flex');
+            }
+        }
+
+        function formatCurrency(num) {
+            return Number(num).toLocaleString('vi-VN');
+        }
+
+        function getBadgeHTML(statusId) {
+            const config = STATUS_CONFIG[statusId] || STATUS_CONFIG.vacant;
+            return `
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${config.color}">
+                    <i data-lucide="${config.icon}" class="w-3.5 h-3.5"></i>
+                    ${config.label}
+                </span>
+            `;
+        }
+
+        // --- 6. HÀM RENDER CHÍNH ---
+        function renderApp() {
+            renderHeader();
+            renderSidebar();
+            renderMainContent();
+        }
+
+        function renderHeader() {
+            // Nút Role
+            document.getElementById('btn-role-seller').className = `px-3 py-1.5 text-sm font-medium rounded-md transition-all ${state.role === 'seller' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`;
+            document.getElementById('btn-role-ctv').className = `px-3 py-1.5 text-sm font-medium rounded-md transition-all ${state.role === 'ctv' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`;
+
+            // Thông tin User
+            document.getElementById('user-avatar').innerText = state.role === 'seller' ? 'AD' : 'CT';
+            document.getElementById('user-name').innerText = state.role === 'seller' ? 'Admin System' : 'Trương Tuấn';
+            document.getElementById('user-desc').innerText = state.role === 'seller' ? 'Quản lý chi nhánh' : 'Cộng tác viên (CTV01)';
+            document.getElementById('sidebar-role-text').innerText = state.role === 'seller' ? 'Quản lý hệ thống' : 'Cổng thông tin CTV';
+
+            // Tiêu đề
+            const titles = { 'dashboard': 'Bảng điều khiển', 'rooms': 'Danh sách phòng', 'ctvs': 'Cộng tác viên' };
+            document.getElementById('header-title').innerText = titles[state.activeTab] || '';
+        }
+
+        function renderSidebar() {
+            const nav = document.getElementById('sidebar-nav');
+            const getBtnClass = (id) => `w-full flex items-center gap-3 px-4 py-3 rounded-lg tab-transition ${state.activeTab === id ? 'bg-indigo-800 text-white shadow-inner' : 'text-indigo-200 hover:bg-indigo-800/50 hover:text-white'}`;
+            
+            let html = `
+                <button onclick="setTab('dashboard')" class="${getBtnClass('dashboard')}">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i> <span class="font-medium">Tổng quan</span>
+                </button>
+                <button onclick="setTab('rooms')" class="${getBtnClass('rooms')}">
+                    <i data-lucide="home" class="w-5 h-5"></i> <span class="font-medium">${state.role === 'seller' ? 'Quản lý Phòng' : 'Tìm Phòng Trống'}</span>
+                </button>
+            `;
+
+            if (state.role === 'seller') {
+                html += `
+                    <button onclick="setTab('ctvs')" class="${getBtnClass('ctvs')}">
+                        <i data-lucide="users" class="w-5 h-5"></i> <span class="font-medium">Quản lý CTV</span>
+                    </button>
+                `;
+            }
+
+            html += `
+                <div class="pt-6 mt-6 border-t border-indigo-800">
+                    <button class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-indigo-200 hover:bg-indigo-800/50 hover:text-white transition-colors">
+                        <i data-lucide="settings" class="w-5 h-5"></i> <span class="font-medium">Cài đặt</span>
+                    </button>
                 </div>
+            `;
 
-                {role === 'seller' && (
-                  <button className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium shadow-sm">
-                    <Plus size={18} />
-                    Thêm phòng mới
-                  </button>
-                )}
-              </div>
+            nav.innerHTML = html;
+            lucide.createIcons();
+        }
 
-              {/* Grid danh sách phòng */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                {filteredRooms.map(room => (
-                  <Card key={room.id} className="flex flex-col hover:border-indigo-300 transition-colors">
-                    <div className="p-5 border-b border-slate-100 flex justify-between items-start">
-                      <div>
-                        <h3 className="font-bold text-lg text-slate-800">{room.name}</h3>
-                        <p className="text-xs text-slate-500 mt-1 flex items-center gap-1"><MapPin size={12}/> {room.building}</p>
-                      </div>
-                      <Badge status={room.status} />
+        function renderMainContent() {
+            const container = document.getElementById('main-content');
+            
+            // Xóa biểu đồ cũ để tránh lỗi "Canvas is already in use"
+            if (barChartInstance) { barChartInstance.destroy(); barChartInstance = null; }
+            if (pieChartInstance) { pieChartInstance.destroy(); pieChartInstance = null; }
+
+            if (state.activeTab === 'dashboard') {
+                container.innerHTML = getDashboardHTML();
+                if(state.role === 'seller') setTimeout(initCharts, 0); // Đảm bảo DOM đã vẽ xong canvas
+            } else if (state.activeTab === 'rooms') {
+                container.innerHTML = getRoomsHTML();
+            } else if (state.activeTab === 'ctvs' && state.role === 'seller') {
+                container.innerHTML = getCtvsHTML();
+            }
+
+            // Gọi Lucide render icon
+            setTimeout(() => {
+                lucide.createIcons();
+            }, 0);
+        }
+
+        // --- 7. TẠO HTML TỪNG VIEW ---
+        
+        function getDashboardHTML() {
+            const vacantCount = state.rooms.filter(r => r.status === 'vacant').length;
+            
+            if (state.role === 'seller') {
+                const totalRooms = state.rooms.length;
+                const rentedCount = state.rooms.filter(r => r.status === 'rented').length;
+                const depositedCount = state.rooms.filter(r => r.status === 'deposited').length;
+                const maintenanceCount = state.rooms.filter(r => r.status === 'maintenance').length;
+                
+                const totalRevenue = state.rooms.filter(r => r.status === 'rented').reduce((sum, r) => sum + Number(r.price), 0);
+                const occupancyRate = totalRooms > 0 ? Math.round((rentedCount / totalRooms) * 100) : 0;
+
+                // Gắn data vào window để vẽ biểu đồ
+                window.chartPieData = [vacantCount, rentedCount, depositedCount, maintenanceCount];
+
+                return `
+                    <div class="space-y-6 animate-[fadeIn_0.3s_ease-in-out]">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                            <!-- Card 1 -->
+                            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 border-l-4 border-l-indigo-500">
+                                <div class="flex justify-between items-start">
+                                    <div><p class="text-sm font-medium text-slate-500 mb-1">Tổng số phòng</p><h3 class="text-3xl font-bold text-slate-800">${totalRooms}</h3></div>
+                                    <div class="p-3 bg-indigo-50 text-indigo-600 rounded-lg"><i data-lucide="home" class="w-6 h-6"></i></div>
+                                </div>
+                            </div>
+                            <!-- Card 2 -->
+                            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 border-l-4 border-l-emerald-500">
+                                <div class="flex justify-between items-start">
+                                    <div><p class="text-sm font-medium text-slate-500 mb-1">Phòng trống</p><h3 class="text-3xl font-bold text-slate-800">${vacantCount}</h3></div>
+                                    <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg"><i data-lucide="check-circle" class="w-6 h-6"></i></div>
+                                </div>
+                            </div>
+                            <!-- Card 3 -->
+                            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 border-l-4 border-l-amber-500">
+                                <div class="flex justify-between items-start">
+                                    <div><p class="text-sm font-medium text-slate-500 mb-1">Tỷ lệ lấp đầy</p><h3 class="text-3xl font-bold text-slate-800">${occupancyRate}%</h3></div>
+                                    <div class="p-3 bg-amber-50 text-amber-600 rounded-lg"><i data-lucide="user-check" class="w-6 h-6"></i></div>
+                                </div>
+                            </div>
+                            <!-- Card 4 -->
+                            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 border-l-4 border-l-blue-500">
+                                <div class="flex justify-between items-start">
+                                    <div><p class="text-sm font-medium text-slate-500 mb-1">Doanh thu dự kiến</p><h3 class="text-2xl font-bold text-slate-800">${formatCurrency(totalRevenue)}đ</h3></div>
+                                    <div class="p-3 bg-blue-50 text-blue-600 rounded-lg"><i data-lucide="dollar-sign" class="w-6 h-6"></i></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <!-- Chart Bar -->
+                            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 lg:col-span-2">
+                                <h3 class="text-lg font-semibold text-slate-800 mb-4">Biểu đồ doanh thu & Hoa hồng (Triệu VND)</h3>
+                                <div class="h-72 w-full"><canvas id="barChart"></canvas></div>
+                            </div>
+                            <!-- Chart Pie -->
+                            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+                                <h3 class="text-lg font-semibold text-slate-800 mb-4">Trạng thái phòng</h3>
+                                <div class="h-60 flex justify-center w-full relative">
+                                    <canvas id="pieChart"></canvas>
+                                </div>
+                                <div class="grid grid-cols-2 gap-y-3 mt-4">
+                                    <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full" style="background-color: ${STATUS_CONFIG.vacant.hex}"></div><span class="text-sm text-slate-600">Trống: <span class="font-semibold">${vacantCount}</span></span></div>
+                                    <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full" style="background-color: ${STATUS_CONFIG.rented.hex}"></div><span class="text-sm text-slate-600">Đang thuê: <span class="font-semibold">${rentedCount}</span></span></div>
+                                    <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full" style="background-color: ${STATUS_CONFIG.deposited.hex}"></div><span class="text-sm text-slate-600">Đã cọc: <span class="font-semibold">${depositedCount}</span></span></div>
+                                    <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full" style="background-color: ${STATUS_CONFIG.maintenance.hex}"></div><span class="text-sm text-slate-600">Bảo trì: <span class="font-semibold">${maintenanceCount}</span></span></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div className="p-5 flex-1 space-y-3">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-slate-500">Loại phòng:</span>
-                        <span className="font-medium text-slate-800">{room.type}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-slate-500">Diện tích:</span>
-                        <span className="font-medium text-slate-800">{room.area}m²</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-slate-500">Giá thuê:</span>
-                        <span className="font-bold text-indigo-600">{room.price.toLocaleString()}đ</span>
-                      </div>
-                      
-                      {role === 'seller' && room.tenant && (
-                        <div className="flex justify-between text-sm border-t border-slate-100 pt-3 mt-3">
-                          <span className="text-slate-500">Khách thuê:</span>
-                          <span className="font-medium text-slate-800">{room.tenant}</span>
+                `;
+            } else {
+                // Giao diện CTV
+                const currentCtv = state.ctvs.find(c => c.id === CURRENT_CTV_ID) || { deals: 0, commission: 0 };
+                const myActiveDeals = state.rooms.filter(r => r.ctvId === CURRENT_CTV_ID).length;
+                
+                let suggestRooms = state.rooms.filter(r => r.status === 'vacant').slice(0, 3);
+                let suggestHTML = suggestRooms.map(room => `
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden group hover:shadow-md transition-shadow">
+                        <div class="h-32 bg-slate-200 relative">
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
+                            <div class="absolute top-3 right-3">${getBadgeHTML(room.status)}</div>
+                            <h4 class="absolute bottom-3 left-4 text-white font-bold text-lg">${room.name}</h4>
                         </div>
-                      )}
-                      
-                      {room.ctvId && (role === 'seller' || room.ctvId === currentCtvId) && (
-                        <div className="flex justify-between text-sm">
-                          <span className="text-slate-500">Sale phụ trách:</span>
-                          <span className="font-medium text-slate-800">{ctvs.find(c => c.id === room.ctvId)?.name || room.ctvId}</span>
+                        <div class="p-4 space-y-3">
+                            <p class="flex items-center text-sm text-slate-600 gap-2"><i data-lucide="map-pin" class="w-4 h-4 text-slate-400"></i> ${room.building}</p>
+                            <p class="flex items-center text-sm text-slate-600 gap-2"><i data-lucide="home" class="w-4 h-4 text-slate-400"></i> ${room.type} - ${room.area}m²</p>
+                            <div class="pt-3 flex items-center justify-between border-t border-slate-100 mt-2">
+                                <span class="font-bold text-indigo-600">${formatCurrency(room.price)} đ/th</span>
+                                <button onclick="setTab('rooms'); window.setSearchQuery('${room.name}')" class="text-sm font-medium text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100">
+                                    Chi tiết
+                                </button>
+                            </div>
                         </div>
-                      )}
+                    </div>
+                `).join('');
+
+                return `
+                    <div class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 border-l-4 border-l-emerald-500">
+                                <div class="flex justify-between items-start">
+                                    <div><p class="text-sm font-medium text-slate-500 mb-1">Phòng đang trống</p><h3 class="text-3xl font-bold text-slate-800">${vacantCount}</h3><p class="text-xs text-emerald-600 mt-2">Sẵn sàng để tư vấn</p></div>
+                                    <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg"><i data-lucide="home" class="w-6 h-6"></i></div>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 border-l-4 border-l-blue-500">
+                                <div class="flex justify-between items-start">
+                                    <div><p class="text-sm font-medium text-slate-500 mb-1">Giao dịch của tôi</p><h3 class="text-3xl font-bold text-slate-800">${currentCtv.deals}</h3><p class="text-xs text-slate-500 mt-2">${myActiveDeals} khách đang thuê</p></div>
+                                    <div class="p-3 bg-blue-50 text-blue-600 rounded-lg"><i data-lucide="check-circle" class="w-6 h-6"></i></div>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 border-l-4 border-l-indigo-500">
+                                <div class="flex justify-between items-start">
+                                    <div><p class="text-sm font-medium text-slate-500 mb-1">Tổng hoa hồng</p><h3 class="text-2xl font-bold text-slate-800">${formatCurrency(currentCtv.commission)}đ</h3><p class="text-xs text-indigo-600 mt-2">Đã thanh toán 100%</p></div>
+                                    <div class="p-3 bg-indigo-50 text-indigo-600 rounded-lg"><i data-lucide="wallet" class="w-6 h-6"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <h3 class="text-lg font-semibold text-slate-800 mt-8 mb-4">Phòng trống gợi ý hôm nay</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            ${suggestHTML || '<p class="text-slate-500 col-span-full">Hiện không có phòng trống nào.</p>'}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function getRoomsHTML() {
+            let filteredRooms = state.rooms.filter(room => {
+                const searchTxt = state.searchQuery.toLowerCase();
+                const matchesSearch = (room.name || '').toLowerCase().includes(searchTxt) || (room.building || '').toLowerCase().includes(searchTxt);
+                const matchesStatus = state.statusFilter === 'all' || room.status === state.statusFilter;
+                
+                if (state.role === 'ctv') {
+                    return matchesSearch && matchesStatus && (room.status === 'vacant' || room.ctvId === CURRENT_CTV_ID);
+                }
+                return matchesSearch && matchesStatus;
+            });
+
+            let roomsGridHTML = '';
+            if (filteredRooms.length === 0) {
+                roomsGridHTML = `
+                    <div class="col-span-full py-12 text-center text-slate-500 bg-white rounded-xl border border-slate-200 border-dashed">
+                        <i data-lucide="search" class="w-10 h-10 mx-auto mb-4 text-slate-300"></i>
+                        <p>Không tìm thấy phòng nào phù hợp với bộ lọc.</p>
+                    </div>`;
+            } else {
+                roomsGridHTML = filteredRooms.map(room => {
+                    const ctvName = room.ctvId ? (state.ctvs.find(c => c.id === room.ctvId)?.name || room.ctvId) : '';
+                    return `
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col hover:border-indigo-300 transition-colors">
+                        <div class="p-5 border-b border-slate-100 flex justify-between items-start">
+                            <div>
+                                <h3 class="font-bold text-lg text-slate-800">${room.name}</h3>
+                                <p class="text-xs text-slate-500 mt-1 flex items-center gap-1"><i data-lucide="map-pin" class="w-3 h-3"></i> ${room.building}</p>
+                            </div>
+                            ${getBadgeHTML(room.status)}
+                        </div>
+                        <div class="p-5 flex-1 space-y-3">
+                            <div class="flex justify-between text-sm"><span class="text-slate-500">Loại phòng:</span><span class="font-medium text-slate-800">${room.type}</span></div>
+                            <div class="flex justify-between text-sm"><span class="text-slate-500">Diện tích:</span><span class="font-medium text-slate-800">${room.area}m²</span></div>
+                            <div class="flex justify-between text-sm"><span class="text-slate-500">Giá thuê:</span><span class="font-bold text-indigo-600">${formatCurrency(room.price)}đ</span></div>
+                            
+                            ${state.role === 'seller' && room.tenant ? `
+                                <div class="flex justify-between text-sm border-t border-slate-100 pt-3 mt-3">
+                                    <span class="text-slate-500">Khách thuê:</span><span class="font-medium text-slate-800">${room.tenant}</span>
+                                </div>
+                            ` : ''}
+                            
+                            ${room.ctvId && (state.role === 'seller' || room.ctvId === CURRENT_CTV_ID) ? `
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-slate-500">Sale phụ trách:</span><span class="font-medium text-slate-800">${ctvName}</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-b-xl border-t border-slate-100 flex gap-2">
+                            ${state.role === 'seller' ? `
+                                <button class="flex-1 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors">Chỉnh sửa</button>
+                            ` : (room.status === 'vacant' ? `
+                                <button onclick="handleBookRoom('${room.id}')" class="flex-1 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 shadow-sm transition-colors">Nhận cọc / Lên HĐ</button>
+                            ` : `
+                                <button class="flex-1 py-2 bg-slate-200 text-slate-500 cursor-not-allowed rounded-lg text-sm font-medium">Không khả dụng</button>
+                            `)}
+                            <button class="px-3 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors"><i data-lucide="more-vertical" class="w-4 h-4"></i></button>
+                        </div>
+                    </div>`;
+                }).join('');
+            }
+
+            return `
+                <div class="space-y-6">
+                    <!-- Thanh công cụ -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <div class="relative">
+                                <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4"></i>
+                                <input type="text" placeholder="Tìm tên phòng, tòa nhà..." class="pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 w-64 text-sm" value="${state.searchQuery}" onkeyup="window.setSearchQuery(this.value)">
+                            </div>
+                            <div class="relative">
+                                <i data-lucide="filter" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4"></i>
+                                <select class="pl-10 pr-8 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm appearance-none bg-white cursor-pointer" onchange="window.setStatusFilter(this.value)">
+                                    <option value="all" ${state.statusFilter === 'all' ? 'selected' : ''}>Tất cả trạng thái</option>
+                                    <option value="vacant" ${state.statusFilter === 'vacant' ? 'selected' : ''}>Trống</option>
+                                    <option value="rented" ${state.statusFilter === 'rented' ? 'selected' : ''}>Đang thuê</option>
+                                    <option value="deposited" ${state.statusFilter === 'deposited' ? 'selected' : ''}>Đã cọc</option>
+                                    <option value="maintenance" ${state.statusFilter === 'maintenance' ? 'selected' : ''}>Bảo trì</option>
+                                </select>
+                                <i data-lucide="chevron-down" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none w-4 h-4"></i>
+                            </div>
+                        </div>
+                        ${state.role === 'seller' ? `
+                            <button class="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium shadow-sm">
+                                <i data-lucide="plus" class="w-4 h-4"></i> Thêm phòng mới
+                            </button>
+                        ` : ''}
                     </div>
                     
-                    <div className="p-4 bg-slate-50 rounded-b-xl border-t border-slate-100 flex gap-2">
-                      {role === 'seller' ? (
-                         <button className="flex-1 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50">
-                           Chỉnh sửa
-                         </button>
-                      ) : (
-                         room.status === 'vacant' ? (
-                           <button onClick={() => handleBookRoom(room.id)} className="flex-1 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 shadow-sm">
-                             Nhận cọc / Lên HĐ
-                           </button>
-                         ) : (
-                           <button className="flex-1 py-2 bg-slate-200 text-slate-500 cursor-not-allowed rounded-lg text-sm font-medium">
-                             Không khả dụng
-                           </button>
-                         )
-                      )}
-                      <button className="px-3 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50">
-                        <MoreVertical size={18} />
-                      </button>
+                    <!-- Lưới danh sách phòng -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                        ${roomsGridHTML}
                     </div>
-                  </Card>
-                ))}
-                
-                {filteredRooms.length === 0 && (
-                  <div className="col-span-full py-12 text-center text-slate-500 bg-white rounded-xl border border-slate-200 border-dashed">
-                     <Search size={40} className="mx-auto mb-4 text-slate-300" />
-                     <p>Không tìm thấy phòng nào phù hợp với bộ lọc.</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
+                </div>
+            `;
+        }
 
-          {}
-          {activeTab === 'ctvs' && role === 'seller' && (
-             <div className="space-y-6">
-               <Card className="overflow-hidden">
-                 <div className="p-5 border-b border-slate-200 flex justify-between items-center bg-white">
-                   <h3 className="font-semibold text-lg text-slate-800">Danh sách Cộng Tác Viên</h3>
-                   <button className="flex items-center gap-2 bg-indigo-50 text-indigo-700 px-4 py-2 rounded-lg hover:bg-indigo-100 transition-colors text-sm font-medium">
-                     <Plus size={18} />
-                     Thêm CTV
-                   </button>
-                 </div>
-                 <div className="overflow-x-auto">
-                   <table className="w-full text-left border-collapse">
-                     <thead>
-                       <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 text-sm">
-                         <th className="p-4 font-medium">Mã CTV</th>
-                         <th className="p-4 font-medium">Họ Tên</th>
-                         <th className="p-4 font-medium">Số điện thoại</th>
-                         <th className="p-4 font-medium">Số giao dịch</th>
-                         <th className="p-4 font-medium">Tổng hoa hồng</th>
-                         <th className="p-4 font-medium">Trạng thái</th>
-                         <th className="p-4 font-medium text-right">Thao tác</th>
-                       </tr>
-                     </thead>
-                     <tbody className="divide-y divide-slate-100 bg-white">
-                       {ctvs.map(ctv => (
-                         <tr key={ctv.id} className="hover:bg-slate-50 transition-colors">
-                           <td className="p-4 text-sm font-medium text-slate-900">{ctv.id}</td>
-                           <td className="p-4 text-sm text-slate-700 flex items-center gap-3">
-                             <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-xs">
-                               {ctv.name.charAt(0)}
-                             </div>
-                             {ctv.name}
-                           </td>
-                           <td className="p-4 text-sm text-slate-600">{ctv.phone}</td>
-                           <td className="p-4 text-sm text-slate-900 font-medium">
-                             <span className="inline-block px-2 py-1 bg-slate-100 rounded-md">{ctv.deals}</span>
-                           </td>
-                           <td className="p-4 text-sm text-indigo-600 font-semibold">{ctv.commission.toLocaleString()}đ</td>
-                           <td className="p-4">
-                             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border bg-emerald-50 text-emerald-700 border-emerald-200">
-                               <CheckCircle size={12} />
-                               Hoạt động
-                             </span>
-                           </td>
-                           <td className="p-4 text-right">
-                             <button className="text-indigo-600 hover:text-indigo-800 text-sm font-medium">Chi tiết</button>
-                           </td>
-                         </tr>
-                       ))}
-                     </tbody>
-                   </table>
-                 </div>
-               </Card>
-             </div>
-          )}
+        function getCtvsHTML() {
+            let trs = state.ctvs.map(ctv => `
+                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="p-4 text-sm font-medium text-slate-900 border-b border-slate-100">${ctv.id}</td>
+                    <td class="p-4 text-sm text-slate-700 border-b border-slate-100">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-xs">${ctv.name.charAt(0)}</div>
+                            ${ctv.name}
+                        </div>
+                    </td>
+                    <td class="p-4 text-sm text-slate-600 border-b border-slate-100">${ctv.phone}</td>
+                    <td class="p-4 text-sm text-slate-900 border-b border-slate-100 font-medium">
+                        <span class="inline-block px-2 py-1 bg-slate-100 rounded-md">${ctv.deals}</span>
+                    </td>
+                    <td class="p-4 text-sm text-indigo-600 font-semibold border-b border-slate-100">${formatCurrency(ctv.commission)}đ</td>
+                    <td class="p-4 border-b border-slate-100">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border bg-emerald-50 text-emerald-700 border-emerald-200">
+                            <i data-lucide="check-circle" class="w-3 h-3"></i> Hoạt động
+                        </span>
+                    </td>
+                    <td class="p-4 text-right border-b border-slate-100">
+                        <button class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">Chi tiết</button>
+                    </td>
+                </tr>
+            `).join('');
 
-        </div>
-      </main>
-    </div>
-  );
-}
+            return `
+                <div class="space-y-6">
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="p-5 border-b border-slate-200 flex justify-between items-center bg-white">
+                            <h3 class="font-semibold text-lg text-slate-800">Danh sách Cộng Tác Viên</h3>
+                            <button class="flex items-center gap-2 bg-indigo-50 text-indigo-700 px-4 py-2 rounded-lg hover:bg-indigo-100 transition-colors text-sm font-medium">
+                                <i data-lucide="plus" class="w-4 h-4"></i> Thêm CTV
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 text-sm">
+                                        <th class="p-4 font-medium">Mã CTV</th>
+                                        <th class="p-4 font-medium">Họ Tên</th>
+                                        <th class="p-4 font-medium">Số điện thoại</th>
+                                        <th class="p-4 font-medium">Số giao dịch</th>
+                                        <th class="p-4 font-medium">Tổng hoa hồng</th>
+                                        <th class="p-4 font-medium">Trạng thái</th>
+                                        <th class="p-4 font-medium text-right">Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-slate-100">
+                                    ${trs}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 8. KHỞI TẠO BIỂU ĐỒ (CHART.JS) ---
+        function initCharts() {
+            const barCtx = document.getElementById('barChart');
+            if (barCtx) {
+                barChartInstance = new Chart(barCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: REVENUE_DATA.map(d => d.month),
+                        datasets: [
+                            { label: 'Doanh thu', data: REVENUE_DATA.map(d => d.revenue), backgroundColor: '#4f46e5', borderRadius: 4, barPercentage: 0.6 },
+                            { label: 'Chi hoa hồng CTV', data: REVENUE_DATA.map(d => d.commission), backgroundColor: '#f59e0b', borderRadius: 4, barPercentage: 0.6 }
+                        ]
+                    },
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false, 
+                        plugins: { legend: { position: 'top' } }, 
+                        scales: { y: { beginAtZero: true, grid: { borderDash: [2, 4] } }, x: { grid: { display: false } } } 
+                    }
+                });
+            }
+
+            const pieCtx = document.getElementById('pieChart');
+            if (pieCtx && window.chartPieData) {
+                pieChartInstance = new Chart(pieCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Trống', 'Đang thuê', 'Đã cọc', 'Bảo trì'],
+                        datasets: [{ 
+                            data: window.chartPieData, 
+                            backgroundColor: [STATUS_CONFIG.vacant.hex, STATUS_CONFIG.rented.hex, STATUS_CONFIG.deposited.hex, STATUS_CONFIG.maintenance.hex], 
+                            borderWidth: 0,
+                        }]
+                    },
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false, 
+                        cutout: '70%', 
+                        plugins: { legend: { display: false } } 
+                    }
+                });
+            }
+        }
+
+        // --- 9. KHỞI CHẠY ỨNG DỤNG ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderApp(); // Render giao diện
+            fetchInitialData(); // Tiến hành tải dữ liệu nếu có URL Apps Script
+        });
+
+    </script>
+</body>
+</html>
