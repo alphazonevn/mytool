@@ -4,17 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <!-- PWA META TAGS -->
     <meta name="theme-color" content="#ee7752">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Nexus Chat">
     <link rel="apple-touch-icon" href="https://api.dicebear.com/7.x/shapes/svg?seed=Nexus&backgroundColor=ee7752">
-    <link rel="manifest" id="manifest-link"> <!-- Sẽ được tạo động bằng JS -->
-
-    <title>Phòng Chat Siêu Cấp AI</title>
+    <link rel="manifest" id="manifest-link"> <title>Phòng Chat Siêu Cấp AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Thư viện Emoji Picker -->
     <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1/index.js"></script>
 
     <style>
@@ -67,7 +63,6 @@
         .loader { border-top-color: transparent; animation: spinner 1s linear infinite; }
         @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes pulse-red { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
-        .recording { animation: pulse-red 2s infinite; color: #ef4444 !important; }
         
         .md-code { background: rgba(156, 163, 175, 0.3); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 0.9em; color: #db2777; }
         body.dark-theme .md-code { color: #fbcfe8; }
@@ -84,7 +79,6 @@
 </head>
 <body class="h-screen flex items-center justify-center antialiased overflow-hidden">
 
-    <!-- MÀN HÌNH ĐĂNG NHẬP -->
     <div id="login-screen" class="glass p-8 rounded-[2rem] shadow-2xl w-full max-w-md mx-4 transition-all duration-500 transform hover:scale-[1.02] relative z-10">
         <button id="theme-toggle-login" class="absolute top-6 right-6 text-white/80 hover:text-white transition p-2 rounded-full hover:bg-white/20">
             <svg class="w-6 h-6 dark-icon hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
@@ -105,23 +99,20 @@
             </div>
             <div id="login-error" class="bg-red-500/80 text-white text-sm text-center py-2 rounded-lg hidden backdrop-blur-md animate-pulse font-medium"></div>
             
-            <button type="submit" id="login-btn" class="w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-bold py-4 rounded-xl shadow-lg transition-all transform hover:-translate-y-1 flex justify-center items-center text-lg">
+            <button type="submit" id="login-btn" class="whitespace-nowrap w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-bold py-4 rounded-xl shadow-lg transition-all transform hover:-translate-y-1 flex justify-center items-center text-lg">
                 <span>Vào Phòng Ngay</span>
                 <div id="login-loader" class="loader ml-3 w-6 h-6 border-4 border-white border-t-transparent rounded-full hidden"></div>
             </button>
             
-            <!-- Nút Tải App PWA -->
-            <button type="button" id="install-app-btn" class="hidden w-full bg-white/20 hover:bg-white/30 text-white font-medium py-3 rounded-xl transition-colors flex justify-center items-center text-sm border border-white/30">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+            <button type="button" id="install-app-btn" class="hidden whitespace-nowrap w-full bg-white/20 hover:bg-white/30 text-white font-medium py-3 rounded-xl transition-colors flex justify-center items-center text-sm border border-white/30">
+                <svg class="w-5 h-5 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                 Tải App (Thêm vào Màn hình chính)
             </button>
         </form>
     </div>
 
-    <!-- MÀN HÌNH CHAT -->
     <div id="chat-screen" class="hidden w-full h-full md:h-[92vh] md:max-w-4xl md:mx-auto md:rounded-[2rem] shadow-2xl glass-panel flex flex-col overflow-hidden relative">
         
-        <!-- Header -->
         <div class="theme-header backdrop-blur-md border-b border-gray-200/20 px-4 md:px-6 py-4 flex items-center justify-between z-10 shadow-sm transition-colors duration-300">
             <div class="flex items-center space-x-3 md:space-x-4">
                 <div class="relative">
@@ -135,7 +126,7 @@
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                         </button>
                     </div>
-                    <p class="text-xs md:text-sm text-gray-500 font-medium">Tên của bạn: <span id="display-name" class="text-pink-500 font-bold"></span></p>
+                    <p class="text-xs md:text-sm text-gray-500 font-medium whitespace-nowrap">Tên của bạn: <span id="display-name" class="text-pink-500 font-bold"></span></p>
                 </div>
             </div>
             
@@ -157,14 +148,12 @@
             </div>
         </div>
 
-        <!-- Khung chứa tin nhắn -->
         <div id="chat-messages" class="flex-1 p-4 md:p-6 overflow-y-auto flex flex-col space-y-5 bg-gradient-to-b from-transparent to-black/5 scroll-smooth relative">
             <div class="flex justify-center items-center h-full opacity-50">
                 <div class="loader w-8 h-8 border-4 border-pink-500 border-t-transparent rounded-full"></div>
             </div>
         </div>
 
-        <!-- THÔNG BÁO NỔI THÔNG MINH (IN-APP TOAST) -->
         <div id="new-msg-toast" class="absolute top-20 left-1/2 transform -translate-x-1/2 -translate-y-32 opacity-0 transition-all duration-500 z-30 bg-gradient-to-r from-pink-500 to-rose-500 text-white px-5 py-2 rounded-full shadow-xl shadow-pink-500/30 flex items-center space-x-3 cursor-pointer font-medium text-sm border border-white/20 pointer-events-none">
             <img id="toast-avatar" src="" class="w-7 h-7 rounded-full border border-white/50 bg-white object-cover">
             <span class="truncate max-w-[150px] sm:max-w-[250px]" id="toast-text">Tin nhắn mới...</span>
@@ -175,33 +164,24 @@
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
         </button>
 
-        <!-- Khung Emoji (Ẩn mặc định) -->
         <div id="emoji-picker-container" class="hidden absolute bottom-[80px] left-2 md:left-16 z-50 rounded-2xl shadow-2xl border border-gray-200/20 overflow-hidden w-[95%] md:w-[350px]">
             <emoji-picker></emoji-picker>
         </div>
 
-        <!-- Khung nhập tin nhắn -->
         <div class="theme-header backdrop-blur-lg p-3 md:p-4 border-t border-gray-200/20 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-10 transition-colors duration-300">
             <form id="chat-form" class="flex items-end space-x-2 md:space-x-3 max-w-full relative">
                 
-                <!-- Nút đính kèm File -->
                 <button type="button" id="attach-btn" class="p-3 text-gray-400 hover:text-blue-500 theme-input rounded-full shadow-sm border border-gray-200/20 transition-transform hover:scale-110 flex-shrink-0" title="Gửi hình/file">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
                 </button>
                 <input type="file" id="file-input" class="hidden" accept="image/*, .pdf, .doc, .docx, .xls, .xlsx, .zip">
 
                 <div class="flex-1 relative theme-input rounded-3xl shadow-inner border border-gray-200/20 flex items-center transition-colors">
-                    <input type="text" id="message-input" autocomplete="off" placeholder="Soạn tin nhắn..." class="w-full pl-4 pr-20 py-3 md:py-4 bg-transparent focus:outline-none placeholder-gray-400 theme-text">
+                    <input type="text" id="message-input" autocomplete="off" placeholder="Soạn tin nhắn..." class="w-full pl-4 pr-12 py-3 md:py-4 bg-transparent focus:outline-none placeholder-gray-400 theme-text">
                     
                     <div class="absolute right-2 flex items-center">
-                        <!-- Nút Mở bảng Emoji -->
                         <button type="button" id="emoji-btn" class="p-2 text-gray-400 hover:text-yellow-500 rounded-full transition-colors" title="Chèn Icon">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        </button>
-
-                        <!-- Nút Nhập liệu bằng Giọng nói -->
-                        <button type="button" id="mic-btn" class="p-2 text-gray-400 hover:text-pink-500 rounded-full transition-colors" title="Nhập liệu bằng giọng nói">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
                         </button>
                     </div>
                 </div>
@@ -211,7 +191,6 @@
                 </button>
             </form>
             
-            <!-- Vùng hiển thị file đang chọn -->
             <div id="file-preview" class="hidden mt-2 px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-xl text-sm text-blue-500 flex justify-between items-center">
                 <span class="truncate max-w-[80%] font-medium" id="file-name-display">filename.png</span>
                 <button type="button" id="remove-file-btn" class="text-red-500 hover:text-red-700 font-bold p-1">&times;</button>
@@ -219,7 +198,6 @@
         </div>
     </div>
 
-    <!-- Modal Xem Ảnh & Đổi Tên (Giữ nguyên) -->
     <div id="image-modal" class="fixed inset-0 z-50 bg-black/90 hidden flex items-center justify-center backdrop-blur-sm transition-opacity opacity-0 cursor-zoom-out">
         <img id="image-modal-content" src="" class="max-w-[95vw] max-h-[95vh] object-contain rounded-lg shadow-2xl transform scale-95 transition-transform duration-300">
         <button id="close-modal-btn" class="absolute top-6 right-6 text-white bg-black/50 hover:bg-red-500 rounded-full p-2 transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
@@ -229,14 +207,14 @@
             <h3 class="text-lg font-bold mb-4 theme-text">Đổi tên phòng chat</h3>
             <input type="text" id="new-room-name" class="w-full px-4 py-2 border border-gray-300/30 rounded-lg focus:ring-2 focus:ring-pink-500 outline-none mb-4 bg-transparent theme-text" placeholder="Nhập tên mới...">
             <div class="flex justify-end space-x-2">
-                <button id="cancel-room-btn" class="px-4 py-2 text-gray-500 hover:bg-gray-500/20 rounded-lg transition-colors">Hủy</button>
-                <button id="save-room-btn" class="px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-colors shadow-lg">Lưu</button>
+                <button id="cancel-room-btn" class="whitespace-nowrap px-4 py-2 text-gray-500 hover:bg-gray-500/20 rounded-lg transition-colors">Hủy</button>
+                <button id="save-room-btn" class="whitespace-nowrap px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-colors shadow-lg">Lưu</button>
             </div>
         </div>
     </div>
 
     <script>
-        // === PWA SETUP (Khởi tạo App Install) ===
+        // === PWA SETUP (Khởi tạo App Install & Service Worker cho Push Notification) ===
         const manifest = {
             name: "Nexus Chat AI",
             short_name: "Nexus Chat",
@@ -250,9 +228,18 @@
         const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
         document.getElementById('manifest-link').href = URL.createObjectURL(manifestBlob);
 
-        // Đăng ký Service Worker ẩn để kích hoạt Add to Home Screen
+        // Đăng ký Service Worker ẩn để kích hoạt Add to Home Screen và hiển thị Push Notification chuẩn trên điện thoại
         if ('serviceWorker' in navigator) {
-            const swCode = `self.addEventListener('fetch', function(e) {});`;
+            const swCode = `
+                self.addEventListener('fetch', function(e) {});
+                self.addEventListener('notificationclick', function(e) {
+                    e.notification.close();
+                    e.waitUntil(clients.matchAll({ type: 'window' }).then(clientsArr => {
+                        if (clientsArr.length) return clientsArr[0].focus();
+                        else return clients.openWindow('/');
+                    }));
+                });
+            `;
             const swBlob = new Blob([swCode], {type: 'application/javascript'});
             navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>{});
         }
@@ -277,13 +264,10 @@
 
         // === BIẾN TRẠNG THÁI ===
         let currentUser = ''; let pollingInterval = null; let lastMessageCount = 0; let isUserScrolling = false;
-        let selectedFile = null; let roomNameStr = "Phòng Chat Chung"; let isMuted = false; let isRecording = false;
+        let selectedFile = null; let roomNameStr = "Phòng Chat Chung"; let isMuted = false;
         let unreadCount = 0; const originalTitle = document.title;
-        const notifSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3'); notifSound.volume = 0.5;
-
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const recognition = SpeechRecognition ? new SpeechRecognition() : null;
-        if(recognition) { recognition.continuous = false; recognition.lang = 'vi-VN'; recognition.interimResults = false; }
+        // Đổi âm thanh chú ý hơn & tăng âm lượng
+        const notifSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3'); notifSound.volume = 1.0;
 
         const els = {
             loginScreen: document.getElementById('login-screen'), chatScreen: document.getElementById('chat-screen'),
@@ -297,7 +281,7 @@
             attachBtn: document.getElementById('attach-btn'), fileInput: document.getElementById('file-input'),
             filePreview: document.getElementById('file-preview'), fileNameDisplay: document.getElementById('file-name-display'),
             removeFileBtn: document.getElementById('remove-file-btn'), notiBtn: document.getElementById('noti-btn'),
-            statusText: document.getElementById('status-text'), micBtn: document.getElementById('mic-btn'),
+            statusText: document.getElementById('status-text'),
             imageModal: document.getElementById('image-modal'), imgModalContent: document.getElementById('image-modal-content'),
             closeModalBtn: document.getElementById('close-modal-btn'), soundBtn: document.getElementById('sound-btn'),
             themeBtns: [document.getElementById('theme-toggle-login'), document.getElementById('theme-toggle-chat')],
@@ -364,14 +348,6 @@
         els.imageModal.addEventListener('click', (e) => { if (e.target !== els.imgModalContent) closeImageModal(); });
         els.closeModalBtn.addEventListener('click', closeImageModal);
 
-        if(!recognition) els.micBtn.style.display = 'none';
-        else {
-            els.micBtn.addEventListener('click', () => { if(isRecording) { recognition.stop(); return; } recognition.start(); });
-            recognition.onstart = () => { isRecording = true; els.micBtn.classList.add('recording'); els.input.placeholder = "Đang nghe..."; };
-            recognition.onresult = (e) => { els.input.value += (els.input.value ? ' ' : '') + e.results[0][0].transcript; };
-            recognition.onend = () => { isRecording = false; els.micBtn.classList.remove('recording'); els.input.placeholder = "Soạn tin nhắn..."; els.input.focus(); };
-        }
-
         async function apiCall(action, payload = {}) {
             if (action === 'getMessages' || action === 'getRoomInfo') { const res = await fetch(`${SCRIPT_URL}?action=${action}`); return await res.json(); }
             payload.action = action;
@@ -397,7 +373,26 @@
         }
         function hideInAppToast() { els.toast.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto'); els.toast.classList.add('-translate-y-32', 'opacity-0', 'pointer-events-none'); }
         els.toast.addEventListener('click', () => { scrollToBottom(true); hideInAppToast(); });
-        function showPushNotification(msg) { if (Notification.permission === "granted" && document.hidden) new Notification(`${msg.username} - ${roomNameStr}`, { body: msg.isFile ? "Đã gửi một tệp 📎" : msg.text, icon: getAvatarUrl(msg.username) }); }
+        
+        // Cập nhật Push Notification hỗ trợ ServiceWorker và Rung cho điện thoại
+        function showPushNotification(msg) { 
+            if (Notification.permission === "granted" && document.hidden) {
+                const title = `${msg.username} - ${roomNameStr}`;
+                const options = { 
+                    body: msg.isFile ? "Đã gửi một tệp 📎" : msg.text, 
+                    icon: getAvatarUrl(msg.username),
+                    vibrate: [200, 100, 200, 100, 200] // Rung báo hiệu chú ý trên đt
+                };
+                
+                if ('serviceWorker' in navigator && navigator.serviceWorker.ready) {
+                    navigator.serviceWorker.ready.then(reg => {
+                        reg.showNotification(title, options);
+                    });
+                } else {
+                    new Notification(title, options);
+                }
+            } 
+        }
 
         function getAvatarUrl(name) { return `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(name)}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffdfbf`; }
         function formatMessage(text, isFile = false, fileUrl = '') {
@@ -440,7 +435,6 @@
         document.getElementById('logout-btn').addEventListener('click', () => {
             clearInterval(pollingInterval); currentUser = ''; lastMessageCount = 0;
             els.chatScreen.classList.add('hidden'); els.loginScreen.classList.remove('hidden');
-            if(isRecording) recognition.stop();
         });
 
         async function updateRoomInfo() { try { const res = await apiCall('getRoomInfo'); if (res.roomName && res.roomName !== roomNameStr) { roomNameStr = res.roomName; els.roomNameDisplay.innerText = roomNameStr; } } catch (e) {} }
@@ -503,7 +497,7 @@
 
         els.chatForm.addEventListener('submit', async function(e) {
             e.preventDefault(); const text = els.input.value.trim(); if (!text && !selectedFile) return;
-            els.sendBtn.disabled = true; els.attachBtn.disabled = true; els.micBtn.disabled = true; els.emojiBtn.disabled = true; els.emojiContainer.classList.add('hidden');
+            els.sendBtn.disabled = true; els.attachBtn.disabled = true; els.emojiBtn.disabled = true; els.emojiContainer.classList.add('hidden');
             let payload = { username: currentUser, text: text, isFile: false };
             if (selectedFile) {
                 renderTempMessage(text, true); 
@@ -515,7 +509,7 @@
 
         async function sendMessageToServer(payload) {
             try { await apiCall('saveMessage', payload); fetchMessages(); } catch (err) { alert("Lỗi gửi tin! (Có thể do mạng hoặc file nặng)."); }
-            finally { els.sendBtn.disabled = false; els.attachBtn.disabled = false; els.micBtn.disabled = false; els.emojiBtn.disabled = false; els.input.focus(); }
+            finally { els.sendBtn.disabled = false; els.attachBtn.disabled = false; els.emojiBtn.disabled = false; els.input.focus(); }
         }
 
         function renderTempMessage(text, isUploadingFile = false) {
