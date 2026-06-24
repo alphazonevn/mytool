@@ -91,7 +91,7 @@
             <div class="theme-input theme-text w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-inner backdrop-blur-sm border border-gray-200/20">
                 <svg class="w-8 h-8 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"></path></svg>
             </div>
-            <h2 class="text-2xl sm:text-3xl font-extrabold theme-text">RFR+ Kênh Thông Tin Chung</h2>
+            <h2 class="text-2xl sm:text-3xl font-extrabold theme-text">RFR+ Kênh Đối Tác</h2>
             <p class="theme-text opacity-80 text-xs sm:text-sm mt-1 sm:mt-2 font-medium" id="status-text">Đang kết nối Server...</p>
         </div>
 
@@ -125,7 +125,7 @@
                 </div>
                 <div class="overflow-hidden flex-1 min-w-0">
                     <div class="flex items-center space-x-1 sm:space-x-2">
-                        <h1 id="room-name-display" class="text-base sm:text-xl font-bold theme-text tracking-tight truncate">RFR+ Kênh Thông Tin Chung</h1>
+                        <h1 id="room-name-display" class="text-base sm:text-xl font-bold theme-text tracking-tight truncate">RFR+ Kênh Đối Tác</h1>
                         <button id="edit-room-btn" class="text-gray-400 hover:text-pink-500 transition p-1 rounded-full hover:bg-black/5 flex-shrink-0 whitespace-nowrap" title="Đổi tên phòng">
                             <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                         </button>
@@ -224,7 +224,7 @@
     <script>
         // === PWA SETUP ===
         const manifest = {
-            name: "RFR+ Kênh Thông Tin Chung",
+            name: "RFR+ Kênh Đối Tác",
             short_name: "Nexus Chat",
             start_url: location.href,
             display: "standalone",
@@ -272,7 +272,7 @@
         // === BIẾN TRẠNG THÁI ===
         let currentUser = ''; let pollingInterval = null; let lastMessageCount = 0; let isUserScrolling = false;
         let selectedFiles = [];
-        let roomNameStr = "RFR+ Kênh Thông Tin Chung"; let isMuted = false;
+        let roomNameStr = "RFR+ Kênh Đối Tác"; let isMuted = false;
         let unreadCount = 0; const originalTitle = document.title;
         const notifSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3'); notifSound.volume = 1.0;
 
