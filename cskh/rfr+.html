@@ -79,22 +79,20 @@
         }
     </style>
 </head>
-<!-- Khóa cứng body (fixed inset-0, overscroll-none) để giải quyết dứt điểm lỗi nhảy layout của Mobile Browser -->
 <body class="fixed inset-0 w-full flex items-center justify-center antialiased overflow-hidden overscroll-none">
 
-    <!-- LOGIN SCREEN -->
     <div id="login-screen" class="glass p-6 sm:p-8 rounded-[2rem] shadow-2xl w-[92%] sm:w-full max-w-md transition-all duration-500 transform hover:scale-[1.02] relative z-10">
-        <button id="theme-toggle-login" class="absolute top-4 right-4 sm:top-6 sm:right-6 text-white/80 hover:text-white transition p-2 rounded-full hover:bg-white/20 whitespace-nowrap">
+        <button id="theme-toggle-login" class="absolute top-4 right-4 sm:top-6 sm:right-6 theme-text opacity-80 hover:opacity-100 transition p-2 rounded-full hover:bg-black/10 dark:hover:bg-white/20 whitespace-nowrap">
             <svg class="w-5 h-5 sm:w-6 sm:h-6 dark-icon hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
             <svg class="w-5 h-5 sm:w-6 sm:h-6 light-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
         </button>
 
         <div class="text-center mb-6 sm:mb-8">
-            <div class="bg-white/40 text-white w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-inner backdrop-blur-sm border border-white/50">
+            <div class="theme-input theme-text w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-inner backdrop-blur-sm border border-gray-200/20">
                 <svg class="w-8 h-8 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"></path></svg>
             </div>
-            <h2 class="text-2xl sm:text-3xl font-extrabold text-white drop-shadow-md">RFR+ CSKH</h2>
-            <p class="text-white/80 text-xs sm:text-sm mt-1 sm:mt-2 font-medium" id="status-text">Đang kết nối Server...</p>
+            <h2 class="text-2xl sm:text-3xl font-extrabold theme-text">RFR+ CSKH</h2>
+            <p class="theme-text opacity-80 text-xs sm:text-sm mt-1 sm:mt-2 font-medium" id="status-text">Đang kết nối Server...</p>
         </div>
 
         <form id="login-form" class="space-y-4 sm:space-y-5">
@@ -108,24 +106,22 @@
                 <div id="login-loader" class="loader ml-3 w-5 h-5 sm:w-6 sm:h-6 border-4 border-white border-t-transparent rounded-full hidden"></div>
             </button>
             
-            <button type="button" id="install-app-btn" class="hidden whitespace-nowrap w-full bg-white/20 hover:bg-white/30 text-white font-medium py-3 rounded-xl transition-colors flex justify-center items-center text-xs sm:text-sm border border-white/30">
+            <button type="button" id="install-app-btn" class="hidden whitespace-nowrap w-full bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 theme-text font-medium py-3 rounded-xl transition-colors flex justify-center items-center text-xs sm:text-sm border border-gray-400/30">
                 <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                 Tải App
             </button>
         </form>
     </div>
 
-    <!-- CHAT SCREEN -->
     <div id="chat-screen" class="hidden w-full h-full md:h-[95vh] md:max-w-4xl md:mx-auto md:rounded-[2rem] shadow-2xl glass-panel flex flex-col overflow-hidden relative">
         
-        <!-- HEADER -->
         <div class="theme-header backdrop-blur-md border-b border-gray-200/20 px-3 py-3 sm:px-6 sm:py-4 flex items-center justify-between z-10 shadow-sm transition-colors duration-300">
-            <div class="flex items-center space-x-2 sm:space-x-4 max-w-[65%] min-w-0"> <!-- Đảm bảo max-w và min-w-0 để cắt chữ tốt -->
+            <div class="flex items-center space-x-2 sm:space-x-4 max-w-[65%] min-w-0">
                 <div class="relative flex-shrink-0">
                     <img id="my-avatar" src="" alt="avatar" class="w-9 h-9 sm:w-12 sm:h-12 rounded-full border-2 border-pink-500 bg-white p-0.5 object-cover">
                     <div class="absolute bottom-0 right-0 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-400 border-2 border-white rounded-full"></div>
                 </div>
-                <div class="overflow-hidden flex-1 min-w-0"> <!-- flex-1 min-w-0 quan trọng cho truncate -->
+                <div class="overflow-hidden flex-1 min-w-0">
                     <div class="flex items-center space-x-1 sm:space-x-2">
                         <h1 id="room-name-display" class="text-base sm:text-xl font-bold theme-text tracking-tight truncate">Phòng Chat Chung</h1>
                         <button id="edit-room-btn" class="text-gray-400 hover:text-pink-500 transition p-1 rounded-full hover:bg-black/5 flex-shrink-0 whitespace-nowrap" title="Đổi tên phòng">
@@ -154,61 +150,56 @@
             </div>
         </div>
 
-        <!-- MESSAGES -->
         <div id="chat-messages" class="flex-1 p-3 sm:p-6 overflow-y-auto flex flex-col space-y-4 sm:space-y-5 bg-gradient-to-b from-transparent to-black/5 scroll-smooth relative">
             <div class="flex justify-center items-center h-full opacity-50">
                 <div class="loader w-8 h-8 border-4 border-pink-500 border-t-transparent rounded-full"></div>
             </div>
         </div>
 
-        <!-- TOAST / SCROLL -->
         <div id="new-msg-toast" class="absolute top-16 sm:top-20 left-1/2 transform -translate-x-1/2 -translate-y-32 opacity-0 transition-all duration-500 z-30 bg-gradient-to-r from-pink-500 to-rose-500 text-white px-4 py-1.5 sm:px-5 sm:py-2 rounded-full shadow-xl shadow-pink-500/30 flex items-center space-x-2 sm:space-x-3 cursor-pointer font-medium text-xs sm:text-sm border border-white/20 pointer-events-none whitespace-nowrap">
             <img id="toast-avatar" src="" class="w-6 h-6 sm:w-7 sm:h-7 rounded-full border border-white/50 bg-white object-cover">
             <span class="truncate max-w-[120px] sm:max-w-[250px]" id="toast-text">Tin nhắn mới...</span>
             <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 ml-1 flex-shrink-0 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
         </div>
 
-        <button id="scroll-bottom-btn" class="hidden absolute bottom-20 right-4 sm:bottom-24 sm:right-6 bg-pink-500 text-white p-2.5 sm:p-3 rounded-full shadow-lg hover:bg-pink-600 transition-transform transform hover:scale-110 z-20 whitespace-nowrap">
+        <button id="scroll-bottom-btn" class="hidden absolute bottom-24 right-4 sm:bottom-28 sm:right-6 bg-pink-500 text-white p-2.5 sm:p-3 rounded-full shadow-lg hover:bg-pink-600 transition-transform transform hover:scale-110 z-20 whitespace-nowrap">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
         </button>
 
-        <div id="emoji-picker-container" class="hidden absolute bottom-[80px] sm:bottom-[90px] left-2 sm:left-16 z-50 rounded-2xl shadow-2xl border border-gray-200/20 overflow-hidden w-[95%] sm:w-[350px]">
+        <div id="emoji-picker-container" class="hidden absolute bottom-[90px] sm:bottom-[100px] left-2 sm:left-16 z-50 rounded-2xl shadow-2xl border border-gray-200/20 overflow-hidden w-[95%] sm:w-[350px]">
             <emoji-picker></emoji-picker>
         </div>
 
-        <!-- INPUT FORM - Bổ sung padding-bottom env(safe-area) chống lẹm đáy iPhone -->
         <div class="theme-header backdrop-blur-lg p-2 sm:p-4 border-t border-gray-200/20 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-10 transition-colors duration-300" style="padding-bottom: max(0.5rem, env(safe-area-inset-bottom));">
             <form id="chat-form" class="flex items-end space-x-2 max-w-full relative">
                 
-                <button type="button" id="attach-btn" class="p-2 sm:p-3 text-gray-400 hover:text-blue-500 theme-input rounded-full shadow-sm border border-gray-200/20 transition-transform hover:scale-110 flex-shrink-0 whitespace-nowrap" title="Gửi hình/file">
+                <button type="button" id="attach-btn" class="p-2 sm:p-3 mb-0.5 sm:mb-1 text-gray-400 hover:text-blue-500 theme-input rounded-full shadow-sm border border-gray-200/20 transition-transform hover:scale-110 flex-shrink-0 whitespace-nowrap" title="Gửi hình/file">
                     <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
                 </button>
                 <input type="file" id="file-input" class="hidden" accept="image/*, .pdf, .doc, .docx, .xls, .xlsx, .zip">
 
-                <div class="flex-1 relative theme-input rounded-3xl shadow-inner border border-gray-200/20 flex items-center transition-colors">
-                    <input type="text" id="message-input" autocomplete="off" placeholder="Soạn tin nhắn..." class="w-full pl-4 pr-10 py-2.5 sm:py-4 bg-transparent focus:outline-none placeholder-gray-400 theme-text text-sm sm:text-base">
+                <div class="flex-1 relative theme-input rounded-[1.5rem] shadow-inner border border-gray-200/20 flex items-end transition-colors pb-0.5 sm:pb-1">
+                    <textarea id="message-input" rows="1" autocomplete="off" placeholder="Soạn tin nhắn..." class="w-full pl-4 pr-10 py-2.5 sm:py-3.5 bg-transparent focus:outline-none placeholder-gray-400 theme-text text-sm sm:text-base resize-none overflow-y-auto max-h-[120px]" style="min-height: 44px;"></textarea>
                     
-                    <div class="absolute right-1 sm:right-2 flex items-center">
+                    <div class="absolute right-1 sm:right-2 bottom-1.5 sm:bottom-2 flex items-center">
                         <button type="button" id="emoji-btn" class="p-1.5 sm:p-2 text-gray-400 hover:text-yellow-500 rounded-full transition-colors whitespace-nowrap" title="Chèn Icon">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </button>
                     </div>
                 </div>
                 
-                <button type="submit" id="send-btn" class="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-full p-2.5 sm:p-4 flex-shrink-0 shadow-lg transition-transform transform hover:scale-110 disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center whitespace-nowrap">
+                <button type="submit" id="send-btn" class="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-full p-2.5 sm:p-3 mb-0.5 sm:mb-1 flex-shrink-0 shadow-lg transition-transform transform hover:scale-110 disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center whitespace-nowrap">
                     <svg class="w-5 h-5 sm:w-6 sm:h-6 ml-0.5 sm:ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
                 </button>
             </form>
             
             <div id="file-preview" class="hidden mt-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-500/10 border border-blue-500/20 rounded-xl text-xs sm:text-sm text-blue-500 flex justify-between items-center w-full max-w-full">
-                <!-- Fix truncate tên file -->
                 <span class="truncate flex-1 min-w-0 font-medium mr-2" id="file-name-display">filename.png</span>
                 <button type="button" id="remove-file-btn" class="text-red-500 hover:text-red-700 font-bold p-1 flex-shrink-0 whitespace-nowrap">&times;</button>
             </div>
         </div>
     </div>
 
-    <!-- MODALS -->
     <div id="image-modal" class="fixed inset-0 z-50 bg-black/90 hidden flex items-center justify-center backdrop-blur-sm transition-opacity opacity-0 cursor-zoom-out">
         <img id="image-modal-content" src="" class="max-w-[95vw] max-h-[95vh] object-contain rounded-lg shadow-2xl transform scale-95 transition-transform duration-300">
         <button id="close-modal-btn" class="absolute top-4 right-4 sm:top-6 sm:right-6 text-white bg-black/50 hover:bg-red-500 rounded-full p-2 transition-colors whitespace-nowrap"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
@@ -315,10 +306,28 @@
             const textAfter = els.input.value.substring(cursorPosition);
             els.input.value = textBefore + event.detail.unicode + textAfter;
             
+            // Cập nhật lại chiều cao của khung nhập
+            els.input.style.height = 'auto';
+            els.input.style.height = (els.input.scrollHeight) + 'px';
+            
             // CHỈ focus trên desktop, tránh làm loạn bàn phím ảo trên điện thoại
             if (window.innerWidth > 768) {
                 els.input.focus();
                 els.input.setSelectionRange(cursorPosition + event.detail.unicode.length, cursorPosition + event.detail.unicode.length);
+            }
+        });
+
+        // --- XỬ LÝ KHUNG NHẬP VĂN BẢN (TEXTAREA) TỰ ĐỘNG GIÃN DÒNG ---
+        els.input.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+
+        els.input.addEventListener('keydown', function(e) {
+            // Nhấn Enter mà không giữ Shift -> Gửi tin nhắn
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                els.sendBtn.click(); // Kích hoạt nút gửi
             }
         });
 
@@ -511,7 +520,12 @@
                 const reader = new FileReader();
                 reader.onload = async function() { payload.isFile = true; payload.fileName = selectedFile.name; payload.mimeType = selectedFile.type; payload.base64 = reader.result.split(',')[1]; await sendMessageToServer(payload); selectedFile = null; els.fileInput.value = ''; els.filePreview.classList.add('hidden'); };
                 reader.readAsDataURL(selectedFile);
-            } else { renderTempMessage(text, false); els.input.value = ''; await sendMessageToServer(payload); }
+            } else { 
+                renderTempMessage(text, false); 
+                els.input.value = ''; 
+                els.input.style.height = 'auto'; // Trả lại chiều cao gốc sau khi gửi
+                await sendMessageToServer(payload); 
+            }
         });
 
         async function sendMessageToServer(payload) {
