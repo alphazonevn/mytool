@@ -5,7 +5,8 @@
     <link rel="apple-touch-icon" href="https://ava-grp-talk.zadn.vn/8/4/f/4/5/360/8f3a517f39a79416575784a297c07171.jpg">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#09101d">
+    <!-- Cập nhật theme color sang Đen đậm -->
+    <meta name="theme-color" content="#030303">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -27,15 +28,15 @@
                         display: ['"Manrope"', '"Be Vietnam Pro"', 'sans-serif']
                     },
                     colors: {
-                        ink: { 950: '#050b14', 900: '#09101d', 800: '#101828' },
-                        brand: { 50:'#e0f2fe', 100:'#bae6fd', 400:'#38bdf8', 500:'#0ea5e9', 600:'#0284c7', 700:'#0369a1' },
-                        accent: { 400:'#34d399', 500:'#10b981' }
+                        ink: { 950: '#000000', 900: '#050505', 800: '#0f0f0f' },
+                        brand: { 50:'#fef2f2', 100:'#fee2e2', 400:'#f87171', 500:'#ef4444', 600:'#dc2626', 700:'#b91c1c' },
+                        accent: { 400:'#f87171', 500:'#ef4444' }
                     },
                     boxShadow: {
                         'soft': '0 20px 40px -15px rgba(15,23,42,0.08)',
                         'softer': '0 8px 24px -8px rgba(15,23,42,0.10)',
-                        'glow': '0 0 0 1px rgba(14,165,233,0.15), 0 12px 30px -8px rgba(14,165,233,0.45)',
-                        'glow-lg': '0 20px 50px -12px rgba(14,165,233,0.5)',
+                        'glow': '0 0 0 1px rgba(220,38,38,0.15), 0 12px 30px -8px rgba(220,38,38,0.45)',
+                        'glow-lg': '0 20px 50px -12px rgba(220,38,38,0.5)',
                         'sheet': '0 -10px 40px -10px rgba(15,23,42,0.25)'
                     },
                     borderRadius: { '4xl': '2rem', '5xl': '2.5rem' }
@@ -70,15 +71,15 @@
             border: 1px solid rgba(255, 255, 255, 0.7);
         }
         .dark .glass-panel {
-            background: rgba(16, 24, 40, 0.58);
-            border: 1px solid rgba(255, 255, 255, 0.07);
+            background: rgba(10, 10, 10, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
         .glass-strong {
             background: rgba(255,255,255,0.85);
             backdrop-filter: blur(30px) saturate(180%);
             -webkit-backdrop-filter: blur(30px) saturate(180%);
         }
-        .dark .glass-strong { background: rgba(9,16,29,0.85); }
+        .dark .glass-strong { background: rgba(5, 5, 5, 0.85); }
 
         .glass-chip {
             background: rgba(255,255,255,0.55);
@@ -151,8 +152,8 @@
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none; appearance: none;
             width: 20px; height: 20px; border-radius: 50%;
-            background: #fff; border: 3px solid #0ea5e9;
-            box-shadow: 0 2px 8px rgba(14,165,233,0.5); cursor: pointer; margin-top: -8px;
+            background: #fff; border: 3px solid #dc2626;
+            box-shadow: 0 2px 8px rgba(220,38,38,0.5); cursor: pointer; margin-top: -8px;
         }
         input[type="range"]::-webkit-slider-runnable-track { height: 4px; border-radius: 99px; }
 
@@ -161,36 +162,36 @@
 
         /* ---------- Focus visibility ---------- */
         button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible {
-            outline: 2px solid #0ea5e9; outline-offset: 2px;
+            outline: 2px solid #dc2626; outline-offset: 2px;
         }
 
         .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     </style>
 </head>
-<body class="flex flex-col h-screen bg-[#f4f7fb] dark:bg-ink-900 font-sans text-slate-900 dark:text-slate-100 overflow-hidden transition-colors duration-500">
+<body class="flex flex-col h-screen bg-[#f8f9fa] dark:bg-[#030303] font-sans text-slate-900 dark:text-slate-100 overflow-hidden transition-colors duration-500">
 
     <!-- Ambient Background -->
     <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
-        <div class="absolute top-[-12%] left-[-12%] w-96 h-96 bg-cyan-400/25 dark:bg-cyan-600/15 rounded-full mix-blend-multiply dark:mix-blend-lighten filter blur-[100px] animate-blob"></div>
-        <div class="absolute top-[15%] right-[-15%] w-96 h-96 bg-blue-400/25 dark:bg-blue-600/15 rounded-full mix-blend-multiply dark:mix-blend-lighten filter blur-[100px] animate-blob animate-blob-delay"></div>
-        <div class="absolute bottom-[-15%] left-[15%] w-[42rem] h-[42rem] bg-teal-400/15 dark:bg-teal-600/8 rounded-full mix-blend-multiply dark:mix-blend-lighten filter blur-[120px] animate-blob-delay2"></div>
+        <div class="absolute top-[-12%] left-[-12%] w-96 h-96 bg-red-500/25 dark:bg-red-700/15 rounded-full mix-blend-multiply dark:mix-blend-lighten filter blur-[100px] animate-blob"></div>
+        <div class="absolute top-[15%] right-[-15%] w-96 h-96 bg-rose-500/25 dark:bg-rose-700/15 rounded-full mix-blend-multiply dark:mix-blend-lighten filter blur-[100px] animate-blob animate-blob-delay"></div>
+        <div class="absolute bottom-[-15%] left-[15%] w-[42rem] h-[42rem] bg-orange-500/15 dark:bg-orange-700/8 rounded-full mix-blend-multiply dark:mix-blend-lighten filter blur-[120px] animate-blob-delay2"></div>
     </div>
 
     <!-- Header -->
     <div class="fixed top-0 left-0 right-0 z-50 flex justify-center px-3 md:px-4 pt-3 md:pt-4 pointer-events-none" style="padding-top: calc(0.75rem + var(--safe-top));">
         <header class="w-full max-w-7xl h-14 md:h-16 glass-strong rounded-full shadow-soft flex items-center justify-between px-3 md:px-6 pointer-events-auto transition-all duration-300 border border-white/60 dark:border-white/10">
             <div class="flex items-center gap-2 md:gap-4 min-w-0">
-                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-600 to-blue-500 flex items-center justify-center shadow-lg shadow-cyan-500/30 shrink-0">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-red-600 to-rose-600 flex items-center justify-center shadow-lg shadow-red-500/30 shrink-0">
                     <i data-lucide="building-2" class="w-4 h-4 text-white"></i>
                 </div>
                 <h2 class="text-lg md:text-xl font-extrabold font-display bg-clip-text text-transparent bg-gradient-to-r from-slate-800 to-slate-600 dark:from-white dark:to-slate-300 tracking-tight whitespace-nowrap">RFR+</h2>
-                <div id="sync-status" class="hidden items-center gap-1.5 px-2.5 py-1 bg-white/50 dark:bg-slate-800/50 text-cyan-600 dark:text-cyan-400 text-[10px] font-bold rounded-full border border-white/60 dark:border-slate-700 whitespace-nowrap shadow-sm backdrop-blur-md">
+                <div id="sync-status" class="hidden items-center gap-1.5 px-2.5 py-1 bg-white/50 dark:bg-slate-800/50 text-red-600 dark:text-red-400 text-[10px] font-bold rounded-full border border-white/60 dark:border-slate-700 whitespace-nowrap shadow-sm backdrop-blur-md">
                     <i data-lucide="loader-2" class="w-3 h-3 animate-spin"></i> <span id="sync-text" class="hidden sm:inline">Đang đồng bộ</span>
                 </div>
             </div>
 
             <div class="flex items-center gap-1 md:gap-3 shrink-0">
-                <button id="btn-install-pwa" onclick="triggerInstallPWA()" class="hidden w-9 h-9 md:w-10 md:h-10 items-center justify-center rounded-full text-cyan-500 hover:bg-cyan-50 dark:hover:bg-cyan-500/10 transition-all active:scale-90" title="Cài đặt ứng dụng">
+                <button id="btn-install-pwa" onclick="triggerInstallPWA()" class="hidden w-9 h-9 md:w-10 md:h-10 items-center justify-center rounded-full text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all active:scale-90" title="Cài đặt ứng dụng">
                     <i data-lucide="download" class="w-[18px] h-[18px]"></i>
                 </button>
                 <button onclick="toggleDarkMode()" class="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-all active:scale-90">
@@ -210,10 +211,10 @@
     <!-- Bottom Navigation (mobile-first) -->
     <div class="fixed bottom-0 left-0 right-0 z-[80] flex justify-center px-3 pb-3 pointer-events-none" style="padding-bottom: calc(0.75rem + var(--safe-bottom));">
         <nav class="w-full max-w-md glass-strong rounded-full shadow-sheet border border-white/60 dark:border-white/10 flex items-center justify-between px-2 py-2 pointer-events-auto">
-            <button class="nav-item active flex-1 flex flex-col items-center gap-0.5 py-1.5 rounded-2xl text-cyan-600 dark:text-cyan-400 transition-all active:scale-90" onclick="setActiveTab('home', this)" data-tab="home">
+            <button class="nav-item active flex-1 flex flex-col items-center gap-0.5 py-1.5 rounded-2xl text-red-600 dark:text-red-400 transition-all active:scale-90" onclick="setActiveTab('home', this)" data-tab="home">
                 <i data-lucide="layout-grid" class="w-5 h-5"></i>
                 <span class="text-[10px] font-bold">Trang chủ</span>
-                <span class="nav-dot w-1 h-1 rounded-full bg-cyan-500 absolute -bottom-0.5"></span>
+                <span class="nav-dot w-1 h-1 rounded-full bg-red-500 absolute -bottom-0.5"></span>
             </button>
             <button class="nav-item flex-1 flex flex-col items-center gap-0.5 py-1.5 rounded-2xl text-slate-400 dark:text-slate-500 transition-all active:scale-90" onclick="openFilterSheet()" data-tab="filter">
                 <i data-lucide="sliders-horizontal" class="w-5 h-5"></i>
@@ -222,18 +223,18 @@
             <button class="nav-item flex-1 flex flex-col items-center gap-0.5 py-1.5 rounded-2xl text-slate-400 dark:text-slate-500 transition-all active:scale-90 relative" onclick="setActiveTab('bookmarks', this)" data-tab="bookmarks">
                 <i data-lucide="heart" class="w-5 h-5"></i>
                 <span class="text-[10px] font-bold">Yêu thích</span>
-                <span class="nav-dot w-1 h-1 rounded-full bg-cyan-500 absolute -bottom-0.5"></span>
+                <span class="nav-dot w-1 h-1 rounded-full bg-red-500 absolute -bottom-0.5"></span>
                 <span id="bookmark-count-badge" class="hidden absolute top-0.5 right-2 min-w-[16px] h-4 px-1 bg-rose-500 text-white text-[9px] font-bold rounded-full items-center justify-center"></span>
             </button>
             <button class="nav-item flex-1 flex flex-col items-center gap-0.5 py-1.5 rounded-2xl text-slate-400 dark:text-slate-500 transition-all active:scale-90" onclick="setActiveTab('stats', this)" data-tab="stats">
                 <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
                 <span class="text-[10px] font-bold">Thống kê</span>
-                <span class="nav-dot w-1 h-1 rounded-full bg-cyan-500 absolute -bottom-0.5"></span>
+                <span class="nav-dot w-1 h-1 rounded-full bg-red-500 absolute -bottom-0.5"></span>
             </button>
         </nav>
     </div>
 
-    <!-- Zalo Float Button -->
+    <!-- Zalo Float Button (Giữ nguyên màu thương hiệu Zalo) -->
     <a href="https://zalo.me/0879342346" target="_blank" rel="noopener noreferrer" class="fixed right-4 md:right-8 z-[70] bg-[#0068FF] text-white pl-3 pr-4 py-3 md:py-3.5 rounded-full shadow-xl shadow-blue-500/40 hover:-translate-y-1 hover:shadow-blue-500/60 transition-all duration-300 flex items-center gap-2 border border-white/20 active:scale-95 group" style="bottom: calc(6.5rem + var(--safe-bottom));">
         <div class="w-6 h-6 md:w-7 md:h-7 bg-white rounded-full flex items-center justify-center text-[#0068FF] font-black text-[12px] md:text-[13px] shrink-0">Z</div>
         <span class="font-bold whitespace-nowrap text-sm hidden sm:inline pr-1">Liên hệ Zalo</span>
@@ -261,7 +262,7 @@
                 </button>
 
                 <div class="mb-7 text-center mt-3">
-                    <div class="w-12 h-12 bg-cyan-100 dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 rounded-2xl flex items-center justify-center mx-auto mb-4 rotate-3">
+                    <div class="w-12 h-12 bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 rounded-2xl flex items-center justify-center mx-auto mb-4 rotate-3">
                         <i data-lucide="fingerprint" class="w-6 h-6"></i>
                     </div>
                     <h2 class="text-2xl font-extrabold font-display text-slate-800 dark:text-white">Chào mừng trở lại</h2>
@@ -269,7 +270,7 @@
                 </div>
 
                 <div class="flex p-1 bg-slate-100/80 dark:bg-slate-800/80 rounded-xl mb-6 relative">
-                    <button id="tab-login" onclick="switchAuthTab('login')" class="flex-1 py-2.5 text-sm font-semibold rounded-lg bg-white dark:bg-slate-700 shadow-sm text-cyan-600 dark:text-white transition-all whitespace-nowrap">Đăng nhập</button>
+                    <button id="tab-login" onclick="switchAuthTab('login')" class="flex-1 py-2.5 text-sm font-semibold rounded-lg bg-white dark:bg-slate-700 shadow-sm text-red-600 dark:text-white transition-all whitespace-nowrap">Đăng nhập</button>
                     <button id="tab-register" onclick="switchAuthTab('register')" class="flex-1 py-2.5 text-sm font-semibold rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white transition-all whitespace-nowrap">Đăng ký mới</button>
                 </div>
 
@@ -277,26 +278,26 @@
                     <div class="space-y-3">
                         <div class="relative">
                             <i data-lucide="phone" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
-                            <input type="tel" id="login-phone" placeholder="Số điện thoại" required class="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 dark:text-white transition-all text-sm font-medium">
+                            <input type="tel" id="login-phone" placeholder="Số điện thoại" required class="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 dark:text-white transition-all text-sm font-medium">
                         </div>
                         <div class="relative">
                             <i data-lucide="lock" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
-                            <input type="password" id="login-pass" placeholder="Mật khẩu" required class="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 dark:text-white transition-all text-sm font-medium">
+                            <input type="password" id="login-pass" placeholder="Mật khẩu" required class="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 dark:text-white transition-all text-sm font-medium">
                         </div>
                     </div>
-                    <button type="submit" id="btn-login-submit" class="w-full mt-6 py-3.5 bg-slate-900 dark:bg-cyan-600 hover:bg-cyan-600 dark:hover:bg-cyan-500 text-white rounded-xl text-sm font-bold transition-all shadow-lg hover:shadow-cyan-500/30 flex items-center justify-center gap-2 whitespace-nowrap active:scale-[0.98]">
+                    <button type="submit" id="btn-login-submit" class="w-full mt-6 py-3.5 bg-slate-900 dark:bg-red-600 hover:bg-red-600 dark:hover:bg-red-500 text-white rounded-xl text-sm font-bold transition-all shadow-lg hover:shadow-red-500/30 flex items-center justify-center gap-2 whitespace-nowrap active:scale-[0.98]">
                         Đăng nhập ngay
                     </button>
                 </form>
 
                 <form id="form-register" onsubmit="handleAuth(event, 'register')" class="space-y-4 hidden">
                     <div class="space-y-3">
-                        <input type="text" id="reg-name" placeholder="Họ & Tên" required class="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 dark:text-white transition-all text-sm font-medium">
-                        <input type="tel" id="reg-phone" placeholder="Số điện thoại" required class="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 dark:text-white transition-all text-sm font-medium">
-                        <input type="email" id="reg-email" placeholder="Email" required class="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 dark:text-white transition-all text-sm font-medium">
-                        <input type="password" id="reg-pass" placeholder="Mật khẩu" required class="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 dark:text-white transition-all text-sm font-medium">
+                        <input type="text" id="reg-name" placeholder="Họ & Tên" required class="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 dark:text-white transition-all text-sm font-medium">
+                        <input type="tel" id="reg-phone" placeholder="Số điện thoại" required class="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 dark:text-white transition-all text-sm font-medium">
+                        <input type="email" id="reg-email" placeholder="Email" required class="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 dark:text-white transition-all text-sm font-medium">
+                        <input type="password" id="reg-pass" placeholder="Mật khẩu" required class="w-full px-4 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 dark:text-white transition-all text-sm font-medium">
                     </div>
-                    <button type="submit" id="btn-reg-submit" class="w-full mt-6 py-3.5 bg-slate-900 dark:bg-cyan-600 hover:bg-cyan-600 dark:hover:bg-cyan-500 text-white rounded-xl text-sm font-bold transition-all shadow-lg hover:shadow-cyan-500/30 flex items-center justify-center gap-2 whitespace-nowrap active:scale-[0.98]">
+                    <button type="submit" id="btn-reg-submit" class="w-full mt-6 py-3.5 bg-slate-900 dark:bg-red-600 hover:bg-red-600 dark:hover:bg-red-500 text-white rounded-xl text-sm font-bold transition-all shadow-lg hover:shadow-red-500/30 flex items-center justify-center gap-2 whitespace-nowrap active:scale-[0.98]">
                         Tạo tài khoản
                     </button>
                 </form>
@@ -311,7 +312,7 @@
             <div class="sheet-handle md:hidden"></div>
             <div class="px-6 pt-3 md:pt-6 pb-2 flex items-center justify-between">
                 <h3 class="font-extrabold font-display text-lg text-slate-800 dark:text-white flex items-center gap-2">
-                    <i data-lucide="sliders-horizontal" class="w-5 h-5 text-cyan-500"></i> Bộ lọc nâng cao
+                    <i data-lucide="sliders-horizontal" class="w-5 h-5 text-red-500"></i> Bộ lọc nâng cao
                 </h3>
                 <button onclick="closeFilterSheet()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors bg-slate-100 dark:bg-slate-800 p-2 rounded-full">
                     <i data-lucide="x" class="w-4 h-4"></i>
@@ -329,13 +330,13 @@
                 <div>
                     <div class="flex justify-between items-baseline mb-3">
                         <p class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Khoảng giá / tháng</p>
-                        <p id="filter-price-display" class="text-sm font-bold text-cyan-600 dark:text-cyan-400 tabular"></p>
+                        <p id="filter-price-display" class="text-sm font-bold text-red-600 dark:text-red-400 tabular"></p>
                     </div>
-                    <input type="range" id="filter-price-range" min="0" max="20000000" step="500000" class="w-full accent-cyan-600 bg-slate-200 dark:bg-slate-700 rounded-full h-1" oninput="onPriceFilterChange(this.value)">
+                    <input type="range" id="filter-price-range" min="0" max="20000000" step="500000" class="w-full accent-red-600 bg-slate-200 dark:bg-slate-700 rounded-full h-1" oninput="onPriceFilterChange(this.value)">
                 </div>
                 <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200/60 dark:border-slate-700/50">
                     <div class="flex items-center gap-2">
-                        <i data-lucide="video" class="w-4 h-4 text-cyan-500"></i>
+                        <i data-lucide="video" class="w-4 h-4 text-red-500"></i>
                         <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">Chỉ hiện phòng có video</span>
                     </div>
                     <button id="filter-video-toggle" onclick="toggleVideoFilter()" class="w-12 h-7 rounded-full bg-slate-300 dark:bg-slate-700 relative transition-colors shrink-0" role="switch" aria-checked="false">
@@ -345,7 +346,7 @@
             </div>
             <div class="px-6 py-4 bg-slate-50/80 dark:bg-slate-950/40 flex gap-3 border-t border-slate-100 dark:border-slate-800" style="padding-bottom: calc(1rem + var(--safe-bottom));">
                 <button onclick="resetFilters()" class="px-5 py-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 whitespace-nowrap transition-all active:scale-95">Đặt lại</button>
-                <button onclick="closeFilterSheet()" class="flex-1 py-3 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl text-sm font-bold shadow-lg hover:shadow-cyan-500/30 transition-all active:scale-95 flex items-center justify-center gap-2 whitespace-nowrap">
+                <button onclick="closeFilterSheet()" class="flex-1 py-3 bg-red-600 hover:bg-red-500 text-white rounded-xl text-sm font-bold shadow-lg hover:shadow-red-500/30 transition-all active:scale-95 flex items-center justify-center gap-2 whitespace-nowrap">
                     <i data-lucide="check" class="w-4 h-4"></i> <span id="filter-apply-count">Áp dụng</span>
                 </button>
             </div>
@@ -354,7 +355,7 @@
 
     <!-- ============ ROOM DETAILS SHEET ============ -->
     <div id="details-modal" class="hidden fixed inset-0 z-[105] flex items-end md:items-center justify-center">
-        <div class="absolute inset-0 bg-slate-900/55 dark:bg-black/75 backdrop-blur-md scrim-enter" onclick="closeRoomDetails()"></div>
+        <div class="absolute inset-0 bg-slate-900/55 dark:bg-black/80 backdrop-blur-md scrim-enter" onclick="closeRoomDetails()"></div>
         <div class="relative w-full md:max-w-5xl h-[94vh] md:h-[88vh] glass-strong rounded-t-[2rem] md:rounded-[2rem] shadow-sheet md:shadow-2xl border-t md:border border-white/60 dark:border-white/10 overflow-hidden sheet-enter flex flex-col">
             <div class="sheet-handle md:hidden shrink-0"></div>
             <button onclick="closeRoomDetails()" class="absolute top-4 right-4 z-20 bg-white/30 hover:bg-white/50 dark:bg-black/30 dark:hover:bg-black/50 text-slate-800 dark:text-white p-2 rounded-full backdrop-blur-md transition-colors shadow-sm active:scale-90">
@@ -384,12 +385,13 @@
                             <span id="detail-address" class="text-slate-500 dark:text-slate-400 text-sm font-medium group-hover:text-rose-500 transition-colors border-b border-transparent group-hover:border-rose-500/30"></span>
                         </div>
 
-                        <div class="bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-cyan-900/20 dark:to-blue-900/20 border border-cyan-100 dark:border-cyan-500/20 rounded-2xl p-5 mb-6 flex justify-between items-center shadow-sm">
-                            <div>
-                                <p class="text-cyan-600 dark:text-cyan-400 text-xs font-bold uppercase tracking-wider mb-1">Giá thuê</p>
-                                <p id="detail-price" class="text-xl md:text-2xl font-black text-cyan-700 dark:text-cyan-300 tabular"></p>
+                        <!-- CẬP NHẬT GIAO DIỆN CHỐNG TRÀN CHỮ: Flex-wrap + cuộn ngang an toàn -->
+                        <div class="bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 border border-red-100 dark:border-red-500/20 rounded-2xl p-4 md:p-5 mb-6 flex flex-wrap justify-between items-center gap-4 shadow-sm">
+                            <div class="w-full sm:w-auto flex-1 min-w-[45%]">
+                                <p class="text-red-600 dark:text-red-400 text-xs font-bold uppercase tracking-wider mb-1">Giá thuê</p>
+                                <p id="detail-price" class="text-xl md:text-2xl font-black text-red-700 dark:text-red-400 tabular truncate"></p>
                             </div>
-                            <div class="text-right" id="detail-comm-container"></div>
+                            <div class="w-full sm:w-auto text-left sm:text-right shrink-0 overflow-hidden" id="detail-comm-container"></div>
                         </div>
 
                         <div class="grid grid-cols-1 gap-4 mb-6">
@@ -420,7 +422,7 @@
             <div class="sheet-handle md:hidden"></div>
             <div class="px-6 pt-3 md:pt-5 pb-5 flex justify-between items-center">
                 <h3 class="font-extrabold font-display text-slate-800 dark:text-white flex items-center gap-2">
-                    <i data-lucide="wallet" class="w-5 h-5 text-cyan-500"></i> Cập nhật Hoa hồng
+                    <i data-lucide="wallet" class="w-5 h-5 text-red-500"></i> Cập nhật Hoa hồng
                 </h3>
                 <button onclick="closeCommissionModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors bg-slate-100 dark:bg-slate-800 p-2 rounded-full">
                     <i data-lucide="x" class="w-4 h-4"></i>
@@ -428,20 +430,20 @@
             </div>
             <div class="px-6 pb-6 space-y-5">
                 <div class="flex p-1 bg-slate-100 dark:bg-slate-800 rounded-xl">
-                    <button id="btn-type-percent" onclick="setCommissionType('percent')" class="flex-1 py-2 text-sm font-bold rounded-lg bg-white dark:bg-slate-700 text-cyan-600 dark:text-white shadow-sm whitespace-nowrap transition-all">Tỉ lệ (%)</button>
+                    <button id="btn-type-percent" onclick="setCommissionType('percent')" class="flex-1 py-2 text-sm font-bold rounded-lg bg-white dark:bg-slate-700 text-red-600 dark:text-white shadow-sm whitespace-nowrap transition-all">Tỉ lệ (%)</button>
                     <button id="btn-type-fixed" onclick="setCommissionType('fixed')" class="flex-1 py-2 text-sm font-bold rounded-lg text-slate-500 dark:text-slate-400 whitespace-nowrap transition-all">Tiền mặt</button>
                 </div>
                 <div>
-                    <input type="number" inputmode="decimal" id="commission-input" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white mb-3 focus:ring-2 focus:ring-cyan-500 outline-none font-bold transition-all" oninput="previewCommission()">
-                    <div class="text-sm bg-cyan-50/50 dark:bg-cyan-500/10 p-4 rounded-xl flex justify-between items-center border border-cyan-100 dark:border-cyan-500/20">
+                    <input type="number" inputmode="decimal" id="commission-input" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white mb-3 focus:ring-2 focus:ring-red-500 outline-none font-bold transition-all" oninput="previewCommission()">
+                    <div class="text-sm bg-red-50/50 dark:bg-red-500/10 p-4 rounded-xl flex justify-between items-center border border-red-100 dark:border-red-500/20">
                         <span class="text-slate-600 dark:text-slate-300 font-semibold">Thực nhận:</span>
-                        <span id="comm-preview" class="font-black text-cyan-700 dark:text-cyan-400 text-lg tabular">0đ</span>
+                        <span id="comm-preview" class="font-black text-red-700 dark:text-red-400 text-lg tabular">0đ</span>
                     </div>
                 </div>
             </div>
             <div class="px-6 py-4 bg-slate-50/80 dark:bg-slate-950/80 flex justify-end gap-3 border-t border-slate-100 dark:border-slate-800" style="padding-bottom: calc(1rem + var(--safe-bottom));">
                 <button onclick="closeCommissionModal()" class="px-5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 whitespace-nowrap transition-all active:scale-95">Hủy</button>
-                <button onclick="saveCommission()" class="flex-1 py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl text-sm font-bold whitespace-nowrap flex items-center justify-center gap-2 shadow-lg hover:shadow-cyan-500/30 transition-all active:scale-95">
+                <button onclick="saveCommission()" class="flex-1 py-2.5 bg-red-600 hover:bg-red-500 text-white rounded-xl text-sm font-bold whitespace-nowrap flex items-center justify-center gap-2 shadow-lg hover:shadow-red-500/30 transition-all active:scale-95">
                     <i data-lucide="check" class="w-4 h-4"></i> Lưu ngay
                 </button>
             </div>
@@ -451,6 +453,7 @@
     <script>
         const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyCyIvKrORQ5I2-JmnoEWqAe1nQSLaGMaZJ8OnX0cf_DK-OWkvxnSlcTDXUWJnBaOjMPg/exec';
 
+        // Trạng thái giữ nguyên hệ màu Semantic để thể hiện trực quan
         const STATUS_CONFIG = {
             vacant: { label: 'Trống', color: 'bg-emerald-500 text-white shadow-emerald-500/40 border-emerald-400', icon: 'check-circle', dot: 'bg-emerald-500' },
             rented: { label: 'Đang thuê', color: 'bg-blue-500 text-white shadow-blue-500/40 border-blue-400', icon: 'home', dot: 'bg-blue-500' },
@@ -461,28 +464,28 @@
         let state = {
             user: null,
             searchQuery: '',
-            statusFilters: [],         // multi-select status filter
-            typeFilters: [],           // multi-select type filter
-            maxPrice: 20000000,        // price ceiling filter (0 = no cap selected yet -> default max)
+            statusFilters: [],         
+            typeFilters: [],           
+            maxPrice: 20000000,        
             priceFilterActive: false,
             videoOnly: false,
             rooms: [], editingRoomId: null, commEditType: 'percent', viewingRoomId: null,
             bookmarks: [],
-            isDark: false,
-            activeTab: 'home',         // home | bookmarks | stats
-            viewMode: 'grid'           // grid | list
+            isDark: true, // Ép mặc định sang Dark mode với nền Đen Đậm
+            activeTab: 'home',         
+            viewMode: 'grid'           
         };
 
         let deferredInstallPrompt = null;
 
-        // Safe localStorage reads
         try { state.user = JSON.parse(localStorage.getItem('rfr_user')) || null; } catch(e) { state.user = null; }
         try { state.bookmarks = JSON.parse(localStorage.getItem('rfr_bookmarks') || '[]'); } catch(e) { state.bookmarks = []; }
-        try { state.isDark = localStorage.getItem('rfr_theme') === 'dark'; } catch(e) { state.isDark = false; }
+        try { state.isDark = localStorage.getItem('rfr_theme') !== 'light'; } catch(e) { state.isDark = true; }
         try { state.viewMode = localStorage.getItem('rfr_viewmode') || 'grid'; } catch(e) { state.viewMode = 'grid'; }
 
         function initTheme() {
             if (state.isDark) document.documentElement.classList.add('dark');
+            else document.documentElement.classList.remove('dark');
             updateThemeIcon();
         }
 
@@ -600,7 +603,7 @@
             const isLogin = tab === 'login';
             document.getElementById('form-login').classList.toggle('hidden', !isLogin);
             document.getElementById('form-register').classList.toggle('hidden', isLogin);
-            const activeClass = 'flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all whitespace-nowrap bg-white dark:bg-slate-700 shadow-sm text-cyan-600 dark:text-white';
+            const activeClass = 'flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all whitespace-nowrap bg-white dark:bg-slate-700 shadow-sm text-red-600 dark:text-white';
             const inactiveClass = 'flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all whitespace-nowrap text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white';
             document.getElementById('tab-login').className = isLogin ? activeClass : inactiveClass;
             document.getElementById('tab-register').className = !isLogin ? activeClass : inactiveClass;
@@ -725,8 +728,8 @@
             document.querySelectorAll('.nav-item').forEach(function(el) {
                 const isActive = el.getAttribute('data-tab') === tab;
                 el.classList.toggle('active', isActive);
-                el.classList.toggle('text-cyan-600', isActive);
-                el.classList.toggle('dark:text-cyan-400', isActive);
+                el.classList.toggle('text-red-600', isActive);
+                el.classList.toggle('dark:text-red-400', isActive);
                 el.classList.toggle('text-slate-400', !isActive);
                 el.classList.toggle('dark:text-slate-500', !isActive);
             });
@@ -777,12 +780,12 @@
             const knob = btn.querySelector('span');
             if (state.videoOnly) {
                 btn.classList.remove('bg-slate-300', 'dark:bg-slate-700');
-                btn.classList.add('bg-cyan-600');
+                btn.classList.add('bg-red-600');
                 knob.style.transform = 'translateX(20px)';
                 btn.setAttribute('aria-checked', 'true');
             } else {
                 btn.classList.add('bg-slate-300', 'dark:bg-slate-700');
-                btn.classList.remove('bg-cyan-600');
+                btn.classList.remove('bg-red-600');
                 knob.style.transform = 'translateX(0px)';
                 btn.setAttribute('aria-checked', 'false');
             }
@@ -797,7 +800,7 @@
                 const active = state.statusFilters.includes(key);
                 const cfg = STATUS_CONFIG[key];
                 return '<button onclick="toggleStatusFilterChip(\'' + key + '\')" class="px-4 py-2 rounded-full text-xs font-bold border transition-all flex items-center gap-1.5 whitespace-nowrap active:scale-95 '
-                    + (active ? 'bg-cyan-600 text-white border-cyan-600 shadow-md shadow-cyan-500/30' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700')
+                    + (active ? 'bg-red-600 text-white border-red-600 shadow-md shadow-red-500/30' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700')
                     + '"><span class="w-2 h-2 rounded-full ' + cfg.dot + '"></span>' + cfg.label + '</button>';
             }).join('');
 
@@ -805,7 +808,7 @@
             typeContainer.innerHTML = types.length ? types.map(function(t) {
                 const active = state.typeFilters.includes(t);
                 return '<button onclick="toggleTypeFilterChip(\'' + t.replace(/'/g, "\\'") + '\')" class="px-4 py-2 rounded-full text-xs font-bold border transition-all whitespace-nowrap active:scale-95 '
-                    + (active ? 'bg-cyan-600 text-white border-cyan-600 shadow-md shadow-cyan-500/30' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700')
+                    + (active ? 'bg-red-600 text-white border-red-600 shadow-md shadow-red-500/30' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700')
                     + '">' + t + '</button>';
             }).join('') : '<p class="text-xs text-slate-400 font-medium">Chưa có dữ liệu loại phòng</p>';
         }
@@ -855,7 +858,7 @@
             const btn = document.getElementById('filter-video-toggle');
             if (btn) {
                 btn.classList.add('bg-slate-300', 'dark:bg-slate-700');
-                btn.classList.remove('bg-cyan-600');
+                btn.classList.remove('bg-red-600');
                 const knob = btn.querySelector('span');
                 if (knob) knob.style.transform = 'translateX(0px)';
                 btn.setAttribute('aria-checked', 'false');
@@ -901,14 +904,14 @@
         function renderStatCardsRow() {
             const s = computeStats();
             const cards = [
-                { label: 'Tổng số phòng', value: s.total, icon: 'building-2', color: 'from-cyan-500 to-blue-500' },
+                { label: 'Tổng số phòng', value: s.total, icon: 'building-2', color: 'from-red-500 to-rose-500' },
                 { label: 'Phòng trống', value: s.byStatus.vacant, icon: 'check-circle', color: 'from-emerald-500 to-teal-500' },
                 { label: 'Đang thuê', value: s.byStatus.rented, icon: 'home', color: 'from-blue-500 to-cyan-500' },
                 { label: 'Đã cọc', value: s.byStatus.deposited, icon: 'clock', color: 'from-amber-500 to-orange-500' },
                 { label: 'Tỉ lệ lấp đầy', value: s.occupancyRate + '%', icon: 'trending-up', color: 'from-fuchsia-500 to-pink-500' }
             ];
             if (state.user) {
-                cards.push({ label: 'Tổng hoa hồng', value: formatCurrency(s.totalCommission) + 'đ', icon: 'wallet', color: 'from-cyan-500 to-blue-500', wide: true });
+                cards.push({ label: 'Tổng hoa hồng', value: formatCurrency(s.totalCommission) + 'đ', icon: 'wallet', color: 'from-red-500 to-rose-500', wide: true });
             }
             return '<div class="flex gap-3 overflow-x-auto hide-scrollbar stat-scroller pb-1 -mx-3 px-3 md:mx-0 md:px-0">'
                 + cards.map(function(c) {
@@ -936,15 +939,15 @@
             }).join('');
 
             const commissionCard = state.user ? (
-                '<div class="glass-panel rounded-3xl p-6 border border-white/60 dark:border-white/5 shadow-softer bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-900/10 dark:to-blue-900/10">'
-                + '<p class="text-xs font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 mb-2">Tổng hoa hồng dự kiến (phòng thuê + đã cọc)</p>'
+                '<div class="glass-panel rounded-3xl p-6 border border-white/60 dark:border-white/5 shadow-softer bg-gradient-to-br from-red-50 to-rose-50 dark:from-red-900/10 dark:to-rose-900/10">'
+                + '<p class="text-xs font-bold uppercase tracking-wider text-red-600 dark:text-red-400 mb-2">Tổng hoa hồng dự kiến (phòng thuê + đã cọc)</p>'
                 + '<p class="text-3xl font-black text-slate-800 dark:text-white tabular">' + formatCurrency(s.totalCommission) + 'đ</p>'
                 + '</div>'
             ) : (
                 '<div class="glass-panel rounded-3xl p-6 border border-white/60 dark:border-white/5 shadow-softer text-center">'
                 + '<i data-lucide="lock" class="w-6 h-6 text-slate-400 mx-auto mb-2"></i>'
                 + '<p class="text-sm font-semibold text-slate-500 dark:text-slate-400">Đăng nhập để xem tổng hoa hồng</p>'
-                + '<button onclick="openAuthModal(\'login\')" class="mt-3 px-4 py-2 bg-cyan-600 text-white rounded-xl text-xs font-bold active:scale-95 whitespace-nowrap">Đăng nhập ngay</button>'
+                + '<button onclick="openAuthModal(\'login\')" class="mt-3 px-4 py-2 bg-red-600 text-white rounded-xl text-xs font-bold active:scale-95 whitespace-nowrap">Đăng nhập ngay</button>'
                 + '</div>'
             );
 
@@ -955,7 +958,7 @@
                 + '</div>'
                 + renderStatCardsRow()
                 + '<div class="glass-panel rounded-3xl p-6 border border-white/60 dark:border-white/5 shadow-softer">'
-                + '<h3 class="font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2"><i data-lucide="pie-chart" class="w-4 h-4 text-cyan-500"></i> Phân bố trạng thái</h3>'
+                + '<h3 class="font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2"><i data-lucide="pie-chart" class="w-4 h-4 text-red-500"></i> Phân bố trạng thái</h3>'
                 + '<div class="space-y-3">' + statusRows + '</div>'
                 + '</div>'
                 + commissionCard
@@ -986,10 +989,10 @@
                     + '</div>'
                     + '<div class="flex-1 p-3.5 flex flex-col min-w-0">'
                     + '<div class="flex items-start justify-between gap-2 mb-1">' + getBadgeHTML(room.status, 'sm') + '<button onclick="toggleBookmark(\'' + room.id + '\', event)" class="text-slate-300 dark:text-slate-600 hover:text-rose-500 transition-colors shrink-0"><i data-lucide="heart" class="w-4 h-4 ' + (isBookmarked ? 'fill-rose-500 text-rose-500' : '') + '"></i></button></div>'
-                    + '<h3 class="font-extrabold text-sm text-slate-800 dark:text-white leading-snug line-clamp-2 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">' + (room.name || '') + '</h3>'
+                    + '<h3 class="font-extrabold text-sm text-slate-800 dark:text-white leading-snug line-clamp-2 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">' + (room.name || '') + '</h3>'
                     + '<p class="text-xs font-medium text-slate-500 dark:text-slate-400 flex items-center gap-1 truncate mt-1"><i data-lucide="map-pin" class="w-3 h-3 text-rose-500 shrink-0"></i> ' + (room.building || '') + '</p>'
                     + '<div class="mt-auto flex items-end justify-between pt-2">'
-                    + '<span class="font-black text-cyan-600 dark:text-cyan-400 text-base tabular whitespace-nowrap">' + formatCurrency(room.price) + 'đ</span>'
+                    + '<span class="font-black text-red-600 dark:text-red-400 text-base tabular whitespace-nowrap">' + formatCurrency(room.price) + 'đ</span>'
                     + (state.user ? '<span class="font-bold text-emerald-600 dark:text-emerald-400 text-xs bg-emerald-100/50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-lg">' + getCommissionInfo(room).display + '</span>' : '')
                     + '</div></div></div>';
             }
@@ -1004,7 +1007,7 @@
                 + videoIcon
                 + '</div>'
                 + '<div class="p-3.5 md:p-5 flex-1 flex flex-col">'
-                + '<h3 class="font-extrabold text-sm md:text-lg text-slate-800 dark:text-white leading-snug line-clamp-2 mb-1.5 md:mb-2 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">' + (room.name || '') + '</h3>'
+                + '<h3 class="font-extrabold text-sm md:text-lg text-slate-800 dark:text-white leading-snug line-clamp-2 mb-1.5 md:mb-2 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">' + (room.name || '') + '</h3>'
                 + '<p class="text-xs md:text-sm font-medium text-slate-500 dark:text-slate-400 flex items-center gap-1.5 truncate mb-3 md:mb-5"><i data-lucide="map-pin" class="w-3.5 h-3.5 md:w-4 md:h-4 text-rose-500 shrink-0"></i> ' + (room.building || '') + '</p>'
                 + '<div class="mt-auto space-y-2 md:space-y-3">'
                 + '<div class="flex justify-between items-center">'
@@ -1013,7 +1016,7 @@
                 + '</div>'
                 + '<div class="flex justify-between items-center">'
                 + '<span class="text-slate-500 dark:text-slate-400 text-[10px] md:text-xs font-semibold uppercase tracking-wider">Giá thuê</span>'
-                + '<span class="font-black text-cyan-600 dark:text-cyan-400 text-base md:text-lg tabular whitespace-nowrap">' + formatCurrency(room.price) + 'đ</span>'
+                + '<span class="font-black text-red-600 dark:text-red-400 text-base md:text-lg tabular whitespace-nowrap">' + formatCurrency(room.price) + 'đ</span>'
                 + '</div>'
                 + commissionHTML
                 + '</div></div></div>';
@@ -1063,19 +1066,19 @@
                 + '<div class="flex items-center justify-between mb-3 px-1">'
                 + '<h1 class="text-lg md:text-2xl font-black font-display text-slate-800 dark:text-white">' + heading + '</h1>'
                 + '<div class="flex items-center gap-2">'
-                + '<button onclick="setViewMode(\'grid\')" class="w-8 h-8 rounded-lg flex items-center justify-center transition-all ' + (state.viewMode === 'grid' ? 'bg-cyan-600 text-white shadow-md' : 'bg-white/50 dark:bg-slate-800/50 text-slate-400') + '"><i data-lucide="layout-grid" class="w-4 h-4"></i></button>'
-                + '<button onclick="setViewMode(\'list\')" class="w-8 h-8 rounded-lg flex items-center justify-center transition-all ' + (state.viewMode === 'list' ? 'bg-cyan-600 text-white shadow-md' : 'bg-white/50 dark:bg-slate-800/50 text-slate-400') + '"><i data-lucide="list" class="w-4 h-4"></i></button>'
+                + '<button onclick="setViewMode(\'grid\')" class="w-8 h-8 rounded-lg flex items-center justify-center transition-all ' + (state.viewMode === 'grid' ? 'bg-red-600 text-white shadow-md' : 'bg-white/50 dark:bg-slate-800/50 text-slate-400') + '"><i data-lucide="layout-grid" class="w-4 h-4"></i></button>'
+                + '<button onclick="setViewMode(\'list\')" class="w-8 h-8 rounded-lg flex items-center justify-center transition-all ' + (state.viewMode === 'list' ? 'bg-red-600 text-white shadow-md' : 'bg-white/50 dark:bg-slate-800/50 text-slate-400') + '"><i data-lucide="list" class="w-4 h-4"></i></button>'
                 + '</div></div>'
                 + '<div class="glass-panel p-1.5 md:p-2 rounded-[1.5rem] md:rounded-[2rem] shadow-soft flex items-center gap-2 border border-white/60 dark:border-white/10 relative z-20 mb-4 md:mb-6">'
                 + '<div class="flex-1 w-full relative flex items-center pl-2 md:pl-4">'
-                + '<i data-lucide="search" class="w-4 h-4 md:w-5 md:h-5 text-cyan-500 absolute left-4 md:left-6"></i>'
+                + '<i data-lucide="search" class="w-4 h-4 md:w-5 md:h-5 text-red-500 absolute left-4 md:left-6"></i>'
                 + '<input type="text" placeholder="Tìm kiếm không gian..." class="w-full pl-9 md:pl-12 pr-2 py-2.5 md:py-3.5 bg-transparent border-none focus:ring-0 text-slate-800 dark:text-white placeholder-slate-400 font-medium text-sm md:text-base outline-none" value="' + searchVal + '" oninput="window.setSearchQuery(this.value)">'
                 + '</div>'
-                + '<button onclick="openFilterSheet()" class="relative shrink-0 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-white/50 dark:bg-slate-800/50 border border-white/60 dark:border-slate-700 text-cyan-600 dark:text-cyan-400 shadow-sm active:scale-90 transition-all">'
+                + '<button onclick="openFilterSheet()" class="relative shrink-0 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-white/50 dark:bg-slate-800/50 border border-white/60 dark:border-slate-700 text-red-600 dark:text-red-400 shadow-sm active:scale-90 transition-all">'
                 + '<i data-lucide="sliders-horizontal" class="w-4 h-4 md:w-5 md:h-5"></i>'
                 + (filterCount > 0 ? '<span class="absolute -top-1 -right-1 w-4 h-4 bg-rose-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">' + filterCount + '</span>' : '')
                 + '</button>'
-                + '<div class="hidden md:flex items-center justify-center w-12 h-12 bg-cyan-600 text-white rounded-full shadow-lg shadow-cyan-500/30 font-black text-sm shrink-0">' + filteredRooms.length + '</div>'
+                + '<div class="hidden md:flex items-center justify-center w-12 h-12 bg-red-600 text-white rounded-full shadow-lg shadow-red-500/30 font-black text-sm shrink-0">' + filteredRooms.length + '</div>'
                 + '</div>'
                 + '<div class="' + gridClass + '">'
                 + (roomsHTML || emptyHTML)
@@ -1126,19 +1129,24 @@
             if (state.user) {
                 const commInfo = getCommissionInfo(room);
                 const editBtn = state.user.role === 'admin'
-                    ? '<button onclick="openCommissionModal(\'' + room.id + '\', event)" class="text-cyan-500 hover:text-cyan-600 bg-cyan-50 dark:bg-cyan-500/10 p-2 rounded-xl transition-colors active:scale-95"><i data-lucide="edit-3" class="w-5 h-5"></i></button>'
+                    ? '<button onclick="openCommissionModal(\'' + room.id + '\', event)" class="text-red-500 hover:text-red-600 bg-red-50 dark:bg-red-500/10 p-2 rounded-xl transition-colors active:scale-95 shrink-0"><i data-lucide="edit-3" class="w-5 h-5"></i></button>'
                     : '';
-                commContainer.innerHTML = '<p class="text-emerald-600 dark:text-emerald-400 text-xs font-bold uppercase tracking-wider mb-1">Hoa hồng</p>'
-                    + '<div class="flex items-center gap-2 justify-end">'
-                    + '<p class="text-xl font-black text-emerald-600 dark:text-emerald-400 bg-emerald-100/50 dark:bg-emerald-500/10 px-3 py-1 rounded-xl whitespace-nowrap tabular">' + commInfo.fullText + '</p>'
+                
+                /* TẠO HÀNG ĐỢI CUỘN NGANG KHI TRÀN BỞI THUỘC TÍNH FLEX-WRAP & OVERFLOW */
+                commContainer.innerHTML = '<p class="text-emerald-600 dark:text-emerald-400 text-xs font-bold uppercase tracking-wider mb-1 text-left sm:text-right">Hoa hồng</p>'
+                    + '<div class="flex items-center gap-2 justify-start sm:justify-end max-w-full">'
+                    + '<div class="overflow-x-auto hide-scrollbar">'
+                    + '<p class="text-base md:text-lg font-black text-emerald-600 dark:text-emerald-400 bg-emerald-100/50 dark:bg-emerald-500/10 px-3 py-1 rounded-xl whitespace-nowrap tabular">' + commInfo.fullText + '</p>'
+                    + '</div>'
                     + editBtn + '</div>';
-                shareContainer.innerHTML = '<div class="text-[11px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-widest flex items-center gap-2 mb-1"><i data-lucide="wand-2" class="w-4 h-4 text-cyan-500"></i> AI Smart Copy</div>'
+                    
+                shareContainer.innerHTML = '<div class="text-[11px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-widest flex items-center gap-2 mb-1"><i data-lucide="wand-2" class="w-4 h-4 text-red-500"></i> AI Smart Copy</div>'
                     + '<div class="flex gap-3">'
-                    + '<button onclick="shareRoomSmart(\'standard\')" class="flex-1 py-3 bg-white dark:bg-slate-800 border border-slate-200/50 dark:border-slate-700/50 text-slate-700 dark:text-white rounded-xl text-sm font-bold hover:border-cyan-500 hover:text-cyan-600 dark:hover:text-cyan-400 shadow-sm transition-all whitespace-nowrap active:scale-[0.98]">Bản tiêu chuẩn</button>'
-                    + '<button onclick="shareRoomSmart(\'sales\')" class="flex-1 py-3 bg-white dark:bg-slate-800 border border-slate-200/50 dark:border-slate-700/50 text-slate-700 dark:text-white rounded-xl text-sm font-bold hover:border-cyan-500 hover:text-cyan-600 dark:hover:text-cyan-400 shadow-sm transition-all whitespace-nowrap active:scale-[0.98]">Bản bán hàng</button>'
+                    + '<button onclick="shareRoomSmart(\'standard\')" class="flex-1 py-3 bg-white dark:bg-slate-800 border border-slate-200/50 dark:border-slate-700/50 text-slate-700 dark:text-white rounded-xl text-sm font-bold hover:border-red-500 hover:text-red-600 dark:hover:text-red-400 shadow-sm transition-all whitespace-nowrap active:scale-[0.98]">Bản tiêu chuẩn</button>'
+                    + '<button onclick="shareRoomSmart(\'sales\')" class="flex-1 py-3 bg-white dark:bg-slate-800 border border-slate-200/50 dark:border-slate-700/50 text-slate-700 dark:text-white rounded-xl text-sm font-bold hover:border-red-500 hover:text-red-600 dark:hover:text-red-400 shadow-sm transition-all whitespace-nowrap active:scale-[0.98]">Bản bán hàng</button>'
                     + '</div>' + zaloBtnHTML;
             } else {
-                commContainer.innerHTML = '<button onclick="openAuthModal(\'login\'); closeRoomDetails();" class="text-cyan-500 hover:text-cyan-600 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 bg-cyan-50 dark:bg-cyan-500/10 px-4 py-2 rounded-xl active:scale-95 whitespace-nowrap"><i data-lucide="lock" class="w-4 h-4"></i> Đăng nhập xem HH</button>';
+                commContainer.innerHTML = '<button onclick="openAuthModal(\'login\'); closeRoomDetails();" class="text-red-500 hover:text-red-600 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 bg-red-50 dark:bg-red-500/10 px-4 py-2 rounded-xl active:scale-95 whitespace-nowrap"><i data-lucide="lock" class="w-4 h-4"></i> Đăng nhập xem HH</button>';
                 shareContainer.innerHTML = '<div class="text-center py-2 text-slate-500 text-sm font-medium"><i data-lucide="lock" class="w-4 h-4 inline-block mb-1"></i> Tính năng Share bài yêu cầu đăng nhập</div>' + zaloBtnHTML;
             }
 
@@ -1147,11 +1155,11 @@
             thumbGallery.innerHTML = '';
 
             if (room.video) {
-                thumbGallery.innerHTML += '<div onclick="setMainMedia(\'video\', \'' + room.video + '\')" class="h-full aspect-square flex-shrink-0 cursor-pointer rounded-xl overflow-hidden border-2 border-transparent hover:border-cyan-500 opacity-70 hover:opacity-100 transition-all relative flex items-center justify-center bg-slate-900 group"><i data-lucide="play-circle" class="w-8 h-8 text-white group-hover:scale-110 transition-transform"></i></div>';
+                thumbGallery.innerHTML += '<div onclick="setMainMedia(\'video\', \'' + room.video + '\')" class="h-full aspect-square flex-shrink-0 cursor-pointer rounded-xl overflow-hidden border-2 border-transparent hover:border-red-500 opacity-70 hover:opacity-100 transition-all relative flex items-center justify-center bg-slate-900 group"><i data-lucide="play-circle" class="w-8 h-8 text-white group-hover:scale-110 transition-transform"></i></div>';
             }
             if (room.images && room.images.length > 0) {
                 room.images.forEach(function(imgUrl) {
-                    thumbGallery.innerHTML += '<div onclick="setMainMedia(\'image\', \'' + imgUrl + '\')" class="h-full aspect-square flex-shrink-0 cursor-pointer rounded-xl overflow-hidden border-2 border-transparent hover:border-cyan-500 opacity-70 hover:opacity-100 transition-all"><img src="' + imgUrl + '" class="w-full h-full object-cover"></div>';
+                    thumbGallery.innerHTML += '<div onclick="setMainMedia(\'image\', \'' + imgUrl + '\')" class="h-full aspect-square flex-shrink-0 cursor-pointer rounded-xl overflow-hidden border-2 border-transparent hover:border-red-500 opacity-70 hover:opacity-100 transition-all"><img src="' + imgUrl + '" class="w-full h-full object-cover"></div>';
                 });
             }
 
@@ -1271,7 +1279,7 @@
 
         function updateCommissionModalUI() {
             const isPercent = state.commEditType === 'percent';
-            const activeClass = 'flex-1 py-2 text-sm font-bold rounded-lg whitespace-nowrap transition-all bg-white dark:bg-slate-700 text-cyan-600 dark:text-white shadow-sm';
+            const activeClass = 'flex-1 py-2 text-sm font-bold rounded-lg whitespace-nowrap transition-all bg-white dark:bg-slate-700 text-red-600 dark:text-white shadow-sm';
             const inactiveClass = 'flex-1 py-2 text-sm font-bold rounded-lg whitespace-nowrap transition-all text-slate-500 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-slate-700/50';
             document.getElementById('btn-type-percent').className = isPercent ? activeClass : inactiveClass;
             document.getElementById('btn-type-fixed').className = !isPercent ? activeClass : inactiveClass;
