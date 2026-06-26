@@ -5,7 +5,6 @@
     <link rel="apple-touch-icon" href="https://ava-grp-talk.zadn.vn/8/4/f/4/5/360/8f3a517f39a79416575784a297c07171.jpg">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
-    <!-- Cập nhật theme color sang Đen đậm -->
     <meta name="theme-color" content="#030303">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -170,14 +169,12 @@
 </head>
 <body class="flex flex-col h-screen bg-[#f8f9fa] dark:bg-[#030303] font-sans text-slate-900 dark:text-slate-100 overflow-hidden transition-colors duration-500">
 
-    <!-- Ambient Background -->
     <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
         <div class="absolute top-[-12%] left-[-12%] w-96 h-96 bg-red-500/25 dark:bg-red-700/15 rounded-full mix-blend-multiply dark:mix-blend-lighten filter blur-[100px] animate-blob"></div>
         <div class="absolute top-[15%] right-[-15%] w-96 h-96 bg-rose-500/25 dark:bg-rose-700/15 rounded-full mix-blend-multiply dark:mix-blend-lighten filter blur-[100px] animate-blob animate-blob-delay"></div>
         <div class="absolute bottom-[-15%] left-[15%] w-[42rem] h-[42rem] bg-orange-500/15 dark:bg-orange-700/8 rounded-full mix-blend-multiply dark:mix-blend-lighten filter blur-[120px] animate-blob-delay2"></div>
     </div>
 
-    <!-- Header -->
     <div class="fixed top-0 left-0 right-0 z-50 flex justify-center px-3 md:px-4 pt-3 md:pt-4 pointer-events-none" style="padding-top: calc(0.75rem + var(--safe-top));">
         <header class="w-full max-w-7xl h-14 md:h-16 glass-strong rounded-full shadow-soft flex items-center justify-between px-3 md:px-6 pointer-events-auto transition-all duration-300 border border-white/60 dark:border-white/10">
             <div class="flex items-center gap-2 md:gap-4 min-w-0">
@@ -203,12 +200,10 @@
         </header>
     </div>
 
-    <!-- Main Content -->
     <main class="flex-1 overflow-auto px-3 md:px-8 pb-4 relative w-full hide-scrollbar" style="padding-top: calc(4.5rem + var(--safe-top) + 0.75rem);">
         <div id="main-content" class="max-w-7xl mx-auto" style="padding-bottom: calc(6.5rem + var(--safe-bottom));"></div>
     </main>
 
-    <!-- Bottom Navigation (mobile-first) -->
     <div class="fixed bottom-0 left-0 right-0 z-[80] flex justify-center px-3 pb-3 pointer-events-none" style="padding-bottom: calc(0.75rem + var(--safe-bottom));">
         <nav class="w-full max-w-md glass-strong rounded-full shadow-sheet border border-white/60 dark:border-white/10 flex items-center justify-between px-2 py-2 pointer-events-auto">
             <button class="nav-item active flex-1 flex flex-col items-center gap-0.5 py-1.5 rounded-2xl text-red-600 dark:text-red-400 transition-all active:scale-90" onclick="setActiveTab('home', this)" data-tab="home">
@@ -234,16 +229,13 @@
         </nav>
     </div>
 
-    <!-- Zalo Float Button (Giữ nguyên màu thương hiệu Zalo) -->
     <a href="https://zalo.me/0879342346" target="_blank" rel="noopener noreferrer" class="fixed right-4 md:right-8 z-[70] bg-[#0068FF] text-white pl-3 pr-4 py-3 md:py-3.5 rounded-full shadow-xl shadow-blue-500/40 hover:-translate-y-1 hover:shadow-blue-500/60 transition-all duration-300 flex items-center gap-2 border border-white/20 active:scale-95 group" style="bottom: calc(6.5rem + var(--safe-bottom));">
         <div class="w-6 h-6 md:w-7 md:h-7 bg-white rounded-full flex items-center justify-center text-[#0068FF] font-black text-[12px] md:text-[13px] shrink-0">Z</div>
         <span class="font-bold whitespace-nowrap text-sm hidden sm:inline pr-1">Liên hệ Zalo</span>
     </a>
 
-    <!-- Toasts -->
     <div id="toast-container" class="fixed left-1/2 -translate-x-1/2 z-[100] flex flex-col gap-2.5 pointer-events-none w-max max-w-[90vw]" style="top: calc(5rem + var(--safe-top));"></div>
 
-    <!-- Lightbox -->
     <div id="lightbox" class="hidden fixed inset-0 z-[110] bg-slate-900/90 dark:bg-black/95 backdrop-blur-xl flex items-center justify-center p-4 transition-opacity cursor-zoom-out" onclick="closeLightbox()">
         <button class="absolute top-6 right-6 text-white/50 hover:text-white transition-colors bg-white/10 hover:bg-white/20 p-3 rounded-full z-10 backdrop-blur-md active:scale-90" onclick="closeLightbox(); event.stopPropagation();" style="top: calc(1.5rem + var(--safe-top));">
             <i data-lucide="x" class="w-5 h-5"></i>
@@ -251,7 +243,6 @@
         <div id="lightbox-content" class="max-w-5xl max-h-[90vh] w-full h-full flex items-center justify-center relative"></div>
     </div>
 
-    <!-- ============ AUTH SHEET ============ -->
     <div id="auth-modal" class="hidden fixed inset-0 z-[120] flex items-end md:items-center justify-center">
         <div class="absolute inset-0 bg-slate-900/40 dark:bg-black/60 backdrop-blur-sm scrim-enter" id="auth-scrim" onclick="closeAuthModal()"></div>
         <div class="relative w-full md:max-w-md glass-strong rounded-t-[2rem] md:rounded-[2rem] shadow-sheet md:shadow-2xl border-t md:border border-white/60 dark:border-white/10 overflow-hidden sheet-enter" id="auth-sheet-panel" style="padding-bottom: var(--safe-bottom);">
@@ -305,7 +296,6 @@
         </div>
     </div>
 
-    <!-- ============ FILTER SHEET ============ -->
     <div id="filter-modal" class="hidden fixed inset-0 z-[115] flex items-end md:items-center justify-center">
         <div class="absolute inset-0 bg-slate-900/40 dark:bg-black/60 backdrop-blur-sm scrim-enter" onclick="closeFilterSheet()"></div>
         <div class="relative w-full md:max-w-lg glass-strong rounded-t-[2rem] md:rounded-[2rem] shadow-sheet md:shadow-2xl border-t md:border border-white/60 dark:border-white/10 overflow-hidden sheet-enter">
@@ -353,7 +343,6 @@
         </div>
     </div>
 
-    <!-- ============ ROOM DETAILS SHEET ============ -->
     <div id="details-modal" class="hidden fixed inset-0 z-[105] flex items-end md:items-center justify-center">
         <div class="absolute inset-0 bg-slate-900/55 dark:bg-black/80 backdrop-blur-md scrim-enter" onclick="closeRoomDetails()"></div>
         <div class="relative w-full md:max-w-5xl h-[94vh] md:h-[88vh] glass-strong rounded-t-[2rem] md:rounded-[2rem] shadow-sheet md:shadow-2xl border-t md:border border-white/60 dark:border-white/10 overflow-hidden sheet-enter flex flex-col">
@@ -363,13 +352,11 @@
             </button>
 
             <div class="flex-1 overflow-y-auto md:overflow-hidden flex flex-col md:flex-row hide-scrollbar">
-                <!-- Media Column -->
                 <div class="md:w-3/5 bg-slate-950 flex flex-col relative shrink-0 md:h-full">
                     <div class="relative w-full aspect-[4/3] md:aspect-auto md:flex-1 flex items-center justify-center overflow-hidden cursor-zoom-in" id="main-media-container" onclick="openLightbox(this)"></div>
                     <div class="h-20 md:h-24 bg-slate-900 border-t border-slate-800 p-2 flex gap-2 overflow-x-auto hide-scrollbar shrink-0" id="thumbnail-gallery"></div>
                 </div>
 
-                <!-- Info Column -->
                 <div class="md:w-2/5 flex flex-col md:h-full md:overflow-hidden">
                     <div class="p-5 md:p-6 flex-1 md:overflow-y-auto hide-scrollbar">
                         <div class="flex items-start justify-between mb-4">
@@ -385,7 +372,6 @@
                             <span id="detail-address" class="text-slate-500 dark:text-slate-400 text-sm font-medium group-hover:text-rose-500 transition-colors border-b border-transparent group-hover:border-rose-500/30"></span>
                         </div>
 
-                        <!-- CẬP NHẬT GIAO DIỆN CHỐNG TRÀN CHỮ: Flex-wrap + cuộn ngang an toàn -->
                         <div class="bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 border border-red-100 dark:border-red-500/20 rounded-2xl p-4 md:p-5 mb-6 flex flex-wrap justify-between items-center gap-4 shadow-sm">
                             <div class="w-full sm:w-auto flex-1 min-w-[45%]">
                                 <p class="text-red-600 dark:text-red-400 text-xs font-bold uppercase tracking-wider mb-1">Giá thuê</p>
@@ -415,7 +401,6 @@
         </div>
     </div>
 
-    <!-- ============ COMMISSION SHEET ============ -->
     <div id="commission-modal" class="hidden fixed inset-0 z-[118] flex items-end md:items-center justify-center">
         <div class="absolute inset-0 bg-slate-900/40 dark:bg-black/70 backdrop-blur-sm scrim-enter" onclick="closeCommissionModal()"></div>
         <div class="relative w-full md:max-w-sm glass-strong rounded-t-[2rem] md:rounded-[2rem] shadow-sheet md:shadow-2xl border-t md:border border-white/60 dark:border-white/10 overflow-hidden sheet-enter">
@@ -873,7 +858,10 @@
         function applyAllFilters(rooms) {
             return rooms.filter(function(room) {
                 const searchTxt = state.searchQuery.toLowerCase();
-                const matchesSearch = (room.name || '').toLowerCase().includes(searchTxt) || (room.building || '').toLowerCase().includes(searchTxt);
+                // NÂNG CẤP TÌM KIẾM THEO ĐỊA CHỈ: Kiểm tra cả 2 trường address & building
+                const addressText = (room.address || room.building || '').toLowerCase();
+                const matchesSearch = (room.name || '').toLowerCase().includes(searchTxt) || addressText.includes(searchTxt);
+                
                 const matchesStatus = state.statusFilters.length === 0 || state.statusFilters.includes(room.status);
                 const matchesType = state.typeFilters.length === 0 || state.typeFilters.includes(room.type);
                 const matchesPrice = !state.priceFilterActive || (Number(room.price) || 0) <= state.maxPrice;
@@ -990,7 +978,7 @@
                     + '<div class="flex-1 p-3.5 flex flex-col min-w-0">'
                     + '<div class="flex items-start justify-between gap-2 mb-1">' + getBadgeHTML(room.status, 'sm') + '<button onclick="toggleBookmark(\'' + room.id + '\', event)" class="text-slate-300 dark:text-slate-600 hover:text-rose-500 transition-colors shrink-0"><i data-lucide="heart" class="w-4 h-4 ' + (isBookmarked ? 'fill-rose-500 text-rose-500' : '') + '"></i></button></div>'
                     + '<h3 class="font-extrabold text-sm text-slate-800 dark:text-white leading-snug line-clamp-2 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">' + (room.name || '') + '</h3>'
-                    + '<p class="text-xs font-medium text-slate-500 dark:text-slate-400 flex items-center gap-1 truncate mt-1"><i data-lucide="map-pin" class="w-3 h-3 text-rose-500 shrink-0"></i> ' + (room.building || '') + '</p>'
+                    + '<p class="text-xs font-medium text-slate-500 dark:text-slate-400 flex items-center gap-1 truncate mt-1"><i data-lucide="map-pin" class="w-3 h-3 text-rose-500 shrink-0"></i> ' + (room.address || room.building || 'Chưa cập nhật địa chỉ') + '</p>'
                     + '<div class="mt-auto flex items-end justify-between pt-2">'
                     + '<span class="font-black text-red-600 dark:text-red-400 text-base tabular whitespace-nowrap">' + formatCurrency(room.price) + 'đ</span>'
                     + (state.user ? '<span class="font-bold text-emerald-600 dark:text-emerald-400 text-xs bg-emerald-100/50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-lg">' + getCommissionInfo(room).display + '</span>' : '')
@@ -1008,7 +996,7 @@
                 + '</div>'
                 + '<div class="p-3.5 md:p-5 flex-1 flex flex-col">'
                 + '<h3 class="font-extrabold text-sm md:text-lg text-slate-800 dark:text-white leading-snug line-clamp-2 mb-1.5 md:mb-2 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">' + (room.name || '') + '</h3>'
-                + '<p class="text-xs md:text-sm font-medium text-slate-500 dark:text-slate-400 flex items-center gap-1.5 truncate mb-3 md:mb-5"><i data-lucide="map-pin" class="w-3.5 h-3.5 md:w-4 md:h-4 text-rose-500 shrink-0"></i> ' + (room.building || '') + '</p>'
+                + '<p class="text-xs md:text-sm font-medium text-slate-500 dark:text-slate-400 flex items-center gap-1.5 truncate mb-3 md:mb-5"><i data-lucide="map-pin" class="w-3.5 h-3.5 md:w-4 md:h-4 text-rose-500 shrink-0"></i> ' + (room.address || room.building || 'Chưa cập nhật địa chỉ') + '</p>'
                 + '<div class="mt-auto space-y-2 md:space-y-3">'
                 + '<div class="flex justify-between items-center">'
                 + '<span class="text-slate-500 dark:text-slate-400 text-[10px] md:text-xs font-semibold uppercase tracking-wider">Loại phòng</span>'
@@ -1052,7 +1040,7 @@
                 + '<p class="font-bold text-lg text-slate-700 dark:text-slate-300">' + (isBookmarksEmpty ? 'Chưa có phòng yêu thích' : 'Không tìm thấy kết quả') + '</p>'
                 + '<p class="text-sm text-slate-500 mt-2">' + (isBookmarksEmpty ? 'Nhấn vào biểu tượng tim trên mỗi phòng để lưu lại' : 'Thử thay đổi từ khóa hoặc bộ lọc của bạn') + '</p></div>';
 
-            const searchVal = (state.searchQuery || '').replace(/"/g, '&quot;');
+            const searchVal = (state.searchQuery || '').replace(/"/g, '"');
             const filterCount = getActiveFilterCount();
             const heading = state.activeTab === 'bookmarks' ? 'Phòng đã lưu' : 'Không gian nổi bật';
 
@@ -1108,7 +1096,8 @@
             state.viewingRoomId = roomId;
 
             document.getElementById('detail-title').innerText = room.name || '';
-            document.getElementById('detail-address').innerText = room.building || '';
+            // NÂNG CẤP ĐỊA CHỈ: Kiểm tra cả 2 trường
+            document.getElementById('detail-address').innerText = room.address || room.building || 'Chưa cập nhật địa chỉ';
             document.getElementById('detail-price').innerText = formatCurrency(room.price) + 'đ/tháng';
             document.getElementById('detail-type').innerText = room.type || '';
             document.getElementById('detail-description').innerText = room.description || 'Chưa cập nhật nội dung.';
@@ -1227,7 +1216,9 @@
         window.openMap = function() {
             if (!state.viewingRoomId) return;
             const room = state.rooms.find(function(r) { return r.id === state.viewingRoomId; });
-            if (room && room.building) window.open('http://maps.google.com/?q=' + encodeURIComponent(room.building), '_blank');
+            const mapAddress = room.address || room.building;
+            // Sửa lại định dạng URL Google Maps chuẩn
+            if (mapAddress) window.open('https://maps.google.com/?q=' + encodeURIComponent(mapAddress), '_blank');
         }
 
         window.shareRoomSmart = function(tone) {
@@ -1237,10 +1228,12 @@
             const commInfo = getCommissionInfo(room);
             let postContent = '';
             const statusLabel = (STATUS_CONFIG[room.status] && STATUS_CONFIG[room.status].label) || 'Trống';
+            const displayAddress = room.address || room.building || 'Chưa cập nhật';
+            
             if (tone === 'standard') {
-                postContent = '📣 CHO THUÊ PHÒNG: ' + room.name + '\n📍 Địa chỉ: ' + room.building + '\n🛋️ Loại: ' + room.type + '\n💰 Giá: ' + formatCurrency(room.price) + 'đ/tháng\n✨ Trạng thái: ' + statusLabel + '\n📝 Mô tả: ' + (room.description || '') + '\n🎁 Hoa hồng MG: ' + commInfo.fullText + '\n📞 Liên hệ ngay!';
+                postContent = '📣 CHO THUÊ PHÒNG: ' + room.name + '\n📍 Địa chỉ: ' + displayAddress + '\n🛋️ Loại: ' + room.type + '\n💰 Giá: ' + formatCurrency(room.price) + 'đ/tháng\n✨ Trạng thái: ' + statusLabel + '\n📝 Mô tả: ' + (room.description || '') + '\n🎁 Hoa hồng MG: ' + commInfo.fullText + '\n📞 Liên hệ ngay!';
             } else {
-                postContent = '🔥 GÓC SIÊU PHẨM GIÁ TỐT NHẤT KHU VỰC 🔥\n\nChính chủ cần cho thuê gấp [ ' + room.name + ' ] tại ' + room.building + '.\n💎 Thiết kế hiện đại, phân khúc ' + room.type + '.\n💸 Mức giá cực mềm chỉ: ' + formatCurrency(room.price) + 'đ/tháng.\n\n📍 Tiện ích đầy đủ, xách vali vào ở ngay!\n🤝 Anh em Môi Giới đẩy giúp, hoa hồng gửi thẳng: ' + commInfo.fullText + '.\n📲 Inbox hoặc Alo ngay để chốt deal!';
+                postContent = '🔥 GÓC SIÊU PHẨM GIÁ TỐT NHẤT KHU VỰC 🔥\n\nChính chủ cần cho thuê gấp [ ' + room.name + ' ] tại ' + displayAddress + '.\n💎 Thiết kế hiện đại, phân khúc ' + room.type + '.\n💸 Mức giá cực mềm chỉ: ' + formatCurrency(room.price) + 'đ/tháng.\n\n📍 Tiện ích đầy đủ, xách vali vào ở ngay!\n🤝 Anh em Môi Giới đẩy giúp, hoa hồng gửi thẳng: ' + commInfo.fullText + '.\n📲 Inbox hoặc Alo ngay để chốt deal!';
             }
             const textArea = document.createElement('textarea');
             textArea.value = postContent;
