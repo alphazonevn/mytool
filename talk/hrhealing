@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="icon" type="image/webp" href="https://i.pinimg.com/736x/01/30/83/01308389f738faab383554ec4e1c196f.jpg">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <meta name="theme-color" content="#ee7752">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Nexus Chat">
+    <link rel="apple-touch-icon" href="https://api.dicebear.com/7.x/shapes/svg?seed=Nexus&backgroundColor=ee7752">
+    <link rel="manifest" id="manifest-link"> <title>Hmm Staycation - Homestay thuê ngày</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1/index.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --bg-grad-1: #ee7752; --bg-grad-2: #e73c7e; --bg-grad-3: #23a6d5; --bg-grad-4: #23d5ab;
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-panel: rgba(255, 255, 255, 0.85);
+            --text-color: #1f2937;
+            --header-bg: rgba(255, 255, 255, 0.4);
+            --input-bg: #ffffff;
+            --sys-msg-bg: rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-theme {
+            --bg-grad-1: #0f2027; --bg-grad-2: #203a43; --bg-grad-3: #2c5364; --bg-grad-4: #1a2a6c;
+            --glass-bg: rgba(15, 23, 42, 0.6);
+            --glass-panel: rgba(15, 23, 42, 0.85);
+            --text-color: #f1f5f9;
+            --header-bg: rgba(15, 23, 42, 0.6);
+            --input-bg: rgba(30, 41, 59, 0.8);
+            --sys-msg-bg: rgba(255, 255, 255, 0.15);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(-45deg, var(--bg-grad-1), var(--bg-grad-2), var(--bg-grad-3), var(--bg-grad-4));
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: var(--text-color);
+            transition: color 0.3s ease;
+        }
+
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        .glass { background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.2); transition: background 0.3s ease; }
+        .glass-panel { background: var(--glass-panel); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2); transition: background 0.3s ease; }
+        .theme-text { color: var(--text-color); }
+        .theme-header { background: var(--header-bg); }
+        .theme-input { background: var(--input-bg); color: var(--text-color); }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.5); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(107, 114, 128, 0.8); }
+
+        @keyframes popIn { 0% { opacity: 0; transform: translateY(20px) scale(0.95); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+        .msg-animate { animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .loader { border-top-color: transparent; animation: spinner 1s linear infinite; }
+        @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .md-code { background: rgba(156, 163, 175, 0.3); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 0.9em; color: #db2777; }
+        body.dark-theme .md-code { color: #fbcfe8; }
+        
+        emoji-picker {
+            width: 100%;
+            height: 35vh;
+            max-height: 320px;
+            --background: var(--input-bg);
+            --border-color: rgba(255,255,255,0.1);
+            --button-hover-background: rgba(156, 163, 175, 0.2);
+        }
+    </style>
+</head>
+<body class="fixed inset-0 w-full flex items-center justify-center antialiased overflow-hidden overscroll-none">
+
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen" class="glass p-6 sm:p-8 rounded-[2rem] shadow-2xl w-[92%] sm:w-full max-w-md transition-all duration-500 transform hover:scale-[1.02] relative z-10">
+        <button id="theme-toggle-login" class="absolute top-4 right-4 sm:top-6 sm:right-6 theme-text opacity-80 hover:opacity-100 transition p-2 rounded-full hover:bg-black/10 dark:hover:bg-white/20 whitespace-nowrap">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 dark-icon hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 light-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+        </button>
+
+        <div class="text-center mb-6 sm:mb-8">
+            <div class="theme-input theme-text w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-inner backdrop-blur-sm border border-gray-200/20">
+                <svg class="w-8 h-8 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"></path></svg>
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-extrabold theme-text">Hmm Staycation</h2>
+            <p class="theme-text opacity-80 text-xs sm:text-sm mt-1 sm:mt-2 font-medium" id="status-text">Đang kết nối Server...</p>
+        </div>
+
+        <form id="login-form" class="space-y-4 sm:space-y-5">
+            <div class="relative">
+                <input type="text" id="username" required placeholder="Tên hiển thị của bạn" class="w-full px-4 py-3 sm:px-5 sm:py-4 rounded-xl theme-input border-2 border-transparent focus:border-pink-400 outline-none transition-all placeholder-gray-400 font-medium shadow-sm text-base sm:text-lg">
+            </div>
+            <div id="login-error" class="bg-red-500/80 text-white text-xs sm:text-sm text-center py-2 rounded-lg hidden backdrop-blur-md animate-pulse font-medium"></div>
+            
+            <button type="submit" id="login-btn" class="whitespace-nowrap w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-bold py-3 sm:py-4 rounded-xl shadow-lg transition-all transform hover:-translate-y-1 flex justify-center items-center text-base sm:text-lg">
+                <span>Vào Phòng Ngay</span>
+                <div id="login-loader" class="loader ml-3 w-5 h-5 sm:w-6 sm:h-6 border-4 border-white border-t-transparent rounded-full hidden"></div>
+            </button>
+            
+            <button type="button" id="install-app-btn" class="hidden whitespace-nowrap w-full bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 theme-text font-medium py-3 rounded-xl transition-colors flex justify-center items-center text-xs sm:text-sm border border-gray-400/30">
+                <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                Tải App
+            </button>
+        </form>
+    </div>
+
+    <!-- CHAT SCREEN -->
+    <div id="chat-screen" class="hidden w-full h-full md:h-[95vh] md:max-w-4xl md:mx-auto md:rounded-[2rem] shadow-2xl glass-panel flex flex-col overflow-hidden relative">
+        
+        <!-- HEADER -->
+        <div class="theme-header backdrop-blur-md border-b border-gray-200/20 px-3 py-3 sm:px-6 sm:py-4 flex items-center justify-between z-10 shadow-sm transition-colors duration-300">
+            <div class="flex items-center space-x-2 sm:space-x-4 max-w-[65%] min-w-0">
+                <div class="relative flex-shrink-0">
+                    <img id="my-avatar" src="" alt="avatar" class="w-9 h-9 sm:w-12 sm:h-12 rounded-full border-2 border-pink-500 bg-white p-0.5 object-cover">
+                    <div class="absolute bottom-0 right-0 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-400 border-2 border-white rounded-full"></div>
+                </div>
+                <div class="overflow-hidden flex-1 min-w-0">
+                    <div class="flex items-center space-x-1 sm:space-x-2">
+                        <h1 id="room-name-display" class="text-base sm:text-xl font-bold theme-text tracking-tight truncate">Hmm Staycation</h1>
+                        <button id="edit-room-btn" class="text-gray-400 hover:text-pink-500 transition p-1 rounded-full hover:bg-black/5 flex-shrink-0 whitespace-nowrap" title="Đổi tên phòng">
+                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                        </button>
+                    </div>
+                    <p class="text-[10px] sm:text-sm text-gray-500 font-medium whitespace-nowrap truncate">Bạn: <span id="display-name" class="text-pink-500 font-bold"></span></p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-0.5 sm:space-x-2 flex-shrink-0">
+                <button id="sound-btn" class="text-gray-400 hover:text-indigo-500 transition-colors p-1.5 sm:p-2 rounded-full hover:bg-black/5 whitespace-nowrap" title="Tắt/Bật âm thanh">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 sound-on" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M10 19l-5-5H2v-4h3l5-5v14z"></path></svg>
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 sound-off hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h2.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" clip-rule="evenodd"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path></svg>
+                </button>
+                <button id="noti-btn" class="text-gray-400 hover:text-yellow-500 transition-colors p-1.5 sm:p-2 rounded-full hover:bg-black/5 whitespace-nowrap" title="Bật thông báo đẩy">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                </button>
+                <button id="theme-toggle-chat" class="text-gray-400 hover:text-blue-400 transition-colors p-1.5 sm:p-2 rounded-full hover:bg-black/5 whitespace-nowrap" title="Đổi giao diện">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 dark-icon hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 light-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                </button>
+                <button id="logout-btn" class="text-gray-400 hover:text-red-500 transition-colors p-1.5 sm:p-2 rounded-full hover:bg-black/5 whitespace-nowrap" title="Đăng xuất">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- MESSAGES -->
+        <div id="chat-messages" class="flex-1 p-3 sm:p-6 overflow-y-auto flex flex-col space-y-4 sm:space-y-5 bg-gradient-to-b from-transparent to-black/5 scroll-smooth relative">
+            <div class="flex justify-center items-center h-full opacity-50">
+                <div class="loader w-8 h-8 border-4 border-pink-500 border-t-transparent rounded-full"></div>
+            </div>
+        </div>
+
+        <!-- TOAST / SCROLL -->
+        <div id="new-msg-toast" class="absolute top-16 sm:top-20 left-1/2 transform -translate-x-1/2 -translate-y-32 opacity-0 transition-all duration-500 z-30 bg-gradient-to-r from-pink-500 to-rose-500 text-white px-4 py-1.5 sm:px-5 sm:py-2 rounded-full shadow-xl shadow-pink-500/30 flex items-center space-x-2 sm:space-x-3 cursor-pointer font-medium text-xs sm:text-sm border border-white/20 pointer-events-none whitespace-nowrap">
+            <img id="toast-avatar" src="" class="w-6 h-6 sm:w-7 sm:h-7 rounded-full border border-white/50 bg-white object-cover">
+            <span class="truncate max-w-[120px] sm:max-w-[250px]" id="toast-text">Tin nhắn mới...</span>
+            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 ml-1 flex-shrink-0 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+        </div>
+
+        <button id="scroll-bottom-btn" class="hidden absolute bottom-24 right-4 sm:bottom-28 sm:right-6 bg-pink-500 text-white p-2.5 sm:p-3 rounded-full shadow-lg hover:bg-pink-600 transition-transform transform hover:scale-110 z-20 whitespace-nowrap">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+        </button>
+
+        <div id="emoji-picker-container" class="hidden absolute bottom-[90px] sm:bottom-[100px] left-2 sm:left-16 z-50 rounded-2xl shadow-2xl border border-gray-200/20 overflow-hidden w-[95%] sm:w-[350px]">
+            <emoji-picker></emoji-picker>
+        </div>
+
+        <!-- INPUT FORM -->
+        <div class="theme-header backdrop-blur-lg p-2 sm:p-4 border-t border-gray-200/20 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-10 transition-colors duration-300" style="padding-bottom: max(0.5rem, env(safe-area-inset-bottom));">
+            <form id="chat-form" class="flex items-end space-x-2 max-w-full relative">
+                
+                <button type="button" id="attach-btn" class="p-2 sm:p-3 mb-0.5 sm:mb-1 text-gray-400 hover:text-blue-500 theme-input rounded-full shadow-sm border border-gray-200/20 transition-transform hover:scale-110 flex-shrink-0 whitespace-nowrap" title="Gửi hình/file">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
+                </button>
+                <input type="file" id="file-input" class="hidden" accept="image/*, .pdf, .doc, .docx, .xls, .xlsx, .zip" multiple>
+
+                <div class="flex-1 relative theme-input rounded-[1.5rem] shadow-inner border border-gray-200/20 flex items-end transition-colors pb-0.5 sm:pb-1">
+                    <textarea id="message-input" rows="1" autocomplete="off" placeholder="Soạn tin nhắn..." class="w-full pl-4 pr-10 py-2.5 sm:py-3.5 bg-transparent focus:outline-none placeholder-gray-400 theme-text text-sm sm:text-base resize-none overflow-y-auto max-h-[120px]" style="min-height: 44px;"></textarea>
+                    
+                    <div class="absolute right-1 sm:right-2 bottom-1.5 sm:bottom-2 flex items-center">
+                        <button type="button" id="emoji-btn" class="p-1.5 sm:p-2 text-gray-400 hover:text-yellow-500 rounded-full transition-colors whitespace-nowrap" title="Chèn Icon">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <button type="submit" id="send-btn" class="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-full p-2.5 sm:p-3 mb-0.5 sm:mb-1 flex-shrink-0 shadow-lg transition-transform transform hover:scale-110 disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center whitespace-nowrap">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 ml-0.5 sm:ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                </button>
+            </form>
+            
+            <div id="file-preview" class="hidden mt-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-500/10 border border-blue-500/20 rounded-xl text-xs sm:text-sm text-blue-500 flex justify-between items-center w-full max-w-full">
+                <span class="truncate flex-1 min-w-0 font-medium mr-2" id="file-name-display">filename.png</span>
+                <button type="button" id="remove-file-btn" class="text-red-500 hover:text-red-700 font-bold p-1 flex-shrink-0 whitespace-nowrap">×</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALS -->
+    <div id="image-modal" class="fixed inset-0 z-50 bg-black/90 hidden flex items-center justify-center backdrop-blur-sm transition-opacity opacity-0 cursor-zoom-out">
+        <img id="image-modal-content" src="" class="max-w-[95vw] max-h-[95vh] object-contain rounded-lg shadow-2xl transform scale-95 transition-transform duration-300">
+        <button id="close-modal-btn" class="absolute top-4 right-4 sm:top-6 sm:right-6 text-white bg-black/50 hover:bg-red-500 rounded-full p-2 transition-colors whitespace-nowrap"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+    </div>
+    <div id="room-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center px-4">
+        <div class="theme-input p-5 sm:p-6 rounded-2xl shadow-2xl w-full max-w-[320px] transform scale-100 transition-transform border border-gray-200/20">
+            <h3 class="text-base sm:text-lg font-bold mb-4 theme-text whitespace-nowrap">Đổi tên phòng chat</h3>
+            <input type="text" id="new-room-name" class="w-full px-3 py-2 sm:px-4 sm:py-2 border border-gray-300/30 rounded-lg focus:ring-2 focus:ring-pink-500 outline-none mb-4 bg-transparent theme-text text-sm sm:text-base" placeholder="Nhập tên mới...">
+            <div class="flex justify-end space-x-2">
+                <button id="cancel-room-btn" class="whitespace-nowrap px-3 py-1.5 sm:px-4 sm:py-2 text-gray-500 hover:bg-gray-500/20 rounded-lg transition-colors text-sm sm:text-base">Hủy</button>
+                <button id="save-room-btn" class="whitespace-nowrap px-3 py-1.5 sm:px-4 sm:py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-colors shadow-lg text-sm sm:text-base">Lưu</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // === PWA SETUP ===
+        const manifest = {
+            name: "Hmm Staycation",
+            short_name: "Nexus Chat",
+            start_url: location.href,
+            display: "standalone",
+            background_color: "#ffffff",
+            theme_color: "#ee7752",
+            icons: [{ src: "https://api.dicebear.com/7.x/shapes/svg?seed=Nexus&backgroundColor=ee7752", sizes: "192x192", type: "image/svg+xml" },
+                    { src: "https://api.dicebear.com/7.x/shapes/svg?seed=Nexus&backgroundColor=ee7752", sizes: "512x512", type: "image/svg+xml" }]
+        };
+        const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+        document.getElementById('manifest-link').href = URL.createObjectURL(manifestBlob);
+
+        if ('serviceWorker' in navigator) {
+            const swCode = `
+                self.addEventListener('fetch', function(e) {});
+                self.addEventListener('notificationclick', function(e) {
+                    e.notification.close();
+                    e.waitUntil(clients.matchAll({ type: 'window' }).then(clientsArr => {
+                        if (clientsArr.length) return clientsArr[0].focus();
+                        else return clients.openWindow('/');
+                    }));
+                });
+            `;
+            const swBlob = new Blob([swCode], {type: 'application/javascript'});
+            navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>{});
+        }
+
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('install-app-btn').classList.remove('hidden');
+        });
+        document.getElementById('install-app-btn').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') document.getElementById('install-app-btn').classList.add('hidden');
+                deferredPrompt = null;
+            }
+        });
+
+        // === CẤU HÌNH API ===
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbypbgqrYH_nL9rMDfMxitU-gQRIFfDl9d0xYBmAJ1UKMI8NKxI_JaU4ULh02S2ie5Ub/exec';
+
+        // === BIẾN TRẠNG THÁI ===
+        let currentUser = ''; let pollingInterval = null; let lastMessageCount = 0; let isUserScrolling = false;
+        let selectedFiles = [];
+        let roomNameStr = "Hmm Staycation"; let isMuted = false;
+        let unreadCount = 0; const originalTitle = document.title;
+        const notifSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3'); notifSound.volume = 1.0;
+
+        const els = {
+            loginScreen: document.getElementById('login-screen'), chatScreen: document.getElementById('chat-screen'),
+            loginForm: document.getElementById('login-form'), chatForm: document.getElementById('chat-form'),
+            messages: document.getElementById('chat-messages'), error: document.getElementById('login-error'),
+            loginBtnText: document.querySelector('#login-btn span'), loginLoader: document.getElementById('login-loader'),
+            sendBtn: document.getElementById('send-btn'), input: document.getElementById('message-input'),
+            myAvatar: document.getElementById('my-avatar'), displayName: document.getElementById('display-name'),
+            scrollBtn: document.getElementById('scroll-bottom-btn'), roomNameDisplay: document.getElementById('room-name-display'),
+            editRoomBtn: document.getElementById('edit-room-btn'), roomModal: document.getElementById('room-modal'),
+            attachBtn: document.getElementById('attach-btn'), fileInput: document.getElementById('file-input'),
+            filePreview: document.getElementById('file-preview'), fileNameDisplay: document.getElementById('file-name-display'),
+            removeFileBtn: document.getElementById('remove-file-btn'), notiBtn: document.getElementById('noti-btn'),
+            statusText: document.getElementById('status-text'),
+            imageModal: document.getElementById('image-modal'), imgModalContent: document.getElementById('image-modal-content'),
+            closeModalBtn: document.getElementById('close-modal-btn'), soundBtn: document.getElementById('sound-btn'),
+            themeBtns: [document.getElementById('theme-toggle-login'), document.getElementById('theme-toggle-chat')],
+            toast: document.getElementById('new-msg-toast'), toastAvatar: document.getElementById('toast-avatar'),
+            toastText: document.getElementById('toast-text'), emojiBtn: document.getElementById('emoji-btn'),
+            emojiContainer: document.getElementById('emoji-picker-container'), picker: document.querySelector('emoji-picker')
+        };
+
+        els.emojiBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            els.emojiContainer.classList.toggle('hidden');
+        });
+        document.addEventListener('click', (e) => {
+            if (!els.emojiContainer.contains(e.target) && e.target !== els.emojiBtn && !els.emojiBtn.contains(e.target)) {
+                els.emojiContainer.classList.add('hidden');
+            }
+        });
+        els.picker.addEventListener('emoji-click', event => {
+            const cursorPosition = els.input.selectionStart;
+            const textBefore = els.input.value.substring(0, cursorPosition);
+            const textAfter = els.input.value.substring(cursorPosition);
+            els.input.value = textBefore + event.detail.unicode + textAfter;
+            
+            els.input.style.height = 'auto';
+            els.input.style.height = (els.input.scrollHeight) + 'px';
+            
+            if (window.innerWidth > 768) {
+                els.input.focus();
+                els.input.setSelectionRange(cursorPosition + event.detail.unicode.length, cursorPosition + event.detail.unicode.length);
+            }
+        });
+
+        els.input.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+
+        els.input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                els.sendBtn.click();
+            }
+        });
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-theme');
+            const isDark = document.body.classList.contains('dark-theme');
+            localStorage.setItem('nexusTheme', isDark ? 'dark' : 'light');
+            updateThemeIcons(isDark);
+            els.picker.classList.toggle('dark', isDark);
+            els.picker.classList.toggle('light', !isDark);
+        }
+        function updateThemeIcons(isDark) {
+            document.querySelectorAll('.dark-icon').forEach(el => isDark ? el.classList.remove('hidden') : el.classList.add('hidden'));
+            document.querySelectorAll('.light-icon').forEach(el => !isDark ? el.classList.remove('hidden') : el.classList.add('hidden'));
+        }
+        if (localStorage.getItem('nexusTheme') === 'dark' || (!localStorage.getItem('nexusTheme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.body.classList.add('dark-theme'); updateThemeIcons(true); els.picker.classList.add('dark');
+        } else { els.picker.classList.add('light'); }
+        els.themeBtns.forEach(btn => btn.addEventListener('click', toggleTheme));
+
+        els.soundBtn.addEventListener('click', () => {
+            isMuted = !isMuted;
+            document.querySelector('.sound-on').classList.toggle('hidden', isMuted);
+            document.querySelector('.sound-off').classList.toggle('hidden', !isMuted);
+        });
+
+        function openImageModal(src) {
+            els.imgModalContent.src = src; els.imageModal.classList.remove('hidden');
+            setTimeout(() => { els.imageModal.classList.remove('opacity-0'); els.imgModalContent.classList.remove('scale-95'); els.imgModalContent.classList.add('scale-100'); }, 10);
+        }
+        function closeImageModal() {
+            els.imageModal.classList.add('opacity-0'); els.imgModalContent.classList.remove('scale-100'); els.imgModalContent.classList.add('scale-95');
+            setTimeout(() => els.imageModal.classList.add('hidden'), 300);
+        }
+        els.imageModal.addEventListener('click', (e) => { if (e.target !== els.imgModalContent) closeImageModal(); });
+        els.closeModalBtn.addEventListener('click', closeImageModal);
+
+        async function apiCall(action, payload = {}) {
+            if (action === 'getMessages' || action === 'getRoomInfo') { const res = await fetch(`${SCRIPT_URL}?action=${action}`); return await res.json(); }
+            payload.action = action;
+            const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload), headers: { 'Content-Type': 'text/plain;charset=utf-8' } });
+            return await res.json();
+        }
+
+        els.notiBtn.addEventListener('click', () => {
+            if (!("Notification" in window)) alert("Trình duyệt không hỗ trợ thông báo.");
+            else if (Notification.permission === "granted") alert("Thông báo đã được bật!");
+            else if (Notification.permission !== "denied") Notification.requestPermission().then(p => { if (p === "granted") { new Notification("Nexus Chat", { body: "Đã bật thông báo!", icon: getAvatarUrl("Nexus") }); els.notiBtn.classList.add('text-yellow-500'); } });
+            else alert("Bạn đã chặn thông báo trong trình duyệt.");
+        });
+
+        document.addEventListener('visibilitychange', () => { if (!document.hidden) { unreadCount = 0; document.title = originalTitle; } });
+
+        function showInAppToast(msg) {
+            els.toastAvatar.src = getAvatarUrl(msg.username);
+            let pText = msg.isFile ? "Đã gửi tệp đính kèm" : msg.text.replace(/[*_~`]/g, '');
+            els.toastText.innerText = `${msg.username}: ${pText}`;
+            els.toast.classList.remove('-translate-y-32', 'opacity-0', 'pointer-events-none'); els.toast.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
+            clearTimeout(els.toast.hideTimeout); els.toast.hideTimeout = setTimeout(() => hideInAppToast(), 4000);
+        }
+        function hideInAppToast() { els.toast.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto'); els.toast.classList.add('-translate-y-32', 'opacity-0', 'pointer-events-none'); }
+        els.toast.addEventListener('click', () => { scrollToBottom(true); hideInAppToast(); });
+        
+        function showPushNotification(msg) { 
+            if (Notification.permission === "granted" && document.hidden) {
+                const title = `${msg.username} - ${roomNameStr}`;
+                const options = { 
+                    body: msg.isFile ? "Đã gửi tệp đính kèm" : msg.text, 
+                    icon: getAvatarUrl(msg.username),
+                    vibrate: [200, 100, 200, 100, 200]
+                };
+                if ('serviceWorker' in navigator && navigator.serviceWorker.ready) {
+                    navigator.serviceWorker.ready.then(reg => { reg.showNotification(title, options); });
+                } else { new Notification(title, options); }
+            } 
+        }
+
+        function getAvatarUrl(name) { return `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(name)}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffdfbf`; }
+        
+        // --- BỘ CHUYỂN ĐỔI URL DRIVE ĐỂ HIỂN THỊ TRỰC TIẾP ---
+        function getDirectImageUrl(url) {
+            if (!url) return '';
+            let match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/) || url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+            if (url.includes('drive.google.com') && match) {
+                return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1000`;
+            }
+            return url;
+        }
+
+        // --- BỘ LỌC FORMAT MESSAGE ĐÃ ẨN LINK & LÀM GỌN UI ---
+        function formatMessage(text, isFile = false, fileUrl = '', fileName = '') {
+            if (!text) text = '';
+            
+            // Xóa link rác khỏi văn bản (nếu Backend vô tình ghép vào)
+            if (isFile && fileUrl) {
+                text = text.replace(fileUrl, '').trim();
+            }
+
+            let safeText = text.replace(/[&<>'"]/g, tag => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'}[tag] || tag));
+            safeText = safeText.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold">$1</strong>').replace(/\*(.*?)\*/g, '<em class="italic">$1</em>').replace(/`(.*?)`/g, '<code class="md-code">$1</code>');
+            
+            // Render ảnh dạng link độc lập (nếu người dùng copy link paste vào khung chat)
+            if (/(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp))/ig.test(safeText)) {
+                safeText = safeText.replace(/(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp))/ig, '\n<img src="$1" onclick="openImageModal(\'$1\')" class="mt-2 rounded-xl max-w-[200px] sm:max-w-xs shadow-md cursor-zoom-in hover:scale-[1.02] transition-transform bg-white/50" onerror="this.src=\'https://placehold.co/200x200/png?text=L%E1%BB%97i+%E1%BA%A2nh\'; this.onerror=null;" alt="Ảnh link"/>');
+            } else {
+                safeText = safeText.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" class="text-blue-500 hover:text-blue-600 underline underline-offset-2 break-all">$1</a>');
+            }
+
+            if (isFile && fileUrl) {
+                const nameToCheck = fileName || text || '';
+                const isImage = nameToCheck.match(/\.(jpeg|jpg|gif|png|webp|bmp|heic|jfif)$/i) != null || fileUrl.match(/\.(jpeg|jpg|gif|png|webp|bmp|heic|jfif)$/i) != null;
+                
+                let textToShow = safeText;
+                let displayFileName = fileName || 'Tệp đính kèm';
+                
+                // Xóa tên file khỏi đuôi văn bản (để lại text thuần túy)
+                let lines = textToShow.split('\n');
+                if (lines.length > 0 && lines[lines.length - 1].includes(displayFileName)) {
+                    lines.pop();
+                    textToShow = lines.join('\n').trim();
+                } else if (lines.length > 0 && lines[lines.length - 1].match(/\.(jpeg|jpg|gif|png|webp|bmp|heic|jfif|pdf|doc|docx|xls|xlsx|zip|rar)$/i)) {
+                    displayFileName = fileName || lines.pop(); 
+                    textToShow = lines.join('\n').trim();
+                }
+
+                if (isImage) {
+                    let directUrl = getDirectImageUrl(fileUrl);
+                    let fileIdMatch = fileUrl.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || fileUrl.match(/id=([a-zA-Z0-9_-]+)/) || fileUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                    let fallbackScript = `this.onerror=null; this.src='https://placehold.co/200x200/png?text=L%E1%BB%97i+%E1%BA%A2nh';`;
+                    if (fileUrl.includes('drive.google.com') && fileIdMatch) {
+                        fallbackScript = `if(!this.dataset.retried){ this.dataset.retried='true'; this.src='https://lh3.googleusercontent.com/d/${fileIdMatch[1]}'; } else { this.onerror=null; this.src='https://placehold.co/200x200/png?text=L%E1%BB%97i+%E1%BA%A2nh'; }`;
+                    }
+                    
+                    // CHỈ RENDER ẢNH - BỎ HOÀN TOÀN TEXT LINK HIỂN THỊ DƯỚI ẢNH
+                    const imgNode = `\n<img src="${directUrl}" onclick="openImageModal('${directUrl}')" class="mt-2 rounded-xl max-w-[200px] sm:max-w-xs shadow-md cursor-zoom-in hover:scale-[1.02] transition-transform bg-white/50" alt="Ảnh" onerror="${fallbackScript}"/>`;
+                    return textToShow ? (textToShow + imgNode) : imgNode.trim();
+                } else {
+                    // UI FILE CARD CỰC GỌN (THAY CHO LINK RAW)
+                    const docIcon = `<svg class="w-5 h-5 sm:w-6 sm:h-6 mr-2 flex-shrink-0 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>`;
+                    const linkNode = `\n<a href="${fileUrl}" target="_blank" class="flex items-center mt-2 p-2 sm:p-3 bg-black/10 dark:bg-white/10 rounded-xl hover:bg-black/20 dark:hover:bg-white/20 transition-colors text-current group no-underline border border-gray-200/20 shadow-sm max-w-full overflow-hidden w-fit max-w-[220px] sm:max-w-xs">
+                        ${docIcon}
+                        <span class="truncate font-medium text-xs sm:text-sm group-hover:underline flex-1 min-w-0">${displayFileName}</span>
+                    </a>`;
+                    return textToShow ? (textToShow + linkNode) : linkNode.trim();
+                }
+            }
+            return safeText;
+        }
+
+        els.messages.addEventListener('scroll', () => {
+            const { scrollTop, scrollHeight, clientHeight } = els.messages;
+            if (scrollHeight - scrollTop - clientHeight > 100) { isUserScrolling = true; els.scrollBtn.classList.remove('hidden'); }
+            else { isUserScrolling = false; els.scrollBtn.classList.add('hidden'); }
+        });
+        els.scrollBtn.addEventListener('click', () => scrollToBottom(true));
+        function scrollToBottom(force = false) { if (!isUserScrolling || force) els.messages.scrollTo({ top: els.messages.scrollHeight, behavior: force ? 'smooth' : 'auto' }); }
+
+        els.loginForm.addEventListener('submit', async function(e) {
+            e.preventDefault(); const userVal = document.getElementById('username').value.trim(); const passVal = '123456';
+            if(!userVal) return;
+            els.loginBtnText.innerText = 'Đang xác thực...'; els.loginLoader.classList.remove('hidden'); els.error.classList.add('hidden');
+            try {
+                const res = await apiCall('checkLogin', { username: userVal, password: passVal });
+                if (res.success) enterRoom(userVal); else { els.loginBtnText.innerText = 'Vào Phòng Ngay'; els.loginLoader.classList.add('hidden'); els.error.innerText = res.message; els.error.classList.remove('hidden'); }
+            } catch (err) { els.loginBtnText.innerText = 'Vào Phòng Ngay'; els.loginLoader.classList.add('hidden'); els.error.innerText = 'Lỗi kết nối Server!'; els.error.classList.remove('hidden'); }
+        });
+
+        // --- CƠ CHẾ LƯU TÊN PHÒNG THEO THIẾT BỊ ---
+        function loadLocalRoomName() {
+            const savedRoom = localStorage.getItem('nexusRoomName');
+            if (savedRoom) {
+                roomNameStr = savedRoom;
+                els.roomNameDisplay.innerText = roomNameStr;
+            }
+        }
+
+        async function enterRoom(username) {
+            currentUser = username; 
+            localStorage.setItem('nexusUser', username); 
+            els.displayName.innerText = currentUser; els.myAvatar.src = getAvatarUrl(currentUser);
+            els.loginScreen.classList.add('hidden'); els.chatScreen.classList.remove('hidden'); els.messages.innerHTML = '';
+            
+            loadLocalRoomName(); // Lấy tên phòng từ bộ nhớ cục bộ
+            
+            fetchMessages(); 
+            // Chỉ lặp gọi tin nhắn, KHÔNG gọi đồng bộ tên phòng từ server
+            pollingInterval = setInterval(() => { fetchMessages(); }, 3000); 
+            
+            if (Notification.permission === "granted") els.notiBtn.classList.add('text-yellow-500');
+        }
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            clearInterval(pollingInterval); currentUser = ''; lastMessageCount = 0;
+            localStorage.removeItem('nexusUser'); 
+            els.chatScreen.classList.add('hidden'); els.loginScreen.classList.remove('hidden');
+        });
+
+        els.editRoomBtn.addEventListener('click', () => { document.getElementById('new-room-name').value = roomNameStr; els.roomModal.classList.remove('hidden'); });
+        document.getElementById('cancel-room-btn').addEventListener('click', () => els.roomModal.classList.add('hidden'));
+        
+        document.getElementById('save-room-btn').addEventListener('click', () => {
+            const newName = document.getElementById('new-room-name').value.trim(); if(!newName) return;
+            els.roomModal.classList.add('hidden'); 
+            roomNameStr = newName; 
+            els.roomNameDisplay.innerText = roomNameStr;
+            // Chỉ lưu vào trình duyệt (localStorage), không gọi API lên Server nữa
+            localStorage.setItem('nexusRoomName', newName); 
+        });
+
+        els.attachBtn.addEventListener('click', () => els.fileInput.click());
+        
+        els.fileInput.addEventListener('change', function() {
+            if(this.files.length > 0) {
+                const newFiles = Array.from(this.files);
+                const validFiles = [];
+                for (let f of newFiles) {
+                    if (f.size > 3 * 1024 * 1024) {
+                        alert(`File "${f.name}" quá lớn (vượt quá 3MB) và sẽ bị bỏ qua!`);
+                    } else {
+                        validFiles.push(f);
+                    }
+                }
+                
+                if (validFiles.length > 0) {
+                    selectedFiles = validFiles;
+                    if (selectedFiles.length === 1) {
+                        els.fileNameDisplay.innerText = selectedFiles[0].name;
+                    } else {
+                        els.fileNameDisplay.innerText = `Đã chọn ${selectedFiles.length} tệp`;
+                    }
+                    els.filePreview.classList.remove('hidden');
+                } else {
+                    selectedFiles = [];
+                    this.value = '';
+                    els.filePreview.classList.add('hidden');
+                }
+            }
+        });
+        
+        els.removeFileBtn.addEventListener('click', () => { selectedFiles = []; els.fileInput.value = ''; els.filePreview.classList.add('hidden'); });
+
+        async function fetchMessages() { try { const messages = await apiCall('getMessages'); renderMessages(messages); } catch (e) {} }
+
+        function renderMessages(messages) {
+            if (messages.length === lastMessageCount) return;
+            if (lastMessageCount > 0 && messages.length > lastMessageCount) {
+                messages.slice(lastMessageCount).forEach(newMsg => {
+                    if (newMsg.username !== currentUser && newMsg.username !== 'Hệ thống') {
+                        if(!isMuted) notifSound.play().catch(e=>{});
+                        if (document.hidden) { unreadCount++; document.title = `(${unreadCount}) Tin nhắn mới - ${originalTitle}`; showPushNotification(newMsg); } 
+                        else if (isUserScrolling) showInAppToast(newMsg);
+                    }
+                });
+            }
+            lastMessageCount = messages.length; els.messages.innerHTML = ''; 
+            messages.forEach((msg) => {
+                const isMe = msg.username === currentUser; const isSystem = msg.username === 'Hệ thống';
+                const date = new Date(msg.timestamp); const timeStr = date.getHours().toString().padStart(2,'0') + ':' + date.getMinutes().toString().padStart(2,'0');
+                const msgWrapper = document.createElement('div'); msgWrapper.className = `flex w-full msg-animate ${isSystem ? 'justify-center' : (isMe ? 'justify-end' : 'justify-start')}`;
+                
+                if (isSystem) msgWrapper.innerHTML = `<div class="bg-black/10 dark:bg-white/10 backdrop-blur-sm text-gray-500 dark:text-gray-300 text-[10px] sm:text-xs px-3 py-1 sm:px-4 sm:py-1.5 rounded-full my-1 sm:my-2 font-medium tracking-wide shadow-sm border border-gray-200/10">${formatMessage(msg.text)}</div>`;
+                else {
+                    const avatarSrc = getAvatarUrl(msg.username); const bubbleBg = isMe ? 'bg-gradient-to-br from-pink-500 to-rose-500 text-white rounded-tr-sm shadow-pink-500/30' : 'theme-input border border-gray-200/20 text-current rounded-tl-sm shadow-sm';
+                    const timeColor = isMe ? 'text-pink-100' : 'text-gray-400';
+                    msgWrapper.innerHTML = `
+                        <div class="flex max-w-[85%] sm:max-w-[75%] items-end ${isMe ? 'flex-row-reverse space-x-reverse space-x-1.5 sm:space-x-2' : 'space-x-1.5 sm:space-x-2'}">
+                            <img src="${avatarSrc}" class="w-7 h-7 sm:w-10 sm:h-10 rounded-full border border-gray-200/20 bg-white object-cover shadow-sm flex-shrink-0 cursor-pointer" onclick="openImageModal('${avatarSrc}')">
+                            <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'}">
+                                ${!isMe ? `<span class="text-[10px] sm:text-[11px] font-bold text-gray-500 dark:text-gray-400 mb-0.5 sm:mb-1 ml-1">${msg.username}</span>` : ''}
+                                <div class="px-3 py-2 sm:px-5 sm:py-3 rounded-[1rem] sm:rounded-[1.2rem] shadow-md ${bubbleBg}">
+                                    <div class="text-[14px] sm:text-[15px] leading-relaxed whitespace-pre-wrap break-words">${formatMessage(msg.text, msg.isFile, msg.fileUrl, msg.fileName)}</div>
+                                    <span class="text-[9px] sm:text-[10px] mt-1 sm:mt-1.5 block opacity-80 text-${isMe ? 'right' : 'left'} ${timeColor} font-medium tracking-wide">${timeStr}</span>
+                                </div>
+                            </div>
+                        </div>`;
+                }
+                els.messages.appendChild(msgWrapper);
+            });
+            scrollToBottom();
+        }
+
+        els.chatForm.addEventListener('submit', async function(e) {
+            e.preventDefault(); const text = els.input.value.trim(); 
+            if (!text && selectedFiles.length === 0) return;
+            
+            els.sendBtn.disabled = true; els.attachBtn.disabled = true; els.emojiBtn.disabled = true; els.emojiContainer.classList.add('hidden');
+            
+            try {
+                if (text && selectedFiles.length === 0) {
+                    renderTempMessage(text, false); 
+                    els.input.value = ''; 
+                    els.input.style.height = 'auto';
+                    await apiCall('saveMessage', { username: currentUser, text: text, isFile: false });
+                } else {
+                    els.input.value = ''; 
+                    els.input.style.height = 'auto';
+                    
+                    for (let i = 0; i < selectedFiles.length; i++) {
+                        const file = selectedFiles[i];
+                        
+                        let msgText = file.name;
+                        if (i === 0 && text) {
+                            msgText = text + '\n' + file.name;
+                        }
+                        
+                        renderTempMessage(msgText, true, file.name); 
+                        
+                        await new Promise((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.onload = async function() { 
+                                const payload = { 
+                                    username: currentUser, 
+                                    text: msgText, 
+                                    isFile: true, 
+                                    fileName: file.name, 
+                                    mimeType: file.type, 
+                                    base64: reader.result.split(',')[1] 
+                                };
+                                try {
+                                    await apiCall('saveMessage', payload);
+                                    resolve();
+                                } catch (err) {
+                                    reject(err);
+                                }
+                            };
+                            reader.onerror = reject;
+                            reader.readAsDataURL(file);
+                        });
+                    }
+                }
+                
+                selectedFiles = []; 
+                els.fileInput.value = ''; 
+                els.filePreview.classList.add('hidden');
+                fetchMessages();
+                
+            } catch (err) {
+                alert("Lỗi gửi tin! (Có thể do mạng hoặc file nặng).");
+            } finally {
+                els.sendBtn.disabled = false; els.attachBtn.disabled = false; els.emojiBtn.disabled = false; els.input.focus();
+            }
+        });
+
+        function renderTempMessage(text, isUploadingFile = false, fileName = "") {
+            const tempDiv = document.createElement('div'); tempDiv.className = `flex w-full justify-end msg-animate opacity-60`;
+            
+            let cleanText = text;
+            if (isUploadingFile && cleanText.endsWith(fileName)) {
+                cleanText = cleanText.substring(0, cleanText.lastIndexOf(fileName)).trim();
+            }
+
+            const formattedText = cleanText ? formatMessage(cleanText) : '';
+            const fileIndicator = isUploadingFile ? `<div class="text-[10px] sm:text-xs italic mt-1 font-medium text-white/90">Đang tải ${fileName ? `"${fileName}"` : 'file'}... ⏳</div>` : '';
+            
+            tempDiv.innerHTML = `
+                <div class="flex max-w-[85%] sm:max-w-[75%] items-end flex-row-reverse space-x-reverse space-x-1.5 sm:space-x-2">
+                    <img src="${getAvatarUrl(currentUser)}" class="w-7 h-7 sm:w-10 sm:h-10 rounded-full border border-gray-200/20 bg-white object-cover opacity-80 flex-shrink-0">
+                    <div class="flex flex-col items-end">
+                        <div class="px-3 py-2 sm:px-5 sm:py-3 rounded-[1rem] sm:rounded-[1.2rem] shadow-md bg-gradient-to-br from-pink-400 to-rose-400 text-white rounded-tr-sm">
+                            ${formattedText ? `<div class="text-[14px] sm:text-[15px] leading-relaxed whitespace-pre-wrap break-words">${formattedText}</div>` : ''}
+                            ${fileIndicator}
+                            <span class="text-[9px] sm:text-[10px] mt-1 sm:mt-1.5 block text-white/80 text-right animate-pulse tracking-wide">Đang bay đi... ✈️</span>
+                        </div>
+                    </div>
+                </div>`;
+            els.messages.appendChild(tempDiv); scrollToBottom(true);
+        }
+        
+        const savedUser = localStorage.getItem('nexusUser');
+        if (savedUser) {
+            els.loginScreen.classList.add('hidden'); 
+            enterRoom(savedUser); 
+        } else {
+            els.statusText.innerText = "Hệ thống AI sẵn sàng!";
+        }
+    </script>
+</body>
+</html>
