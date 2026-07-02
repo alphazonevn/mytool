@@ -227,7 +227,8 @@ body.is-night .phase-pill{border-color:rgba(179,39,60,.4);color:var(--blood-brig
 .role-card .icon{
   font-size:44px;width:76px;height:76px;flex:none;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  background:rgba(0,0,0,.06);
+  background:radial-gradient(circle at 35% 30%, rgba(255,255,255,.5), rgba(0,0,0,.08) 70%);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.08), 0 4px 14px -4px rgba(0,0,0,.35);
 }
 .role-card h3{font-size:22px;}
 .role-card .team{
@@ -351,12 +352,114 @@ table.lb tr:first-child td{color:var(--fire-bright);font-weight:700;}
 .scrollbar-thin::-webkit-scrollbar{width:6px;}
 .scrollbar-thin::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:99px;}
 
+/* =========================================================
+   REALISTIC SCENERY LAYER — SVG forest / mist / wolf silhouette
+   (procedurally drawn, so it never breaks/loads externally)
+   ========================================================= */
+.scenery{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;}
+.scenery svg{position:absolute;bottom:0;left:0;width:100%;height:46vh;min-height:260px;}
+.scenery .layer-far{opacity:.55;filter:blur(.4px);}
+.scenery .layer-near{opacity:.9;}
+.scenery .mist{
+  position:absolute;left:-10%;bottom:0;width:120%;height:180px;
+  background:linear-gradient(to top, rgba(170,180,207,.16), transparent 85%);
+  animation:mistdrift 26s ease-in-out infinite alternate;
+}
+@keyframes mistdrift{from{transform:translateX(-3%);}to{transform:translateX(3%);}}
+body.is-day .scenery .layer-far,body.is-day .scenery .layer-near{filter:sepia(.35) saturate(1.3) brightness(.95);}
+.scenery .wolf-silhouette{position:absolute;right:6%;bottom:8%;width:120px;opacity:.5;animation:wolfbreathe 5s ease-in-out infinite;}
+@keyframes wolfbreathe{0%,100%{transform:translateY(0);}50%{transform:translateY(-3px);}}
+@media (max-width:640px){.scenery .wolf-silhouette{width:70px;}.scenery svg{height:32vh;}}
+
+/* =========================================================
+   TOPBAR TOGGLES — sound & vibration
+   ========================================================= */
+.toggle-row{display:flex;align-items:center;gap:8px;}
+.icon-toggle{
+  width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.16);
+  background:rgba(255,255,255,.05);color:var(--text-light);font-size:16px;
+  display:flex;align-items:center;justify-content:center;transition:all .15s ease;
+}
+.icon-toggle:hover{background:rgba(255,255,255,.1);}
+.icon-toggle.off{opacity:.4;}
+
+/* =========================================================
+   COUNTDOWN — numeric ring next to the bar
+   ========================================================= */
+.timer-row{display:flex;align-items:center;gap:12px;margin-top:14px;}
+.timer-row .timer-bar{flex:1;margin-top:0;}
+.timer-num{
+  font-family:var(--font-display);font-weight:700;font-size:15px;min-width:38px;text-align:center;
+  color:var(--fire-bright);
+}
+body.is-day .timer-num{color:var(--fire-bright);}
+body.is-night .timer-num{color:var(--blood-bright);}
+.timer-num.urgent{animation:pulseurgent .6s ease-in-out infinite;color:var(--blood-bright);}
+@keyframes pulseurgent{0%,100%{transform:scale(1);}50%{transform:scale(1.18);}}
+
+/* =========================================================
+   CHAT REACTIONS
+   ========================================================= */
+.msg-wrap{display:flex;flex-direction:column;gap:4px;}
+.msg-wrap.mine{align-items:flex-end;}
+.msg-wrap.other{align-items:flex-start;}
+.reaction-row{display:flex;gap:4px;flex-wrap:wrap;padding:0 4px;}
+.reaction-pill{
+  font-size:11px;padding:2px 7px;border-radius:999px;background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.12);cursor:pointer;display:flex;gap:3px;align-items:center;
+  transition:transform .1s ease, background .15s ease;
+}
+.reaction-pill:hover{background:rgba(255,255,255,.16);transform:scale(1.06);}
+.reaction-pill.mine-reacted{border-color:var(--fire);background:rgba(232,151,61,.18);}
+.reaction-picker{display:flex;gap:3px;opacity:0;transition:opacity .15s ease;}
+.msg-wrap:hover .reaction-picker{opacity:1;}
+.reaction-picker button{
+  background:transparent;border:none;font-size:13px;padding:2px 3px;border-radius:6px;
+}
+.reaction-picker button:hover{background:rgba(255,255,255,.1);}
+
+/* =========================================================
+   POST-GAME STATS / ANALYTICS
+   ========================================================= */
+.mvp-card{
+  display:flex;align-items:center;gap:16px;background:linear-gradient(135deg, rgba(232,151,61,.18), rgba(179,39,60,.14));
+  border:1px solid rgba(232,151,61,.35);border-radius:var(--radius-lg);padding:18px 20px;margin-top:16px;
+}
+.mvp-card .medal{font-size:40px;}
+.mvp-card h4{font-size:16px;color:var(--fire-bright);}
+.mvp-card p{font-size:12.5px;color:var(--text-dim);margin-top:3px;}
+.stat-bars{display:flex;flex-direction:column;gap:10px;margin-top:14px;}
+.stat-bar-row{display:flex;align-items:center;gap:10px;font-size:12.5px;}
+.stat-bar-row .lbl{width:96px;flex:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-dim);}
+.stat-bar-track{flex:1;height:10px;border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden;}
+.stat-bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--fire),var(--blood));transition:width .6s ease;}
+.stat-bar-row .val{width:26px;text-align:right;flex:none;color:var(--text-light);font-weight:600;}
+.timeline{display:flex;flex-direction:column;gap:6px;margin-top:14px;max-height:220px;overflow-y:auto;}
+.timeline .tl-item{display:flex;gap:10px;font-size:12.5px;color:var(--text-dim);padding:6px 0;border-bottom:1px dashed rgba(255,255,255,.06);}
+.timeline .tl-item b{color:var(--text-light);}
+
+/* smart tip callout tone */
+.tip-card.smart{border-left-color:var(--blood);background:rgba(179,39,60,.08);}
+
 </style>
 </head>
 <body class="is-night">
 
 <div class="sky"></div>
 <div class="stars"></div>
+<div class="scenery" aria-hidden="true">
+  <div class="mist"></div>
+  <svg class="layer-far" viewBox="0 0 1200 260" preserveAspectRatio="none">
+    <polygon points="0,260 0,140 60,90 130,150 200,70 270,140 340,60 410,150 480,90 560,150 630,80 700,150 780,100 850,160 930,90 1000,150 1080,100 1150,150 1200,120 1200,260" fill="#0d1526"/>
+  </svg>
+  <svg class="layer-near" viewBox="0 0 1200 220" preserveAspectRatio="none">
+    <polygon points="0,220 0,120 50,150 90,60 140,140 190,90 230,150 290,50 340,150 400,100 450,160 520,70 570,150 630,110 690,160 760,80 820,150 880,110 940,170 1010,90 1070,160 1130,120 1200,170 1200,220" fill="#070b14"/>
+  </svg>
+  <svg class="wolf-silhouette" viewBox="0 0 200 140" preserveAspectRatio="xMidYMax meet">
+    <path fill="#050810" d="M18 132c2-20 6-34 18-45 3-14 2-28 12-40 6-7 15-11 24-9-3-6-3-13 1-19 6 8 9 13 10 20 9-3 19-1 26 6 10-9 16-9 24-3-4 7-9 11-16 13 9 8 13 19 12 31 12 9 18 21 19 36-6-2-11-6-14-12-2 9-7 16-15 20 1-8-1-15-6-20-5 10-14 16-25 17 3-7 3-14 0-20-8 8-19 11-30 8 4-6 6-13 5-20-9 3-17 9-22 18-6-3-9-9-9-16-8 5-13 12-14 21-1-6 0-11 3-16-9 2-16 8-20 17z"/>
+    <circle cx="150" cy="55" r="2.4" fill="#e8973d" opacity=".9"/>
+  </svg>
+</div>
 <div class="orb-wrap"><div class="orb" id="orb"></div></div>
 <div class="toast-stack" id="toastStack"></div>
 
@@ -368,7 +471,11 @@ table.lb tr:first-child td{color:var(--fire-bright);font-weight:700;}
       <small id="roomLabel">Chưa vào phòng</small>
     </div>
   </div>
-  <div class="phase-pill" id="phasePill">Sảnh chờ</div>
+  <div class="toggle-row">
+    <button class="icon-toggle" id="btnSoundToggle" title="Bật/tắt âm thanh">🔊</button>
+    <button class="icon-toggle" id="btnVibrateToggle" title="Bật/tắt rung">📳</button>
+    <div class="phase-pill" id="phasePill">Sảnh chờ</div>
+  </div>
 </header>
 
 <main class="app">
@@ -376,6 +483,18 @@ table.lb tr:first-child td{color:var(--fire-bright);font-weight:700;}
   <!-- ============ SCREEN 0: LANDING / JOIN-CREATE ============ -->
   <section id="screen-landing" class="fade-in">
     <div class="hero">
+      <svg width="100%" height="150" viewBox="0 0 700 150" style="max-width:520px;margin:0 auto 4px;display:block;">
+        <defs>
+          <radialGradient id="heroMoon" cx="35%" cy="35%" r="65%">
+            <stop offset="0%" stop-color="#f4f2ea"/><stop offset="60%" stop-color="#cfd3e2"/><stop offset="100%" stop-color="#7d87a8"/>
+          </radialGradient>
+        </defs>
+        <circle cx="560" cy="46" r="34" fill="url(#heroMoon)" opacity=".95"/>
+        <circle cx="548" cy="36" r="5" fill="#00000022"/><circle cx="572" cy="54" r="3.4" fill="#00000022"/>
+        <polygon points="0,150 0,95 40,70 80,100 120,60 170,95 220,55 270,100 320,75 380,105 440,65 500,100 560,80 620,105 680,80 700,90 700,150" fill="#141d33"/>
+        <polygon points="0,150 0,120 45,105 100,130 150,95 210,125 270,100 330,130 400,105 460,130 530,110 600,132 660,110 700,125 700,150" fill="#0a0e1a"/>
+        <path d="M628 100c1-10 4-17 9-22 2-7 1-14 6-20 3-3 7-5 12-4-2-3-2-6 0-9 3 4 4 6 5 10 4-1 9 0 13 3 5-4 8-4 12-1-2 3-4 5-8 6 4 4 6 9 6 15 6 4 9 10 9 18-3-1-5-3-7-6-1 4-3 8-7 10 0-4 0-7-3-10-2 5-7 8-12 8 1-3 1-7 0-10-4 4-9 5-15 4 2-3 3-6 2-10-4 1-8 4-11 9-3-1-4-4-4-8-4 2-6 6-7 10 0-3 0-5 1-8-4 1-8 4-10 8z" fill="#0a0e1a"/>
+      </svg>
       <h2>Trăng tròn đã lên.<br><em>Ai là Sói trong làng?</em></h2>
       <p>Trò chơi suy luận xã hội cổ điển — tạo phòng, mời bạn bè bằng mã phòng, và để màn đêm quyết định số phận.</p>
     </div>
@@ -449,7 +568,10 @@ table.lb tr:first-child td{color:var(--fire-bright);font-weight:700;}
       <div>
         <div class="panel">
           <div class="narrator" id="narratorBox">Người dẫn chuyện đang chuẩn bị kịch bản…</div>
-          <div class="timer-bar"><div class="fill" id="timerFill" style="width:100%"></div></div>
+          <div class="timer-row">
+            <div class="timer-bar"><div class="fill" id="timerFill" style="width:100%"></div></div>
+            <div class="timer-num" id="timerNum">--</div>
+          </div>
         </div>
 
         <div class="panel">
@@ -503,6 +625,11 @@ table.lb tr:first-child td{color:var(--fire-bright);font-weight:700;}
       </div>
     </div>
 
+    <div class="panel" id="statsPanel">
+      <div class="section-title"><h3>📊 Thống kê & phân tích trận đấu</h3><span class="hint">Tự động tổng hợp</span></div>
+      <div id="statsBody"></div>
+    </div>
+
     <div class="panel">
       <div class="section-title"><h3>Lịch sử trận đấu của bạn</h3></div>
       <div id="historyList"><p class="center-note">Chưa có trận nào được lưu.</p></div>
@@ -528,7 +655,7 @@ const CONFIG = {
   // Dán URL Web App sau khi triển khai Apps Script (xem apps-script/README.md).
   // Để trống ("") thì trò chơi tự chạy ở CHẾ ĐỘ LOCAL (dùng BroadcastChannel
   // giữa các tab/cửa sổ trên cùng một trình duyệt) — dùng để test nhanh không cần deploy.
-  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbxVvsXoQMr8s5DPgefBC5PfymBbx1Q-yl7dnjyaiu-2SYckHVvAMgGGuGTyQvv9gfK2/exec",
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwOCwBjytdktMi5kC6AZw6gK1CGrDt4VgKQp1k_40gV-SGStNRSepq_Psl_gLWWPEoT/exec",
 
   // Khoảng thời gian (ms) client hỏi lại server để lấy trạng thái mới — mô phỏng real-time.
   POLL_INTERVAL_MS: 2500,
@@ -628,6 +755,137 @@ function generalTip(role) {
   return ROLES[role] ? ROLES[role].tip : '';
 }
 
+/* =========================================================
+   NARRATOR AI — pool of varied narration lines + a lightweight
+   "smart" line-picker so no two games sound identical. Selection
+   is deterministic per room/day/phase (seeded), so every player
+   polling the same state sees the same narrator line.
+   ========================================================= */
+const NARRATOR_LINES = {
+  nightStart: [
+    'Đêm thứ {d} buông xuống. Sương giăng kín lối, cả làng nín thở chờ bình minh…',
+    'Trăng lên cao, gió lạnh luồn qua từng mái nhà — màn đêm thứ {d} bắt đầu.',
+    'Mọi ánh đèn đã tắt. Đêm {d} là lúc bóng tối cai trị ngôi làng.',
+    'Tiếng cú kêu vang trong rừng sâu — đêm thứ {d} chính thức bắt đầu, ai sẽ là nạn nhân tiếp theo?'
+  ],
+  dayStart: [
+    'Bình minh ló dạng sau đêm {d}. Dân làng thức dậy, hoang mang bàn tán về những gì đã xảy ra.',
+    'Ánh nắng đầu tiên rọi xuống quảng trường làng — mọi người tụ họp, lo lắng không biết ai đã mất tích.',
+    'Ngày mới bắt đầu trong sự căng thẳng. Ai đó đã không còn ngồi bên đống lửa sáng nay.',
+    'Chuông làng vang lên báo hiệu một ngày mới — nhưng niềm vui chẳng còn trọn vẹn sau đêm {d}.'
+  ],
+  voteStart: [
+    'Mặt trời đã lên đến đỉnh đầu. Đã đến lúc cả làng chỉ tay vào kẻ khả nghi nhất!',
+    'Không thể chần chừ thêm — hãy cùng bỏ phiếu tìm ra kẻ đội lốt Sói giữa các bạn.',
+    'Tiếng trống vang lên báo hiệu giờ phán xét. Ai sẽ bị treo cổ hôm nay?',
+    'Cả làng vây quanh đống lửa, ánh mắt dò xét lẫn nhau — giờ bỏ phiếu đã điểm.'
+  ],
+  noDeathNight: [
+    'Một đêm yên bình hiếm hoi trôi qua — không ai thiệt mạng! Có lẽ Sói đã bị ngăn cản…',
+    'Kỳ lạ thay, không có tiếng hét nào trong đêm. Cả làng vẫn còn nguyên vẹn.',
+    'Sói dường như đã thất bại đêm nay — hoặc đang âm mưu điều gì đó lớn hơn.'
+  ],
+  deathNight: [
+    '{name} đã không qua khỏi đêm qua. ({roleIcon} {roleName})',
+    'Tiếng gầm gừ vang lên trong đêm — {name} đã trở thành con mồi. ({roleIcon} {roleName})',
+    'Sáng nay, người ta tìm thấy dấu vết máu nơi nhà {name}. ({roleIcon} {roleName})'
+  ],
+  voteResult: [
+    'Dân làng đã treo cổ {name}. ({roleIcon} {roleName})',
+    'Số đông đã lên tiếng — {name} bị đưa lên giàn treo cổ. ({roleIcon} {roleName})',
+    '{name} không thể thanh minh kịp thời và đã bị treo cổ. ({roleIcon} {roleName})'
+  ],
+  voteTie: [
+    'Số phiếu hòa nhau — không ai bị treo cổ hôm nay. Sự nghi ngờ vẫn còn treo lơ lửng.',
+    'Cả làng không thể thống nhất — hôm nay không ai phải trả giá.'
+  ],
+  winWolf: [
+    'Bầy Sói đã áp đảo! Ngôi làng chìm trong bóng tối vĩnh viễn.',
+    'Tiếng hú chiến thắng vang khắp núi rừng — phe Sói đã chiến thắng!'
+  ],
+  winVillage: [
+    'Dân làng đã tiêu diệt toàn bộ Sói! Ánh mặt trời trở lại ngôi làng.',
+    'Ngôi làng được giải cứu! Những kẻ đội lốt cuối cùng đã bị vạch trần.'
+  ]
+};
+function seededPick(pool, seed) {
+  let h = 0; for (let i = 0; i < String(seed).length; i++) h = (h * 31 + String(seed).charCodeAt(i)) >>> 0;
+  return pool[h % pool.length];
+}
+function narratorLine(kind, seed, vars = {}) {
+  let line = seededPick(NARRATOR_LINES[kind] || ['…'], kind + '-' + seed);
+  Object.keys(vars).forEach(k => { line = line.split('{' + k + '}').join(vars[k]); });
+  return line;
+}
+
+/* ---------- smart, situation-aware strategy tips ---------- */
+function smartTip(state) {
+  if (!state || !state.myRole) return null;
+  const alive = state.players.filter(p => p.alive);
+  const wolvesAlive = alive.filter(p => p.role === 'wolf' || p.role === 'wolfcub').length;
+  const isWolf = state.myRole === 'wolf' || state.myRole === 'wolfcub';
+
+  if (state.phase === 'vote' && state.votes) {
+    const counts = {};
+    Object.values(state.votes).forEach(t => { if (t) counts[t] = (counts[t] || 0) + 1; });
+    const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+    if (entries.length >= 2 && entries[0][1] === entries[1][1]) {
+      return '⚖️ Phiếu bầu đang hòa giữa nhiều người — nếu bạn chưa bỏ phiếu, lá phiếu của bạn có thể quyết định kết quả hôm nay.';
+    }
+    if (entries.length === 1 && entries[0][1] >= Math.ceil(alive.length / 2)) {
+      const target = byId(state.players, entries[0][0]);
+      return target ? `🔥 ${target.name} đang bị nghi ngờ nhiều nhất. Hãy cân nhắc kỹ trước khi theo số đông — Sói giỏi đổ tội cho người vô tội.` : null;
+    }
+  }
+  if (state.phase === 'night' && !isWolf && alive.length > 0) {
+    const ratio = wolvesAlive / alive.length;
+    if (ratio >= 0.4) return '⚠️ Tỉ lệ Sói còn lại khá cao so với Dân làng — ban ngày mai cần lập luận thật chặt chẽ, tránh treo nhầm phe mình.';
+  }
+  if (isWolf && state.phase === 'day') {
+    return '🎭 Hãy chủ động đặt câu hỏi thay vì im lặng — sự im lặng bất thường dễ khiến bạn bị nghi ngờ hơn là tham gia tranh luận một cách "vô tội".';
+  }
+  return null;
+}
+
+/* =========================================================
+   SOUND & VIBRATION — synthesized SFX via Web Audio API
+   (no external audio files needed → works offline, no copyright)
+   ========================================================= */
+const SFX = {
+  ctx: null, enabled: JSON.parse(localStorage.getItem('masoi:sound') ?? 'true'),
+  vibrateEnabled: JSON.parse(localStorage.getItem('masoi:vibrate') ?? 'true'),
+  ensureCtx() { if (!this.ctx) { const AC = window.AudioContext || window.webkitAudioContext; if (AC) this.ctx = new AC(); } return this.ctx; },
+  tone(freq, dur, type = 'sine', gainStart = 0.18) {
+    if (!this.enabled) return;
+    const ctx = this.ensureCtx(); if (!ctx) return;
+    if (ctx.state === 'suspended') ctx.resume();
+    const osc = ctx.createOscillator(); const gain = ctx.createGain();
+    osc.type = type; osc.frequency.value = freq;
+    gain.gain.setValueAtTime(gainStart, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(); osc.stop(ctx.currentTime + dur);
+  },
+  night() { this.tone(220, 1.1, 'sine'); this.tone(164, 1.3, 'triangle', 0.1); },
+  day() { this.tone(523, 0.25, 'triangle'); setTimeout(() => this.tone(659, 0.35, 'triangle'), 140); },
+  death() { this.tone(140, 0.5, 'sawtooth', 0.16); setTimeout(() => this.tone(90, 0.7, 'sawtooth', 0.14), 180); },
+  vote() { this.tone(300, 0.18, 'square', 0.1); },
+  bell() { this.tone(880, 0.5, 'sine', 0.14); setTimeout(() => this.tone(1046, 0.6, 'sine', 0.1), 120); },
+  win() { [523, 659, 784, 1046].forEach((f, i) => setTimeout(() => this.tone(f, 0.5, 'triangle', 0.14), i * 130)); },
+  lose() { [392, 349, 311, 261].forEach((f, i) => setTimeout(() => this.tone(f, 0.6, 'sawtooth', 0.12), i * 150)); },
+  chat() { this.tone(700, 0.08, 'square', 0.06); },
+  vibrate(pattern) { if (this.vibrateEnabled && navigator.vibrate) navigator.vibrate(pattern); }
+};
+function sfxForEvent(type) {
+  switch (type) {
+    case 'death': SFX.death(); SFX.vibrate([80, 40, 80]); break;
+    case 'vote_result': SFX.bell(); SFX.vibrate(60); break;
+    case 'night_result': SFX.tone(196, 0.6, 'sine', 0.08); break;
+    case 'phase': SFX.tone(440, 0.3, 'triangle', 0.1); break;
+    case 'end': SFX.vibrate([100, 60, 100, 60, 200]); break;
+    default: break;
+  }
+}
 
 /* ===== script.js ===== */
 /* =========================================================
@@ -696,7 +954,7 @@ function newRoom(code, hostId, hostName) {
     phase: 'lobby', dayNumber: 0, roleList: [],
     nightActions: { wolfTarget: null, wolfVotes: {}, seerTarget: null, seerLog: {}, witchSaveUsed: false, witchPoisonUsed: false, witchPoisonTarget: null, witchSaveTarget: null, guardTarget: null, guardLastTarget: null, cupidPair: [], cupidDone: false, huntShotPending: null, huntShotTarget: null },
     votes: {}, chat: [], events: [], narrator: 'Chào mừng đến với ngôi làng nhỏ dưới ánh trăng. Hãy chờ chủ phòng bắt đầu…',
-    winner: null, timerEndsAt: null
+    winner: null, timerEndsAt: null, stats: { voteHistory: [] }
   };
 }
 
@@ -742,7 +1000,7 @@ const BACKEND_LOCAL = {
     room.players.forEach((p, i) => { p.role = roleList[i]; p.alive = true; });
     room.roleList = roleList;
     room.phase = 'night'; room.dayNumber = 1;
-    room.narrator = 'Đêm đầu tiên buông xuống. Cả làng chìm vào giấc ngủ…';
+    room.narrator = narratorLine('nightStart', room.code + '-n-1', { d: 1 });
     room.timerEndsAt = nowTs() + CONFIG.PHASE_SECONDS.night * 1000;
     pushEvent(room, 'phase', 'Trò chơi bắt đầu! Đêm 1.');
     saveRoom(room);
@@ -767,8 +1025,20 @@ const BACKEND_LOCAL = {
     const p = byId(room.players, playerId);
     if (!p) return;
     if (channel === 'wolf' && !(p.role === 'wolf' || p.role === 'wolfcub')) return;
-    room.chat.push({ id: uid(), ts: nowTs(), channel, from: playerId, fromName: p.name, text: text.slice(0, 240) });
+    room.chat.push({ id: uid(), ts: nowTs(), channel, from: playerId, fromName: p.name, text: text.slice(0, 240), reactions: {} });
     if (room.chat.length > 400) room.chat = room.chat.slice(-400);
+    saveRoom(room);
+  },
+  async reactChat(code, playerId, messageId, emoji) {
+    const room = loadRoom(code);
+    if (!room) return;
+    const msg = room.chat.find(m => m.id === messageId);
+    if (!msg) return;
+    msg.reactions = msg.reactions || {};
+    const list = msg.reactions[emoji] || [];
+    const idx = list.indexOf(playerId);
+    if (idx === -1) list.push(playerId); else list.splice(idx, 1);
+    msg.reactions[emoji] = list;
     saveRoom(room);
   },
   async advancePhase(code, playerId) {
@@ -817,7 +1087,8 @@ function filterState(room, playerId) {
       wolfTargetVisible: (me && (me.role === 'wolf' || me.role === 'wolfcub')) ? room.nightActions.wolfTarget : null,
       huntShotPending: room.nightActions.huntShotPending
     },
-    roleCounts: roleCountSummary(room.players.length)
+    roleCounts: roleCountSummary(room.players.length),
+    stats: gameOver ? room.stats : null
   };
 }
 
@@ -892,9 +1163,9 @@ function resolveNight(room) {
   if (NA.witchPoisonTarget) killPlayer(room, NA.witchPoisonTarget, dead);
 
   if (dead.length === 0) {
-    pushEvent(room, 'night_result', 'Một đêm yên bình trôi qua — không ai thiệt mạng!');
+    pushEvent(room, 'night_result', narratorLine('noDeathNight', room.code + '-' + room.dayNumber));
   } else {
-    dead.forEach(p => pushEvent(room, 'death', `${p.name} đã không qua khỏi trong đêm qua. (${ROLES[p.role].icon} ${ROLES[p.role].name})`));
+    dead.forEach(p => pushEvent(room, 'death', narratorLine('deathNight', room.code + '-' + room.dayNumber + '-' + p.id, { name: p.name, roleIcon: ROLES[p.role].icon, roleName: ROLES[p.role].name })));
   }
 
   NA.guardLastTarget = NA.guardTarget;
@@ -918,11 +1189,13 @@ function resolveVote(room) {
     else if (n === bestN) { tie = true; }
   });
   const dead = [];
+  room.stats = room.stats || { voteHistory: [] };
+  room.stats.voteHistory.push({ dayNumber: room.dayNumber, tally: tally });
   if (best && !tie && bestN > 0) {
     killPlayer(room, best, dead);
-    dead.forEach(p => pushEvent(room, 'vote_result', `Dân làng đã treo cổ ${p.name}. (${ROLES[p.role].icon} ${ROLES[p.role].name})`));
+    dead.forEach(p => pushEvent(room, 'vote_result', narratorLine('voteResult', room.code + '-v-' + room.dayNumber + '-' + p.id, { name: p.name, roleIcon: ROLES[p.role].icon, roleName: ROLES[p.role].name })));
   } else {
-    pushEvent(room, 'vote_result', 'Số phiếu hòa nhau — không ai bị treo cổ hôm nay.');
+    pushEvent(room, 'vote_result', narratorLine('voteTie', room.code + '-v-' + room.dayNumber));
   }
   room.votes = {};
   return dead;
@@ -943,11 +1216,11 @@ function advancePhaseEngine(room) {
     const winner = checkWinCondition(room);
     if (winner) return endGame(room, winner);
     room.phase = 'day';
-    room.narrator = `Bình minh ló dạng. Cả làng thức dậy và bắt đầu bàn tán về những gì đã xảy ra trong đêm ${room.dayNumber}.`;
+    room.narrator = narratorLine('dayStart', room.code + '-d-' + room.dayNumber, { d: room.dayNumber });
     room.timerEndsAt = nowTs() + CONFIG.PHASE_SECONDS.day * 1000;
   } else if (room.phase === 'day') {
     room.phase = 'vote';
-    room.narrator = 'Đã đến giờ bỏ phiếu! Hãy chọn ai là kẻ đáng ngờ nhất để treo cổ.';
+    room.narrator = narratorLine('voteStart', room.code + '-vs-' + room.dayNumber);
     room.timerEndsAt = nowTs() + CONFIG.PHASE_SECONDS.vote * 1000;
   } else if (room.phase === 'vote') {
     resolveVote(room);
@@ -955,18 +1228,37 @@ function advancePhaseEngine(room) {
     if (winner) return endGame(room, winner);
     room.dayNumber += 1;
     room.phase = 'night';
-    room.narrator = `Màn đêm thứ ${room.dayNumber} lại buông xuống. Sói lại thức dậy đi săn…`;
+    room.narrator = narratorLine('nightStart', room.code + '-n-' + room.dayNumber, { d: room.dayNumber });
     room.timerEndsAt = nowTs() + CONFIG.PHASE_SECONDS.night * 1000;
   }
+}
+
+function computeGameStats(room) {
+  const msgCounts = {};
+  room.chat.forEach(m => { msgCounts[m.from] = (msgCounts[m.from] || 0) + 1; });
+  const survivalDays = {};
+  room.players.forEach(p => { survivalDays[p.id] = room.dayNumber; });
+  room.events.filter(e => e.type === 'death' || e.type === 'vote_result').forEach(() => {});
+  // score each player: chat activity + survival + win bonus, to crown an MVP
+  const winnerIsWolf = room.winner === 'wolf';
+  const scored = room.players.map(p => {
+    const won = (winnerIsWolf && (p.role === 'wolf' || p.role === 'wolfcub')) || (!winnerIsWolf && !(p.role === 'wolf' || p.role === 'wolfcub'));
+    const chatScore = Math.min(msgCounts[p.id] || 0, 20);
+    const surviveScore = p.alive ? 10 : 0;
+    const winScore = won ? 15 : 0;
+    return { id: p.id, name: p.name, role: p.role, score: chatScore + surviveScore + winScore, chatCount: msgCounts[p.id] || 0, alive: p.alive, won };
+  }).sort((a, b) => b.score - a.score);
+  room.stats = room.stats || { voteHistory: [] };
+  room.stats.mvp = scored[0] || null;
+  room.stats.chatActivity = scored.map(s => ({ id: s.id, name: s.name, count: s.chatCount }));
 }
 
 function endGame(room, winner) {
   room.phase = 'ended';
   room.winner = winner;
-  room.narrator = winner === 'wolf'
-    ? 'Bầy Sói đã áp đảo! Ngôi làng chìm trong bóng tối vĩnh viễn.'
-    : 'Dân làng đã tiêu diệt toàn bộ Sói! Ánh mặt trời trở lại ngôi làng.';
+  room.narrator = winner === 'wolf' ? narratorLine('winWolf', room.code) : narratorLine('winVillage', room.code);
   pushEvent(room, 'end', room.narrator);
+  computeGameStats(room);
   room.players.forEach(p => {
     const onWinningTeam = (winner === 'wolf' && (p.role === 'wolf' || p.role === 'wolfcub')) ||
                            (winner === 'village' && !(p.role === 'wolf' || p.role === 'wolfcub'));
@@ -998,6 +1290,7 @@ const BACKEND_REMOTE = {
   async nightAction(code, playerId, action, targetId) { return gasCall('nightAction', { roomCode: code, playerId, nightActionType: action, targetId }); },
   async dayVote(code, playerId, targetId) { return gasCall('dayVote', { roomCode: code, playerId, targetId }); },
   async sendChat(code, playerId, channel, text) { return gasCall('sendChat', { roomCode: code, playerId, channel, text }); },
+  async reactChat(code, playerId, messageId, emoji) { return gasCall('reactChat', { roomCode: code, playerId, messageId, emoji }); },
   async advancePhase(code, playerId) { return gasCall('advancePhase', { roomCode: code, playerId }); },
   async getLeaderboard() { return gasCall('getLeaderboard', {}); },
 };
@@ -1092,13 +1385,29 @@ function renderRoleCard(role) {
     </div>`;
 }
 
+const QUICK_REACTIONS = ['👍', '😂', '😱', '🤔', '🐺'];
 function renderChat(state) {
   const log = qs('#chatLog');
   const msgs = state.chat.filter(m => m.channel === APP.channel);
+  const prevCount = APP._lastChatCount || 0;
+  if (msgs.length > prevCount && APP._lastChatCount !== undefined) SFX.chat();
+  APP._lastChatCount = msgs.length;
   log.innerHTML = msgs.map(m => {
     const mine = m.from === APP.playerId;
-    return `<div class="msg ${mine ? 'mine' : 'other'}"><span class="who">${mine ? 'Bạn' : anonName(m.from, state)}</span>${escapeHtml(m.text)}</div>`;
+    const reactions = m.reactions || {};
+    const reactionPills = Object.entries(reactions).filter(([, ids]) => ids && ids.length).map(([emoji, ids]) => {
+      const mineReacted = ids.includes(APP.playerId);
+      return `<button class="reaction-pill ${mineReacted ? 'mine-reacted' : ''}" data-msg="${m.id}" data-emoji="${emoji}">${emoji} ${ids.length}</button>`;
+    }).join('');
+    const picker = QUICK_REACTIONS.map(e => `<button data-msg="${m.id}" data-emoji="${e}">${e}</button>`).join('');
+    return `<div class="msg-wrap ${mine ? 'mine' : 'other'}">
+      <div class="msg ${mine ? 'mine' : 'other'}"><span class="who">${mine ? 'Bạn' : anonName(m.from, state)}</span>${escapeHtml(m.text)}</div>
+      <div class="reaction-row">${reactionPills}<span class="reaction-picker">${picker}</span></div>
+    </div>`;
   }).join('') || `<div class="msg system">Chưa có tin nhắn nào trong kênh này.</div>`;
+  qsa('.reaction-row [data-msg]', log).forEach(btn => {
+    btn.onclick = () => { Backend.reactChat(APP.roomCode, APP.playerId, btn.dataset.msg, btn.dataset.emoji); refresh(); };
+  });
   log.scrollTop = log.scrollHeight;
 }
 function anonName(playerId, state) {
@@ -1112,9 +1421,10 @@ function renderTips(state) {
   const body = qs('#tipsBody');
   if (!state.myRole) { body.innerHTML = '<p class="center-note">Chiến thuật sẽ hiện ra khi bạn nhận vai trò.</p>'; return; }
   const r = ROLES[state.myRole];
+  const tip = smartTip(state);
   body.innerHTML = `<div class="tip-card">${r.tip}</div>` + (state.myRole === 'seer' && Object.keys(state.seerLog || {}).length
     ? `<div class="tip-card">📜 Kết quả soi: ` + Object.entries(state.seerLog).map(([d, log]) => `Đêm ${d}: <b>${log.targetName}</b> là ${log.isWolf ? '🐺 Sói' : '👤 Dân làng'}`).join(' · ') + `</div>`
-    : '');
+    : '') + (tip ? `<div class="tip-card smart">🧠 <b>Gợi ý thông minh:</b> ${tip}</div>` : '');
 }
 
 function renderLeaderboard(list) {
@@ -1155,12 +1465,15 @@ function renderNarrator(state) {
 
 function startTimerTick(state) {
   clearInterval(APP.timerTick);
-  if (!state.timerEndsAt) { qs('#timerFill').style.width = '0%'; return; }
+  const numEl = qs('#timerNum');
+  if (!state.timerEndsAt) { qs('#timerFill').style.width = '0%'; if (numEl) numEl.textContent = '--'; return; }
   const totalMap = { night: CONFIG.PHASE_SECONDS.night, day: CONFIG.PHASE_SECONDS.day, vote: CONFIG.PHASE_SECONDS.vote };
   const total = (totalMap[state.phase] || 60) * 1000;
   const tick = () => {
     const remain = Math.max(0, state.timerEndsAt - nowTs());
     qs('#timerFill').style.width = Math.max(0, (remain / total) * 100) + '%';
+    const secs = Math.ceil(remain / 1000);
+    if (numEl) { numEl.textContent = secs + 's'; numEl.classList.toggle('urgent', secs <= 10 && secs > 0); }
   };
   tick();
   APP.timerTick = setInterval(tick, 1000);
@@ -1214,7 +1527,7 @@ function renderActionArea(state) {
     Object.values(state.votes || {}).forEach(t => counts[t] = (counts[t] || 0) + 1);
     if (!alive) { hint.textContent = 'Bạn đã bị loại — chỉ có thể xem kết quả bỏ phiếu.'; renderCampfire(campfire, state.players, { voteCounts: counts }); return; }
     hint.textContent = 'Bỏ phiếu treo cổ người bạn nghi ngờ nhất:';
-    renderCampfire(campfire, state.players, { selectable: true, selectedId: state.votes ? state.votes[APP.playerId] : null, voteCounts: counts, onSelect: (id) => { Backend.dayVote(APP.roomCode, APP.playerId, id); toast('Đã ghi nhận phiếu bầu của bạn.', 'info', '🗳️'); refresh(); } });
+    renderCampfire(campfire, state.players, { selectable: true, selectedId: state.votes ? state.votes[APP.playerId] : null, voteCounts: counts, onSelect: (id) => { SFX.vote(); SFX.vibrate(30); Backend.dayVote(APP.roomCode, APP.playerId, id); toast('Đã ghi nhận phiếu bầu của bạn.', 'info', '🗳️'); refresh(); } });
   } else {
     renderCampfire(campfire, state.players, { revealAll: state.phase === 'ended' });
   }
@@ -1242,6 +1555,7 @@ function renderEvents(state) {
     const kindMap = { death: 'danger', vote_result: 'danger', night_result: 'success', join: 'info', leave: 'info', phase: 'info', end: 'success' };
     const iconMap = { death: '🩸', vote_result: '⚖️', night_result: '🌙', join: '🚪', leave: '👋', phase: '📯', end: '🏆' };
     toast(ev.text, kindMap[ev.type] || 'info', iconMap[ev.type] || '🔔');
+    if (APP.lastEventCursor > 0 || news.length < 5) sfxForEvent(ev.type);
   });
   APP.lastEventCursor = state.events.length;
 
@@ -1262,8 +1576,51 @@ function renderResultScreen(state) {
       <h4>${p.name}${p.id === APP.playerId ? ' (bạn)' : ''}</h4>
       <span>${ROLES[p.role] ? ROLES[p.role].name : ''} ${p.alive ? '' : '💀'}</span>
     </div>`).join('');
+  if (APP._lastResultShown !== state.code + '-' + state.winner) {
+    const won = me ? (state.winner === 'wolf') === (me.role === 'wolf' || me.role === 'wolfcub') : false;
+    won ? SFX.win() : SFX.lose();
+    SFX.vibrate(won ? [80, 40, 80, 40, 160] : [200]);
+    APP._lastResultShown = state.code + '-' + state.winner;
+  }
+  renderStatsPanel(state);
   renderHistory();
   refreshLeaderboard();
+}
+
+function renderStatsPanel(state) {
+  const body = qs('#statsBody');
+  const stats = state.stats;
+  if (!stats) { body.innerHTML = '<p class="center-note">Không có dữ liệu thống kê cho trận này.</p>'; return; }
+  let html = '';
+  if (stats.mvp) {
+    const mvpRole = ROLES[stats.mvp.role];
+    html += `<div class="mvp-card">
+      <div class="medal">🏅</div>
+      <div>
+        <h4>MVP trận đấu: ${stats.mvp.name}${stats.mvp.id === APP.playerId ? ' (bạn)' : ''}</h4>
+        <p>${mvpRole ? mvpRole.icon + ' ' + mvpRole.name : ''} · ${stats.mvp.chatCount} tin nhắn · ${stats.mvp.alive ? 'sống sót đến cuối' : 'đã hy sinh'} ${stats.mvp.won ? '· thuộc phe chiến thắng' : ''}</p>
+      </div>
+    </div>`;
+  }
+  if (stats.chatActivity && stats.chatActivity.length) {
+    const maxCount = Math.max(1, ...stats.chatActivity.map(c => c.count));
+    html += `<div class="section-title" style="margin-top:18px;"><h3 style="font-size:14px;">💬 Mức độ tham gia trò chuyện</h3></div>
+      <div class="stat-bars">` + stats.chatActivity.slice(0, 10).map(c => `
+        <div class="stat-bar-row">
+          <span class="lbl">${c.name}</span>
+          <span class="stat-bar-track"><span class="stat-bar-fill" style="width:${(c.count / maxCount) * 100}%"></span></span>
+          <span class="val">${c.count}</span>
+        </div>`).join('') + `</div>`;
+  }
+  if (stats.voteHistory && stats.voteHistory.length) {
+    html += `<div class="section-title" style="margin-top:18px;"><h3 style="font-size:14px;">🗳️ Diễn biến bỏ phiếu qua các ngày</h3></div>
+      <div class="timeline">` + stats.voteHistory.map(v => {
+        const entries = Object.entries(v.tally || {}).sort((a, b) => b[1] - a[1]);
+        const desc = entries.length ? entries.map(([id, n]) => { const p = byId(state.players, id); return `<b>${p ? p.name : '?'}</b>: ${n} phiếu`; }).join(', ') : 'không có phiếu';
+        return `<div class="tl-item">Ngày ${v.dayNumber}: ${desc}</div>`;
+      }).join('') + `</div>`;
+  }
+  body.innerHTML = html || '<p class="center-note">Chưa có đủ dữ liệu để thống kê.</p>';
 }
 
 async function refreshLeaderboard() {
@@ -1345,6 +1702,15 @@ if (bus) {
 document.addEventListener('DOMContentLoaded', () => {
   refreshLeaderboard();
 
+  const soundBtn = qs('#btnSoundToggle'), vibrateBtn = qs('#btnVibrateToggle');
+  const syncToggles = () => {
+    soundBtn.textContent = SFX.enabled ? '🔊' : '🔇'; soundBtn.classList.toggle('off', !SFX.enabled);
+    vibrateBtn.textContent = SFX.vibrateEnabled ? '📳' : '📴'; vibrateBtn.classList.toggle('off', !SFX.vibrateEnabled);
+  };
+  syncToggles();
+  soundBtn.onclick = () => { SFX.enabled = !SFX.enabled; localStorage.setItem('masoi:sound', JSON.stringify(SFX.enabled)); syncToggles(); if (SFX.enabled) SFX.chat(); };
+  vibrateBtn.onclick = () => { SFX.vibrateEnabled = !SFX.vibrateEnabled; localStorage.setItem('masoi:vibrate', JSON.stringify(SFX.vibrateEnabled)); syncToggles(); if (SFX.vibrateEnabled) SFX.vibrate(40); };
+
   qs('#tabCreate').onclick = () => { qs('#tabCreate').classList.add('active'); qs('#tabJoin').classList.remove('active'); qs('#formCreate').classList.remove('hidden'); qs('#formJoin').classList.add('hidden'); };
   qs('#tabJoin').onclick = () => { qs('#tabJoin').classList.add('active'); qs('#tabCreate').classList.remove('active'); qs('#formJoin').classList.remove('hidden'); qs('#formCreate').classList.add('hidden'); };
 
@@ -1374,13 +1740,13 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   qs('#btnStartGame').onclick = async () => {
-    try { await Backend.startGame(APP.roomCode, APP.playerId); refresh(); }
+    try { SFX.night(); await Backend.startGame(APP.roomCode, APP.playerId); refresh(); }
     catch (e) { toast(e.message, 'danger', '⚠️'); }
   };
 
   qs('#btnLeaveLobby').onclick = async () => { await Backend.leaveRoom(APP.roomCode, APP.playerId); backToLanding(); };
 
-  qs('#btnAdvancePhase').onclick = async () => { await Backend.advancePhase(APP.roomCode, APP.playerId); refresh(); };
+  qs('#btnAdvancePhase').onclick = async () => { SFX.tone(440, 0.2, 'triangle', 0.1); await Backend.advancePhase(APP.roomCode, APP.playerId); refresh(); };
 
   qs('#btnBackToLanding').onclick = () => backToLanding();
 
