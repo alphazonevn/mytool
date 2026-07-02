@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thần Số Học Chuyên Sâu | Giải Mã Bản Ngã</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        mystic: {
+                            50: '#f5f3ff', 100: '#ede9fe', 200: '#ddd6fe', 300: '#c4b5fd',
+                            400: '#a78bfa', 500: '#8b5cf6', 600: '#7c3aed', 700: '#6d28d9',
+                            800: '#5b21b6', 900: '#31105e', 950: '#1e0a3c',
+                        },
+                        gold: {
+                            300: '#fde047', 400: '#facc15', 500: '#eab308',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'slide-up': 'slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'pulse-glow': 'pulseGlow 3s ease-in-out infinite',
+                        'spin-slow': 'spin 15s linear infinite',
+                    },
+                    keyframes: {
+                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                        slideUp: { '0%': { opacity: '0', transform: 'translateY(30px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+                        pulseGlow: { '0%, 100%': { opacity: 0.4, transform: 'scale(1)' }, '50%': { opacity: 0.8, transform: 'scale(1.05)' } }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background: radial-gradient(circle at 50% 0%, #31105e 0%, #0f0518 80%);
+            color: #f8fafc;
+            min-height: 100vh;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        
+        /* Hiệu ứng kính mờ (Glassmorphism) tinh tế hơn */
+        .glass-panel {
+            background: rgba(30, 10, 60, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(167, 139, 250, 0.15);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+        
+        .glass-panel-light {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .input-mystic {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(167, 139, 250, 0.3);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .input-mystic:focus {
+            outline: none;
+            border-color: #a78bfa;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+            background: rgba(0, 0, 0, 0.4);
+        }
+        ::-webkit-calendar-picker-indicator { filter: invert(1) opacity(0.7); cursor: pointer; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+        ::-webkit-scrollbar-thumb { background: rgba(139, 92, 246, 0.5); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(167, 139, 246, 0.8); }
+
+        .mystic-bg-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23a78bfa' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .number-badge {
+            text-shadow: 0 0 20px rgba(167, 139, 250, 0.6);
+        }
+
+        /* Accordion transition */
+        .accordion-content {
+            transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        .accordion-content.open {
+            max-height: 1000px; /* Số lớn đủ để chứa nội dung */
+            opacity: 1;
+        }
+        
+        .loader-ring {
+            border: 4px solid rgba(167, 139, 250, 0.1);
+            border-top: 4px solid #a78bfa;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+    </style>
+</head>
+<body class="mystic-bg-pattern relative font-sans text-gray-200">
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
+        <div class="absolute top-[-20%] left-[-10%] w-[60vw] h-[60vw] rounded-full bg-mystic-800 mix-blend-screen filter blur-[150px] opacity-40 animate-pulse-glow"></div>
+        <div class="absolute bottom-[-20%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-mystic-600 mix-blend-screen filter blur-[120px] opacity-20 animate-pulse-glow" style="animation-delay: 2s;"></div>
+    </div>
+
+    <div class="container mx-auto px-4 py-8 md:py-16 max-w-5xl relative z-10 min-h-screen flex flex-col">
+        
+        <header class="text-center mb-10 md:mb-16 animate-slide-up">
+            <div class="inline-block relative mb-4">
+                <svg class="w-20 h-20 text-mystic-400/30 animate-spin-slow absolute -top-10 -left-10 z-0" viewBox="0 0 100 100" fill="none">
+                    <circle cx="50" cy="50" r="48" stroke="currentColor" stroke-width="1" stroke-dasharray="5 5"/>
+                    <circle cx="50" cy="50" r="38" stroke="currentColor" stroke-width="0.5"/>
+                    <path d="M50 10 L50 90 M10 50 L90 50 M22 22 L78 78 M22 78 L78 22" stroke="currentColor" stroke-width="0.5" opacity="0.5"/>
+                </svg>
+                <h1 class="font-serif text-4xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-br from-white via-mystic-100 to-mystic-400 text-gradient relative z-10 pb-2">
+                    STAR MAPPING
+                </h1>
+                <p class="font-serif text-lg md:text-2xl text-mystic-300 mt-2 italic tracking-wide">Giải mã bí ẩn cuộc đời bạn qua những con số</p>
+            </div>
+        </header>
+
+        <main class="flex-grow flex flex-col justify-center items-center w-full">
+            <div id="inputSection" class="w-full max-w-2xl glass-panel rounded-3xl p-6 md:p-10 animate-slide-up" style="animation-delay: 0.1s;">
+                <p class="text-center text-gray-300 mb-8 leading-relaxed">
+                    Hệ thống phân tích chuyên sâu dựa trên thuật toán Pythagoras kết hợp chiêm tinh số học. Vui lòng cung cấp thông tin chính xác.
+                </p>
+                <form id="numerologyForm" class="space-y-6">
+                    <div class="space-y-5">
+                        <div class="relative group">
+                            <label for="fullName" class="block text-xs font-semibold text-mystic-300 uppercase tracking-widest mb-1">Họ và tên khai sinh</label>
+                            <input type="text" id="fullName" required placeholder="Nhập đầy đủ có dấu hoặc không dấu..." 
+                                class="w-full input-mystic rounded-xl px-5 py-4 text-lg">
+                            <div class="absolute inset-y-0 right-0 bottom-0 top-6 flex items-center pr-4 pointer-events-none text-mystic-400 opacity-50 group-focus-within:opacity-100 transition-opacity">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                            </div>
+                        </div>
+                        
+                        <div class="relative group">
+                            <label for="birthDate" class="block text-xs font-semibold text-mystic-300 uppercase tracking-widest mb-1">Ngày sinh dương lịch</label>
+                            <input type="date" id="birthDate" required 
+                                class="w-full input-mystic rounded-xl px-5 py-4 text-lg">
+                        </div>
+                    </div>
+
+                    <div class="pt-6 text-center">
+                        <button type="submit" class="w-full md:w-auto relative inline-flex items-center justify-center px-10 py-4 font-bold text-white transition-all duration-300 bg-gradient-to-r from-mystic-700 to-mystic-500 font-serif text-lg rounded-xl hover:from-mystic-600 hover:to-mystic-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-mystic-900 focus:ring-mystic-500 shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:shadow-[0_0_30px_rgba(167,139,250,0.6)] transform hover:-translate-y-1 overflow-hidden group">
+                            <span class="absolute w-0 h-0 transition-all duration-500 ease-out bg-white rounded-full group-hover:w-full group-hover:h-56 opacity-10"></span>
+                            <span class="relative flex items-center gap-3">
+                                Giải Mã
+                                <svg class="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="loadingSection" class="hidden flex flex-col items-center justify-center py-20 w-full">
+                <div class="loader-ring mb-6"></div>
+                <h3 class="font-serif text-2xl text-mystic-200 animate-pulse">Đang kết nối năng lượng...</h3>
+                <p class="text-sm text-mystic-400 mt-2" id="loadingText">Phân tích tần số rung động của tên...</p>
+            </div>
+
+            <div id="resultsSection" class="hidden w-full space-y-8 animate-fade-in pb-10">
+                
+                <!-- Bảng tên & Chỉ số chủ đạo -->
+                <div class="glass-panel rounded-3xl p-8 md:p-12 text-center relative overflow-hidden">
+                    <div class="absolute top-[-50px] right-[-50px] opacity-10">
+                        <svg width="200" height="200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M12 2L15 9H22L16.5 14L18.5 22L12 17.5L5.5 22L7.5 14L2 9H9L12 2Z"></path></svg>
+                    </div>
+                    
+                    <h2 class="text-sm md:text-base text-mystic-300 font-semibold tracking-widest uppercase mb-2">Bản báo cáo dành cho</h2>
+                    <h3 id="resName" class="font-serif text-3xl md:text-5xl font-bold text-white mb-8"></h3>
+                    
+                    <div class="inline-block relative">
+                        <div class="absolute inset-0 bg-mystic-500 blur-3xl opacity-30 rounded-full"></div>
+                        <div class="relative w-40 h-40 md:w-48 md:h-48 rounded-full border border-mystic-400/50 bg-mystic-900/80 flex flex-col items-center justify-center mx-auto shadow-[0_0_40px_rgba(139,92,246,0.3)] z-10">
+                            <span class="text-xs uppercase tracking-widest text-mystic-300 mb-1">Đường Đời</span>
+                            <span id="resLifepath" class="font-serif text-6xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-mystic-300 number-badge"></span>
+                        </div>
+                    </div>
+                    <p id="resLifepathTitle" class="mt-6 font-serif text-xl md:text-2xl text-gold-400 font-semibold"></p>
+                    <p id="resLifepathBrief" class="mt-4 max-w-2xl mx-auto text-gray-300 leading-relaxed"></p>
+                </div>
+
+                <!-- Grid các chỉ số thứ cấp (Tổng quan nhanh) -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                    <div class="glass-panel-light glass-panel rounded-2xl p-4 md:p-6 text-center hover:bg-white/5 transition-colors">
+                        <p class="text-xs text-mystic-300 uppercase tracking-wider mb-2">Sứ Mệnh</p>
+                        <p id="resDestiny" class="font-serif text-4xl text-white font-bold"></p>
+                    </div>
+                    <div class="glass-panel-light glass-panel rounded-2xl p-4 md:p-6 text-center hover:bg-white/5 transition-colors">
+                        <p class="text-xs text-mystic-300 uppercase tracking-wider mb-2">Linh Hồn</p>
+                        <p id="resSoul" class="font-serif text-4xl text-white font-bold"></p>
+                    </div>
+                    <div class="glass-panel-light glass-panel rounded-2xl p-4 md:p-6 text-center hover:bg-white/5 transition-colors">
+                        <p class="text-xs text-mystic-300 uppercase tracking-wider mb-2">Nhân Cách</p>
+                        <p id="resPersonality" class="font-serif text-4xl text-white font-bold"></p>
+                    </div>
+                    <div class="glass-panel-light glass-panel rounded-2xl p-4 md:p-6 text-center hover:bg-white/5 transition-colors">
+                        <p class="text-xs text-mystic-300 uppercase tracking-wider mb-2">Thái Độ</p>
+                        <p id="resAttitude" class="font-serif text-4xl text-white font-bold"></p>
+                    </div>
+                </div>
+
+                <div class="space-y-4" id="detailsContainer">
+                    <h3 class="font-serif text-2xl text-white border-b border-mystic-500/30 pb-2 mt-10 mb-6">Giải Mã Chi Tiết</h3>
+                    
+                    <!-- Các Card Chi tiết sẽ được JS render ở đây -->
+                </div>
+
+                <!-- Khu vực Chỉ số bổ sung (Năm cá nhân, Chỉ số thiếu) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                    <!-- Năm cá nhân -->
+                    <div class="glass-panel rounded-2xl p-6 relative overflow-hidden">
+                        <div class="absolute -right-10 -top-10 w-32 h-32 bg-gold-500/10 rounded-full blur-2xl"></div>
+                        <h4 class="font-serif text-xl text-mystic-100 flex items-center gap-2 mb-4">
+                            <svg class="w-5 h-5 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            Năm Cá Nhân <span id="currentYearDisplay"></span>
+                        </h4>
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-16 h-16 rounded-full bg-mystic-800 border border-mystic-500 flex items-center justify-center shrink-0">
+                                <span id="resPersonalYear" class="font-serif text-3xl font-bold text-gold-400"></span>
+                            </div>
+                            <p id="resPyTitle" class="font-semibold text-lg text-white"></p>
+                        </div>
+                        <p id="resPyDesc" class="text-sm text-gray-300 leading-relaxed"></p>
+                    </div>
+
+                    <!-- Chỉ số thiếu & Trưởng thành -->
+                    <div class="glass-panel rounded-2xl p-6 flex flex-col justify-between">
+                        <div>
+                            <h4 class="font-serif text-xl text-mystic-100 mb-4 border-b border-mystic-500/20 pb-2">Năng Lượng Bị Khuyết (Chỉ số thiếu)</h4>
+                            <div id="resMissingNumbers" class="flex flex-wrap gap-2 mb-4">
+                                <!-- Render tags -->
+                            </div>
+                            <p class="text-sm text-gray-300 leading-relaxed mb-6">Đây là những kỹ năng/năng lượng bạn cần chủ động học hỏi và bổ sung trong kiếp sống này vì nó không có sẵn trong tên của bạn.</p>
+                        </div>
+                        
+                        <div class="bg-mystic-900/50 rounded-xl p-4 border border-mystic-700/50">
+                            <h5 class="text-sm font-semibold text-mystic-300 uppercase mb-1">Chỉ số Trưởng Thành: <span id="resMaturity" class="text-white text-lg ml-1 font-serif"></span></h5>
+                            <p class="text-xs text-gray-400">Mục tiêu và thành tựu bạn hướng tới ở nửa sau cuộc đời (từ tuổi 35-40 trở đi).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nút xem lại -->
+                <div class="text-center pt-8">
+                    <button id="resetBtn" class="px-8 py-3 rounded-full border border-mystic-500 text-mystic-200 hover:bg-mystic-800 hover:text-white transition-all text-sm font-medium">
+                        ← Xem cho người khác
+                    </button>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="text-center text-xs text-mystic-400 mt-12 pb-6">
+            <p>Hệ thống Thần Số Học chuyên sâu • Thiết kế tối ưu cho trải nghiệm khai sáng</p>
+        </footer>
+    </div>
+
+    <script>
+        // 1. DATA: BẢNG QUY ĐỔI & Ý NGHĨA CHUYÊN SÊU
+        const pythagorasChart = {
+            'A':1, 'B':2, 'C':3, 'D':4, 'E':5, 'F':6, 'G':7, 'H':8, 'I':9,
+            'J':1, 'K':2, 'L':3, 'M':4, 'N':5, 'O':6, 'P':7, 'Q':8, 'R':9,
+            'S':1, 'T':2, 'U':3, 'V':4, 'W':5, 'X':6, 'Y':7, 'Z':8
+        };
+        const vnVowelsList = ['A', 'E', 'I', 'O', 'U', 'Y'];
+
+        // Cơ sở dữ liệu ý nghĩa chuyên sâu
+        const numberData = {
+            1: {
+                title: "Người Lãnh Đạo Tiên Phong",
+                overview: "Số 1 đại diện cho sự khởi đầu, độc lập và sức mạnh cá nhân. Năng lượng của bạn là năng lượng của một mũi tên bắn thẳng về phía trước.",
+                strengths: ["Khả năng lãnh đạo bẩm sinh, tự tin", "Độc lập, tự chủ, không thích dựa dẫm", "Quyết đoán, có tư duy tiên phong và sáng tạo"],
+                weaknesses: ["Cái tôi lớn, đôi khi bảo thủ và độc đoán", "Thiếu kiên nhẫn với người chậm hơn", "Dễ cảm thấy cô độc"],
+                advice: "Hãy học cách lắng nghe và tôn trọng ý kiến người khác. Lãnh đạo thực sự là người nâng đỡ, không phải áp đặt."
+            },
+            2: {
+                title: "Người Hòa Giải Tận Tâm",
+                overview: "Số 2 là biểu tượng của sự cân bằng, ngoại giao và thấu cảm. Bạn là chất keo gắn kết các mối quan hệ và tập thể.",
+                strengths: ["Trực giác cực kỳ nhạy bén", "Lắng nghe, thấu hiểu và đồng cảm tốt", "Làm việc nhóm xuất sắc, giỏi đàm phán"],
+                weaknesses: ["Quá nhạy cảm, dễ bị tổn thương", "Hay lưỡng lự, thiếu quyết đoán", "Dễ đánh mất bản thân vì làm hài lòng người khác"],
+                advice: "Hãy thiết lập ranh giới rõ ràng. Yêu thương người khác là tốt, nhưng bạn phải yêu thương và tôn trọng nhu cầu của chính mình trước tiên."
+            },
+            3: {
+                title: "Người Truyền Cảm Hứng",
+                overview: "Số 3 mang năng lượng của ánh mặt trời: vui vẻ, lạc quan, sáng tạo và ngôn từ linh hoạt. Bạn sinh ra để tỏa sáng.",
+                strengths: ["Hoạt ngôn, giao tiếp tốt, hài hước", "Óc sáng tạo dồi dào, tư duy nghệ thuật", "Khả năng truyền lửa và động lực cho người khác"],
+                weaknesses: ["Cả thèm chóng chán, thiếu tập trung", "Đôi khi ăn nói thiếu suy nghĩ làm tổn thương người khác", "Nông nổi, thiếu kỷ luật"],
+                advice: "Hãy chọn một mục tiêu và kiên trì với nó. Học cách kiểm soát cảm xúc và lời nói để năng lượng sáng tạo được dùng đúng chỗ."
+            },
+            4: {
+                title: "Người Xây Dựng Nền Tảng",
+                overview: "Số 4 là hiện thân của tính trật tự, tính thực tế, nguyên tắc và sự bền bỉ. Bạn là chỗ dựa vững chắc cho mọi người.",
+                strengths: ["Kỷ luật, trách nhiệm, làm việc có kế hoạch", "Thực tế, đáng tin cậy, chú ý đến chi tiết", "Khả năng tổ chức và quản lý rủi ro tốt"],
+                weaknesses: ["Cứng nhắc, bảo thủ, ngại thay đổi", "Làm việc quá sức (workaholic)", "Thiếu lãng mạn, đôi khi khô khan"],
+                advice: "Cuộc sống không chỉ có nguyên tắc. Hãy thả lỏng, học cách linh hoạt và đón nhận những điều bất ngờ, rủi ro một cách có kiểm soát."
+            },
+            5: {
+                title: "Linh Hồn Tự Do",
+                overview: "Số 5 đại diện cho sự thay đổi, phiêu lưu, khao khát tự do mãnh liệt và khả năng thích nghi tuyệt vời.",
+                strengths: ["Năng động, linh hoạt, thích ứng nhanh mọi hoàn cảnh", "Dũng cảm, thích trải nghiệm mới, tầm nhìn mở", "Thu hút, duyên dáng trong giao tiếp"],
+                weaknesses: ["Thiếu kiên nhẫn, dễ chán nản với sự lặp lại", "Không thích bị ràng buộc, đôi khi vô trách nhiệm", "Dễ rơi vào các thú vui tiêu cực nếu mất phương hướng"],
+                advice: "Tự do đích thực đến từ tính kỷ luật tự giác. Hãy tạo ra những luật lệ linh hoạt cho chính mình để không bị lạc lối."
+            },
+            6: {
+                title: "Người Chăm Sóc Yêu Thương",
+                overview: "Số 6 là con số của gia đình, tình mẫu tử/phụ tử, trách nhiệm và sự cống hiến vô điều kiện.",
+                strengths: ["Giàu tình cảm, nhân ái, thích chăm sóc người khác", "Đề cao giá trị gia đình và sự hòa hợp", "Có năng lực sáng tạo và thẩm mỹ tốt"],
+                weaknesses: ["Thích ôm đồm, lo chuyện bao đồng", "Dễ bị áp lực vì quá lo lắng cho người khác", "Áp đặt sự quan tâm khiến người khác ngột ngạt"],
+                advice: "Hãy hiểu rằng mỗi người có một bài học riêng, bạn không thể cứu tất cả. Hãy để những người bạn yêu thương tự bước đi."
+            },
+            7: {
+                title: "Triết Gia Thông Thái",
+                overview: "Số 7 là con số của tâm linh, trí tuệ, sự phân tích và chiêm nghiệm sâu sắc. Bạn thường đi tìm chân lý.",
+                strengths: ["Trí tuệ uyên bác, thích học hỏi, phân tích sâu", "Trực giác và kết nối tâm linh mạnh mẽ", "Khả năng quan sát và đúc kết vấn đề xuất sắc"],
+                weaknesses: ["Thích cô độc, dễ bị cho là lạnh lùng, khó gần", "Hay nghi ngờ, suy nghĩ quá nhiều (overthinking)", "Dễ rơi vào trầm cảm nếu không tìm thấy ý nghĩa sống"],
+                advice: "Hãy mở lòng chia sẻ kiến thức của mình thay vì giữ khư khư. Kết nối với tự nhiên để cân bằng tâm trí."
+            },
+            8: {
+                title: "Nhà Điều Hành Quyền Lực",
+                overview: "Số 8 liên quan đến tài chính, quyền lực, kinh doanh và sự cân bằng nhân quả. Bạn có tư duy thực thi lớn.",
+                strengths: ["Tư duy kinh doanh, quản lý tài chính xuất sắc", "Bản lĩnh, mạnh mẽ, chịu được áp lực cao", "Khả năng điều hành và bao quát tổ chức"],
+                weaknesses: ["Quá coi trọng vật chất, thực dụng", "Sống thiên về lý trí, áp đặt quyền lực lên người khác", "Ít thể hiện cảm xúc"],
+                advice: "Tiền bạc và quyền lực chỉ là công cụ, không phải mục đích cuối cùng. Hãy biết chia sẻ sự trù phú và cân bằng đời sống tinh thần."
+            },
+            9: {
+                title: "Nhà Nhân Đạo Vĩ Đại",
+                overview: "Số 9 là con số kết thúc chu kỳ, đại diện cho lòng vị tha, lý tưởng sống cao đẹp và sự cống hiến cho nhân loại.",
+                strengths: ["Tấm lòng bao dung, nhân đạo, hướng thiện", "Tầm nhìn xa trông rộng, lý tưởng cao cả", "Có năng lực hoàn thành và kết thúc các dự án"],
+                weaknesses: ["Dễ bị lợi dụng lòng tốt", "Hay sống trong quá khứ, khó buông bỏ", "Đôi khi ảo tưởng, thiếu thực tế"],
+                advice: "Hãy học cách cho đi mà không mong cầu nhận lại, và quan trọng nhất là học cách tha thứ để giải phóng năng lượng."
+            },
+            11: {
+                title: "Sứ Giả Tâm Linh (Master 11/2)",
+                overview: "Số 11 là số Master đầu tiên, mang trực giác cực kỳ nhạy bén, khả năng khai sáng và năng lượng tâm linh cao.",
+                strengths: ["Trực giác như radar, nhạy cảm với năng lượng", "Khả năng truyền cảm hứng sâu sắc", "Thấu cảm và tinh tế (mang đặc tính của số 2)"],
+                weaknesses: ["Căng thẳng thần kinh cao, dễ bị kiệt sức", "Chênh vênh giữa vật chất và tinh thần", "Hay mơ mộng, xa rời thực tế"],
+                advice: "Tin tưởng vào trực giác của mình. Cần phải có lối sống cực kỳ cân bằng, thiền định hoặc yoga để xả bớt năng lượng thần kinh."
+            },
+            22: {
+                title: "Bậc Thầy Kiến Tạo (Master 22/4)",
+                overview: "Số 22 là số mạnh nhất, kết hợp tầm nhìn của 11 và sức mạnh thực thi của 4. Bạn sinh ra để làm việc lớn.",
+                strengths: ["Khả năng biến những giấc mơ viển vông thành hiện thực", "Năng lực lãnh đạo, tổ chức ở quy mô lớn", "Tư duy hệ thống và thực tế cao"],
+                weaknesses: ["Áp lực bản thân cực lớn", "Nếu tiêu cực sẽ trở nên độc tài, tàn nhẫn", "Dễ chìm trong công việc"],
+                advice: "Đừng để nỗi sợ thất bại cản bước. Hãy bắt đầu từ những việc nhỏ nhưng luôn giữ tầm nhìn lớn lao."
+            },
+            33: {
+                title: "Bậc Thầy Chữa Lành (Master 33/6)",
+                overview: "Số 33 là tình yêu thương vô điều kiện, sự hy sinh và năng lượng chữa lành mạnh mẽ nhất.",
+                strengths: ["Lòng vị tha bao la, năng lực chữa lành tinh thần", "Trách nhiệm cao cả với cộng đồng", "Có khả năng hy sinh vì lợi ích chung"],
+                weaknesses: ["Nhận quá nhiều gánh nặng của người khác", "Bỏ bê hoàn toàn bản thân", "Hay đau khổ trước nỗi đau của nhân loại"],
+                advice: "Hãy nhớ nguyên tắc 'đeo mặt nạ dưỡng khí cho mình trước khi giúp người khác'. Bạn phải khỏe mạnh mới chữa lành được thế giới."
+            }
+        };
+
+        // Dữ liệu cho Năm Cá Nhân
+        const personalYearData = {
+            1: { title: "Năm Khởi Đầu & Gieo Hạt", desc: "Năm của những quyết định mới, cơ hội mới và sự thay đổi lớn. Dám bước ra khỏi vùng an toàn, chủ động hành động." },
+            2: { title: "Năm Cân Bằng & Kết Nối", desc: "Năm cần sự kiên nhẫn, vun đắp các mối quan hệ, hợp tác. Trực giác lên cao, tránh quyết định nóng vội." },
+            3: { title: "Năm Lan Tỏa & Sáng Tạo", desc: "Năm của sự vui vẻ, giao tiếp, mở rộng vòng tròn xã hội. Hãy tận dụng ý tưởng sáng tạo và nâng cao kỹ năng biểu đạt." },
+            4: { title: "Năm Củng Cố & Kỷ Luật", desc: "Năm nền tảng, đòi hỏi sự chăm chỉ, làm việc có tổ chức và cẩn trọng về tài chính, sức khỏe. Ít sự đột phá nhưng vững chắc." },
+            5: { title: "Năm Chuyển Giao & Tự Do", desc: "Năm của sự thay đổi năng động, những ngã rẽ bất ngờ. Có nhiều cơ hội đi lại, đổi mới công việc hoặc tư duy." },
+            6: { title: "Năm Gia Đình & Trách Nhiệm", desc: "Trọng tâm hướng về gia đình, người thân và trách nhiệm. Là năm tốt để kết hôn, mua nhà hoặc giải quyết mâu thuẫn tình cảm." },
+            7: { title: "Năm Nội Tâm & Tri Thức", desc: "Năm chững lại để nghỉ ngơi, học tập, nghiên cứu và phát triển tâm linh. Tránh mở rộng đầu tư vật chất lớn trong năm nay." },
+            8: { title: "Năm Gặt Hái & Quyền Lực", desc: "Năm thu hoạch từ những nỗ lực trước đó. Cơ hội lớn về tài chính, sự nghiệp thăng tiến. Cần quyết đoán và tự tin." },
+            9: { title: "Năm Buông Bỏ & Kết Thúc", desc: "Năm cuối chu kỳ 9 năm. Thời điểm dọn dẹp những gì cũ kỹ, tha thứ, buông bỏ để chuẩn bị cho chu kỳ mới. Tránh bắt đầu dự án dài hạn." }
+        };
+
+        function removeVietnameseTones(str) {
+            str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
+            str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
+            str = str.replace(/ì|í|ị|ỉ|ĩ/g, "i");
+            str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o");
+            str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u");
+            str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
+            str = str.replace(/đ/g, "d");
+            str = str.replace(/À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ/g, "A");
+            str = str.replace(/È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ/g, "E");
+            str = str.replace(/Ì|Í|Ị|Ỉ|Ĩ/g, "I");
+            str = str.replace(/Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ/g, "O");
+            str = str.replace(/Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ/g, "U");
+            str = str.replace(/Ỳ|Ý|Ỵ|Ỷ|Ỹ/g, "Y");
+            str = str.replace(/Đ/g, "D");
+            return str;
+        }
+
+        function reduceNumber(num, keepMaster = true) {
+            if (num === 0) return 0;
+            if (keepMaster && (num === 11 || num === 22 || num === 33)) return num;
+            let sum = num;
+            while (sum > 9 && !(keepMaster && (sum === 11 || sum === 22 || sum === 33))) {
+                sum = sum.toString().split('').reduce((acc, digit) => acc + parseInt(digit), 0);
+            }
+            return sum;
+        }
+
+        function getBaseNumber(num) {
+            if (num === 11) return 2;
+            if (num === 22) return 4;
+            if (num === 33) return 6;
+            return reduceNumber(num, false);
+        }
+
+        function calculateNumerology(name, birthDateStr) {
+            const [yearStr, monthStr, dayStr] = birthDateStr.split('-');
+            const dayNum = reduceNumber(dayStr.split('').reduce((a,b)=>a+parseInt(b),0), false);
+            const monthNum = reduceNumber(monthStr.split('').reduce((a,b)=>a+parseInt(b),0), false);
+            const yearNum = reduceNumber(yearStr.split('').reduce((a,b)=>a+parseInt(b),0), false);
+            
+            // Đường đời
+            let lifepath = reduceNumber(dayNum + monthNum + yearNum, true);
+            // Thái độ
+            let attitude = reduceNumber(dayNum + monthNum, false); 
+            
+            // Tên
+            const cleanName = removeVietnameseTones(name).toUpperCase().replace(/[^A-Z]/g, '');
+            let totalVowels = 0, totalConsonants = 0, totalDestiny = 0;
+            let presentNumbers = new Set();
+
+            // Tính trên từng chữ để rút gọn chính xác theo Pythagoras (hoặc tổng theo tùy trường phái, ở đây dùng tổng toàn bộ cho phổ thông)
+            for (let i = 0; i < cleanName.length; i++) {
+                const char = cleanName[i];
+                const numValue = pythagorasChart[char];
+                if (numValue) {
+                    presentNumbers.add(numValue);
+                    totalDestiny += numValue;
+                    if (vnVowelsList.includes(char)) {
+                        totalVowels += numValue;
+                    } else {
+                        totalConsonants += numValue;
+                    }
+                }
+            }
+
+            const soul = reduceNumber(totalVowels, true);
+            const personality = reduceNumber(totalConsonants, true);
+            const destiny = reduceNumber(totalDestiny, true);
+            const maturity = reduceNumber(lifepath + destiny, true);
+
+            // Chỉ số thiếu
+            const missingNumbers = [];
+            for (let i = 1; i <= 9; i++) {
+                if (!presentNumbers.has(i)) missingNumbers.push(i);
+            }
+
+            // Năm cá nhân
+            const currentYear = new Date().getFullYear();
+            const currentYearReduced = reduceNumber(currentYear.toString().split('').reduce((a,b)=>a+parseInt(b),0), false);
+            const personalYear = reduceNumber(dayNum + monthNum + currentYearReduced, false);
+
+            return { lifepath, destiny, soul, personality, attitude, maturity, missingNumbers, personalYear, currentYear };
+        }
+
+        function getDataSafely(num) {
+            return numberData[num] || numberData[getBaseNumber(num)] || numberData[1]; // Fallback
+        }
+
+        const form = document.getElementById('numerologyForm');
+        const inputSection = document.getElementById('inputSection');
+        const loadingSection = document.getElementById('loadingSection');
+        const resultsSection = document.getElementById('resultsSection');
+        const detailsContainer = document.getElementById('detailsContainer');
+
+        function createAccordionCard(title, badgeLabel, number, typeDesc) {
+            const data = getDataSafely(number);
+            
+            const card = document.createElement('div');
+            card.className = 'glass-panel rounded-2xl overflow-hidden';
+            
+            card.innerHTML = `
+                <button class="w-full p-5 flex items-center justify-between focus:outline-none hover:bg-white/5 transition-colors group" onclick="toggleAccordion(this)">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full border border-mystic-500 bg-mystic-800 flex items-center justify-center shrink-0 group-hover:border-mystic-300 transition-colors">
+                            <span class="font-serif font-bold text-xl text-white">${number}</span>
+                        </div>
+                        <div class="text-left">
+                            <h4 class="font-serif text-lg text-mystic-100 font-semibold">${title}</h4>
+                            <p class="text-xs text-mystic-400 uppercase tracking-wide">${badgeLabel}</p>
+                        </div>
+                    </div>
+                    <svg class="w-6 h-6 text-mystic-400 transform transition-transform duration-300 chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="accordion-content bg-black/20 border-t border-mystic-500/20">
+                    <div class="p-5 md:p-6 space-y-4">
+                        <p class="text-sm text-mystic-300 italic mb-4">${typeDesc}</p>
+                        
+                        <div class="space-y-2">
+                            <h5 class="text-mystic-200 font-semibold text-sm uppercase tracking-wide flex items-center gap-2">
+                                <svg class="w-4 h-4 text-mystic-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+                                Tổng quan
+                            </h5>
+                            <p class="text-gray-300 text-sm leading-relaxed">${data.overview}</p>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-2 gap-4 mt-4">
+                            <div class="bg-green-900/10 p-4 rounded-xl border border-green-500/20">
+                                <h5 class="text-green-400 font-semibold text-sm mb-2 flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                    Điểm mạnh
+                                </h5>
+                                <ul class="list-disc list-inside text-sm text-gray-300 space-y-1">
+                                    ${data.strengths.map(s => `<li>${s}</li>`).join('')}
+                                </ul>
+                            </div>
+                            <div class="bg-red-900/10 p-4 rounded-xl border border-red-500/20">
+                                <h5 class="text-red-400 font-semibold text-sm mb-2 flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                    Điểm yếu / Thử thách
+                                </h5>
+                                <ul class="list-disc list-inside text-sm text-gray-300 space-y-1">
+                                    ${data.weaknesses.map(w => `<li>${w}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gold-500/10 p-4 rounded-xl border border-gold-500/20 mt-4">
+                            <h5 class="text-gold-400 font-semibold text-sm mb-2">💡 Lời khuyên vàng</h5>
+                            <p class="text-sm text-gray-300">${data.advice}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            return card;
+        }
+
+        window.toggleAccordion = function(btn) {
+            const content = btn.nextElementSibling;
+            const chevron = btn.querySelector('.chevron');
+            
+            // Close others
+            document.querySelectorAll('.accordion-content').forEach(el => {
+                if(el !== content && el.classList.contains('open')) {
+                    el.classList.remove('open');
+                    el.previousElementSibling.querySelector('.chevron').style.transform = 'rotate(0deg)';
+                }
+            });
+
+            // Toggle current
+            if (content.classList.contains('open')) {
+                content.classList.remove('open');
+                chevron.style.transform = 'rotate(0deg)';
+            } else {
+                content.classList.add('open');
+                chevron.style.transform = 'rotate(180deg)';
+            }
+        }
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const fullName = document.getElementById('fullName').value.trim();
+            const birthDate = document.getElementById('birthDate').value;
+            if(!fullName || !birthDate) return;
+
+            // 1. Chuyển sang UI Loading
+            inputSection.classList.add('hidden');
+            loadingSection.classList.remove('hidden');
+            
+            let texts = ["Phân tích tần số rung động của tên...", "Đối chiếu bản đồ sao sinh thần...", "Tính toán các số chủ đạo...", "Hoàn tất giải mã!"];
+            let idx = 0;
+            let textInterval = setInterval(() => {
+                idx++;
+                if(idx < texts.length) {
+                    document.getElementById('loadingText').textContent = texts[idx];
+                }
+            }, 600);
+
+            // 2. Xử lý thuật toán sau một khoảng trễ giả lập
+            setTimeout(() => {
+                clearInterval(textInterval);
+                const res = calculateNumerology(fullName, birthDate);
+                
+                // --- Đổ dữ liệu vào UI ---
+                document.getElementById('resName').textContent = fullName.toUpperCase();
+                
+                // Main stats
+                document.getElementById('resLifepath').textContent = res.lifepath;
+                const lpData = getDataSafely(res.lifepath);
+                document.getElementById('resLifepathTitle').textContent = lpData.title;
+                document.getElementById('resLifepathBrief').textContent = lpData.overview;
+                
+                // Quick stats
+                document.getElementById('resDestiny').textContent = res.destiny;
+                document.getElementById('resSoul').textContent = res.soul;
+                document.getElementById('resPersonality').textContent = res.personality;
+                document.getElementById('resAttitude').textContent = res.attitude;
+
+                // Chi tiết Accordion
+                detailsContainer.innerHTML = `<h3 class="font-serif text-2xl text-white border-b border-mystic-500/30 pb-2 mt-10 mb-6">Giải Mã Chi Tiết</h3>`;
+                detailsContainer.appendChild(createAccordionCard("Chỉ Số Sứ Mệnh", "Mục đích đến với thế giới", res.destiny, "Sứ mệnh chỉ ra vai trò của bạn, điều bạn cần làm và giá trị bạn mang lại cho xã hội."));
+                detailsContainer.appendChild(createAccordionCard("Chỉ Số Linh Hồn", "Khao khát sâu thẳm", res.soul, "Linh hồn là những khao khát thầm kín bên trong, điều khiến bạn thực sự hạnh phúc và thỏa mãn."));
+                detailsContainer.appendChild(createAccordionCard("Chỉ Số Nhân Cách", "Vỏ bọc bên ngoài", res.personality, "Nhân cách là cách bạn thể hiện ra bên ngoài, ấn tượng đầu tiên bạn tạo ra với người khác."));
+                detailsContainer.appendChild(createAccordionCard("Chỉ Số Thái Độ", "Phản xạ tự nhiên", res.attitude, "Thái độ là cách bạn phản ứng trong các tình huống bất ngờ hoặc khi đối mặt với vấn đề trong cuộc sống."));
+
+                // Các chỉ số bổ sung
+                document.getElementById('currentYearDisplay').textContent = res.currentYear;
+                document.getElementById('resPersonalYear').textContent = res.personalYear;
+                const pyData = personalYearData[res.personalYear] || personalYearData[1];
+                document.getElementById('resPyTitle').textContent = pyData.title;
+                document.getElementById('resPyDesc').textContent = pyData.desc;
+                
+                document.getElementById('resMaturity').textContent = res.maturity;
+                
+                const missingContainer = document.getElementById('resMissingNumbers');
+                missingContainer.innerHTML = '';
+                if(res.missingNumbers.length === 0) {
+                    missingContainer.innerHTML = `<span class="px-3 py-1 bg-green-500/20 text-green-300 rounded-lg text-sm border border-green-500/30">Tuyệt vời! Tên bạn có đủ các số từ 1-9.</span>`;
+                } else {
+                    res.missingNumbers.forEach(num => {
+                        missingContainer.innerHTML += `<span class="w-8 h-8 rounded bg-red-500/20 text-red-300 font-bold flex items-center justify-center border border-red-500/30 shadow-[0_0_10px_rgba(239,68,68,0.2)]">${num}</span>`;
+                    });
+                }
+
+                // Chuyển UI
+                loadingSection.classList.add('hidden');
+                resultsSection.classList.remove('hidden');
+                
+                // Tự động mở accordion đầu tiên
+                setTimeout(() => {
+                    const firstBtn = detailsContainer.querySelector('button');
+                    if(firstBtn) toggleAccordion(firstBtn);
+                }, 500);
+
+            }, 2500); // Đợi 2.5s cho hiệu ứng loading
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            resultsSection.classList.add('hidden');
+            inputSection.classList.remove('hidden');
+            inputSection.classList.add('animate-slide-up');
+            form.reset();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Hạn chế ngày sinh
+        document.getElementById('birthDate').setAttribute('max', new Date().toISOString().split('T')[0]);
+
+    </script>
+</body>
+</html>
