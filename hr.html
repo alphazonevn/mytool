@@ -13,6 +13,7 @@
     <!-- Tailwind Config -->
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: { sans: ['Inter', 'sans-serif'] },
@@ -68,7 +69,10 @@
             border-right: 1px solid #E2E8F0;
             box-shadow: 0 1px 0 rgba(0,0,0,0.02);
             backdrop-filter: blur(8px);
+            cursor: pointer;
+            user-select: none;
         }
+        .excel-table th:hover { background-color: #F1F5F9; }
         .excel-table td { 
             border-bottom: 1px solid #E2E8F0; border-right: 1px solid #E2E8F0; 
             padding: 12px 16px; color: #1E293B; outline: none;
@@ -85,6 +89,7 @@
             z-index: 10; position: relative; cursor: text;
         }
         .excel-table tr:hover td:not(:focus) { background-color: #F8FAFC; }
+        .excel-table tr.row-highlight td:not(:focus) { background-color: #EEF2FF; }
 
         /* Nút bấm có hiệu ứng nẩy */
         .btn-smart { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
@@ -96,61 +101,91 @@
         .kanban-card { cursor: grab; transition: transform 0.2s ease, box-shadow 0.2s ease; }
         .kanban-card:active { cursor: grabbing; }
         .kanban-card.dragging { opacity: 0.5; transform: scale(1.02); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .kanban-card.card-new { animation: cardPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        @keyframes cardPop { from { opacity: 0; transform: scale(0.85) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+        /* Dark mode */
+        html.dark body { background-color: #0B1120; }
+        html.dark .dm-bg { background-color: #0F172A !important; }
+        html.dark .dm-surface { background-color: #151E32 !important; border-color: #1E293B !important; }
+        html.dark .dm-border { border-color: #1E293B !important; }
+        html.dark .dm-text { color: #E2E8F0 !important; }
+        html.dark .dm-text-mute { color: #94A3B8 !important; }
+        html.dark .dm-hover:hover { background-color: #1E293B !important; }
+        html.dark .excel-table { background: #151E32; }
+        html.dark .excel-table th { background-color: #101827; color: #CBD5E1; border-color: #1E293B; }
+        html.dark .excel-table td { color: #E2E8F0; border-color: #1E293B; }
+        html.dark .excel-table tr:hover td:not(:focus) { background-color: #1A2436; }
+
+        /* Toggle switch */
+        .switch-track { transition: background-color 0.2s ease; }
+        .switch-thumb { transition: transform 0.2s cubic-bezier(0.4,0,0.2,1); }
+
+        /* Notification dot pulse already used; keyboard focus for accessibility */
+        button:focus-visible, [tabindex]:focus-visible, input:focus-visible { outline: 2px solid #4F46E5; outline-offset: 2px; }
+
+        .cmd-item.cmd-active { background-color: #EEF2FF; color: #4F46E5; }
     </style>
 </head>
-<body class="text-slate-800 flex h-screen overflow-hidden selection:bg-primary/20 selection:text-primary relative">
+<body class="text-slate-800 flex h-screen overflow-hidden selection:bg-primary/20 selection:text-primary relative dm-bg">
 
     <!-- Thanh Load dữ liệu toàn cầu (Global Progress Bar) -->
     <div id="globalLoader" class="fixed top-0 left-0 h-1 bg-gradient-to-r from-primary to-purple-500 w-0 z-[100] transition-all duration-300 ease-out"></div>
 
     <!-- Sidebar -->
-    <aside class="w-64 bg-white border-r border-slate-200 flex flex-col h-full z-20 shadow-soft flex-shrink-0">
-        <div class="h-16 flex items-center px-6 border-b border-slate-100">
+    <aside class="w-64 bg-white border-r border-slate-200 flex flex-col h-full z-20 shadow-soft flex-shrink-0 dm-surface dm-border">
+        <div class="h-16 flex items-center px-6 border-b border-slate-100 dm-border">
             <i class="ph-fill ph-hexagon text-primary text-2xl mr-2 drop-shadow-sm"></i>
-            <span class="font-bold text-lg tracking-tight text-dark">NextGen<span class="text-primary">HR</span></span>
+            <span class="font-bold text-lg tracking-tight text-dark dm-text">NextGen<span class="text-primary">HR</span></span>
         </div>
         
         <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
             <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-semibold rounded-xl bg-primary/10 text-primary transition-all">
                 <i class="ph ph-squares-four text-xl mr-3"></i> Tổng quan
             </button>
-            <button onclick="switchTab('ats')" id="nav-ats" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-xl transition-all">
+            <button onclick="switchTab('ats')" id="nav-ats" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-xl transition-all dm-hover dm-text-mute">
                 <i class="ph ph-users-three text-xl mr-3"></i> Tuyển dụng (ATS)
             </button>
-            <button onclick="switchTab('grid')" id="nav-grid" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-xl transition-all">
+            <button onclick="switchTab('grid')" id="nav-grid" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-xl transition-all dm-hover dm-text-mute">
                 <i class="ph ph-table text-xl mr-3 text-excel/70"></i> Dữ liệu (Excel)
             </button>
-            <button onclick="switchTab('resources')" id="nav-resources" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-xl transition-all">
+            <button onclick="switchTab('resources')" id="nav-resources" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-xl transition-all dm-hover dm-text-mute">
                 <i class="ph ph-folder-star text-xl mr-3 text-purple-500/70"></i> Kho Link & Content
             </button>
             
-            <div class="pt-4 mt-2 border-t border-slate-100">
+            <div class="pt-4 mt-2 border-t border-slate-100 dm-border">
                 <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Hệ thống</p>
-                <button class="w-full flex items-center px-4 py-3 text-sm font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-xl transition-all" onclick="openCommandPalette()">
+                <button class="w-full flex items-center px-4 py-3 text-sm font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-xl transition-all dm-hover dm-text-mute" onclick="openCommandPalette()">
                     <i class="ph ph-command text-xl mr-3"></i> Siêu tìm kiếm (Ctrl+K)
+                </button>
+                <button class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-xl transition-all dm-hover dm-text-mute" onclick="toggleDarkMode()">
+                    <span class="flex items-center"><i class="ph ph-moon-stars text-xl mr-3" id="darkModeIcon"></i> Chế độ tối</span>
+                    <span class="switch-track w-9 h-5 bg-slate-200 rounded-full relative inline-block" id="darkModeTrack">
+                        <span class="switch-thumb absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow" id="darkModeThumb"></span>
+                    </span>
                 </button>
             </div>
         </nav>
 
-        <div class="p-4 border-t border-slate-100 bg-white">
-            <div class="flex items-center cursor-pointer hover:bg-slate-50 p-2.5 rounded-xl transition-all group">
+        <div class="p-4 border-t border-slate-100 bg-white dm-surface dm-border">
+            <div class="flex items-center cursor-pointer hover:bg-slate-50 p-2.5 rounded-xl transition-all group dm-hover" onclick="openProfile('Anh Minh','HR Director','IT','Ban Giám đốc','Đang làm việc','https://i.pravatar.cc/150?img=11')">
                 <div class="relative">
                     <img src="https://i.pravatar.cc/150?img=11" alt="Admin" class="w-10 h-10 rounded-full object-cover border border-slate-200">
                     <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-white"></div>
                 </div>
                 <div class="ml-3 flex-1">
-                    <p class="text-sm font-bold text-slate-800 group-hover:text-primary transition-colors">Anh Minh</p>
-                    <p class="text-xs text-slate-500">HR Director</p>
+                    <p class="text-sm font-bold text-slate-800 group-hover:text-primary transition-colors dm-text">Anh Minh</p>
+                    <p class="text-xs text-slate-500 dm-text-mute">HR Director</p>
                 </div>
             </div>
         </div>
     </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 flex flex-col h-full relative bg-slate-50/50">
+    <main class="flex-1 flex flex-col h-full relative bg-slate-50/50 dm-bg">
         <!-- Header thông minh -->
-        <header class="h-16 bg-white/80 backdrop-blur-md border-b border-slate-200/80 flex items-center justify-between px-8 z-10 sticky top-0 flex-shrink-0">
-            <h2 id="page-title" class="text-xl font-bold text-slate-800 tracking-tight">Tổng quan hệ thống</h2>
+        <header class="h-16 bg-white/80 backdrop-blur-md border-b border-slate-200/80 flex items-center justify-between px-8 z-10 sticky top-0 flex-shrink-0 dm-surface dm-border">
+            <h2 id="page-title" class="text-xl font-bold text-slate-800 tracking-tight dm-text">Tổng quan hệ thống</h2>
             <div class="flex items-center space-x-6">
                 <div class="relative group cursor-pointer" onclick="openCommandPalette()">
                     <i class="ph ph-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-hover:text-primary transition-colors"></i>
@@ -159,10 +194,19 @@
                         <span class="text-xs bg-slate-200 px-1.5 py-0.5 rounded text-slate-500 font-medium tracking-wider">Ctrl K</span>
                     </div>
                 </div>
-                <button class="relative p-2 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded-full transition-all">
-                    <i class="ph-fill ph-bell text-xl"></i>
-                    <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white animate-pulse"></span>
-                </button>
+                <div class="relative">
+                    <button class="relative p-2 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded-full transition-all dm-hover" onclick="toggleNotifications(event)">
+                        <i class="ph-fill ph-bell text-xl"></i>
+                        <span id="notifDot" class="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white animate-pulse"></span>
+                    </button>
+                    <div id="notifPanel" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-float border border-slate-100 z-50 overflow-hidden dm-surface dm-border">
+                        <div class="p-4 border-b border-slate-100 dm-border flex justify-between items-center">
+                            <span class="font-bold text-sm text-slate-800 dm-text">Thông báo</span>
+                            <button class="text-xs font-bold text-primary hover:underline" onclick="markAllRead()">Đánh dấu đã đọc</button>
+                        </div>
+                        <div id="notifList" class="max-h-80 overflow-y-auto divide-y divide-slate-100"></div>
+                    </div>
+                </div>
             </div>
         </header>
 
@@ -171,40 +215,40 @@
             <div id="view-dashboard" class="view-section active h-full">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                     <!-- Metric Cards -->
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between hover:shadow-float transition-all cursor-pointer">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between hover:shadow-float transition-all cursor-pointer dm-surface dm-border" onclick="switchTab('grid')">
                         <div>
-                            <p class="text-sm font-medium text-slate-500 mb-1">Tổng Nhân sự</p>
-                            <h3 class="text-3xl font-extrabold text-slate-800">248</h3>
+                            <p class="text-sm font-medium text-slate-500 mb-1 dm-text-mute">Tổng Nhân sự</p>
+                            <h3 class="text-3xl font-extrabold text-slate-800 dm-text">248</h3>
                             <p class="text-xs font-semibold text-emerald-500 mt-2 flex items-center"><i class="ph-bold ph-trend-up mr-1"></i> +12% tháng này</p>
                         </div>
                         <div class="w-12 h-12 bg-primary/10 text-primary rounded-2xl flex items-center justify-center text-2xl shadow-inner">
                             <i class="ph-fill ph-users"></i>
                         </div>
                     </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between hover:shadow-float transition-all cursor-pointer">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between hover:shadow-float transition-all cursor-pointer dm-surface dm-border" onclick="switchTab('ats')">
                         <div>
-                            <p class="text-sm font-medium text-slate-500 mb-1">Đang duyệt (ATS)</p>
-                            <h3 class="text-3xl font-extrabold text-slate-800">45</h3>
+                            <p class="text-sm font-medium text-slate-500 mb-1 dm-text-mute">Đang duyệt (ATS)</p>
+                            <h3 class="text-3xl font-extrabold text-slate-800 dm-text">45</h3>
                             <p class="text-xs font-semibold text-emerald-500 mt-2 flex items-center"><i class="ph-bold ph-trend-up mr-1"></i> 5 lịch phỏng vấn</p>
                         </div>
                         <div class="w-12 h-12 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center text-2xl shadow-inner">
                             <i class="ph-fill ph-user-focus"></i>
                         </div>
                     </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between hover:shadow-float transition-all cursor-pointer">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between hover:shadow-float transition-all cursor-pointer dm-surface dm-border" onclick="showLeaveRequests()">
                         <div>
-                            <p class="text-sm font-medium text-slate-500 mb-1">Phép chờ duyệt</p>
-                            <h3 class="text-3xl font-extrabold text-slate-800">8</h3>
+                            <p class="text-sm font-medium text-slate-500 mb-1 dm-text-mute">Phép chờ duyệt</p>
+                            <h3 class="text-3xl font-extrabold text-slate-800 dm-text">8</h3>
                             <p class="text-xs font-medium text-slate-400 mt-2">Hôm nay</p>
                         </div>
                         <div class="w-12 h-12 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center text-2xl shadow-inner">
                             <i class="ph-fill ph-calendar-x"></i>
                         </div>
                     </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between hover:shadow-float transition-all cursor-pointer">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between hover:shadow-float transition-all cursor-pointer dm-surface dm-border">
                         <div>
-                            <p class="text-sm font-medium text-slate-500 mb-1">Tỷ lệ giữ chân</p>
-                            <h3 class="text-3xl font-extrabold text-slate-800">94%</h3>
+                            <p class="text-sm font-medium text-slate-500 mb-1 dm-text-mute">Tỷ lệ giữ chân</p>
+                            <h3 class="text-3xl font-extrabold text-slate-800 dm-text">94%</h3>
                             <p class="text-xs font-semibold text-emerald-500 mt-2 flex items-center"><i class="ph-bold ph-check-circle mr-1"></i> Tốt</p>
                         </div>
                         <div class="w-12 h-12 bg-emerald-50 text-emerald-500 rounded-2xl flex items-center justify-center text-2xl shadow-inner">
@@ -214,12 +258,12 @@
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-0">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col dm-surface dm-border">
                         <div class="flex justify-between items-center mb-6">
-                            <h4 class="font-bold text-slate-800 text-lg">Biến động nhân sự</h4>
-                            <select class="bg-slate-50 border border-slate-200 text-sm font-medium rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary/20 outline-none">
-                                <option>6 tháng qua</option>
-                                <option>Năm nay</option>
+                            <h4 class="font-bold text-slate-800 text-lg dm-text">Biến động nhân sự</h4>
+                            <select id="chartRangeSelect" onchange="updateHrChart(this.value)" class="bg-slate-50 border border-slate-200 text-sm font-medium rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary/20 outline-none">
+                                <option value="6m">6 tháng qua</option>
+                                <option value="year">Năm nay</option>
                             </select>
                         </div>
                         <div class="relative flex-1 min-h-[250px]">
@@ -227,9 +271,9 @@
                         </div>
                     </div>
 
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col dm-surface dm-border">
                         <div class="flex justify-between items-center mb-6">
-                            <h4 class="font-bold text-slate-800 text-lg flex items-center">
+                            <h4 class="font-bold text-slate-800 text-lg flex items-center dm-text">
                                 <i class="ph-fill ph-warning-circle text-rose-500 mr-2 text-xl"></i> AI Cảnh báo Nghỉ việc
                             </h4>
                             <span class="bg-rose-100 text-rose-700 text-xs font-bold px-3 py-1 rounded-full shadow-sm">2 Rủi ro</span>
@@ -237,15 +281,15 @@
                         
                         <div class="space-y-3 flex-1 overflow-y-auto pr-2">
                             <!-- Warning Item -->
-                            <div class="flex items-center justify-between p-4 bg-white border border-rose-100 rounded-xl shadow-sm hover:shadow-md hover:border-rose-300 transition-all cursor-pointer group">
+                            <div class="flex items-center justify-between p-4 bg-white border border-rose-100 rounded-xl shadow-sm hover:shadow-md hover:border-rose-300 transition-all cursor-pointer group dm-surface" onclick="openProfile('Lê Thị Mai','Sales Manager','Kinh doanh','Nhân viên chính thức','Đang làm việc','https://i.pravatar.cc/150?img=33','85% nguy cơ nghỉ việc — Overwork 3 tuần liên tiếp. Gợi ý AI: sắp xếp nghỉ bù, review lại KPI tháng.')">
                                 <div class="flex items-center">
                                     <div class="relative">
                                         <img src="https://i.pravatar.cc/150?img=33" class="w-12 h-12 rounded-full object-cover ring-2 ring-white">
                                         <div class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-rose-500 rounded-full border-2 border-white"></div>
                                     </div>
                                     <div class="ml-4">
-                                        <p class="text-sm font-bold text-slate-800 group-hover:text-primary transition-colors">Lê Thị Mai</p>
-                                        <p class="text-xs font-medium text-slate-500">Sales Manager • 3 năm</p>
+                                        <p class="text-sm font-bold text-slate-800 group-hover:text-primary transition-colors dm-text">Lê Thị Mai</p>
+                                        <p class="text-xs font-medium text-slate-500 dm-text-mute">Sales Manager • 3 năm</p>
                                     </div>
                                 </div>
                                 <div class="text-right">
@@ -254,15 +298,15 @@
                                 </div>
                             </div>
                             <!-- Warning Item -->
-                            <div class="flex items-center justify-between p-4 bg-white border border-amber-100 rounded-xl shadow-sm hover:shadow-md hover:border-amber-300 transition-all cursor-pointer group">
+                            <div class="flex items-center justify-between p-4 bg-white border border-amber-100 rounded-xl shadow-sm hover:shadow-md hover:border-amber-300 transition-all cursor-pointer group dm-surface" onclick="openProfile('Trần Đức Kiên','Senior Dev','IT','Nhân viên chính thức','Đang làm việc','https://i.pravatar.cc/150?img=59','60% nguy cơ nghỉ việc — Lương thấp hơn mặt bằng thị trường. Gợi ý AI: đề xuất review lương Q3.')">
                                 <div class="flex items-center">
                                     <div class="relative">
                                         <img src="https://i.pravatar.cc/150?img=59" class="w-12 h-12 rounded-full object-cover ring-2 ring-white">
                                         <div class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-amber-500 rounded-full border-2 border-white"></div>
                                     </div>
                                     <div class="ml-4">
-                                        <p class="text-sm font-bold text-slate-800 group-hover:text-primary transition-colors">Trần Đức Kiên</p>
-                                        <p class="text-xs font-medium text-slate-500">Senior Dev • 1.5 năm</p>
+                                        <p class="text-sm font-bold text-slate-800 group-hover:text-primary transition-colors dm-text">Trần Đức Kiên</p>
+                                        <p class="text-xs font-medium text-slate-500 dm-text-mute">Senior Dev • 1.5 năm</p>
                                     </div>
                                 </div>
                                 <div class="text-right">
@@ -276,13 +320,13 @@
             </div>
 
             <div id="view-ats" class="view-section hidden h-full">
-                <div class="flex justify-between items-center mb-6 bg-white p-5 rounded-2xl shadow-sm border border-slate-100 shrink-0">
+                <div class="flex justify-between items-center mb-6 bg-white p-5 rounded-2xl shadow-sm border border-slate-100 shrink-0 dm-surface dm-border">
                     <div>
-                        <h3 class="text-xl font-bold text-slate-800 flex items-center">
+                        <h3 class="text-xl font-bold text-slate-800 flex items-center dm-text">
                             Chiến dịch: Product Manager
                             <span class="ml-3 px-2 py-1 bg-emerald-50 text-emerald-600 border border-emerald-200 text-xs font-bold rounded-md uppercase tracking-wider">Hiring</span>
                         </h3>
-                        <p class="text-sm font-medium text-slate-500 mt-1">Đã thu thập 24 CVs • Kéo thả thẻ để cập nhật trạng thái</p>
+                        <p class="text-sm font-medium text-slate-500 mt-1 dm-text-mute">Đã thu thập <span id="atsTotalCount">24</span> CVs • Kéo thả thẻ để cập nhật trạng thái</p>
                     </div>
                     <div class="flex space-x-3">
                         <button onclick="triggerAICVScan()" class="btn-smart bg-purple-50 hover:bg-purple-100 border border-purple-200 text-purple-700 px-4 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center shadow-sm">
@@ -366,14 +410,21 @@
             </div>
 
             <div id="view-grid" class="view-section hidden h-full">
-                <div class="flex justify-between items-center mb-5 bg-white p-5 rounded-2xl shadow-sm border border-slate-100 shrink-0">
+                <div class="flex justify-between items-center mb-5 bg-white p-5 rounded-2xl shadow-sm border border-slate-100 shrink-0 dm-surface dm-border gap-4 flex-wrap">
                     <div>
                         <h3 class="text-xl font-bold flex items-center text-excel">
                             <i class="ph-fill ph-microsoft-excel-logo text-3xl mr-3"></i> Cơ sở dữ liệu Nhân sự
                         </h3>
-                        <p class="text-sm font-medium text-slate-500 mt-1">Đồng bộ tự động với Google Sheets thông qua Web App API.</p>
+                        <p class="text-sm font-medium text-slate-500 mt-1 dm-text-mute">Đồng bộ tự động với Google Sheets thông qua Web App API.</p>
                     </div>
-                    <div class="flex space-x-3">
+                    <div class="flex space-x-3 items-center flex-wrap gap-2">
+                        <div class="relative">
+                            <i class="ph ph-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                            <input type="text" id="gridSearchInput" oninput="filterGrid(this.value)" placeholder="Tìm trong bảng..." class="pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 w-48">
+                        </div>
+                        <button onclick="exportGridCSV()" class="btn-smart bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 px-4 py-2.5 rounded-xl text-sm font-bold transition-all shadow-sm flex items-center">
+                            <i class="ph-bold ph-download-simple text-lg mr-2"></i> Xuất CSV
+                        </button>
                         <button onclick="openAddColModal()" class="btn-smart bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 px-4 py-2.5 rounded-xl text-sm font-bold transition-all shadow-sm flex items-center">
                             <i class="ph-bold ph-columns text-lg mr-2"></i> Thêm cột dữ liệu
                         </button>
@@ -383,14 +434,14 @@
                     </div>
                 </div>
 
-                <div class="flex-1 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col relative">
+                <div class="flex-1 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col relative dm-surface dm-border">
                     <!-- Overlay Loading cho Bảng -->
-                    <div id="gridLoadingOverlay" class="absolute inset-0 bg-white/70 backdrop-blur-sm z-20 flex flex-col items-center justify-center">
+                    <div id="gridLoadingOverlay" class="absolute inset-0 bg-white/70 backdrop-blur-sm z-20 flex flex-col items-center justify-center dm-surface">
                         <i class="ph-bold ph-spinner animate-spin text-4xl text-primary mb-3"></i>
-                        <span class="text-sm font-bold text-slate-600">Đang đồng bộ dữ liệu Cloud...</span>
+                        <span class="text-sm font-bold text-slate-600 dm-text-mute">Đang đồng bộ dữ liệu Cloud...</span>
                     </div>
 
-                    <div class="overflow-auto flex-1 bg-slate-50/50">
+                    <div class="overflow-auto flex-1 bg-slate-50/50 dm-bg">
                         <table class="excel-table w-full" id="dynamicGrid">
                             <thead>
                                 <tr id="gridHeaderRow">
@@ -401,48 +452,52 @@
                                 <!-- Render via JS -->
                             </tbody>
                         </table>
+                        <div id="gridEmptyState" class="hidden flex-col items-center justify-center py-16 text-center">
+                            <i class="ph ph-magnifying-glass-minus text-4xl text-slate-300 mb-3"></i>
+                            <p class="text-sm font-bold text-slate-500">Không tìm thấy kết quả phù hợp</p>
+                        </div>
                     </div>
                     
-                    <div class="bg-slate-50 px-5 py-3 border-t border-slate-200 text-xs font-medium text-slate-500 flex justify-between items-center shrink-0">
+                    <div class="bg-slate-50 px-5 py-3 border-t border-slate-200 text-xs font-medium text-slate-500 flex justify-between items-center shrink-0 dm-surface dm-border dm-text-mute">
                         <div class="flex items-center" id="saveStatusContainer">
                             <i class="ph-fill ph-check-circle text-emerald-500 mr-2 text-base" id="saveStatusIcon"></i> 
-                            <span id="saveStatusText">Trạng thái: <span id="saveTime" class="ml-1 font-bold text-slate-700">Đã đồng bộ</span></span>
+                            <span id="saveStatusText">Trạng thái: <span id="saveTime" class="ml-1 font-bold text-slate-700 dm-text">Đã đồng bộ</span></span>
                         </div>
-                        <span class="bg-white border border-slate-200 px-3 py-1.5 rounded-lg text-slate-600 font-bold shadow-sm flex items-center">
-                            <i class="ph-bold ph-keyboard mr-1.5"></i> Nhấn Enter để lưu ô
+                        <span class="bg-white border border-slate-200 px-3 py-1.5 rounded-lg text-slate-600 font-bold shadow-sm flex items-center dm-surface dm-border">
+                            <i class="ph-bold ph-keyboard mr-1.5"></i> Enter lưu • ←↑↓→ di chuyển • Del xoá dòng
                         </span>
                     </div>
                 </div>
             </div>
 
             <div id="view-resources" class="view-section hidden h-full">
-                <div class="flex justify-between items-center mb-6 bg-white p-5 rounded-2xl shadow-sm border border-slate-100 shrink-0">
+                <div class="flex justify-between items-center mb-6 bg-white p-5 rounded-2xl shadow-sm border border-slate-100 shrink-0 dm-surface dm-border">
                     <div>
-                        <h3 class="text-xl font-bold flex items-center text-slate-800">
+                        <h3 class="text-xl font-bold flex items-center text-slate-800 dm-text">
                             <i class="ph-fill ph-folder-star text-3xl mr-3 text-purple-600"></i> Kho Tài nguyên & PR
                         </h3>
-                        <p class="text-sm font-medium text-slate-500 mt-1">Quản lý link chiến dịch tuyển dụng và sinh Content tự động bằng AI.</p>
+                        <p class="text-sm font-medium text-slate-500 mt-1 dm-text-mute">Quản lý link chiến dịch tuyển dụng và sinh Content tự động bằng AI.</p>
                     </div>
                 </div>
 
                 <div class="flex-1 overflow-y-auto pr-2 space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <!-- Link Card -->
-                        <div class="border border-slate-200 rounded-2xl p-5 hover:border-purple-300 hover:shadow-md transition-all group bg-white relative overflow-hidden">
+                        <div class="border border-slate-200 rounded-2xl p-5 hover:border-purple-300 hover:shadow-md transition-all group bg-white relative overflow-hidden dm-surface dm-border">
                             <div class="absolute top-0 right-0 w-24 h-24 bg-purple-50 rounded-bl-full -z-10 group-hover:scale-110 transition-transform"></div>
                             <div class="flex justify-between items-start mb-3">
                                 <div>
-                                    <h5 class="font-bold text-slate-800 text-lg">Chiến dịch IT Q3 (Facebook)</h5>
+                                    <h5 class="font-bold text-slate-800 text-lg dm-text">Chiến dịch IT Q3 (Facebook)</h5>
                                     <a href="#" class="text-sm font-bold text-purple-600 hover:underline flex items-center mt-1">
                                         nextgen.vn/job/it-q3 <i class="ph-bold ph-arrow-square-out ml-1"></i>
                                     </a>
                                 </div>
                                 <span class="bg-emerald-50 border border-emerald-200 text-emerald-700 text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-widest shadow-sm">Active</span>
                             </div>
-                            <div class="flex justify-between items-end mt-6 pt-5 border-t border-slate-100">
+                            <div class="flex justify-between items-end mt-6 pt-5 border-t border-slate-100 dm-border">
                                 <div class="flex space-x-6 text-sm">
-                                    <div class="text-slate-500 font-medium"><span class="font-extrabold text-slate-800 text-xl">1,240</span><br>Clicks</div>
-                                    <div class="text-slate-500 font-medium"><span class="font-extrabold text-slate-800 text-xl">45</span><br>CVs</div>
+                                    <div class="text-slate-500 font-medium dm-text-mute"><span class="font-extrabold text-slate-800 text-xl dm-text">1,240</span><br>Clicks</div>
+                                    <div class="text-slate-500 font-medium dm-text-mute"><span class="font-extrabold text-slate-800 text-xl dm-text">45</span><br>CVs</div>
                                 </div>
                                 <div class="flex space-x-2">
                                     <button onclick="generateAIContent('nextgen.vn/job/it-q3', 'IT')" class="btn-smart p-2.5 text-purple-600 bg-purple-50 hover:bg-purple-100 border border-purple-100 rounded-xl transition-all" title="AI Viết bài PR">
@@ -464,10 +519,10 @@
     
     <!-- Modal Thêm Cột -->
     <div id="addColModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[70] hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
-        <div class="bg-white w-[420px] rounded-3xl shadow-2xl p-7 transform scale-95 transition-transform duration-300" id="addColBox">
-            <h3 class="text-xl font-bold text-slate-800 mb-2 flex items-center"><i class="ph-bold ph-columns text-primary mr-2"></i> Thêm trường dữ liệu</h3>
-            <p class="text-sm font-medium text-slate-500 mb-5">Nhập tên cột mới (VD: Sở thích, STK Ngân hàng...). Cột sẽ được đồng bộ ngay lên Google Sheets.</p>
-            <input type="text" id="newColName" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 mb-6 transition-all" placeholder="Tên cột mới...">
+        <div class="bg-white w-[420px] rounded-3xl shadow-2xl p-7 transform scale-95 transition-transform duration-300 dm-surface" id="addColBox">
+            <h3 class="text-xl font-bold text-slate-800 mb-2 flex items-center dm-text"><i class="ph-bold ph-columns text-primary mr-2"></i> Thêm trường dữ liệu</h3>
+            <p class="text-sm font-medium text-slate-500 mb-5 dm-text-mute">Nhập tên cột mới (VD: Sở thích, STK Ngân hàng...). Cột sẽ được đồng bộ ngay lên Google Sheets.</p>
+            <input type="text" id="newColName" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 mb-6 transition-all" placeholder="Tên cột mới..." onkeydown="if(event.key==='Enter'){event.preventDefault();confirmAddColGAS();}">
             <div class="flex justify-end space-x-3">
                 <button onclick="closeAddColModal()" class="btn-smart px-5 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors">Hủy bỏ</button>
                 <button onclick="confirmAddColGAS()" class="btn-smart px-5 py-2.5 text-sm font-bold text-white bg-primary hover:bg-indigo-700 rounded-xl transition-colors shadow-sm">Xác nhận Thêm</button>
@@ -477,28 +532,14 @@
 
     <!-- Command Palette (Siêu tìm kiếm Ctrl+K) -->
     <div id="commandPalette" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[90] hidden flex items-start justify-center pt-[10vh] opacity-0 transition-opacity duration-200">
-        <div class="bg-white w-[600px] rounded-2xl shadow-2xl transform scale-95 transition-transform duration-200 overflow-hidden flex flex-col border border-slate-200" id="commandBox">
-            <div class="flex items-center px-4 py-4 border-b border-slate-100">
+        <div class="bg-white w-[600px] rounded-2xl shadow-2xl transform scale-95 transition-transform duration-200 overflow-hidden flex flex-col border border-slate-200 dm-surface dm-border" id="commandBox">
+            <div class="flex items-center px-4 py-4 border-b border-slate-100 dm-border">
                 <i class="ph-bold ph-magnifying-glass text-slate-400 text-xl mr-3"></i>
-                <input type="text" id="cmdInput" class="w-full bg-transparent border-none focus:outline-none text-slate-800 font-medium placeholder-slate-400 text-lg" placeholder="Nhập lệnh hoặc tìm kiếm (Chuyển tab, Thêm NV...)" autocomplete="off">
+                <input type="text" id="cmdInput" class="w-full bg-transparent border-none focus:outline-none text-slate-800 font-medium placeholder-slate-400 text-lg dm-text" placeholder="Nhập lệnh hoặc tìm kiếm (Chuyển tab, Thêm NV...)" autocomplete="off">
                 <span class="bg-slate-100 text-slate-400 text-xs px-2 py-1 rounded font-bold border border-slate-200">ESC</span>
             </div>
             <div class="p-2 space-y-1 max-h-[300px] overflow-y-auto" id="cmdResults">
-                <!-- Items -->
-                <p class="px-3 py-2 text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Gợi ý chuyển hướng</p>
-                <button onclick="cmdAction('dashboard')" class="w-full flex items-center px-3 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-primary rounded-xl transition-colors text-left">
-                    <i class="ph-bold ph-squares-four w-6 text-center mr-3 text-lg"></i> Mở bảng Tổng quan (Dashboard)
-                </button>
-                <button onclick="cmdAction('ats')" class="w-full flex items-center px-3 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-primary rounded-xl transition-colors text-left">
-                    <i class="ph-bold ph-users-three w-6 text-center mr-3 text-lg"></i> Quản lý Tuyển dụng (ATS)
-                </button>
-                <button onclick="cmdAction('grid')" class="w-full flex items-center px-3 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-excel rounded-xl transition-colors text-left">
-                    <i class="ph-bold ph-table w-6 text-center mr-3 text-lg"></i> Mở cơ sở dữ liệu (Grid/Excel)
-                </button>
-                <p class="px-3 py-2 text-xs font-bold text-slate-400 uppercase tracking-widest mt-2 border-t border-slate-100">Hành động nhanh</p>
-                <button onclick="cmdAction('add-row')" class="w-full flex items-center px-3 py-3 text-sm font-medium text-slate-600 hover:bg-green-50 hover:text-green-700 rounded-xl transition-colors text-left">
-                    <i class="ph-bold ph-plus-circle w-6 text-center mr-3 text-lg"></i> Thêm Nhân sự mới vào DB
-                </button>
+                <!-- Items rendered via JS -->
             </div>
         </div>
     </div>
@@ -519,17 +560,17 @@
         </div>
     </div>
 
-    <!-- Modal Chung (Content/QR) -->
+    <!-- Modal Chung (Content/QR/Profile/Leave) -->
     <div id="aiContentModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[70] hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
-        <div class="bg-white w-[550px] max-w-[95%] rounded-3xl shadow-2xl overflow-hidden flex flex-col transform scale-95 transition-transform duration-300" id="modalBox">
-            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-white">
-                <h4 class="font-bold text-slate-800 text-lg flex items-center" id="modalTitle"></h4>
+        <div class="bg-white w-[550px] max-w-[95%] rounded-3xl shadow-2xl overflow-hidden flex flex-col transform scale-95 transition-transform duration-300 dm-surface" id="modalBox">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-white dm-surface dm-border">
+                <h4 class="font-bold text-slate-800 text-lg flex items-center dm-text" id="modalTitle"></h4>
                 <button onclick="closeModal()" class="text-slate-400 hover:text-rose-500 hover:bg-rose-50 p-2 rounded-xl transition-colors">
                     <i class="ph-bold ph-x text-lg"></i>
                 </button>
             </div>
-            <div class="p-6 flex flex-col items-center min-h-[200px] justify-center bg-slate-50/50" id="modalBody"></div>
-            <div class="p-5 border-t border-slate-100 bg-white flex justify-end">
+            <div class="p-6 flex flex-col items-center min-h-[200px] justify-center bg-slate-50/50 dm-bg" id="modalBody"></div>
+            <div class="p-5 border-t border-slate-100 bg-white flex justify-end dm-surface dm-border" id="modalFooter">
                 <button onclick="closeModal()" class="btn-smart px-5 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-100 rounded-xl mr-3 transition-colors">Đóng</button>
                 <button id="modalActionBtn" class="btn-smart px-5 py-2.5 text-sm font-bold text-white bg-primary hover:bg-indigo-700 rounded-xl shadow-sm transition-colors flex items-center">
                     Thao tác
@@ -603,6 +644,66 @@
             }
         }
 
+        // --- Dark Mode ---
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            const isDark = html.classList.toggle('dark');
+            const thumb = document.getElementById('darkModeThumb');
+            const track = document.getElementById('darkModeTrack');
+            const icon = document.getElementById('darkModeIcon');
+            if(isDark) {
+                thumb.style.transform = 'translateX(16px)';
+                track.classList.remove('bg-slate-200'); track.classList.add('bg-primary');
+                icon.className = 'ph-fill ph-moon-stars text-xl mr-3 text-primary';
+                showToast('Đã bật chế độ tối');
+            } else {
+                thumb.style.transform = 'translateX(0)';
+                track.classList.add('bg-slate-200'); track.classList.remove('bg-primary');
+                icon.className = 'ph ph-moon-stars text-xl mr-3';
+                showToast('Đã tắt chế độ tối');
+            }
+        }
+
+        // --- Notifications ---
+        let notifications = [
+            { icon: 'ph-fill ph-warning-circle', color: 'text-rose-500 bg-rose-50', text: 'Lê Thị Mai có nguy cơ nghỉ việc 85%', time: '5 phút trước', unread: true },
+            { icon: 'ph-fill ph-user-plus', color: 'text-emerald-500 bg-emerald-50', text: 'Phạm Hoàng Nam vừa ứng tuyển vị trí PM', time: '1 giờ trước', unread: true },
+            { icon: 'ph-fill ph-calendar-check', color: 'text-primary bg-primary/10', text: '8 đơn xin phép đang chờ bạn duyệt', time: 'Hôm nay', unread: true },
+            { icon: 'ph-fill ph-file-text', color: 'text-purple-500 bg-purple-50', text: 'Báo cáo lương tháng 6 đã sẵn sàng', time: 'Hôm qua', unread: false }
+        ];
+        function renderNotifications() {
+            const list = document.getElementById('notifList');
+            list.innerHTML = notifications.map(n => `
+                <div class="flex items-start p-4 dm-hover hover:bg-slate-50 transition-colors ${n.unread ? 'bg-primary/5' : ''}">
+                    <div class="w-9 h-9 rounded-xl flex items-center justify-center text-lg mr-3 shrink-0 ${n.color}"><i class="${n.icon}"></i></div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xs font-semibold text-slate-700 dm-text leading-snug">${n.text}</p>
+                        <p class="text-[11px] text-slate-400 mt-1">${n.time}</p>
+                    </div>
+                    ${n.unread ? '<span class="w-2 h-2 bg-primary rounded-full mt-1.5 ml-2 shrink-0"></span>' : ''}
+                </div>
+            `).join('');
+            const dot = document.getElementById('notifDot');
+            dot.style.display = notifications.some(n => n.unread) ? 'block' : 'none';
+        }
+        function toggleNotifications(e) {
+            e.stopPropagation();
+            const panel = document.getElementById('notifPanel');
+            panel.classList.toggle('hidden');
+            if(!panel.classList.contains('hidden')) renderNotifications();
+        }
+        function markAllRead() {
+            notifications.forEach(n => n.unread = false);
+            renderNotifications();
+            showToast('Đã đánh dấu tất cả là đã đọc');
+        }
+        document.addEventListener('click', (e) => {
+            const panel = document.getElementById('notifPanel');
+            if(!panel.classList.contains('hidden') && !panel.contains(e.target) && !e.target.closest('button[onclick="toggleNotifications(event)"]')) {
+                panel.classList.add('hidden');
+            }
+        });
+
         // --- Hệ thống Kéo Thả (Drag & Drop) cho ATS Kanban ---
         let draggedCard = null;
 
@@ -647,16 +748,25 @@
                 const colTitle = col.querySelector('h4').innerText;
                 const cardName = draggedCard.querySelector('h5').innerText;
                 showToast(`Đã di chuyển "${cardName}" sang "${colTitle}"`);
+
+                // Gợi ý thông minh khi ứng viên vào vòng Offer
+                if(col.id === 'col-offer') {
+                    setTimeout(() => showToast(`💡 Gợi ý AI: Soạn email Offer cho "${cardName}"?`), 900);
+                }
                 
                 draggedCard = null;
             }
         }
         
         function updateKanbanCounts() {
+            let total = 0;
             document.querySelectorAll('.kanban-column').forEach(col => {
                 const count = col.querySelectorAll('.kanban-card').length;
                 col.querySelector('.count-badge').innerText = count;
+                total += count;
             });
+            const totalEl = document.getElementById('atsTotalCount');
+            if(totalEl) totalEl.innerText = total;
         }
         
         // Bắt lỗi khi thả thẻ ra ngoài bảng
@@ -668,7 +778,78 @@
         // --- Cấu trúc Lệnh siêu tốc (Command Palette) ---
         const cmdModal = document.getElementById('commandPalette');
         const cmdInput = document.getElementById('cmdInput');
-        
+        let cmdActiveIndex = -1;
+
+        function baseCommands() {
+            return [
+                { icon: 'ph-bold ph-squares-four', label: 'Mở bảng Tổng quan (Dashboard)', action: () => switchTab('dashboard'), group: 'Điều hướng' },
+                { icon: 'ph-bold ph-users-three', label: 'Quản lý Tuyển dụng (ATS)', action: () => switchTab('ats'), group: 'Điều hướng' },
+                { icon: 'ph-bold ph-table', label: 'Mở cơ sở dữ liệu (Grid/Excel)', action: () => switchTab('grid'), group: 'Điều hướng' },
+                { icon: 'ph-bold ph-folder-star', label: 'Kho Link & Content', action: () => switchTab('resources'), group: 'Điều hướng' },
+                { icon: 'ph-bold ph-plus-circle', label: 'Thêm Nhân sự mới vào DB', action: () => { switchTab('grid'); setTimeout(addRowGAS, 400); }, group: 'Hành động nhanh' },
+                { icon: 'ph-bold ph-magic-wand', label: 'Quét CV bằng AI', action: () => { switchTab('ats'); setTimeout(triggerAICVScan, 400); }, group: 'Hành động nhanh' },
+                { icon: 'ph-bold ph-moon-stars', label: 'Bật/Tắt chế độ tối', action: () => toggleDarkMode(), group: 'Hành động nhanh' },
+                { icon: 'ph-bold ph-download-simple', label: 'Xuất dữ liệu ra CSV', action: () => { switchTab('grid'); setTimeout(exportGridCSV, 300); }, group: 'Hành động nhanh' }
+            ];
+        }
+
+        function employeeCommands(query) {
+            if(!gridData || !gridData.length) return [];
+            const nameIdx = gridColumns.findIndex(c => /tên|name/i.test(c));
+            if(nameIdx === -1) return [];
+            return gridData
+                .map((row, idx) => ({ row, idx }))
+                .filter(({ row }) => row.some(cell => String(cell).toLowerCase().includes(query)))
+                .slice(0, 5)
+                .map(({ row, idx }) => ({
+                    icon: 'ph-bold ph-user',
+                    label: `${row[nameIdx] || 'Nhân sự #' + (idx+1)} — xem trong bảng dữ liệu`,
+                    action: () => { switchTab('grid'); setTimeout(() => highlightGridRow(idx), 350); },
+                    group: 'Nhân sự'
+                }));
+        }
+
+        function renderCmdResults(query) {
+            const resultsEl = document.getElementById('cmdResults');
+            const q = query.trim().toLowerCase();
+            let items = baseCommands();
+            if(q) {
+                items = items.filter(c => c.label.toLowerCase().includes(q));
+                items = items.concat(employeeCommands(q));
+            }
+            if(items.length === 0) {
+                resultsEl.innerHTML = `<div class="px-3 py-8 text-center text-sm font-medium text-slate-400"><i class="ph ph-ghost text-2xl block mb-2"></i>Không tìm thấy kết quả cho "${query}"</div>`;
+                return;
+            }
+            let html = '';
+            let lastGroup = null;
+            items.forEach((item, i) => {
+                if(item.group !== lastGroup) {
+                    html += `<p class="px-3 py-2 text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">${item.group}</p>`;
+                    lastGroup = item.group;
+                }
+                html += `<button data-cmd-index="${i}" onclick="runCmd(${i})" class="cmd-item w-full flex items-center px-3 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-primary rounded-xl transition-colors text-left dm-text dm-hover">
+                    <i class="${item.icon} w-6 text-center mr-3 text-lg"></i> ${item.label}
+                </button>`;
+            });
+            resultsEl.innerHTML = html;
+            window._cmdItems = items;
+            cmdActiveIndex = -1;
+        }
+
+        function runCmd(i) {
+            const item = window._cmdItems[i];
+            if(item) { closeCommandPalette(); item.action(); }
+        }
+
+        function highlightGridRow(idx) {
+            const tbody = document.getElementById('gridBody');
+            if(!tbody.rows[idx]) return;
+            tbody.rows[idx].classList.add('row-highlight');
+            tbody.rows[idx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => tbody.rows[idx].classList.remove('row-highlight'), 2000);
+        }
+
         function openCommandPalette() {
             cmdModal.classList.remove('hidden');
             setTimeout(() => { 
@@ -676,6 +857,7 @@
                 document.getElementById('commandBox').classList.remove('scale-95');
                 cmdInput.focus();
                 cmdInput.value = '';
+                renderCmdResults('');
             }, 10);
         }
         
@@ -684,15 +866,27 @@
             document.getElementById('commandBox').classList.add('scale-95');
             setTimeout(() => cmdModal.classList.add('hidden'), 200);
         }
-        
-        function cmdAction(action) {
-            closeCommandPalette();
-            if (action === 'dashboard' || action === 'ats' || action === 'grid') {
-                switchTab(action);
-            } else if (action === 'add-row') {
-                switchTab('grid');
-                setTimeout(() => addRowGAS(), 400); // Đợi tab load xong mới add row
+
+        cmdInput.addEventListener('input', () => renderCmdResults(cmdInput.value));
+        cmdInput.addEventListener('keydown', (e) => {
+            const items = document.querySelectorAll('#cmdResults .cmd-item');
+            if(e.key === 'ArrowDown') {
+                e.preventDefault();
+                cmdActiveIndex = Math.min(cmdActiveIndex + 1, items.length - 1);
+                updateCmdActive(items);
+            } else if(e.key === 'ArrowUp') {
+                e.preventDefault();
+                cmdActiveIndex = Math.max(cmdActiveIndex - 1, 0);
+                updateCmdActive(items);
+            } else if(e.key === 'Enter') {
+                e.preventDefault();
+                if(cmdActiveIndex >= 0 && items[cmdActiveIndex]) items[cmdActiveIndex].click();
+                else if(items.length > 0) items[0].click();
             }
+        });
+        function updateCmdActive(items) {
+            items.forEach((el, i) => el.classList.toggle('cmd-active', i === cmdActiveIndex));
+            if(items[cmdActiveIndex]) items[cmdActiveIndex].scrollIntoView({ block: 'nearest' });
         }
 
         // Lắng nghe phím tắt Ctrl+K
@@ -701,8 +895,10 @@
                 e.preventDefault();
                 cmdModal.classList.contains('hidden') ? openCommandPalette() : closeCommandPalette();
             }
-            if (e.key === 'Escape' && !cmdModal.classList.contains('hidden')) {
-                closeCommandPalette();
+            if (e.key === 'Escape') {
+                if(!cmdModal.classList.contains('hidden')) closeCommandPalette();
+                closeModal(true);
+                closeAddColModal(true);
             }
         });
 
@@ -716,6 +912,7 @@
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxtvcxoCQqEZM7yVd2UWW2A0hYbhnuV-9WGD4bcvKrgscXMyGH-7Fw3OYzBJMQQ17-9/exec';
         let gridColumns = [];
         let gridData = [];
+        let gridFilterQuery = '';
 
         async function callAPI(action, payload = {}) {
             startGlobalLoader();
@@ -749,7 +946,12 @@
             } else {
                 // Fallback Offline Data khi không gọi được API
                 gridColumns = ['Mã NV', 'Họ và Tên', 'Phòng ban', 'Chức vụ', 'Trạng thái'];
-                gridData = [['NV001', 'Dữ liệu Demo (Offline)', 'IT', 'Dev', 'Đang làm việc']];
+                gridData = [
+                    ['NV001', 'Nguyễn Văn An', 'IT', 'Backend Dev', 'Đang làm việc'],
+                    ['NV002', 'Trần Thị Bình', 'Kinh doanh', 'Sales Executive', 'Đang làm việc'],
+                    ['NV003', 'Lê Thị Mai', 'Kinh doanh', 'Sales Manager', 'Đang làm việc'],
+                    ['NV004', 'Trần Đức Kiên', 'IT', 'Senior Dev', 'Đang làm việc']
+                ];
                 renderGrid();
                 showToast("Đang dùng dữ liệu Local (Chưa kết nối Cloud)");
             }
@@ -760,11 +962,24 @@
         function secureCellEvents() {
             const cells = document.querySelectorAll('.excel-table td');
             cells.forEach(cell => {
-                // Chặn phím Enter để xuống dòng, ép lưu dữ liệu
+                // Chặn phím Enter để xuống dòng, ép lưu dữ liệu; hỗ trợ điều hướng bằng phím mũi tên
                 cell.addEventListener('keydown', function(e) {
                     if (e.key === 'Enter') {
                         e.preventDefault();
                         this.blur(); // Rời focus để kích hoạt sự kiện onblur cập nhật dữ liệu
+                        return;
+                    }
+                    const isArrow = ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key);
+                    if (isArrow) {
+                        // Chỉ điều hướng nếu con trỏ đang ở đầu/cuối nội dung để không phá việc sửa text
+                        const sel = window.getSelection();
+                        const atStart = sel.anchorOffset === 0;
+                        const atEnd = sel.anchorOffset === this.innerText.length;
+                        const shouldNav = (e.key === 'ArrowLeft' && atStart) || (e.key === 'ArrowRight' && atEnd) || e.key === 'ArrowUp' || e.key === 'ArrowDown';
+                        if (shouldNav) {
+                            e.preventDefault();
+                            navigateGrid(this, e.key);
+                        }
                     }
                 });
                 
@@ -779,25 +994,127 @@
             });
         }
 
+        function navigateGrid(cell, key) {
+            const td = cell;
+            const tr = td.parentElement;
+            const tbody = tr.parentElement;
+            const colIndex = Array.prototype.indexOf.call(tr.children, td);
+            const rowIndex = Array.prototype.indexOf.call(tbody.children, tr);
+            let targetRow = tr, targetCol = colIndex;
+            if(key === 'ArrowUp') targetRow = tbody.children[rowIndex - 1];
+            if(key === 'ArrowDown') targetRow = tbody.children[rowIndex + 1];
+            if(key === 'ArrowLeft') { targetCol = colIndex - 1; }
+            if(key === 'ArrowRight') { targetCol = colIndex + 1; }
+            if(!targetRow) return;
+            const targetCell = targetRow.children[targetCol];
+            if(targetCell) {
+                targetCell.focus();
+                document.getSelection().selectAllChildren(targetCell);
+                document.getSelection().collapseToEnd();
+            }
+        }
+
         function renderGrid() {
             const header = document.getElementById('gridHeaderRow');
             const body = document.getElementById('gridBody');
             
             header.innerHTML = '';
-            gridColumns.forEach((col) => {
-                header.innerHTML += `<th>${col}</th>`;
+            gridColumns.forEach((col, cIndex) => {
+                header.innerHTML += `<th onclick="sortGridByColumn(${cIndex})" title="Nhấn để sắp xếp">
+                    <span class="flex items-center justify-between gap-2">
+                        <span class="flex items-center gap-1.5">${col} ${sortState.col === cIndex ? `<i class="ph-bold ${sortState.dir === 'asc' ? 'ph-sort-ascending' : 'ph-sort-descending'} text-primary"></i>` : '<i class="ph ph-arrows-down-up text-slate-300 text-xs"></i>'}</span>
+                        <i class="ph-bold ph-x text-rose-400 hover:text-rose-600 text-xs" onclick="event.stopPropagation(); deleteColumn(${cIndex})" title="Xoá cột"></i>
+                    </span>
+                </th>`;
             });
+            header.innerHTML += `<th class="w-10"></th>`;
+
+            const filtered = getFilteredIndices();
 
             body.innerHTML = '';
-            gridData.forEach((row, rIndex) => {
+            filtered.forEach((rIndex) => {
+                const row = gridData[rIndex];
                 let tr = document.createElement('tr');
                 row.forEach((cell, cIndex) => {
                     tr.innerHTML += `<td contenteditable="true" onblur="updateCell(${rIndex}, ${cIndex}, this.innerText)">${cell}</td>`;
                 });
+                tr.innerHTML += `<td class="!cursor-pointer text-center" contenteditable="false" onclick="deleteRow(${rIndex})" title="Xoá dòng"><i class="ph-bold ph-trash text-rose-400 hover:text-rose-600"></i></td>`;
                 body.appendChild(tr);
             });
+
+            document.getElementById('gridEmptyState').classList.toggle('hidden', filtered.length > 0);
+            document.getElementById('gridEmptyState').classList.toggle('flex', filtered.length === 0);
             
             secureCellEvents();
+        }
+
+        function getFilteredIndices() {
+            let indices = gridData.map((_, i) => i);
+            if(gridFilterQuery) {
+                const q = gridFilterQuery.toLowerCase();
+                indices = indices.filter(i => gridData[i].some(cell => String(cell).toLowerCase().includes(q)));
+            }
+            if(sortState.col !== null) {
+                indices.sort((a, b) => {
+                    const va = gridData[a][sortState.col] ?? '';
+                    const vb = gridData[b][sortState.col] ?? '';
+                    const na = parseFloat(va), nb = parseFloat(vb);
+                    let cmp;
+                    if(!isNaN(na) && !isNaN(nb) && va !== '' && vb !== '') cmp = na - nb;
+                    else cmp = String(va).localeCompare(String(vb), 'vi');
+                    return sortState.dir === 'asc' ? cmp : -cmp;
+                });
+            }
+            return indices;
+        }
+
+        function filterGrid(value) {
+            gridFilterQuery = value.trim();
+            renderGrid();
+        }
+
+        let sortState = { col: null, dir: 'asc' };
+        function sortGridByColumn(cIndex) {
+            if(sortState.col === cIndex) {
+                sortState.dir = sortState.dir === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortState.col = cIndex;
+                sortState.dir = 'asc';
+            }
+            renderGrid();
+        }
+
+        function deleteRow(rIndex) {
+            const name = gridData[rIndex][1] || gridData[rIndex][0] || 'dòng này';
+            if(!confirm(`Xoá "${name}" khỏi cơ sở dữ liệu?`)) return;
+            gridData.splice(rIndex, 1);
+            renderGrid();
+            showToast(`Đã xoá "${name}"`);
+            setSaveStatus('saving');
+            setTimeout(() => setSaveStatus('done'), 500);
+        }
+
+        function deleteColumn(cIndex) {
+            const name = gridColumns[cIndex];
+            if(gridColumns.length <= 1) { showToast('Không thể xoá cột cuối cùng'); return; }
+            if(!confirm(`Xoá toàn bộ cột "${name}"?`)) return;
+            gridColumns.splice(cIndex, 1);
+            gridData.forEach(row => row.splice(cIndex, 1));
+            if(sortState.col === cIndex) sortState = { col: null, dir: 'asc' };
+            renderGrid();
+            showToast(`Đã xoá cột "${name}"`);
+        }
+
+        function exportGridCSV() {
+            const rows = [gridColumns.join(',')].concat(gridData.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')));
+            const csv = rows.join('\n');
+            const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = 'nhansu_export.csv';
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('Đã xuất file CSV');
         }
 
         async function updateCell(rIndex, cIndex, value) {
@@ -805,10 +1122,6 @@
             const cleanVal = value.trim();
             if(gridData[rIndex][cIndex] !== cleanVal) {
                 gridData[rIndex][cIndex] = cleanVal;
-                
-                // Cập nhật giao diện lập tức
-                const tbody = document.getElementById('gridBody');
-                tbody.rows[rIndex].cells[cIndex].innerText = cleanVal;
                 
                 setSaveStatus('saving');
                 const success = await callAPI('updateGridCell', { rIndex, cIndex, value: cleanVal });
@@ -832,8 +1145,9 @@
             }, 10);
         }
 
-        function closeAddColModal() {
+        function closeAddColModal(silent) {
             const modal = document.getElementById('addColModal');
+            if(silent && modal.classList.contains('hidden')) return;
             modal.classList.add('opacity-0');
             document.getElementById('addColBox').classList.add('scale-95');
             setTimeout(() => modal.classList.add('hidden'), 300);
@@ -864,10 +1178,13 @@
             let newRow = new Array(gridColumns.length).fill('');
             newRow[0] = 'NV' + String(gridData.length + 1).padStart(3, '0');
             gridData.push(newRow);
+            sortState = { col: null, dir: 'asc' };
+            gridFilterQuery = '';
+            document.getElementById('gridSearchInput').value = '';
             renderGrid();
             
-            const container = document.querySelector('.overflow-auto');
-            container.scrollTop = container.scrollHeight;
+            const container = document.querySelector('#view-grid .overflow-auto');
+            if(container) container.scrollTop = container.scrollHeight;
 
             setSaveStatus('saving');
             const serverRow = await callAPI('addGridRow', { rowData: newRow });
@@ -895,17 +1212,31 @@
             }, 3000);
         }
 
+        // --- Chart nhân sự (đổi phạm vi thời gian) ---
+        let hrChartInstance = null;
+        const chartDatasets = {
+            '6m': { labels: ['T4','T5','T6','T7','T8','T9'], hired: [12,19,15,25,22,30], left: [5,2,4,1,3,2] },
+            'year': { labels: ['T1','T2','T3','T4','T5','T6','T7','T8','T9','T10','T11','T12'], hired: [8,10,14,12,19,15,25,22,30,18,20,26], left: [3,4,2,5,2,4,1,3,2,3,2,4] }
+        };
+        function updateHrChart(range) {
+            const d = chartDatasets[range] || chartDatasets['6m'];
+            hrChartInstance.data.labels = d.labels;
+            hrChartInstance.data.datasets[0].data = d.hired;
+            hrChartInstance.data.datasets[1].data = d.left;
+            hrChartInstance.update();
+        }
+
         // Khởi chạy khi tải xong trang
         document.addEventListener('DOMContentLoaded', () => {
             // Chart.js Setup
             const ctx = document.getElementById('hrChart').getContext('2d');
-            new Chart(ctx, {
+            hrChartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['T4', 'T5', 'T6', 'T7', 'T8', 'T9'],
+                    labels: chartDatasets['6m'].labels,
                     datasets: [
-                        { label: 'Tuyển mới', data: [12, 19, 15, 25, 22, 30], backgroundColor: '#4F46E5', borderRadius: 6, barPercentage: 0.5 }, 
-                        { label: 'Nghỉ việc', data: [5, 2, 4, 1, 3, 2], backgroundColor: '#F43F5E', borderRadius: 6, barPercentage: 0.5 }
+                        { label: 'Tuyển mới', data: chartDatasets['6m'].hired, backgroundColor: '#4F46E5', borderRadius: 6, barPercentage: 0.5 }, 
+                        { label: 'Nghỉ việc', data: chartDatasets['6m'].left, backgroundColor: '#F43F5E', borderRadius: 6, barPercentage: 0.5 }
                     ]
                 },
                 options: {
@@ -919,7 +1250,12 @@
             loadData();
         });
 
-        // AI Features Visual Triggers
+        // --- AI CV Scan: quét & thêm ứng viên mới thực sự vào Kanban ---
+        const aiCandidatePool = [
+            { name: 'Đỗ Minh Quân', desc: 'Product Owner tại Tiki, 4 năm kinh nghiệm B2C.', file: 'CV_MinhQuan.pdf' },
+            { name: 'Vũ Thị Hương', desc: 'Business Analyst chuyển ngành PM, tư duy dữ liệu tốt.', file: 'CV_ThiHuong.pdf' },
+            { name: 'Bùi Anh Tuấn', desc: 'Ex-Grab PM, mạnh về tăng trưởng & thử nghiệm A/B.', file: 'CV_AnhTuan.pdf' }
+        ];
         function triggerAICVScan() {
             const overlay = document.getElementById('aiOverlay');
             overlay.classList.remove('hidden');
@@ -932,21 +1268,49 @@
             const status = document.getElementById('aiStatusText');
             progress.style.width = '0%';
             
-            setTimeout(() => { progress.style.width = '45%'; status.innerText = "Đối chiếu JD & Kỹ năng..."; }, 1200);
-            setTimeout(() => { progress.style.width = '80%'; status.innerText = "Tính điểm Match Score..."; }, 2500);
+            setTimeout(() => { progress.style.width = '30%'; status.innerText = "Đang đọc và phân tích PDF..."; }, 600);
+            setTimeout(() => { progress.style.width = '60%'; status.innerText = "Đối chiếu JD & Kỹ năng..."; }, 1600);
+            setTimeout(() => { progress.style.width = '85%'; status.innerText = "Tính điểm Match Score..."; }, 2600);
             setTimeout(() => { 
                 progress.style.width = '100%'; status.innerText = "Hoàn tất phân tích!"; 
-                showToast("Quét CV bằng AI hoàn tất!");
-            }, 3500);
+                addAICandidateCard();
+                showToast("Quét CV bằng AI hoàn tất — đã thêm ứng viên mới!");
+            }, 3400);
 
             setTimeout(() => {
                 overlay.classList.add('opacity-0');
                 document.getElementById('aiOverlayBox').classList.add('scale-95');
                 setTimeout(() => overlay.classList.add('hidden'), 300);
-            }, 4500);
+            }, 4200);
         }
 
-        // Modal Tools (QR, Content)
+        function addAICandidateCard() {
+            const candidate = aiCandidatePool[Math.floor(Math.random() * aiCandidatePool.length)];
+            const score = Math.floor(Math.random() * 26) + 70; // 70-95%
+            const scoreColor = score >= 85 ? 'emerald' : 'amber';
+            const container = document.querySelector('#col-applied .kanban-container');
+            const card = document.createElement('div');
+            card.className = 'bg-white p-4 rounded-xl shadow-sm border border-slate-200 kanban-card card-new';
+            card.draggable = true;
+            card.addEventListener('dragstart', drag);
+            card.innerHTML = `
+                <div class="flex justify-between items-start mb-3 pointer-events-none">
+                    <h5 class="font-bold text-slate-800 text-sm transition-colors">${candidate.name}</h5>
+                    <span class="bg-${scoreColor}-50 border border-${scoreColor}-200 text-${scoreColor}-700 text-[10px] px-2 py-1 rounded font-bold flex items-center">
+                        <i class="ph-fill ph-sparkle mr-1"></i> ${score}% Match
+                    </span>
+                </div>
+                <p class="text-xs font-medium text-slate-500 mb-4 line-clamp-2 leading-relaxed pointer-events-none">${candidate.desc}</p>
+                <div class="flex justify-between items-center text-xs pointer-events-none">
+                    <span class="text-slate-500 font-medium flex items-center bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-100">
+                        <i class="ph-fill ph-file-pdf text-rose-500 mr-1.5 text-sm"></i> ${candidate.file}
+                    </span>
+                </div>`;
+            container.appendChild(card);
+            updateKanbanCounts();
+        }
+
+        // Modal Tools (QR, Content, Profile, Leave)
         const aiModal = document.getElementById('aiContentModal');
         const modalBox = document.getElementById('modalBox');
         
@@ -957,7 +1321,8 @@
                 modalBox.classList.remove('scale-95');
             }, 10);
         }
-        function closeModal() {
+        function closeModal(silent) {
+            if(silent && aiModal.classList.contains('hidden')) return;
             aiModal.classList.add('opacity-0');
             modalBox.classList.add('scale-95');
             setTimeout(() => aiModal.classList.add('hidden'), 300);
@@ -966,6 +1331,7 @@
         function showQR(link) {
             document.getElementById('modalTitle').innerHTML = `<i class="ph-fill ph-qr-code text-primary mr-2 text-2xl"></i> QR Tuyển dụng`;
             document.getElementById('modalBody').innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://${link}" class="w-48 h-48 rounded-xl shadow-sm border border-slate-200 p-2 bg-white">`;
+            document.getElementById('modalFooter').classList.remove('hidden');
             const btn = document.getElementById('modalActionBtn');
             btn.innerHTML = `<i class="ph-bold ph-download-simple mr-2"></i> Tải ảnh`;
             btn.onclick = () => { showToast("Đã tải mã QR"); closeModal(); };
@@ -975,12 +1341,13 @@
         function generateAIContent(link, cat) {
             document.getElementById('modalTitle').innerHTML = `<i class="ph-fill ph-magic-wand text-purple-600 mr-2 text-2xl"></i> AI Writer`;
             document.getElementById('modalBody').innerHTML = `<div id="aiLoading" class="text-center py-6"><i class="ph-bold ph-spinner animate-spin text-3xl text-purple-500 mb-3"></i><p class="text-sm font-bold text-slate-500">Đang sáng tạo Content...</p></div>`;
+            document.getElementById('modalFooter').classList.remove('hidden');
             document.getElementById('modalActionBtn').innerText = 'Đang xử lý...';
             openModal();
 
             setTimeout(() => {
                 const text = `🔥 TUYỂN DỤNG ${cat.toUpperCase()} TÀI NĂNG 🔥\n\nBạn muốn bứt phá giới hạn? Tham gia cùng NextGen HR!\n👉 Lương hấp dẫn, BHXH Full\n🔗 Apply: https://${link}`;
-                document.getElementById('modalBody').innerHTML = `<div class="bg-white p-5 rounded-xl border border-slate-200 text-sm font-medium whitespace-pre-wrap w-full shadow-inner">${text}</div>`;
+                document.getElementById('modalBody').innerHTML = `<div class="bg-white p-5 rounded-xl border border-slate-200 text-sm font-medium whitespace-pre-wrap w-full shadow-inner dm-surface dm-border dm-text">${text}</div>`;
                 const btn = document.getElementById('modalActionBtn');
                 btn.innerHTML = `<i class="ph-bold ph-copy mr-2"></i> Copy Bài viết`;
                 btn.onclick = () => { 
@@ -989,6 +1356,63 @@
                     closeModal(); 
                 };
             }, 1500);
+        }
+
+        // --- Hồ sơ nhân sự (Employee Profile) ---
+        function openProfile(name, role, dept, type, status, avatar, aiNote) {
+            document.getElementById('modalTitle').innerHTML = `<i class="ph-fill ph-identification-card text-primary mr-2 text-2xl"></i> Hồ sơ nhân sự`;
+            document.getElementById('modalBody').innerHTML = `
+                <div class="flex flex-col items-center text-center w-full">
+                    <img src="${avatar}" class="w-20 h-20 rounded-full object-cover ring-4 ring-primary/10 mb-3">
+                    <h3 class="text-lg font-extrabold text-slate-800 dm-text">${name}</h3>
+                    <p class="text-sm font-semibold text-primary mb-4">${role}</p>
+                    <div class="grid grid-cols-2 gap-3 w-full text-left mb-4">
+                        <div class="bg-slate-50 dm-bg rounded-xl p-3 border border-slate-100 dm-border">
+                            <p class="text-[11px] font-bold text-slate-400 uppercase">Phòng ban</p>
+                            <p class="text-sm font-bold text-slate-700 dm-text">${dept}</p>
+                        </div>
+                        <div class="bg-slate-50 dm-bg rounded-xl p-3 border border-slate-100 dm-border">
+                            <p class="text-[11px] font-bold text-slate-400 uppercase">Loại HĐ</p>
+                            <p class="text-sm font-bold text-slate-700 dm-text">${type}</p>
+                        </div>
+                        <div class="bg-slate-50 dm-bg rounded-xl p-3 border border-slate-100 dm-border col-span-2">
+                            <p class="text-[11px] font-bold text-slate-400 uppercase">Trạng thái</p>
+                            <p class="text-sm font-bold text-emerald-600">${status}</p>
+                        </div>
+                    </div>
+                    ${aiNote ? `<div class="w-full bg-purple-50 border border-purple-100 rounded-xl p-3 text-left flex items-start">
+                        <i class="ph-fill ph-brain text-purple-500 text-lg mr-2 mt-0.5 shrink-0"></i>
+                        <p class="text-xs font-semibold text-purple-700 leading-relaxed">${aiNote}</p>
+                    </div>` : ''}
+                </div>`;
+            document.getElementById('modalFooter').classList.remove('hidden');
+            const btn = document.getElementById('modalActionBtn');
+            btn.innerHTML = `<i class="ph-bold ph-envelope mr-2"></i> Gửi tin nhắn`;
+            btn.onclick = () => { showToast(`Đã mở soạn tin nhắn tới ${name}`); closeModal(); };
+            openModal();
+        }
+
+        // --- Đơn xin phép chờ duyệt ---
+        function showLeaveRequests() {
+            const requests = [
+                { name: 'Nguyễn Văn An', type: 'Nghỉ phép năm', days: '2 ngày', date: '05/07 - 06/07' },
+                { name: 'Trần Thị Bình', type: 'Nghỉ ốm', days: '1 ngày', date: '04/07' },
+                { name: 'Phạm Hoàng Nam', type: 'Công tác', days: '3 ngày', date: '08/07 - 10/07' }
+            ];
+            document.getElementById('modalTitle').innerHTML = `<i class="ph-fill ph-calendar-x text-rose-500 mr-2 text-2xl"></i> Phép chờ duyệt (8)`;
+            document.getElementById('modalBody').innerHTML = `<div class="w-full space-y-2">` + requests.map(r => `
+                <div class="flex items-center justify-between bg-slate-50 dm-bg border border-slate-100 dm-border rounded-xl p-3">
+                    <div>
+                        <p class="text-sm font-bold text-slate-800 dm-text">${r.name}</p>
+                        <p class="text-xs text-slate-500 dm-text-mute">${r.type} • ${r.days} • ${r.date}</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="this.closest('div.flex').outerHTML='<p class=\\'text-xs font-bold text-emerald-600 w-full text-right\\'>Đã duyệt ✓</p>'; showToast('Đã duyệt đơn của ${r.name}')" class="p-2 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100"><i class="ph-bold ph-check"></i></button>
+                        <button onclick="this.closest('div.flex').outerHTML='<p class=\\'text-xs font-bold text-rose-600 w-full text-right\\'>Đã từ chối ✕</p>'; showToast('Đã từ chối đơn của ${r.name}')" class="p-2 bg-rose-50 text-rose-600 rounded-lg hover:bg-rose-100"><i class="ph-bold ph-x"></i></button>
+                    </div>
+                </div>`).join('') + `</div>`;
+            document.getElementById('modalFooter').classList.add('hidden');
+            openModal();
         }
     </script>
 </body>
