@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NextGen HRIS - Full Features</title>
+    <title>NextGen HRIS - Smart Enterprise</title>
     
     <!-- Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -19,9 +19,13 @@
                     colors: {
                         primary: '#4F46E5', 
                         secondary: '#10B981',
-                        dark: '#1E293B', 
+                        dark: '#0F172A', 
                         light: '#F8FAFC',
-                        excel: '#107C41' // Màu xanh đặc trưng của Excel
+                        excel: '#107C41'
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'float': '0 8px 30px rgba(0,0,0,0.08)'
                     }
                 }
             }
@@ -30,159 +34,188 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; }
+        body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; -webkit-font-smoothing: antialiased; }
         
-        /* Tùy chỉnh Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        /* Smart Scrollbar - Tàng hình, chỉ hiện khi hover/scroll */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+        ::-webkit-scrollbar-thumb { 
+            background: transparent; 
+            border-radius: 9999px; 
+            border: 2px solid transparent; 
+            background-clip: padding-box;
+            transition: background-color 0.3s;
+        }
+        *:hover::-webkit-scrollbar-thumb { background-color: #CBD5E1; }
+        ::-webkit-scrollbar-thumb:hover { background-color: #94A3B8 !important; }
 
-        /* Animation chuyển tab */
-        .view-section { display: none; animation: fadeIn 0.3s ease-out; }
-        .view-section.active { display: block; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
+        /* Smooth View Transitions */
+        .view-section { display: none; animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .view-section.active { display: flex; flex-direction: column; }
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(12px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Styles cho Excel/Grid Mode */
-        .excel-table { border-collapse: collapse; width: 100%; font-size: 14px; background: white; }
+        /* Smart Excel Table with Sticky Headers */
+        .excel-table { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 13.5px; background: white; }
         .excel-table th { 
-            background-color: #F1F5F9; border: 1px solid #E2E8F0; 
-            padding: 10px 12px; font-weight: 600; color: #475569; text-align: left;
-            position: relative; white-space: nowrap;
+            background-color: #F8FAFC; 
+            padding: 12px 16px; font-weight: 600; color: #334155; text-align: left;
+            position: sticky; top: 0; z-index: 10;
+            white-space: nowrap;
+            border-bottom: 1px solid #E2E8F0;
+            border-right: 1px solid #E2E8F0;
+            box-shadow: 0 1px 0 rgba(0,0,0,0.02);
+            backdrop-filter: blur(8px);
         }
         .excel-table td { 
-            border: 1px solid #E2E8F0; padding: 10px 12px; color: #1E293B; outline: none;
-            transition: all 0.2s; white-space: nowrap;
+            border-bottom: 1px solid #E2E8F0; border-right: 1px solid #E2E8F0; 
+            padding: 12px 16px; color: #1E293B; outline: none;
+            transition: all 0.15s ease; white-space: nowrap;
         }
+        .excel-table tr:last-child td { border-bottom: none; }
+        .excel-table td:first-child, .excel-table th:first-child { border-left: 1px solid #E2E8F0; }
+        
+        /* Focus Ring thông minh cho Excel Mode */
         .excel-table td:focus {
-            border: 2px solid #107C41; box-shadow: inset 0 0 0 1px #107C41; z-index: 10;
+            border-color: #107C41; 
+            background-color: #F0FBDF; /* Xanh lá nhạt khi sửa */
+            box-shadow: inset 0 0 0 1.5px #107C41; 
+            z-index: 10; position: relative;
         }
-        .excel-table tr:hover td { background-color: #F8FAFC; }
+        .excel-table tr:hover td:not(:focus) { background-color: #F8FAFC; }
+
+        /* Nút bấm có hiệu ứng nẩy */
+        .btn-smart { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .btn-smart:active { transform: scale(0.96); }
     </style>
 </head>
-<body class="text-slate-800 flex h-screen overflow-hidden">
+<body class="text-slate-800 flex h-screen overflow-hidden selection:bg-primary/20 selection:text-primary">
+
+    <!-- Thanh Load dữ liệu toàn cầu (Global Progress Bar) -->
+    <div id="globalLoader" class="fixed top-0 left-0 h-1 bg-gradient-to-r from-primary to-purple-500 w-0 z-[100] transition-all duration-300 ease-out"></div>
 
     <!-- Sidebar -->
-    <aside class="w-64 bg-white border-r border-slate-200 flex flex-col h-full z-20 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
-        <div class="h-16 flex items-center px-6 border-b border-slate-200">
-            <i class="ph ph-hexagon-fill text-primary text-2xl mr-2"></i>
-            <span class="font-bold text-lg text-slate-800">NextGen<span class="text-primary">HR</span></span>
+    <aside class="w-64 bg-white border-r border-slate-200 flex flex-col h-full z-20 shadow-soft flex-shrink-0">
+        <div class="h-16 flex items-center px-6 border-b border-slate-100">
+            <i class="ph-fill ph-hexagon text-primary text-2xl mr-2 drop-shadow-sm"></i>
+            <span class="font-bold text-lg tracking-tight text-dark">NextGen<span class="text-primary">HR</span></span>
         </div>
         
-        <nav class="flex-1 p-4 space-y-1.5 overflow-y-auto">
-            <!-- Navigation Buttons -->
-            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl bg-primary/10 text-primary transition-colors">
-                <i class="ph ph-squares-four text-lg mr-3"></i> Tổng quan
+        <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-semibold rounded-xl bg-primary/10 text-primary transition-all">
+                <i class="ph ph-squares-four text-xl mr-3"></i> Tổng quan
             </button>
-            <button onclick="switchTab('ats')" id="nav-ats" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-xl transition-colors">
-                <i class="ph ph-users-three text-lg mr-3"></i> Tuyển dụng (ATS)
+            <button onclick="switchTab('ats')" id="nav-ats" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-xl transition-all">
+                <i class="ph ph-users-three text-xl mr-3"></i> Tuyển dụng (ATS)
             </button>
-            <button onclick="switchTab('grid')" id="nav-grid" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-xl transition-colors">
-                <i class="ph ph-table text-lg mr-3 text-excel"></i> Dữ liệu (Excel Mode)
+            <button onclick="switchTab('grid')" id="nav-grid" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-xl transition-all">
+                <i class="ph ph-table text-xl mr-3 text-excel/70"></i> Dữ liệu (Excel)
             </button>
-            <button onclick="switchTab('resources')" id="nav-resources" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-xl transition-colors">
-                <i class="ph ph-folder-star text-lg mr-3 text-purple-500"></i> Kho Tài nguyên & Link
+            <button onclick="switchTab('resources')" id="nav-resources" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-xl transition-all">
+                <i class="ph ph-folder-star text-xl mr-3 text-purple-500/70"></i> Kho Link & Content
             </button>
             
-            <div class="pt-4 mt-4 border-t border-slate-200">
-                <p class="px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Hệ thống</p>
-                <button class="w-full flex items-center px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-xl transition-colors">
-                    <i class="ph ph-gear text-lg mr-3"></i> Cài đặt
+            <div class="pt-4 mt-2 border-t border-slate-100">
+                <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Cấu hình</p>
+                <button class="w-full flex items-center px-4 py-3 text-sm font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-xl transition-all">
+                    <i class="ph ph-gear text-xl mr-3"></i> Cài đặt hệ thống
                 </button>
             </div>
         </nav>
 
-        <div class="p-4 border-t border-slate-200 bg-slate-50/50">
-            <div class="flex items-center cursor-pointer hover:bg-slate-100 p-2 rounded-xl transition-colors">
-                <img src="https://i.pravatar.cc/150?img=11" alt="Admin" class="w-10 h-10 rounded-full border-2 border-white shadow-sm">
-                <div class="ml-3">
-                    <p class="text-sm font-medium text-slate-800">Anh Minh</p>
+        <div class="p-4 border-t border-slate-100 bg-white">
+            <div class="flex items-center cursor-pointer hover:bg-slate-50 p-2.5 rounded-xl transition-all group">
+                <div class="relative">
+                    <img src="https://i.pravatar.cc/150?img=11" alt="Admin" class="w-10 h-10 rounded-full object-cover border border-slate-200">
+                    <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-white"></div>
+                </div>
+                <div class="ml-3 flex-1">
+                    <p class="text-sm font-bold text-slate-800 group-hover:text-primary transition-colors">Anh Minh</p>
                     <p class="text-xs text-slate-500">HR Director</p>
                 </div>
+                <i class="ph ph-caret-up text-slate-400"></i>
             </div>
         </div>
     </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 flex flex-col h-full relative bg-[#F8FAFC]">
-        <!-- Header -->
-        <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 z-10 sticky top-0">
-            <h2 id="page-title" class="text-xl font-bold text-slate-800">Tổng quan hệ thống</h2>
-            <div class="flex items-center space-x-5">
+    <main class="flex-1 flex flex-col h-full relative bg-slate-50/50">
+        <!-- Header thông minh: Kính mờ (Glassmorphism) -->
+        <header class="h-16 bg-white/80 backdrop-blur-md border-b border-slate-200/80 flex items-center justify-between px-8 z-10 sticky top-0 flex-shrink-0">
+            <h2 id="page-title" class="text-xl font-bold text-slate-800 tracking-tight">Tổng quan hệ thống</h2>
+            <div class="flex items-center space-x-6">
                 <div class="relative group">
-                    <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors"></i>
-                    <input type="text" placeholder="Tìm kiếm nhân viên, ứng viên..." class="pl-10 pr-4 py-2 bg-slate-100 border-transparent rounded-full text-sm focus:outline-none focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 w-72 transition-all">
+                    <i class="ph ph-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors"></i>
+                    <input type="text" placeholder="Tìm kiếm nhanh..." class="pl-10 pr-4 py-2 bg-slate-100/80 border-transparent rounded-full text-sm focus:outline-none focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 w-64 focus:w-80 transition-all duration-300">
                 </div>
-                <button class="relative p-2 text-slate-400 hover:text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-full transition-colors">
-                    <i class="ph ph-bell text-xl"></i>
-                    <span class="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></span>
+                <button class="relative p-2 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded-full transition-all">
+                    <i class="ph-fill ph-bell text-xl"></i>
+                    <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white animate-pulse"></span>
                 </button>
             </div>
         </header>
 
-        <!-- CÁC PHÂN HỆ (VIEWS) -->
+        <!-- Container chứa các phân hệ -->
         <div class="flex-1 overflow-auto p-8">
             
-            <!-- VIEW 1: DASHBOARD -->
-            <div id="view-dashboard" class="view-section active">
-                <!-- Metrics -->
+            <div id="view-dashboard" class="view-section active h-full">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between hover:shadow-md transition-shadow cursor-pointer">
+                    <!-- Metric Cards với Hover Float effect -->
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between hover:shadow-float transition-all cursor-pointer">
                         <div>
                             <p class="text-sm font-medium text-slate-500 mb-1">Tổng Nhân sự</p>
-                            <h3 class="text-3xl font-bold text-slate-800">248</h3>
-                            <p class="text-xs font-medium text-emerald-500 mt-2 flex items-center"><i class="ph ph-trend-up mr-1"></i> +12% tháng này</p>
+                            <h3 class="text-3xl font-extrabold text-slate-800">248</h3>
+                            <p class="text-xs font-semibold text-emerald-500 mt-2 flex items-center"><i class="ph-bold ph-trend-up mr-1"></i> +12% tháng này</p>
                         </div>
-                        <div class="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center text-3xl">
-                            <i class="ph ph-users"></i>
+                        <div class="w-12 h-12 bg-primary/10 text-primary rounded-2xl flex items-center justify-center text-2xl shadow-inner">
+                            <i class="ph-fill ph-users"></i>
                         </div>
                     </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between hover:shadow-md transition-shadow cursor-pointer">
+                    <!-- Các card khác tương tự -->
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between hover:shadow-float transition-all cursor-pointer">
                         <div>
                             <p class="text-sm font-medium text-slate-500 mb-1">Đang duyệt (ATS)</p>
-                            <h3 class="text-3xl font-bold text-slate-800">45</h3>
-                            <p class="text-xs font-medium text-emerald-500 mt-2 flex items-center"><i class="ph ph-trend-up mr-1"></i> 5 lịch phỏng vấn</p>
+                            <h3 class="text-3xl font-extrabold text-slate-800">45</h3>
+                            <p class="text-xs font-semibold text-emerald-500 mt-2 flex items-center"><i class="ph-bold ph-trend-up mr-1"></i> 5 lịch phỏng vấn</p>
                         </div>
-                        <div class="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center text-3xl">
-                            <i class="ph ph-user-focus"></i>
+                        <div class="w-12 h-12 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center text-2xl shadow-inner">
+                            <i class="ph-fill ph-user-focus"></i>
                         </div>
                     </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between hover:shadow-md transition-shadow cursor-pointer">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between hover:shadow-float transition-all cursor-pointer">
                         <div>
-                            <p class="text-sm font-medium text-slate-500 mb-1">Nghỉ phép (Hôm nay)</p>
-                            <h3 class="text-3xl font-bold text-slate-800">8</h3>
-                            <p class="text-xs font-medium text-slate-500 mt-2">Đã được phê duyệt</p>
+                            <p class="text-sm font-medium text-slate-500 mb-1">Phép chờ duyệt</p>
+                            <h3 class="text-3xl font-extrabold text-slate-800">8</h3>
+                            <p class="text-xs font-medium text-slate-400 mt-2">Hôm nay</p>
                         </div>
-                        <div class="w-14 h-14 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center text-3xl">
-                            <i class="ph ph-calendar-x"></i>
+                        <div class="w-12 h-12 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center text-2xl shadow-inner">
+                            <i class="ph-fill ph-calendar-x"></i>
                         </div>
                     </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between hover:shadow-md transition-shadow cursor-pointer">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between hover:shadow-float transition-all cursor-pointer">
                         <div>
                             <p class="text-sm font-medium text-slate-500 mb-1">Tỷ lệ giữ chân</p>
-                            <h3 class="text-3xl font-bold text-slate-800">94%</h3>
-                            <p class="text-xs font-medium text-emerald-500 mt-2 flex items-center"><i class="ph ph-check-circle mr-1"></i> Chỉ số tốt</p>
+                            <h3 class="text-3xl font-extrabold text-slate-800">94%</h3>
+                            <p class="text-xs font-semibold text-emerald-500 mt-2 flex items-center"><i class="ph-bold ph-check-circle mr-1"></i> Tốt</p>
                         </div>
-                        <div class="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-3xl">
-                            <i class="ph ph-heartbeat"></i>
+                        <div class="w-12 h-12 bg-emerald-50 text-emerald-500 rounded-2xl flex items-center justify-center text-2xl shadow-inner">
+                            <i class="ph-fill ph-heartbeat"></i>
                         </div>
                     </div>
                 </div>
 
-                <!-- Charts & AI Insights -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-0">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col">
                         <div class="flex justify-between items-center mb-6">
                             <h4 class="font-bold text-slate-800 text-lg">Biến động nhân sự</h4>
-                            <select class="bg-slate-50 border border-slate-200 text-sm rounded-lg px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary">
+                            <select class="bg-slate-50 border border-slate-200 text-sm font-medium rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary/20">
                                 <option>6 tháng qua</option>
                                 <option>Năm nay</option>
                             </select>
                         </div>
-                        <div class="relative h-64">
+                        <div class="relative flex-1 min-h-[250px]">
                             <canvas id="hrChart"></canvas>
                         </div>
                     </div>
@@ -190,17 +223,18 @@
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col">
                         <div class="flex justify-between items-center mb-6">
                             <h4 class="font-bold text-slate-800 text-lg flex items-center">
-                                <i class="ph ph-warning-circle text-rose-500 mr-2 text-xl"></i> AI Cảnh báo Nghỉ việc
+                                <i class="ph-fill ph-warning-circle text-rose-500 mr-2 text-xl"></i> AI Cảnh báo Nghỉ việc
                             </h4>
-                            <span class="bg-rose-100 text-rose-700 text-xs font-bold px-2 py-1 rounded-full">2 Rủi ro cao</span>
+                            <span class="bg-rose-100 text-rose-700 text-xs font-bold px-3 py-1 rounded-full shadow-sm">2 Rủi ro cao</span>
                         </div>
                         
-                        <div class="space-y-4 flex-1 overflow-y-auto pr-2">
-                            <div class="flex items-center justify-between p-4 bg-white border border-rose-100 rounded-xl shadow-sm hover:border-rose-300 transition-colors cursor-pointer group">
+                        <div class="space-y-3 flex-1 overflow-y-auto pr-2">
+                            <!-- Warning Item -->
+                            <div class="flex items-center justify-between p-4 bg-white border border-rose-100 rounded-xl shadow-sm hover:shadow-md hover:border-rose-300 transition-all cursor-pointer group">
                                 <div class="flex items-center">
                                     <div class="relative">
-                                        <img src="https://i.pravatar.cc/150?img=33" class="w-12 h-12 rounded-full object-cover">
-                                        <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-rose-500 rounded-full border-2 border-white"></div>
+                                        <img src="https://i.pravatar.cc/150?img=33" class="w-12 h-12 rounded-full object-cover ring-2 ring-white">
+                                        <div class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-rose-500 rounded-full border-2 border-white"></div>
                                     </div>
                                     <div class="ml-4">
                                         <p class="text-sm font-bold text-slate-800 group-hover:text-primary transition-colors">Lê Thị Mai</p>
@@ -209,15 +243,16 @@
                                 </div>
                                 <div class="text-right">
                                     <span class="inline-block px-2.5 py-1 bg-rose-50 text-rose-700 text-xs font-bold rounded-lg border border-rose-100">85% Rủi ro</span>
-                                    <p class="text-[11px] text-slate-500 mt-1.5"><i class="ph ph-clock mr-1"></i>Overwork 3 tuần</p>
+                                    <p class="text-[11px] font-medium text-slate-500 mt-1.5 flex items-center justify-end"><i class="ph-bold ph-clock mr-1"></i>Overwork 3 tuần</p>
                                 </div>
                             </div>
 
-                            <div class="flex items-center justify-between p-4 bg-white border border-amber-100 rounded-xl shadow-sm hover:border-amber-300 transition-colors cursor-pointer group">
+                            <!-- Warning Item -->
+                            <div class="flex items-center justify-between p-4 bg-white border border-amber-100 rounded-xl shadow-sm hover:shadow-md hover:border-amber-300 transition-all cursor-pointer group">
                                 <div class="flex items-center">
                                     <div class="relative">
-                                        <img src="https://i.pravatar.cc/150?img=59" class="w-12 h-12 rounded-full object-cover">
-                                        <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-amber-500 rounded-full border-2 border-white"></div>
+                                        <img src="https://i.pravatar.cc/150?img=59" class="w-12 h-12 rounded-full object-cover ring-2 ring-white">
+                                        <div class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-amber-500 rounded-full border-2 border-white"></div>
                                     </div>
                                     <div class="ml-4">
                                         <p class="text-sm font-bold text-slate-800 group-hover:text-primary transition-colors">Trần Đức Kiên</p>
@@ -226,39 +261,132 @@
                                 </div>
                                 <div class="text-right">
                                     <span class="inline-block px-2.5 py-1 bg-amber-50 text-amber-700 text-xs font-bold rounded-lg border border-amber-100">60% Rủi ro</span>
-                                    <p class="text-[11px] text-slate-500 mt-1.5"><i class="ph ph-money mr-1"></i>Lương < mặt bằng 10%</p>
+                                    <p class="text-[11px] font-medium text-slate-500 mt-1.5 flex items-center justify-end"><i class="ph-bold ph-money mr-1"></i>Lương < mặt bằng</p>
                                 </div>
                             </div>
                         </div>
-                        <button class="w-full mt-4 py-2.5 text-sm font-medium text-primary bg-primary/5 hover:bg-primary/10 rounded-xl transition-colors">
-                            Xem báo cáo chi tiết
-                        </button>
                     </div>
                 </div>
             </div>
 
-            <!-- VIEW 2: ATS KANBAN -->
-            <div id="view-ats" class="view-section hidden h-full flex flex-col">
-                <div class="flex justify-between items-center mb-6 bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+            <div id="view-ats" class="view-section hidden h-full">
+                <div class="flex justify-between items-center mb-6 bg-white p-5 rounded-2xl shadow-sm border border-slate-100 shrink-0">
                     <div>
                         <h3 class="text-xl font-bold text-slate-800 flex items-center">
                             Chiến dịch: Product Manager
-                            <span class="ml-3 px-2 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-md">Hiring</span>
+                            <span class="ml-3 px-2 py-1 bg-emerald-50 text-emerald-600 border border-emerald-200 text-xs font-bold rounded-md uppercase tracking-wider">Hiring</span>
                         </h3>
-                        <p class="text-sm text-slate-500 mt-1">Đã thu thập 24 CVs • Deadline: 30/10/2026</p>
+                        <p class="text-sm font-medium text-slate-500 mt-1">Đã thu thập 24 CVs • Deadline: 30/10/2026</p>
                     </div>
                     <div class="flex space-x-3">
-                <button onclick="openAddColModal()" class="bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-sm flex items-center">
-                    <i class="ph ph-columns text-lg mr-2"></i> Thêm cột
-                </button>
-                <button onclick="addRowGAS()" class="bg-excel hover:bg-green-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-sm flex items-center">
-                    <i class="ph ph-row-insert-bottom text-lg mr-2"></i> Thêm nhân viên
-                </button>
+                        <button onclick="triggerAICVScan()" class="btn-smart bg-purple-50 hover:bg-purple-100 border border-purple-200 text-purple-700 px-4 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center shadow-sm">
+                            <i class="ph-fill ph-magic-wand text-lg mr-2"></i> Quét CV bằng AI
+                        </button>
+                        <button class="btn-smart bg-primary hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-sm flex items-center">
+                            <i class="ph-bold ph-plus text-lg mr-2"></i> Thêm ứng viên
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex-1 flex gap-5 overflow-x-auto pb-2 items-start h-full">
+                    <!-- Column 1: Mới ứng tuyển -->
+                    <div class="w-[320px] flex-shrink-0 bg-slate-100/70 rounded-2xl p-4 flex flex-col h-[calc(100%-10px)] border border-slate-200/50">
+                        <div class="flex justify-between items-center mb-4 px-1">
+                            <h4 class="font-bold text-slate-800 text-sm">Mới ứng tuyển</h4>
+                            <span class="bg-slate-200 text-slate-600 px-2.5 py-0.5 rounded-full text-xs font-bold">2</span>
+                        </div>
+                        <div class="space-y-3 overflow-y-auto flex-1 pr-1 pb-4">
+                            <!-- Card -->
+                            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 cursor-grab hover:border-primary hover:shadow-md transition-all group relative">
+                                <div class="flex justify-between items-start mb-3">
+                                    <h5 class="font-bold text-slate-800 text-sm group-hover:text-primary transition-colors">Phạm Hoàng Nam</h5>
+                                    <span class="bg-emerald-50 border border-emerald-200 text-emerald-700 text-[10px] px-2 py-1 rounded font-bold flex items-center">
+                                        <i class="ph-fill ph-sparkle mr-1"></i> 95% Match
+                                    </span>
+                                </div>
+                                <p class="text-xs font-medium text-slate-500 mb-4 line-clamp-2 leading-relaxed">5 năm kinh nghiệm PM tại Shopee. Kỹ năng mạnh: Agile, Scrum, Data Analysis.</p>
+                                <div class="flex justify-between items-center text-xs">
+                                    <span class="text-slate-500 font-medium flex items-center bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-100 hover:bg-slate-100 transition-colors">
+                                        <i class="ph-fill ph-file-pdf text-rose-500 mr-1.5 text-sm"></i> CV_NamPham.pdf
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <!-- Card -->
+                            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 cursor-grab hover:border-primary hover:shadow-md transition-all group">
+                                <div class="flex justify-between items-start mb-3">
+                                    <h5 class="font-bold text-slate-800 text-sm group-hover:text-primary transition-colors">Lê Quang Hải</h5>
+                                    <span class="bg-amber-50 border border-amber-200 text-amber-700 text-[10px] px-2 py-1 rounded font-bold flex items-center">
+                                        65% Match
+                                    </span>
+                                </div>
+                                <p class="text-xs font-medium text-slate-500 mb-4 line-clamp-2 leading-relaxed">Project Manager tại cty Outsourcing. Chưa có kinh nghiệm làm Product in-house.</p>
+                                <div class="flex justify-between items-center text-xs">
+                                    <span class="text-slate-500 font-medium flex items-center bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-100 hover:bg-slate-100">
+                                        <i class="ph-fill ph-file-pdf text-rose-500 mr-1.5 text-sm"></i> HaiLe_CV_2026.pdf
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: Đang Phỏng vấn -->
+                    <div class="w-[320px] flex-shrink-0 bg-slate-100/70 rounded-2xl p-4 flex flex-col h-[calc(100%-10px)] border border-slate-200/50">
+                        <div class="flex justify-between items-center mb-4 px-1">
+                            <h4 class="font-bold text-slate-800 text-sm">Đang Phỏng vấn</h4>
+                            <span class="bg-slate-200 text-slate-600 px-2.5 py-0.5 rounded-full text-xs font-bold">1</span>
+                        </div>
+                        <div class="space-y-3 overflow-y-auto flex-1 pr-1 pb-4">
+                            <div class="bg-white p-4 rounded-xl shadow-sm border-2 border-blue-400 cursor-grab hover:shadow-md transition-all group relative overflow-hidden">
+                                <div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div> <!-- Thẻ highlight -->
+                                <div class="flex justify-between items-start mb-3 pl-2">
+                                    <h5 class="font-bold text-slate-800 text-sm group-hover:text-primary transition-colors">Ngô Thùy Linh</h5>
+                                    <span class="bg-blue-50 border border-blue-200 text-blue-700 text-[10px] px-2 py-1 rounded font-bold">88% Match</span>
+                                </div>
+                                <div class="bg-blue-50 text-blue-700 text-xs p-2.5 rounded-lg mb-3 flex items-center font-bold ml-2">
+                                    <i class="ph-fill ph-clock text-blue-500 mr-2 text-lg"></i> Hôm nay, 14:00 - Vòng 1
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Column 3: Add New -->
+                    <button class="w-[320px] flex-shrink-0 bg-slate-50 rounded-2xl p-4 flex flex-col h-full border-2 border-dashed border-slate-300 items-center justify-center cursor-pointer hover:border-primary hover:bg-primary/5 transition-all group">
+                        <div class="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                            <i class="ph-bold ph-plus text-xl text-slate-400 group-hover:text-primary"></i>
+                        </div>
+                        <span class="text-sm font-bold text-slate-500 group-hover:text-primary">Thêm vòng tuyển dụng</span>
+                    </button>
+                </div>
             </div>
 
-            <div class="flex-1 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col">
-                    <div class="overflow-auto flex-1 bg-[#F1F5F9]">
-                        <table class="excel-table" id="dynamicGrid">
+            <div id="view-grid" class="view-section hidden h-full">
+                <div class="flex justify-between items-center mb-5 bg-white p-5 rounded-2xl shadow-sm border border-slate-100 shrink-0">
+                    <div>
+                        <h3 class="text-xl font-bold flex items-center text-excel">
+                            <i class="ph-fill ph-microsoft-excel-logo text-3xl mr-3"></i> Cơ sở dữ liệu Nhân sự (Live)
+                        </h3>
+                        <p class="text-sm font-medium text-slate-500 mt-1">Đồng bộ tự động với Google Sheets thông qua API Backend.</p>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button onclick="openAddColModal()" class="btn-smart bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 px-4 py-2.5 rounded-xl text-sm font-bold transition-all shadow-sm flex items-center">
+                            <i class="ph-bold ph-columns text-lg mr-2"></i> Thêm cột dữ liệu
+                        </button>
+                        <button onclick="addRowGAS()" class="btn-smart bg-excel hover:bg-[#0e6b38] text-white px-4 py-2.5 rounded-xl text-sm font-bold transition-all shadow-sm flex items-center">
+                            <i class="ph-bold ph-row-insert-bottom text-lg mr-2"></i> Thêm dòng (Nhân viên)
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex-1 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col relative">
+                    <!-- Overlay Loading cho Bảng -->
+                    <div id="gridLoadingOverlay" class="absolute inset-0 bg-white/70 backdrop-blur-sm z-20 flex flex-col items-center justify-center">
+                        <i class="ph-bold ph-spinner animate-spin text-4xl text-primary mb-3"></i>
+                        <span class="text-sm font-bold text-slate-600">Đang đồng bộ dữ liệu Cloud...</span>
+                    </div>
+
+                    <div class="overflow-auto flex-1 bg-slate-50/50">
+                        <table class="excel-table w-full" id="dynamicGrid">
                             <thead>
                                 <tr id="gridHeaderRow">
                                     <!-- Render via JS -->
@@ -269,57 +397,156 @@
                             </tbody>
                         </table>
                     </div>
-</div>
+                    
+                    <div class="bg-slate-50 px-5 py-3 border-t border-slate-200 text-xs font-medium text-slate-500 flex justify-between items-center shrink-0">
+                        <div class="flex items-center" id="saveStatusContainer">
+                            <i class="ph-fill ph-check-circle text-emerald-500 mr-2 text-base" id="saveStatusIcon"></i> 
+                            <span id="saveStatusText">Trạng thái: <span id="saveTime" class="ml-1 font-bold text-slate-700">Đã đồng bộ</span></span>
+                        </div>
+                        <span class="bg-white border border-slate-200 px-3 py-1.5 rounded-lg text-slate-600 font-bold shadow-sm flex items-center">
+                            <i class="ph-bold ph-mouse-left mr-1.5"></i> Click đúp vào ô để sửa
+                        </span>
+                    </div>
+                </div>
+            </div>
 
-<!-- Modal Thêm Cột Mới (Thay thế prompt) -->
-<div id="addColModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[70] hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
-    <div class="bg-white w-[400px] rounded-2xl shadow-2xl p-6 transform scale-95 transition-transform duration-300" id="addColBox">
-        <h3 class="text-lg font-bold text-slate-800 mb-2">Thêm cột dữ liệu mới</h3>
-        <p class="text-sm text-slate-500 mb-4">Nhập tên trường dữ liệu bạn muốn thêm (VD: Sở thích, STK Ngân hàng...).</p>
-        <input type="text" id="newColName" class="w-full border border-slate-300 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary mb-5" placeholder="Tên cột mới...">
-        <div class="flex justify-end space-x-3">
-            <button onclick="closeAddColModal()" class="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-xl transition-colors">Hủy</button>
-            <button onclick="confirmAddColGAS()" class="px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-indigo-700 rounded-xl transition-colors">Thêm cột</button>
+            <div id="view-resources" class="view-section hidden h-full">
+                <div class="flex justify-between items-center mb-6 bg-white p-5 rounded-2xl shadow-sm border border-slate-100 shrink-0">
+                    <div>
+                        <h3 class="text-xl font-bold flex items-center text-slate-800">
+                            <i class="ph-fill ph-folder-star text-3xl mr-3 text-purple-600"></i> Kho Tài nguyên & PR
+                        </h3>
+                        <p class="text-sm font-medium text-slate-500 mt-1">Quản lý link chiến dịch tuyển dụng và sinh Content tự động bằng AI.</p>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button onclick="createNewLink()" class="btn-smart bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-sm flex items-center">
+                            <i class="ph-bold ph-link text-lg mr-2"></i> Tạo Link Tracking Mới
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex-1 overflow-y-auto pr-2 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <!-- Link Card -->
+                        <div class="border border-slate-200 rounded-2xl p-5 hover:border-purple-300 hover:shadow-md transition-all group bg-white relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-24 h-24 bg-purple-50 rounded-bl-full -z-10 group-hover:scale-110 transition-transform"></div>
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h5 class="font-bold text-slate-800 text-lg">Chiến dịch IT Q3 (Facebook)</h5>
+                                    <a href="#" class="text-sm font-bold text-purple-600 hover:underline flex items-center mt-1">
+                                        nextgen.vn/job/it-q3 <i class="ph-bold ph-arrow-square-out ml-1"></i>
+                                    </a>
+                                </div>
+                                <span class="bg-emerald-50 border border-emerald-200 text-emerald-700 text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-widest shadow-sm">Active</span>
+                            </div>
+                            <div class="flex justify-between items-end mt-6 pt-5 border-t border-slate-100">
+                                <div class="flex space-x-6 text-sm">
+                                    <div class="text-slate-500 font-medium"><span class="font-extrabold text-slate-800 text-xl">1,240</span><br>Clicks</div>
+                                    <div class="text-slate-500 font-medium"><span class="font-extrabold text-slate-800 text-xl">45</span><br>CVs</div>
+                                    <div class="text-emerald-600 font-medium"><span class="font-extrabold text-xl">3.6%</span><br>Tỉ lệ CV</div>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button onclick="generateAIContent('nextgen.vn/job/it-q3-fb', 'IT')" class="btn-smart p-2.5 text-purple-600 bg-purple-50 hover:bg-purple-100 border border-purple-100 rounded-xl transition-all" title="AI Viết bài PR">
+                                        <i class="ph-fill ph-magic-wand text-xl"></i>
+                                    </button>
+                                    <button onclick="showQR('nextgen.vn/job/it-q3-fb')" class="btn-smart p-2.5 text-slate-600 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl transition-all" title="Tạo QR Code">
+                                        <i class="ph-bold ph-qr-code text-xl"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Template Card -->
+                        <div class="border-2 border-dashed border-slate-300 rounded-2xl p-5 flex flex-col justify-center items-center text-center cursor-pointer hover:bg-slate-50 hover:border-primary transition-all group h-full min-h-[160px]" onclick="generateTemplateAI()">
+                            <div class="w-14 h-14 bg-white border border-slate-200 shadow-sm text-primary rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                                <i class="ph-fill ph-sparkle text-2xl"></i>
+                            </div>
+                            <h5 class="font-bold text-slate-800">Tạo mẫu Email bằng AI</h5>
+                            <p class="text-xs font-medium text-slate-500 mt-1">Chuẩn hóa văn phong thương hiệu</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    
+    <!-- Modal Thêm Cột -->
+    <div id="addColModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[70] hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
+        <div class="bg-white w-[420px] rounded-3xl shadow-2xl p-7 transform scale-95 transition-transform duration-300" id="addColBox">
+            <h3 class="text-xl font-bold text-slate-800 mb-2 flex items-center"><i class="ph-bold ph-columns text-primary mr-2"></i> Thêm trường dữ liệu</h3>
+            <p class="text-sm font-medium text-slate-500 mb-5">Nhập tên cột mới (VD: Sở thích, STK Ngân hàng...). Cột sẽ được đồng bộ ngay lên Google Sheets.</p>
+            <input type="text" id="newColName" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 mb-6 transition-all" placeholder="Tên cột mới...">
+            <div class="flex justify-end space-x-3">
+                <button onclick="closeAddColModal()" class="btn-smart px-5 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors">Hủy bỏ</button>
+                <button onclick="confirmAddColGAS()" class="btn-smart px-5 py-2.5 text-sm font-bold text-white bg-primary hover:bg-indigo-700 rounded-xl transition-colors shadow-sm">Xác nhận Thêm</button>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- Toast Notification Container -->
-<div id="toastContainer" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] flex flex-col gap-2 pointer-events-none"></div>
+    <!-- Modal Quét AI -->
+    <div id="aiOverlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[80] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300">
+        <div class="bg-white/90 p-8 rounded-3xl shadow-2xl text-center max-w-sm w-full mx-4 transform scale-95 transition-transform duration-300 border border-white/50 backdrop-blur-xl" id="aiOverlayBox">
+            <div class="relative w-24 h-24 mx-auto mb-6">
+                <div class="absolute inset-0 border-4 border-slate-100 rounded-full"></div>
+                <div class="absolute inset-0 border-4 border-purple-500 rounded-full border-t-transparent animate-spin"></div>
+                <i class="ph-fill ph-brain text-4xl text-purple-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-2 text-slate-800">Trợ lý AI đang làm việc...</h3>
+            <p class="text-sm font-medium text-slate-500 mb-6" id="aiStatusText">Đang đọc và phân tích PDF</p>
+            <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden shadow-inner">
+                <div id="aiProgress" class="bg-gradient-to-r from-purple-500 to-indigo-500 h-full w-0 rounded-full transition-all duration-300 ease-out"></div>
+            </div>
+        </div>
+    </div>
 
+    <!-- Modal Chung (Hiển thị Content, QR) -->
+    <div id="aiContentModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[70] hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
+        <div class="bg-white w-[550px] max-w-[95%] rounded-3xl shadow-2xl overflow-hidden flex flex-col transform scale-95 transition-transform duration-300" id="modalBox">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-white">
+                <h4 class="font-bold text-slate-800 text-lg flex items-center" id="modalTitle"></h4>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-rose-500 hover:bg-rose-50 p-2 rounded-xl transition-colors">
+                    <i class="ph-bold ph-x text-lg"></i>
+                </button>
+            </div>
+            <div class="p-6 flex flex-col items-center min-h-[200px] justify-center bg-slate-50/50" id="modalBody"></div>
+            <div class="p-5 border-t border-slate-100 bg-white flex justify-end">
+                <button onclick="closeModal()" class="btn-smart px-5 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-100 rounded-xl mr-3 transition-colors">Đóng</button>
+                <button id="modalActionBtn" class="btn-smart px-5 py-2.5 text-sm font-bold text-white bg-primary hover:bg-indigo-700 rounded-xl shadow-sm transition-colors flex items-center">
+                    Thao tác
+                </button>
+            </div>
+        </div>
+    </div>
 
-    <!-- ==================== SCRIPTS ==================== -->
+    <!-- Toast Notification -->
+    <div id="toastContainer" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] flex flex-col gap-3 pointer-events-none"></div>
+
     <script>
-        // --- 1. Điều hướng Tabs (Navigation Logic) ---
+        // --- Core UI Logic ---
         function switchTab(tabId) {
-            // Hide all views
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-            // Remove active styles from nav
             document.querySelectorAll('.nav-btn').forEach(el => {
-                el.classList.remove('bg-primary/10', 'text-primary');
-                el.classList.add('text-slate-600', 'hover:bg-slate-50');
+                el.classList.remove('bg-primary/10', 'text-primary', 'font-semibold');
+                el.classList.add('text-slate-500', 'font-medium', 'hover:bg-slate-50', 'hover:text-slate-800');
                 
-                // Cập nhật lại màu icon đặc biệt nếu không active
                 const icon = el.querySelector('i');
-                if(el.id === 'nav-grid') icon.className = 'ph ph-table text-lg mr-3 text-excel opacity-70';
-                if(el.id === 'nav-resources') icon.className = 'ph ph-folder-star text-lg mr-3 text-purple-500 opacity-70';
+                if(el.id === 'nav-grid') icon.className = 'ph ph-table text-xl mr-3 text-excel/70';
+                if(el.id === 'nav-resources') icon.className = 'ph ph-folder-star text-xl mr-3 text-purple-500/70';
             });
 
-            // Show selected view
             document.getElementById('view-' + tabId).classList.add('active');
             
-            // Add active styles to selected nav
             let activeNav = document.getElementById('nav-' + tabId);
-            activeNav.classList.remove('text-slate-600', 'hover:bg-slate-50');
-            activeNav.classList.add('bg-primary/10', 'text-primary');
+            activeNav.classList.remove('text-slate-500', 'font-medium', 'hover:bg-slate-50', 'hover:text-slate-800');
+            activeNav.classList.add('bg-primary/10', 'text-primary', 'font-semibold');
             
-            // Reset opacity icon đặc biệt
             const activeIcon = activeNav.querySelector('i');
-            if(tabId === 'grid') activeIcon.className = 'ph ph-table text-lg mr-3 text-excel';
-            if(tabId === 'resources') activeIcon.className = 'ph ph-folder-star text-lg mr-3 text-purple-500';
+            if(tabId === 'grid') activeIcon.className = 'ph-fill ph-table text-xl mr-3 text-excel';
+            if(tabId === 'resources') activeIcon.className = 'ph-fill ph-folder-star text-xl mr-3 text-purple-500';
 
-            // Update Header Title
-            let titles = {
+            const titles = {
                 'dashboard': 'Tổng quan hệ thống',
                 'ats': 'Quản lý Tuyển dụng (ATS)',
                 'grid': 'Cơ sở dữ liệu Nhân sự',
@@ -328,373 +555,267 @@
             document.getElementById('page-title').innerText = titles[tabId];
         }
 
-        // --- 2. Khởi tạo Biểu đồ (Chart.js) ---
-        // Đảm bảo DOM load xong mới vẽ chart
-        document.addEventListener('DOMContentLoaded', () => {
-            const ctx = document.getElementById('hrChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['T4', 'T5', 'T6', 'T7', 'T8', 'T9'],
-                    datasets: [
-                        {
-                            label: 'Tuyển mới',
-                            data: [12, 19, 15, 25, 22, 30],
-                            backgroundColor: '#4F46E5',
-                            borderRadius: 6,
-                            barPercentage: 0.6
-                        }, 
-                        {
-                            label: 'Nghỉ việc',
-                            data: [5, 2, 4, 1, 3, 2],
-                            backgroundColor: '#F43F5E',
-                            borderRadius: 6,
-                            barPercentage: 0.6
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: { beginAtZero: true, grid: { borderDash: [4, 4], color: '#E2E8F0' } },
-                        x: { grid: { display: false } }
-                    },
-                    plugins: { 
-                        legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 8 } },
-                        tooltip: { backgroundColor: '#1E293B', padding: 10, borderRadius: 8 }
-                    }
+        // --- Tiến trình toàn cầu (Global Progress Bar) ---
+        function startGlobalLoader() {
+            const loader = document.getElementById('globalLoader');
+            loader.style.opacity = '1';
+            loader.style.width = '30%';
+            setTimeout(() => { if(loader.style.width === '30%') loader.style.width = '70%'; }, 500);
+        }
+        function finishGlobalLoader() {
+            const loader = document.getElementById('globalLoader');
+            loader.style.width = '100%';
+            setTimeout(() => { 
+                loader.style.opacity = '0'; 
+                setTimeout(() => { loader.style.width = '0%'; }, 300);
+            }, 300);
+        }
+
+        function setSaveStatus(status) {
+            const icon = document.getElementById('saveStatusIcon');
+            const text = document.getElementById('saveTime');
+            if(status === 'saving') {
+                icon.className = 'ph-bold ph-spinner animate-spin text-primary mr-2 text-base';
+                text.innerText = 'Đang đồng bộ...';
+                text.classList.add('text-primary');
+            } else {
+                icon.className = 'ph-fill ph-check-circle text-emerald-500 mr-2 text-base';
+                text.innerText = new Date().toLocaleTimeString();
+                text.classList.remove('text-primary');
+            }
+        }
+
+        // --- Database Logic (Google Apps Script API) ---
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxtvcxoCQqEZM7yVd2UWW2A0hYbhnuV-9WGD4bcvKrgscXMyGH-7Fw3OYzBJMQQ17-9/exec';
+        let gridColumns = [];
+        let gridData = [];
+
+        async function callAPI(action, payload = {}) {
+            startGlobalLoader();
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: action, ...payload })
+                });
+                const result = await response.json();
+                finishGlobalLoader();
+                if(result.status === 'success') return result.data;
+                throw new Error(result.message);
+            } catch (error) {
+                console.error("API Error:", error);
+                finishGlobalLoader();
+                return null;
+            }
+        }
+
+        async function loadData() {
+            const loadingOverlay = document.getElementById('gridLoadingOverlay');
+            loadingOverlay.classList.remove('hidden');
+            
+            const data = await callAPI('getGridData');
+            if (data) {
+                gridColumns = data.columns;
+                gridData = data.rows;
+                renderGrid();
+                setSaveStatus('done');
+            } else {
+                // Fallback Data
+                gridColumns = ['Mã NV', 'Họ và Tên', 'Phòng ban', 'Chức vụ', 'Trạng thái'];
+                gridData = [['NV001', 'Dữ liệu mẫu (Lỗi kết nối)', 'IT', 'Dev', 'Đang làm việc']];
+                renderGrid();
+                showToast("Đang dùng dữ liệu mẫu (Lỗi mạng)");
+            }
+            loadingOverlay.classList.add('hidden');
+        }
+
+        function renderGrid() {
+            const header = document.getElementById('gridHeaderRow');
+            const body = document.getElementById('gridBody');
+            
+            header.innerHTML = '';
+            gridColumns.forEach((col, idx) => {
+                header.innerHTML += `<th>${col}</th>`;
+            });
+
+            body.innerHTML = '';
+            gridData.forEach((row, rIndex) => {
+                let tr = document.createElement('tr');
+                row.forEach((cell, cIndex) => {
+                    tr.innerHTML += `<td contenteditable="true" onblur="updateCell(${rIndex}, ${cIndex}, this.innerText)">${cell}</td>`;
+                });
+                body.appendChild(tr);
+            });
+        }
+
+        async function updateCell(rIndex, cIndex, value) {
+            if(gridData[rIndex][cIndex] !== value) {
+                gridData[rIndex][cIndex] = value;
+                setSaveStatus('saving');
+                const success = await callAPI('updateGridCell', { rIndex, cIndex, value });
+                if (success) setSaveStatus('done');
+            }
+        }
+
+        // --- Modals & Utilities ---
+        function openAddColModal() {
+            const modal = document.getElementById('addColModal');
+            modal.classList.remove('hidden');
+            setTimeout(() => { 
+                modal.classList.remove('opacity-0'); 
+                document.getElementById('addColBox').classList.remove('scale-95');
+                document.getElementById('newColName').focus();
+            }, 10);
+        }
+
+        function closeAddColModal() {
+            const modal = document.getElementById('addColModal');
+            modal.classList.add('opacity-0');
+            document.getElementById('addColBox').classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+            document.getElementById('newColName').value = '';
+        }
+
+        async function confirmAddColGAS() {
+            let colName = document.getElementById('newColName').value;
+            if(colName && colName.trim() !== "") {
+                gridColumns.push(colName);
+                gridData.forEach(row => row.push('')); 
+                renderGrid();
+                closeAddColModal();
+                setSaveStatus('saving');
+                const success = await callAPI('addGridColumn', { colName });
+                if (success) {
+                    showToast(`Đã thêm trường "${colName}"`);
+                    setSaveStatus('done');
                 }
-            });
-        });
-
-        // --- 3. Logic: Bảng dữ liệu động (Excel Mode) ---
-    let gridColumns = [];
-    let gridData = [];
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxtvcxoCQqEZM7yVd2UWW2A0hYbhnuV-9WGD4bcvKrgscXMyGH-7Fw3OYzBJMQQ17-9/exec';
-
-    async function callAPI(action, payload = {}) {
-        try {
-            // Sử dụng Content-Type text/plain để vượt qua CORS preflight của Google
-            const response = await fetch(SCRIPT_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ action: action, ...payload })
-            });
-            const result = await response.json();
-            if(result.status === 'success') return result.data;
-            throw new Error(result.message);
-        } catch (error) {
-            console.error("API Error:", error);
-            showToast("Lỗi kết nối máy chủ! (Xem console)");
-            return null;
-        }
-    }
-
-    async function loadData() {
-        showToast("Đang kết nối Database...");
-        
-        const data = await callAPI('getGridData');
-        if (data) {
-            gridColumns = data.columns;
-            gridData = data.rows;
-            renderGrid();
-            showToast("Đồng bộ dữ liệu thành công!");
-            updateSaveTime();
-        } else {
-            // Fallback mock data khi chờ kết nối API
-            gridColumns = ['Mã NV', 'Họ và Tên', 'Phòng ban', 'Chức vụ', 'Mức lương', 'Trạng thái'];
-            gridData = [
-                ['NV001', 'Nguyễn Văn A', 'IT', 'Senior Dev', '35,000,000', 'Đang làm việc'],
-                ['NV002', 'Trần Thị B', 'Marketing', 'Designer', '18,000,000', 'Đang làm việc'],
-                ['NV003', 'Lê Thị Mai', 'Sales', 'Manager', '40,000,000', 'Đang làm việc'],
-                ['NV004', 'Trần Đức Kiên', 'IT', 'Senior Dev', '28,000,000', 'Đang làm việc']
-            ];
-            renderGrid();
-            showToast("Đang dùng dữ liệu mẫu (Lỗi kết nối)");
-        }
-    }
-
-    function renderGrid() {
-        const header = document.getElementById('gridHeaderRow');
-        const body = document.getElementById('gridBody');
-        
-        // Render Header
-        header.innerHTML = '';
-        gridColumns.forEach((col, idx) => {
-            header.innerHTML += `<th class="relative group">
-                ${col}
-                ${idx > 5 ? `<button class="absolute right-1 top-1/2 -translate-y-1/2 text-slate-300 hover:text-rose-500 hidden group-hover:block"><i class="ph ph-trash"></i></button>` : ''}
-            </th>`;
-        });
-
-        // Render Body
-        body.innerHTML = '';
-        gridData.forEach((row, rIndex) => {
-            let tr = document.createElement('tr');
-            row.forEach((cell, cIndex) => {
-                tr.innerHTML += `<td contenteditable="true" onblur="updateCell(${rIndex}, ${cIndex}, this.innerText)">${cell}</td>`;
-            });
-            body.appendChild(tr);
-        });
-    }
-
-    function openAddColModal() {
-        const modal = document.getElementById('addColModal');
-        const box = document.getElementById('addColBox');
-        modal.classList.remove('hidden');
-        setTimeout(() => { 
-            modal.classList.remove('opacity-0'); 
-            box.classList.remove('scale-95');
-            document.getElementById('newColName').focus();
-        }, 10);
-    }
-
-    function closeAddColModal() {
-        const modal = document.getElementById('addColModal');
-        const box = document.getElementById('addColBox');
-        modal.classList.add('opacity-0');
-        box.classList.add('scale-95');
-        setTimeout(() => { modal.classList.add('hidden'); }, 300);
-        document.getElementById('newColName').value = '';
-    }
-
-    async function confirmAddColGAS() {
-        let colName = document.getElementById('newColName').value;
-        if(colName && colName.trim() !== "") {
-            gridColumns.push(colName);
-            gridData.forEach(row => row.push('')); 
-            renderGrid();
-            closeAddColModal();
-            
-            showToast("Đang đồng bộ cột mới lên Google Sheets...");
-            document.getElementById('saveTime').innerText = "Đang lưu...";
-            
-            const success = await callAPI('addGridColumn', { colName: colName });
-            if (success) {
-                showToast(`Đã thêm cột "${colName}" thành công!`);
-                updateSaveTime();
             }
         }
-    }
 
-    async function addRowGAS() {
-        let newRow = new Array(gridColumns.length).fill('');
-        newRow[0] = 'NV' + String(gridData.length + 1).padStart(3, '0'); // Auto Gen ID
-        gridData.push(newRow);
-        renderGrid();
-        
-        const container = document.querySelector('.overflow-auto');
-        container.scrollTop = container.scrollHeight;
-
-        showToast("Đang thêm nhân sự mới vào Database...");
-        document.getElementById('saveTime').innerText = "Đang lưu...";
-        
-        const serverRow = await callAPI('addGridRow', { rowData: newRow });
-        if (serverRow) {
-            gridData[gridData.length - 1][0] = serverRow[0]; // Cập nhật ID thực tế từ Server
+        async function addRowGAS() {
+            let newRow = new Array(gridColumns.length).fill('');
+            newRow[0] = 'NV' + String(gridData.length + 1).padStart(3, '0');
+            gridData.push(newRow);
             renderGrid();
-            showToast("Đã thêm 1 dòng nhân viên mới.");
-            updateSaveTime();
-        }
-    }
+            
+            const container = document.querySelector('.overflow-auto');
+            container.scrollTop = container.scrollHeight;
 
-    async function updateCell(rIndex, cIndex, value) {
-        if(gridData[rIndex][cIndex] !== value) {
-            gridData[rIndex][cIndex] = value;
-            
-            document.getElementById('saveTime').innerText = "Đang lưu...";
-            const success = await callAPI('updateGridCell', { 
-                rIndex: rIndex, 
-                cIndex: cIndex, 
-                value: value 
-            });
-            
-            if (success) {
-                updateSaveTime();
+            setSaveStatus('saving');
+            const serverRow = await callAPI('addGridRow', { rowData: newRow });
+            if (serverRow) {
+                gridData[gridData.length - 1][0] = serverRow[0]; 
+                renderGrid();
+                showToast("Đã thêm 1 hồ sơ nhân viên");
+                setSaveStatus('done');
             }
         }
-    }
 
-    function updateSaveTime() {
-            const now = new Date();
-            document.getElementById('saveTime').innerText = now.toLocaleTimeString();
-        }
-
-        // --- 4. Logic: Tiện ích (Toast & Copy) ---
         function showToast(message) {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
-            toast.className = 'bg-slate-800 text-white px-5 py-3 rounded-xl shadow-2xl text-sm font-medium flex items-center transform translate-y-10 opacity-0 transition-all duration-300';
-            toast.innerHTML = `<i class="ph ph-check-circle text-emerald-400 text-lg mr-2"></i> ${message}`;
+            toast.className = 'bg-slate-800/95 backdrop-blur text-white px-5 py-3.5 rounded-2xl shadow-float text-sm font-bold flex items-center transform translate-y-10 opacity-0 transition-all duration-300 border border-slate-700';
+            toast.innerHTML = `<i class="ph-fill ph-check-circle text-emerald-400 text-xl mr-2.5"></i> ${message}`;
             
             container.appendChild(toast);
-            
-            // Animate in
-            setTimeout(() => {
-                toast.classList.remove('translate-y-10', 'opacity-0');
-            }, 10);
-            
-            // Animate out & remove
+            setTimeout(() => toast.classList.remove('translate-y-10', 'opacity-0'), 10);
             setTimeout(() => {
                 toast.classList.add('translate-y-10', 'opacity-0');
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
         }
 
-        function copyText(text) {
-            const el = document.createElement('textarea');
-            el.value = text;
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
-            document.body.removeChild(el);
-            showToast("Đã sao chép nội dung vào khay nhớ tạm!");
-        }
+        // Initializer
+        document.addEventListener('DOMContentLoaded', () => {
+            // Setup Chart.js
+            const ctx = document.getElementById('hrChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['T4', 'T5', 'T6', 'T7', 'T8', 'T9'],
+                    datasets: [
+                        { label: 'Tuyển mới', data: [12, 19, 15, 25, 22, 30], backgroundColor: '#4F46E5', borderRadius: 6, barPercentage: 0.5 }, 
+                        { label: 'Nghỉ việc', data: [5, 2, 4, 1, 3, 2], backgroundColor: '#F43F5E', borderRadius: 6, barPercentage: 0.5 }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true, grid: { borderDash: [4, 4], color: '#F1F5F9' } }, x: { grid: { display: false } } },
+                    plugins: { legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 8, font: {family: 'Inter'} } } }
+                }
+            });
+            
+            // Load Data
+            loadData();
+        });
 
-        // --- 5. Logic: Các tính năng AI & Modal (Quét CV, QR, Sinh Content) ---
-        
-        // Modal Controls
-        const aiModal = document.getElementById('aiContentModal');
-        const modalBox = document.getElementById('modalBox');
-        const modalBody = document.getElementById('modalBody');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalActionBtn = document.getElementById('modalActionBtn');
-
-        function openModal() {
-            aiModal.classList.remove('hidden');
-            setTimeout(() => { 
-                aiModal.classList.remove('opacity-0'); 
-                modalBox.classList.remove('scale-95');
-                modalBox.classList.add('scale-100');
-            }, 10);
-        }
-
-        function closeModal() {
-            aiModal.classList.add('opacity-0');
-            modalBox.classList.remove('scale-100');
-            modalBox.classList.add('scale-95');
-            setTimeout(() => { aiModal.classList.add('hidden'); }, 300);
-        }
-
-        // [TÍNH NĂNG] Quét CV (ATS)
+        // UI Helpers (AI Scanners, Modals)
         function triggerAICVScan() {
             const overlay = document.getElementById('aiOverlay');
-            const overlayBox = document.getElementById('aiOverlayBox');
-            const progress = document.getElementById('aiProgress');
-            const status = document.getElementById('aiStatusText');
-            
             overlay.classList.remove('hidden');
             setTimeout(() => { 
                 overlay.classList.remove('opacity-0'); 
-                overlayBox.classList.remove('scale-95');
+                document.getElementById('aiOverlayBox').classList.remove('scale-95');
             }, 10);
 
+            const progress = document.getElementById('aiProgress');
+            const status = document.getElementById('aiStatusText');
             progress.style.width = '0%';
-            status.innerText = "Đang trích xuất văn bản từ PDF/Word...";
-
-            setTimeout(() => { progress.style.width = '45%'; status.innerText = "AI đang đối chiếu kỹ năng với Job Description (JD)..."; }, 1200);
-            setTimeout(() => { progress.style.width = '80%'; status.innerText = "Đang tính điểm độ phù hợp (Match Score)..."; }, 2500);
+            
+            setTimeout(() => { progress.style.width = '45%'; status.innerText = "Đối chiếu JD & Kỹ năng..."; }, 1200);
+            setTimeout(() => { progress.style.width = '80%'; status.innerText = "Tính điểm Match Score..."; }, 2500);
             setTimeout(() => { 
-                progress.style.width = '100%'; 
-                status.innerText = "Hoàn tất! Đã cập nhật điểm cho 24 CVs."; 
+                progress.style.width = '100%'; status.innerText = "Hoàn tất phân tích!"; 
                 showToast("Quét CV bằng AI hoàn tất!");
             }, 3500);
 
             setTimeout(() => {
                 overlay.classList.add('opacity-0');
-                overlayBox.classList.add('scale-95');
-                setTimeout(() => { overlay.classList.add('hidden'); }, 300);
+                document.getElementById('aiOverlayBox').classList.add('scale-95');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
             }, 4500);
         }
 
-        // [TÍNH NĂNG] Sinh mã QR
-        function showQR(link) {
-            modalTitle.innerHTML = `<i class="ph ph-qr-code text-primary mr-2 text-2xl"></i> QR Code Tuyển dụng`;
-            modalBody.innerHTML = `
-                <p class="text-sm text-slate-500 mb-6 text-center">Ứng viên có thể quét mã này để truy cập form ứng tuyển trên điện thoại.</p>
-                <div class="p-5 bg-white border border-slate-200 rounded-2xl shadow-sm inline-block relative group">
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://${link}" alt="QR Code" class="w-48 h-48">
-                </div>
-                <p class="text-xs font-bold text-slate-800 mt-4">${link}</p>
-            `;
-            modalActionBtn.innerHTML = `<i class="ph ph-download-simple mr-2 text-lg"></i> Tải xuống PNG`;
-            modalActionBtn.onclick = () => {
-                showToast("Đang tải QR Code về máy...");
-                closeModal();
-            };
-            openModal();
-        }
-
-        // [TÍNH NĂNG] AI Viết bài đăng MXH
-        function generateAIContent(link, category) {
-            modalTitle.innerHTML = `<i class="ph ph-magic-wand text-purple-600 mr-2 text-2xl"></i> AI Content Writer`;
-            modalBody.innerHTML = `
-                <div class="w-full flex flex-col items-center justify-center py-10" id="aiLoading">
-                    <div class="relative w-16 h-16 mb-6">
-                        <div class="absolute inset-0 border-4 border-slate-100 rounded-full"></div>
-                        <div class="absolute inset-0 border-4 border-purple-500 rounded-full border-t-transparent animate-spin"></div>
-                    </div>
-                    <p class="text-sm font-medium text-slate-600">Đang đọc thông tin chiến dịch ${category}...</p>
-                    <p class="text-xs text-slate-400 mt-2">Đang sáng tạo Content thu hút...</p>
-                </div>
-                
-                <div id="aiResult" class="hidden w-full">
-                    <div class="bg-[#F8FAFC] border border-slate-200 rounded-xl p-5 text-sm text-slate-700 whitespace-pre-line leading-relaxed font-medium shadow-inner relative">
-                        <div class="absolute top-3 right-3 text-purple-500 bg-purple-100 p-1.5 rounded-lg"><i class="ph ph-sparkle text-lg"></i></div>
-🚀 [HOT JOB] TÌM KIẾM ĐỒNG ĐỘI ${category.toUpperCase()} TÀI NĂNG 🚀
-
-Bạn là người đam mê công việc và muốn bứt phá giới hạn bản thân? Tham gia cùng đội ngũ NextGen HR ngay hôm nay!
-
-🔥 Quyền lợi:
-• Lương siêu hấp dẫn, review 2 lần/năm.
-• Đóng BHXH Full lương + Gói bảo hiểm cao cấp.
-• Cấp sẵn thiết bị làm việc (Macbook/Dell).
-👉 Môi trường trẻ trung, linh hoạt, tôn trọng sự sáng tạo.
-
-Ứng tuyển siêu tốc chỉ với 1 Click:
-🔗 https://${link}
-
-#NextGenHR #Tuyendung #ViecLam${category} #Hiring2026
-                    </div>
-                </div>
-            `;
-            
-            modalActionBtn.innerHTML = `Đang xử lý...`;
-            modalActionBtn.disabled = true;
-            modalActionBtn.classList.add('opacity-50', 'cursor-not-allowed');
-
-            openModal();
-
-            // Giả lập thời gian AI xử lý API
-            setTimeout(() => {
-                document.getElementById('aiLoading').classList.add('hidden');
-                document.getElementById('aiResult').classList.remove('hidden');
-                
-                modalActionBtn.innerHTML = `<i class="ph ph-copy mr-2 text-lg"></i> Copy Nội dung`;
-                modalActionBtn.disabled = false;
-                modalActionBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-                
-                const generatedContent = document.querySelector('#aiResult > div').innerText;
-                modalActionBtn.onclick = () => {
-                    copyText(generatedContent);
-                    closeModal();
-                };
-            }, 2000);
-        }
-
-        // [TÍNH NĂNG] Nút phụ
-        function createNewLink() {
-            showToast("Hệ thống đang mở form tạo Tracking Link chiến dịch mới.");
-        }
+        const aiModal = document.getElementById('aiContentModal');
+        const modalBox = document.getElementById('modalBox');
         
-        function generateTemplateAI() {
-            showToast("Giao diện nhập Prompt cho AI đang được tải...");
+        function openModal() {
+            aiModal.classList.remove('hidden');
+            setTimeout(() => { 
+                aiModal.classList.remove('opacity-0'); 
+                modalBox.classList.remove('scale-95');
+            }, 10);
+        }
+        function closeModal() {
+            aiModal.classList.add('opacity-0');
+            modalBox.classList.add('scale-95');
+            setTimeout(() => aiModal.classList.add('hidden'), 300);
+        }
+        function copyText(text) { navigator.clipboard.writeText(text); showToast("Đã copy vào Clipboard!"); }
+
+        function showQR(link) {
+            document.getElementById('modalTitle').innerHTML = `<i class="ph-fill ph-qr-code text-primary mr-2 text-2xl"></i> QR Tuyển dụng`;
+            document.getElementById('modalBody').innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://${link}" class="w-48 h-48 rounded-xl shadow-sm border border-slate-200 p-2 bg-white">`;
+            const btn = document.getElementById('modalActionBtn');
+            btn.innerHTML = `<i class="ph-bold ph-download-simple mr-2"></i> Tải ảnh`;
+            btn.onclick = () => { showToast("Đã tải mã QR"); closeModal(); };
+            openModal();
         }
 
-        // --- 6. Khởi động hệ thống ---
-    loadData(); // Render bảng Grid Excel lúc đầu và gọi GAS nếu có
-</script>
+        function generateAIContent(link, cat) {
+            document.getElementById('modalTitle').innerHTML = `<i class="ph-fill ph-magic-wand text-purple-600 mr-2 text-2xl"></i> AI Writer`;
+            document.getElementById('modalBody').innerHTML = `<div id="aiLoading" class="text-center py-6"><i class="ph-bold ph-spinner animate-spin text-3xl text-purple-500 mb-3"></i><p class="text-sm font-bold text-slate-500">Đang sáng tạo Content...</p></div>`;
+            document.getElementById('modalActionBtn').innerText = 'Đang xử lý...';
+            openModal();
+
+            setTimeout(() => {
+                const text = `🔥 TUYỂN DỤNG ${cat.toUpperCase()} TÀI NĂNG 🔥\n\nBạn muốn bứt phá giới hạn? Tham gia cùng NextGen HR!\n👉 Lương hấp dẫn, BHXH Full\n🔗 Apply: https://${link}`;
+                document.getElementById('modalBody').innerHTML = `<div class="bg-white p-5 rounded-xl border border-slate-200 text-sm font-medium whitespace-pre-wrap w-full shadow-inner">${text}</div>`;
+                const btn = document.getElementById('modalActionBtn');
+                btn.innerHTML = `<i class="ph-bold ph-copy mr-2"></i> Copy Bài viết`;
+                btn.onclick = () => { copyText(text); closeModal(); };
+            }, 1500);
+        }
+    </script>
 </body>
 </html>
-                    
