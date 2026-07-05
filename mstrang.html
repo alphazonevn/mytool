@@ -5,17 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MS. TRANG - Đặt món & Quản lý</title>
     
-    <!-- Cài đặt Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Cài đặt FontAwesome cho các biểu tượng (Icons) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Cài đặt React và ReactDOM -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    
-    <!-- Cài đặt Babel để biên dịch JSX trình duyệt -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <style>
@@ -42,29 +35,35 @@
     <script type="text/babel">
         const { useState, useEffect, useRef, useCallback } = React;
 
-        // --- CẤU HÌNH LIÊN KẾT APP SCRIPT ---
         const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyxIDh3f0ZaZGvRCIgajpq_NzN2h2JFhxOFRVUQhTB3VOADv0sPreu1IYdkm5fWgVOAXA/exec';
 
-        // Dữ liệu thực đơn mặc định
-        const MENU_ITEMS = [
+        // Thực đơn mặc định (fallback khi mất mạng hoặc sheet trống)
+        const DEFAULT_MENU_ITEMS = [
           { id: 'm1', name: 'Trà Sữa Trân Châu', price: 35000, category: 'Nước uống', emoji: '🧋', color: 'bg-amber-100 text-amber-700' },
           { id: 'm2', name: 'Cà Phê Sữa Đá', price: 25000, category: 'Nước uống', emoji: '☕', color: 'bg-stone-100 text-stone-700' },
           { id: 'm3', name: 'Trà Đào Cam Sả', price: 40000, category: 'Nước uống', emoji: '🍹', color: 'bg-orange-100 text-orange-700' },
           { id: 'm4', name: 'Sinh Tố Bơ', price: 45000, category: 'Nước uống', emoji: '🥑', color: 'bg-green-100 text-green-700' },
           { id: 'm5', name: 'Bánh Mì Thịt Nướng', price: 30000, category: 'Đồ ăn', emoji: '🥖', color: 'bg-yellow-100 text-yellow-700' },
-          { id: 'm6', name: 'Phở Bò', price: 50000, category: 'Đồ ăn', emoji: '🍜', color: 'bg-red-100 text-red-700' },
-          { id: 'm7', name: 'Cơm Tấm Sườn Bì', price: 55000, category: 'Đồ ăn', emoji: '🍛', color: 'bg-orange-100 text-orange-800' },
-          { id: 'm8', name: 'Gỏi Cuốn', price: 20000, category: 'Đồ ăn', emoji: '🌯', color: 'bg-green-50 text-green-700' },
+        ];
+
+        const COLOR_OPTIONS = [
+          { label: 'Cam', value: 'bg-orange-100 text-orange-700' },
+          { label: 'Xanh lá', value: 'bg-green-100 text-green-700' },
+          { label: 'Đỏ', value: 'bg-red-100 text-red-700' },
+          { label: 'Vàng', value: 'bg-yellow-100 text-yellow-700' },
+          { label: 'Nâu/Xám', value: 'bg-stone-100 text-stone-700' },
+          { label: 'Hổ phách', value: 'bg-amber-100 text-amber-700' },
+          { label: 'Xanh dương', value: 'bg-blue-100 text-blue-700' },
+          { label: 'Tím', value: 'bg-purple-100 text-purple-700' }
         ];
 
         const formatVND = (amount) => {
-          return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+          return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(Number(amount));
         };
 
         const getAdminPassword = () => localStorage.getItem('msTrangAdminPwd') || 'admin123';
         const setAdminPassword = (pwd) => localStorage.setItem('msTrangAdminPwd', pwd);
 
-        // Icon Component dùng FontAwesome
         const Icon = ({ name, size = 16, className = "" }) => (
             <i className={`fas fa-${name} ${className}`} style={{ fontSize: size, width: size, textAlign: 'center' }}></i>
         );
@@ -72,9 +71,7 @@
         let audioCtx = null;
         const playNotificationSound = () => {
           try {
-            if (navigator.vibrate) {
-              navigator.vibrate([500, 200, 500, 200, 800]); 
-            }
+            if (navigator.vibrate) navigator.vibrate([500, 200, 500, 200, 800]); 
           } catch(e) {}
 
           try {
@@ -99,7 +96,6 @@
           } catch (e) {}
         };
 
-        // Giao tiếp API
         const api = {
           getOrders: async (url) => {
             if (!url) return JSON.parse(localStorage.getItem('msTrangOrders') || '[]');
@@ -107,27 +103,28 @@
               const res = await fetch(`${url}?action=getOrders`);
               return await res.json();
             } catch (e) {
-              console.error(e);
               return [];
             }
           },
+          getMenu: async (url) => {
+            if (!url) return JSON.parse(localStorage.getItem('msTrangMenu') || JSON.stringify(DEFAULT_MENU_ITEMS));
+            try {
+              const res = await fetch(`${url}?action=getMenu`);
+              const data = await res.json();
+              return data.length > 0 ? data : DEFAULT_MENU_ITEMS;
+            } catch (e) {
+              return DEFAULT_MENU_ITEMS;
+            }
+          },
           createOrder: async (url, orderData) => {
-            const newOrder = {
-              ...orderData,
-              id: Math.random().toString(36).substring(2, 9),
-              timestamp: new Date().toISOString()
-            };
+            const newOrder = { ...orderData, id: Math.random().toString(36).substring(2, 9), timestamp: new Date().toISOString() };
             if (!url) {
               const orders = JSON.parse(localStorage.getItem('msTrangOrders') || '[]');
               orders.push(newOrder);
               localStorage.setItem('msTrangOrders', JSON.stringify(orders));
               return newOrder;
             }
-            await fetch(url, {
-              method: 'POST',
-              headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
-              body: JSON.stringify({ action: 'createOrder', ...newOrder })
-            });
+            await fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'createOrder', ...newOrder }) });
             return newOrder;
           },
           updateOrder: async (url, updatedOrder) => {
@@ -137,16 +134,44 @@
               localStorage.setItem('msTrangOrders', JSON.stringify(orders));
               return updatedOrder;
             }
-            await fetch(url, {
-              method: 'POST',
-              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-              body: JSON.stringify({ action: 'updateOrder', ...updatedOrder })
-            });
+            await fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'updateOrder', ...updatedOrder }) });
             return updatedOrder;
+          },
+          createMenuItem: async (url, itemData) => {
+            const newItem = { ...itemData, id: 'm' + Math.random().toString(36).substring(2, 9) };
+            if (!url) {
+              const menu = JSON.parse(localStorage.getItem('msTrangMenu') || JSON.stringify(DEFAULT_MENU_ITEMS));
+              menu.push(newItem);
+              localStorage.setItem('msTrangMenu', JSON.stringify(menu));
+              return newItem;
+            }
+            await fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'createMenuItem', item: newItem }) });
+            return newItem;
+          },
+          updateMenuItem: async (url, itemData) => {
+            if (!url) {
+              let menu = JSON.parse(localStorage.getItem('msTrangMenu') || JSON.stringify(DEFAULT_MENU_ITEMS));
+              menu = menu.map(m => m.id === itemData.id ? itemData : m);
+              localStorage.setItem('msTrangMenu', JSON.stringify(menu));
+              return itemData;
+            }
+            await fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'updateMenuItem', item: itemData }) });
+            return itemData;
+          },
+          deleteMenuItem: async (url, id) => {
+            if (!url) {
+              let menu = JSON.parse(localStorage.getItem('msTrangMenu') || JSON.stringify(DEFAULT_MENU_ITEMS));
+              menu = menu.filter(m => m.id !== id);
+              localStorage.setItem('msTrangMenu', JSON.stringify(menu));
+              return true;
+            }
+            await fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'deleteMenuItem', id }) });
+            return true;
           }
         };
 
-        const CustomerView = ({ scriptUrl }) => {
+        const CustomerView = ({ scriptUrl, menuItems }) => {
+          const [viewMode, setViewMode] = useState('order'); // 'order' or 'history'
           const [cart, setCart] = useState([]);
           const [isCartOpen, setIsCartOpen] = useState(false);
           const [category, setCategory] = useState('Tất cả');
@@ -158,8 +183,30 @@
           const [isSubmitting, setIsSubmitting] = useState(false);
           const [orderSuccess, setOrderSuccess] = useState(false);
 
-          const categories = ['Tất cả', ...new Set(MENU_ITEMS.map(item => item.category))];
-          const filteredMenu = category === 'Tất cả' ? MENU_ITEMS : MENU_ITEMS.filter(m => m.category === category);
+          // Trạng thái Lịch sử đơn hàng
+          const [myOrders, setMyOrders] = useState([]);
+          const [isLoadingHistory, setIsLoadingHistory] = useState(false);
+
+          const categories = ['Tất cả', ...new Set(menuItems.map(item => item.category))];
+          const filteredMenu = category === 'Tất cả' ? menuItems : menuItems.filter(m => m.category === category);
+
+          const fetchMyOrders = async () => {
+            setIsLoadingHistory(true);
+            const savedOrderIds = JSON.parse(localStorage.getItem('msTrangMyOrderIds') || '[]');
+            const allOrders = await api.getOrders(scriptUrl);
+            const myOrdersFiltered = allOrders.filter(o => savedOrderIds.includes(o.id));
+            
+            // Sắp xếp đơn mới nhất lên đầu
+            myOrdersFiltered.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            setMyOrders(myOrdersFiltered);
+            setIsLoadingHistory(false);
+          };
+
+          useEffect(() => {
+            if (viewMode === 'history') {
+              fetchMyOrders();
+            }
+          }, [viewMode, scriptUrl]);
 
           const addToCart = (item) => {
             setCart(prev => {
@@ -191,17 +238,22 @@
             localStorage.setItem('msTrangCustPhone', customerPhone);
             
             try {
-              await api.createOrder(scriptUrl, {
+              const createdOrder = await api.createOrder(scriptUrl, {
                 customerName,
                 customerPhone,
                 items: cart,
                 total: totalAmount,
                 status: 'pending'
               });
+              
+              // Lưu ID đơn hàng vào máy khách để xem lịch sử
+              const orderIds = JSON.parse(localStorage.getItem('msTrangMyOrderIds') || '[]');
+              orderIds.push(createdOrder.id);
+              localStorage.setItem('msTrangMyOrderIds', JSON.stringify(orderIds));
+
               setCart([]);
               setIsCartOpen(false);
               setOrderSuccess(true);
-              setCustomerName('');
               setTimeout(() => setOrderSuccess(false), 4000);
             } catch (e) {
               setErrorMsg("Có lỗi xảy ra, vui lòng thử lại!");
@@ -218,44 +270,124 @@
                 </div>
               )}
 
-              <div className="mb-6">
-                <h2 className="text-3xl font-extrabold text-gray-800 mb-2">Xin chào 👋</h2>
-                <p className="text-gray-500">Mời bạn chọn món ngon hôm nay</p>
+              {/* Phân hệ điều hướng Khách hàng */}
+              <div className="flex bg-gray-200/50 p-1.5 rounded-2xl w-full max-w-xs mb-8 mx-auto md:mx-0 shadow-inner">
+                <button 
+                  onClick={() => setViewMode('order')}
+                  className={`flex-1 py-2.5 rounded-xl font-bold text-sm transition-all ${viewMode === 'order' ? 'bg-white text-orange-600 shadow' : 'text-gray-500 hover:text-gray-800'}`}
+                >
+                  <Icon name="utensils" className="mr-2" /> Đặt món
+                </button>
+                <button 
+                  onClick={() => setViewMode('history')}
+                  className={`flex-1 py-2.5 rounded-xl font-bold text-sm transition-all ${viewMode === 'history' ? 'bg-white text-orange-600 shadow' : 'text-gray-500 hover:text-gray-800'}`}
+                >
+                  <Icon name="clock-rotate-left" className="mr-2" /> Đơn của tôi
+                </button>
               </div>
 
-              <div className="flex gap-2 overflow-x-auto pb-2 mb-6 scrollbar-hide">
-                {categories.map(cat => (
-                  <button
-                    key={cat}
-                    onClick={() => setCategory(cat)}
-                    className={`whitespace-nowrap px-5 py-2.5 rounded-full font-semibold transition-all shadow-sm ${
-                      category === cat ? 'bg-orange-500 text-white shadow-orange-200' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-100'
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                ))}
-              </div>
-
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {filteredMenu.map(item => (
-                  <div key={item.id} className="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow flex flex-col items-center relative overflow-hidden group">
-                    <div className={`w-20 h-20 md:w-24 md:h-24 ${item.color} rounded-full flex items-center justify-center text-4xl mb-4 shadow-inner transform group-hover:scale-105 transition-transform`}>
-                      {item.emoji}
-                    </div>
-                    <h3 className="font-bold text-gray-800 text-center text-sm md:text-base leading-tight mb-1">{item.name}</h3>
-                    <p className="text-orange-600 font-extrabold mb-4">{formatVND(item.price)}</p>
-                    <button 
-                      onClick={() => addToCart(item)}
-                      className="mt-auto w-full bg-orange-50 text-orange-600 hover:bg-orange-500 hover:text-white py-2.5 rounded-2xl font-bold flex justify-center items-center gap-2 transition-colors"
-                    >
-                      <Icon name="plus" size={16} /> Thêm
-                    </button>
+              {viewMode === 'order' ? (
+                <div className="animate-fade-in-up">
+                  <div className="mb-6">
+                    <h2 className="text-3xl font-extrabold text-gray-800 mb-2">Xin chào 👋</h2>
+                    <p className="text-gray-500">Mời bạn chọn món ngon hôm nay</p>
                   </div>
-                ))}
-              </div>
 
-              {cart.length > 0 && !isCartOpen && (
+                  <div className="flex gap-2 overflow-x-auto pb-2 mb-6 scrollbar-hide">
+                    {categories.map(cat => (
+                      <button
+                        key={cat}
+                        onClick={() => setCategory(cat)}
+                        className={`whitespace-nowrap px-5 py-2.5 rounded-full font-semibold transition-all shadow-sm ${
+                          category === cat ? 'bg-orange-500 text-white shadow-orange-200' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-100'
+                        }`}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {filteredMenu.map(item => (
+                      <div key={item.id} className="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow flex flex-col items-center relative overflow-hidden group">
+                        <div className={`w-20 h-20 md:w-24 md:h-24 ${item.color} rounded-full flex items-center justify-center text-4xl mb-4 shadow-inner transform group-hover:scale-105 transition-transform`}>
+                          {item.emoji}
+                        </div>
+                        <h3 className="font-bold text-gray-800 text-center text-sm md:text-base leading-tight mb-1">{item.name}</h3>
+                        <p className="text-orange-600 font-extrabold mb-4">{formatVND(item.price)}</p>
+                        <button 
+                          onClick={() => addToCart(item)}
+                          className="mt-auto w-full bg-orange-50 text-orange-600 hover:bg-orange-500 hover:text-white py-2.5 rounded-2xl font-bold flex justify-center items-center gap-2 transition-colors"
+                        >
+                          <Icon name="plus" size={16} /> Thêm
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="animate-fade-in-up max-w-3xl mx-auto">
+                  <div className="mb-6 flex justify-between items-end">
+                    <div>
+                      <h2 className="text-2xl font-extrabold text-gray-800 mb-2">Đơn hàng của bạn</h2>
+                      <p className="text-gray-500 text-sm">Theo dõi trạng thái các món đã đặt trên thiết bị này</p>
+                    </div>
+                    <button onClick={fetchMyOrders} className="bg-white border p-2 rounded-full text-gray-500 hover:text-orange-500 shadow-sm transition"><Icon name="rotate-right"/></button>
+                  </div>
+
+                  {isLoadingHistory ? (
+                     <div className="text-center py-12 text-gray-400"><Icon name="spinner" className="fa-spin text-4xl opacity-50"/></div>
+                  ) : myOrders.length === 0 ? (
+                     <div className="bg-white rounded-3xl p-10 text-center border border-gray-100 shadow-sm">
+                       <Icon name="receipt" size={48} className="text-gray-300 mb-4"/>
+                       <p className="font-bold text-gray-500">Bạn chưa có đơn hàng nào gần đây.</p>
+                       <button onClick={() => setViewMode('order')} className="mt-4 bg-orange-100 text-orange-600 font-bold px-6 py-2.5 rounded-full hover:bg-orange-200">Đặt món ngay</button>
+                     </div>
+                  ) : (
+                     <div className="space-y-4">
+                       {myOrders.map(order => (
+                         <div key={order.id} className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden">
+                           <div className={`absolute top-0 left-0 w-2 h-full ${order.status === 'pending' ? 'bg-orange-400' : 'bg-green-500'}`}></div>
+                           <div className="flex justify-between items-start mb-4 pl-3">
+                             <div>
+                               <p className="text-xs text-gray-400 font-semibold mb-1">{new Date(order.timestamp).toLocaleString()}</p>
+                               <h4 className="font-bold text-gray-800">Tên/Bàn: <span className="text-orange-600">{order.customerName}</span></h4>
+                             </div>
+                             {order.status === 'pending' ? (
+                               <span className="bg-orange-50 text-orange-600 px-3 py-1 rounded-full text-xs font-bold border border-orange-200 flex items-center gap-1">
+                                 <Icon name="clock" size={12}/> Đang xử lý
+                               </span>
+                             ) : (
+                               <span className="bg-green-50 text-green-600 px-3 py-1 rounded-full text-xs font-bold border border-green-200 flex items-center gap-1">
+                                 <Icon name="check-circle" size={12}/> Hoàn thành
+                               </span>
+                             )}
+                           </div>
+                           
+                           <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 mb-4 pl-5">
+                             {order.items.map(item => (
+                               <div key={item.id} className="flex justify-between text-sm mb-2 last:mb-0">
+                                 <span className="font-medium text-gray-700">
+                                   <b className="text-orange-600 mr-2">{item.quantity}x</b> {item.name}
+                                 </span>
+                                 <span className="text-gray-500">{formatVND(item.price * item.quantity)}</span>
+                               </div>
+                             ))}
+                           </div>
+                           
+                           <div className="flex justify-between items-center pl-3 border-t border-dashed border-gray-200 pt-4">
+                             <span className="text-gray-500 font-semibold">Tổng thanh toán</span>
+                             <span className="text-xl font-extrabold text-gray-900">{formatVND(order.total)}</span>
+                           </div>
+                         </div>
+                       ))}
+                     </div>
+                  )}
+                </div>
+              )}
+
+              {/* Nút mở giỏ hàng */}
+              {cart.length > 0 && !isCartOpen && viewMode === 'order' && (
                 <button 
                   onClick={() => setIsCartOpen(true)}
                   className="fixed bottom-6 right-6 z-40 bg-orange-500 text-white p-4 rounded-full shadow-2xl flex items-center justify-center animate-pulse-slow hover:scale-105 transition-transform"
@@ -269,6 +401,7 @@
                 </button>
               )}
 
+              {/* Khung Giỏ Hàng (Sidebar) */}
               <div className={`fixed inset-y-0 right-0 w-full md:w-96 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out z-50 flex flex-col ${isCartOpen ? 'translate-x-0' : 'translate-x-full'}`}>
                 <div className="p-5 flex justify-between items-center border-b border-gray-100 bg-gray-50/50">
                   <h2 className="text-xl font-extrabold text-gray-800 flex items-center gap-2">
@@ -321,7 +454,7 @@
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1">Số điện thoại liên hệ <span className="text-red-500">*</span></label>
+                        <label className="block text-sm font-bold text-gray-700 mb-1">Số điện thoại liên hệ</label>
                         <input 
                           type="tel" 
                           placeholder="VD: 0901234567"
@@ -353,7 +486,97 @@
           );
         };
 
-        const StaffView = ({ scriptUrl }) => {
+        const EditOrderModal = ({ order, menuItems, onClose, onSave }) => {
+          const [editedItems, setEditedItems] = useState([...order.items]);
+
+          const updateQty = (id, delta) => {
+            setEditedItems(prev => prev.map(item => {
+              if (item.id === id) return { ...item, quantity: item.quantity + delta };
+              return item;
+            }).filter(item => item.quantity > 0));
+          };
+
+          const addItem = (menuItem) => {
+            setEditedItems(prev => {
+              const existing = prev.find(i => i.id === menuItem.id);
+              if (existing) return prev.map(i => i.id === menuItem.id ? { ...i, quantity: i.quantity + 1 } : i);
+              return [...prev, { ...menuItem, quantity: 1 }];
+            });
+          };
+
+          const total = editedItems.reduce((acc, i) => acc + i.price * i.quantity, 0);
+
+          return (
+            <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+              <div className="bg-white rounded-3xl w-full max-w-4xl h-[90vh] md:h-[80vh] flex flex-col shadow-2xl overflow-hidden animate-fade-in-up">
+                <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/80">
+                  <div>
+                    <h2 className="text-xl font-extrabold text-gray-800">Cập nhật đơn: <span className="text-orange-600">{order.customerName}</span></h2>
+                    <p className="text-sm text-gray-500 mt-1">Thêm hoặc bớt món ăn theo yêu cầu</p>
+                  </div>
+                  <button onClick={onClose} className="w-8 h-8 flex justify-center items-center bg-white rounded-full hover:bg-gray-200 transition border shadow-sm"><Icon name="times" size={16}/></button>
+                </div>
+
+                <div className="flex-1 overflow-hidden flex flex-col md:flex-row">
+                  <div className="flex-1 p-5 overflow-y-auto border-b md:border-b-0 md:border-r border-gray-100 bg-gray-50/30">
+                    <h3 className="font-bold text-gray-700 mb-4 flex items-center gap-2"><Icon name="cart-shopping" size={16}/> Món trong đơn</h3>
+                    {editedItems.length === 0 ? (
+                      <p className="text-gray-400 text-sm text-center py-10">Đơn hàng hiện đang trống</p>
+                    ) : (
+                      <div className="space-y-3">
+                        {editedItems.map(item => (
+                          <div key={item.id} className="bg-white p-3 rounded-2xl flex justify-between items-center border border-gray-100 shadow-sm">
+                            <div>
+                              <h4 className="font-bold text-gray-800 text-sm">{item.name}</h4>
+                              <p className="text-orange-600 font-semibold text-xs">{formatVND(item.price)}</p>
+                            </div>
+                            <div className="flex items-center gap-2 bg-gray-50 rounded-full px-2 py-1 border">
+                              <button onClick={() => updateQty(item.id, -1)} className="p-1 text-gray-500 hover:text-red-500"><Icon name="minus" size={12}/></button>
+                              <span className="font-bold text-sm w-4 text-center">{item.quantity}</span>
+                              <button onClick={() => updateQty(item.id, 1)} className="p-1 text-gray-500 hover:text-green-500"><Icon name="plus" size={12}/></button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex-[1.2] p-5 overflow-y-auto">
+                     <h3 className="font-bold text-gray-700 mb-4 flex items-center gap-2"><Icon name="utensils" size={16}/> Thực đơn</h3>
+                     <div className="grid grid-cols-2 gap-3">
+                       {menuItems.map(item => (
+                         <div key={item.id} onClick={() => addItem(item)} className="bg-white border border-gray-100 hover:border-orange-300 p-3 rounded-2xl cursor-pointer hover:shadow-md transition group flex items-center gap-3">
+                           <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg ${item.color} group-hover:scale-110 transition`}>
+                             {item.emoji}
+                           </div>
+                           <div>
+                             <h4 className="font-bold text-gray-800 text-xs leading-tight">{item.name}</h4>
+                             <p className="text-orange-500 text-xs font-semibold">{formatVND(item.price)}</p>
+                           </div>
+                         </div>
+                       ))}
+                     </div>
+                  </div>
+                </div>
+
+                <div className="p-5 border-t border-gray-100 bg-white flex justify-between items-center">
+                  <div>
+                    <p className="text-sm text-gray-500 font-semibold mb-1">Tổng tiền mới</p>
+                    <p className="text-2xl font-extrabold text-orange-600">{formatVND(total)}</p>
+                  </div>
+                  <div className="flex gap-3">
+                    <button onClick={onClose} className="px-6 py-3 rounded-2xl font-bold bg-gray-100 text-gray-700 hover:bg-gray-200">Hủy</button>
+                    <button onClick={() => onSave(editedItems, total)} className="px-8 py-3 rounded-2xl font-bold bg-orange-500 text-white hover:bg-orange-600 shadow-lg shadow-orange-200 flex items-center gap-2">
+                      <Icon name="save" size={16}/> Lưu & Cập nhật
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        };
+
+        const StaffView = ({ scriptUrl, menuItems }) => {
           const [orders, setOrders] = useState([]);
           const [loading, setLoading] = useState(true);
           const [editingOrder, setEditingOrder] = useState(null);
@@ -509,6 +732,7 @@
               {editingOrder && (
                 <EditOrderModal 
                   order={editingOrder} 
+                  menuItems={menuItems}
                   onClose={() => setEditingOrder(null)} 
                   onSave={handleSaveEdit} 
                 />
@@ -517,269 +741,153 @@
           );
         };
 
-        const EditOrderModal = ({ order, onClose, onSave }) => {
-          const [editedItems, setEditedItems] = useState([...order.items]);
+        const MenuManager = ({ menuItems, scriptUrl, refreshMenu }) => {
+          const [isEditing, setIsEditing] = useState(false);
+          const [editData, setEditData] = useState(null);
+          const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+          const [isSaving, setIsSaving] = useState(false);
 
-          const updateQty = (id, delta) => {
-            setEditedItems(prev => prev.map(item => {
-              if (item.id === id) return { ...item, quantity: item.quantity + delta };
-              return item;
-            }).filter(item => item.quantity > 0));
+          const openAddModal = () => {
+             setEditData({ name: '', price: '', category: '', emoji: '🍲', color: COLOR_OPTIONS[0].value });
+             setIsEditing(true);
           };
 
-          const addItem = (menuItem) => {
-            setEditedItems(prev => {
-              const existing = prev.find(i => i.id === menuItem.id);
-              if (existing) return prev.map(i => i.id === menuItem.id ? { ...i, quantity: i.quantity + 1 } : i);
-              return [...prev, { ...menuItem, quantity: 1 }];
-            });
+          const handleSave = async () => {
+            if(!editData.name || !editData.price || !editData.category) return;
+            setIsSaving(true);
+            try {
+              if (editData.id) {
+                await api.updateMenuItem(scriptUrl, editData);
+              } else {
+                await api.createMenuItem(scriptUrl, editData);
+              }
+              await refreshMenu();
+              setIsEditing(false);
+            } catch(e) {
+               console.error("Lỗi khi lưu:", e);
+            }
+            setIsSaving(false);
           };
 
-          const total = editedItems.reduce((acc, i) => acc + i.price * i.quantity, 0);
+          const handleDelete = async (id) => {
+            await api.deleteMenuItem(scriptUrl, id);
+            setDeleteConfirmId(null);
+            await refreshMenu();
+          };
 
           return (
-            <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-              <div className="bg-white rounded-3xl w-full max-w-4xl h-[90vh] md:h-[80vh] flex flex-col shadow-2xl overflow-hidden animate-fade-in-up">
-                <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/80">
-                  <div>
-                    <h2 className="text-xl font-extrabold text-gray-800">Cập nhật đơn: <span className="text-orange-600">{order.customerName}</span></h2>
-                    <p className="text-sm text-gray-500 mt-1">Thêm hoặc bớt món ăn theo yêu cầu</p>
-                  </div>
-                  <button onClick={onClose} className="w-8 h-8 flex justify-center items-center bg-white rounded-full hover:bg-gray-200 transition border shadow-sm"><Icon name="times" size={16}/></button>
+             <div className="animate-fade-in-up">
+                <div className="flex justify-between items-center mb-6">
+                   <div>
+                     <h3 className="text-xl font-extrabold text-gray-800">Cài đặt Thực đơn</h3>
+                     <p className="text-sm text-gray-500">Thêm, sửa, xóa các món ăn đang bán</p>
+                   </div>
+                   <button onClick={openAddModal} className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2.5 px-5 rounded-xl shadow-md shadow-orange-200 transition-all flex items-center gap-2">
+                     <Icon name="plus"/> Thêm Món
+                   </button>
                 </div>
 
-                <div className="flex-1 overflow-hidden flex flex-col md:flex-row">
-                  <div className="flex-1 p-5 overflow-y-auto border-b md:border-b-0 md:border-r border-gray-100 bg-gray-50/30">
-                    <h3 className="font-bold text-gray-700 mb-4 flex items-center gap-2"><Icon name="cart-shopping" size={16}/> Món trong đơn</h3>
-                    {editedItems.length === 0 ? (
-                      <p className="text-gray-400 text-sm text-center py-10">Đơn hàng hiện đang trống</p>
-                    ) : (
-                      <div className="space-y-3">
-                        {editedItems.map(item => (
-                          <div key={item.id} className="bg-white p-3 rounded-2xl flex justify-between items-center border border-gray-100 shadow-sm">
-                            <div>
-                              <h4 className="font-bold text-gray-800 text-sm">{item.name}</h4>
-                              <p className="text-orange-600 font-semibold text-xs">{formatVND(item.price)}</p>
-                            </div>
-                            <div className="flex items-center gap-2 bg-gray-50 rounded-full px-2 py-1 border">
-                              <button onClick={() => updateQty(item.id, -1)} className="p-1 text-gray-500 hover:text-red-500"><Icon name="minus" size={12}/></button>
-                              <span className="font-bold text-sm w-4 text-center">{item.quantity}</span>
-                              <button onClick={() => updateQty(item.id, 1)} className="p-1 text-gray-500 hover:text-green-500"><Icon name="plus" size={12}/></button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                   <div className="overflow-x-auto">
+                     <table className="w-full text-left border-collapse">
+                        <thead>
+                          <tr className="bg-gray-50/80 text-gray-500 text-sm border-b border-gray-100">
+                            <th className="py-4 px-5 font-bold">Biểu tượng</th>
+                            <th className="py-4 px-5 font-bold">Tên Món</th>
+                            <th className="py-4 px-5 font-bold">Danh mục</th>
+                            <th className="py-4 px-5 font-bold">Giá bán</th>
+                            <th className="py-4 px-5 font-bold text-right">Thao tác</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {menuItems.map(item => (
+                            <tr key={item.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors group">
+                               <td className="py-3 px-5">
+                                 <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg ${item.color}`}>{item.emoji}</div>
+                               </td>
+                               <td className="py-3 px-5 font-bold text-gray-800">{item.name}</td>
+                               <td className="py-3 px-5 text-sm font-semibold text-gray-500"><span className="bg-gray-100 px-2 py-1 rounded-lg">{item.category}</span></td>
+                               <td className="py-3 px-5 font-extrabold text-orange-600">{formatVND(item.price)}</td>
+                               <td className="py-3 px-5 text-right">
+                                  {deleteConfirmId === item.id ? (
+                                     <div className="flex items-center justify-end gap-2 animate-fade-in-up">
+                                        <span className="text-xs text-red-500 font-bold mr-2">Chắc chắn xóa?</span>
+                                        <button onClick={() => handleDelete(item.id)} className="bg-red-500 text-white p-2 rounded-lg hover:bg-red-600"><Icon name="check"/></button>
+                                        <button onClick={() => setDeleteConfirmId(null)} className="bg-gray-200 text-gray-700 p-2 rounded-lg hover:bg-gray-300"><Icon name="times"/></button>
+                                     </div>
+                                  ) : (
+                                     <div className="flex items-center justify-end gap-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <button onClick={() => {setEditData(item); setIsEditing(true)}} className="bg-gray-100 text-gray-600 p-2 rounded-lg hover:bg-blue-100 hover:text-blue-600 transition"><Icon name="pen"/></button>
+                                        <button onClick={() => setDeleteConfirmId(item.id)} className="bg-gray-100 text-gray-600 p-2 rounded-lg hover:bg-red-100 hover:text-red-600 transition"><Icon name="trash"/></button>
+                                     </div>
+                                  )}
+                               </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                     </table>
+                   </div>
+                </div>
 
-                  <div className="flex-[1.2] p-5 overflow-y-auto">
-                     <h3 className="font-bold text-gray-700 mb-4 flex items-center gap-2"><Icon name="utensils" size={16}/> Thực đơn</h3>
-                     <div className="grid grid-cols-2 gap-3">
-                       {MENU_ITEMS.map(item => (
-                         <div key={item.id} onClick={() => addItem(item)} className="bg-white border border-gray-100 hover:border-orange-300 p-3 rounded-2xl cursor-pointer hover:shadow-md transition group flex items-center gap-3">
-                           <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg ${item.color} group-hover:scale-110 transition`}>
-                             {item.emoji}
-                           </div>
-                           <div>
-                             <h4 className="font-bold text-gray-800 text-xs leading-tight">{item.name}</h4>
-                             <p className="text-orange-500 text-xs font-semibold">{formatVND(item.price)}</p>
-                           </div>
+                {/* Modal Thêm/Sửa Món */}
+                {isEditing && (
+                   <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[60] p-4 backdrop-blur-sm">
+                      <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl animate-fade-in-up overflow-hidden">
+                         <div className="p-5 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+                            <h3 className="font-extrabold text-xl text-gray-800">{editData.id ? 'Sửa món ăn' : 'Thêm món mới'}</h3>
+                            <button onClick={() => setIsEditing(false)} className="text-gray-400 hover:text-gray-700"><Icon name="times" size={20}/></button>
                          </div>
-                       ))}
-                     </div>
-                  </div>
-                </div>
-
-                <div className="p-5 border-t border-gray-100 bg-white flex justify-between items-center">
-                  <div>
-                    <p className="text-sm text-gray-500 font-semibold mb-1">Tổng tiền mới</p>
-                    <p className="text-2xl font-extrabold text-orange-600">{formatVND(total)}</p>
-                  </div>
-                  <div className="flex gap-3">
-                    <button onClick={onClose} className="px-6 py-3 rounded-2xl font-bold bg-gray-100 text-gray-700 hover:bg-gray-200">Hủy</button>
-                    <button onClick={() => onSave(editedItems, total)} className="px-8 py-3 rounded-2xl font-bold bg-orange-500 text-white hover:bg-orange-600 shadow-lg shadow-orange-200 flex items-center gap-2">
-                      <Icon name="save" size={16}/> Lưu & Cập nhật
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          );
-        };
-
-        const SettingsModal = ({ isOpen, onClose, scriptUrl, setScriptUrl }) => {
-          const [url, setUrl] = useState(scriptUrl);
-
-          const handleSave = () => {
-            setScriptUrl(url);
-            localStorage.setItem('msTrangScriptUrl', url);
-            onClose();
-          };
-
-          if (!isOpen) return null;
-
-          return (
-            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-4 backdrop-blur-sm">
-               <div className="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl">
-                 <h2 className="text-xl font-extrabold mb-4 flex items-center gap-2"><Icon name="cog" className="text-gray-500" size={20}/> Cài đặt Hệ thống</h2>
-                 
-                 <label className="block text-sm font-bold text-gray-700 mb-2">Google Apps Script Web App URL</label>
-                 <input
-                    type="text"
-                    className="w-full border-2 border-gray-200 p-3 rounded-xl mb-4 focus:outline-none focus:border-orange-500 font-mono text-sm"
-                    placeholder="https://script.google.com/macros/s/.../exec"
-                    value={url}
-                    onChange={e => setUrl(e.target.value)}
-                 />
-                 
-                 <div className="text-sm mb-6 bg-blue-50 text-blue-800 p-4 rounded-xl border border-blue-100 leading-relaxed">
-                    <p className="font-bold mb-1">💡 URL Hệ thống:</p>
-                    Đã được đặt mặc định là App Script URL của bạn. Xóa trống nếu muốn dùng thử chế độ Offline (không lưu Google Sheets).
-                 </div>
-                 
-                 <div className="flex justify-end gap-3">
-                    <button onClick={onClose} className="px-5 py-2.5 bg-gray-100 font-bold rounded-xl text-gray-700 hover:bg-gray-200">Đóng</button>
-                    <button onClick={handleSave} className="px-6 py-2.5 bg-gray-900 text-white rounded-xl font-bold hover:bg-black">Lưu cài đặt</button>
-                 </div>
-               </div>
-            </div>
-          );
-        };
-
-        const LoginView = ({ onLogin }) => {
-          const [pwd, setPwd] = useState('');
-          const [error, setError] = useState('');
-          const [showPwd, setShowPwd] = useState(false);
-
-          const handleLogin = (e) => {
-            e.preventDefault();
-            if (pwd === getAdminPassword()) {
-              onLogin();
-              setError('');
-            } else {
-              setError('Mật khẩu không chính xác!');
-            }
-          };
-
-          return (
-            <div className="flex justify-center items-center py-10 md:py-20 animate-fade-in-up">
-              <div className="bg-white p-8 rounded-3xl shadow-lg border border-gray-100 w-full max-w-sm">
-                <div className="w-16 h-16 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Icon name="lock" size={32} />
-                </div>
-                <h2 className="text-2xl font-black text-center text-gray-800 mb-2">Xác thực Quyền</h2>
-                <p className="text-center text-sm text-gray-500 mb-6">Vui lòng nhập mật khẩu để tiếp tục</p>
-                
-                <form onSubmit={handleLogin}>
-                  <div className="relative mb-4">
-                    <input 
-                      type={showPwd ? "text" : "password"}
-                      placeholder="Nhập mật khẩu..."
-                      className="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500 bg-gray-50 pr-12"
-                      value={pwd}
-                      onChange={e => setPwd(e.target.value)}
-                    />
-                    <button 
-                      type="button" 
-                      onClick={() => setShowPwd(!showPwd)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                    >
-                      {showPwd ? <Icon name="eye-slash" size={20}/> : <Icon name="eye" size={20}/>}
-                    </button>
-                  </div>
-                  {error && <p className="text-red-500 text-sm font-semibold mb-4 text-center">{error}</p>}
-                  
-                  <button 
-                    type="submit"
-                    className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-xl font-bold text-lg shadow-lg shadow-orange-200 transition-all active:scale-[0.98] flex justify-center items-center gap-2"
-                  >
-                    Đăng nhập
-                  </button>
-                </form>
-              </div>
-            </div>
-          );
-        };
-
-        const ChangePasswordModal = ({ isOpen, onClose }) => {
-          const [currentPwd, setCurrentPwd] = useState('');
-          const [newPwd, setNewPwd] = useState('');
-          const [confirmPwd, setConfirmPwd] = useState('');
-          const [error, setError] = useState('');
-          const [success, setSuccess] = useState(false);
-
-          if (!isOpen) return null;
-
-          const handleSave = () => {
-            if (currentPwd !== getAdminPassword()) {
-              setError('Mật khẩu hiện tại không đúng!');
-              return;
-            }
-            if (newPwd.length < 6) {
-              setError('Mật khẩu mới phải có ít nhất 6 ký tự!');
-              return;
-            }
-            if (newPwd !== confirmPwd) {
-              setError('Xác nhận mật khẩu không khớp!');
-              return;
-            }
-
-            setAdminPassword(newPwd);
-            setSuccess(true);
-            setError('');
-            
-            setTimeout(() => {
-              setSuccess(false);
-              setCurrentPwd('');
-              setNewPwd('');
-              setConfirmPwd('');
-              onClose();
-            }, 2000);
-          };
-
-          return (
-            <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[60] p-4 backdrop-blur-sm">
-              <div className="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl animate-fade-in-up">
-                <h2 className="text-xl font-extrabold mb-4 flex items-center gap-2 text-gray-800">
-                  <Icon name="key" className="text-orange-500" size={20} /> Đổi Mật Khẩu
-                </h2>
-                
-                {success ? (
-                  <div className="py-10 flex flex-col items-center">
-                    <div className="w-16 h-16 bg-green-100 text-green-500 rounded-full flex items-center justify-center mb-4">
-                      <Icon name="check-circle" size={32} />
-                    </div>
-                    <h3 className="text-lg font-bold text-green-600">Đổi mật khẩu thành công!</h3>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-bold text-gray-700 mb-1">Mật khẩu hiện tại</label>
-                      <input type="password" value={currentPwd} onChange={e => setCurrentPwd(e.target.value)} className="w-full p-3 rounded-xl border border-gray-200 focus:outline-none focus:border-orange-500" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-bold text-gray-700 mb-1">Mật khẩu mới</label>
-                      <input type="password" value={newPwd} onChange={e => setNewPwd(e.target.value)} className="w-full p-3 rounded-xl border border-gray-200 focus:outline-none focus:border-orange-500" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-bold text-gray-700 mb-1">Xác nhận mật khẩu mới</label>
-                      <input type="password" value={confirmPwd} onChange={e => setConfirmPwd(e.target.value)} className="w-full p-3 rounded-xl border border-gray-200 focus:outline-none focus:border-orange-500" />
-                    </div>
-                    
-                    {error && <p className="text-red-500 text-sm font-semibold">{error}</p>}
-                    
-                    <div className="flex justify-end gap-3 mt-6">
-                      <button onClick={onClose} className="px-5 py-2.5 bg-gray-100 font-bold rounded-xl text-gray-700 hover:bg-gray-200">Hủy</button>
-                      <button onClick={handleSave} className="px-6 py-2.5 bg-orange-500 text-white rounded-xl font-bold hover:bg-orange-600 shadow-md">Cập nhật</button>
-                    </div>
-                  </div>
+                         <div className="p-6 space-y-4">
+                            <div className="grid grid-cols-2 gap-4">
+                               <div className="col-span-2">
+                                 <label className="block text-sm font-bold text-gray-700 mb-1">Tên món <span className="text-red-500">*</span></label>
+                                 <input type="text" value={editData.name} onChange={e=>setEditData({...editData, name: e.target.value})} className="w-full p-3 rounded-xl border border-gray-200 focus:outline-none focus:border-orange-500" placeholder="VD: Cà phê sữa"/>
+                               </div>
+                               <div>
+                                 <label className="block text-sm font-bold text-gray-700 mb-1">Giá bán (VNĐ) <span className="text-red-500">*</span></label>
+                                 <input type="number" value={editData.price} onChange={e=>setEditData({...editData, price: e.target.value})} className="w-full p-3 rounded-xl border border-gray-200 focus:outline-none focus:border-orange-500" placeholder="VD: 25000"/>
+                               </div>
+                               <div>
+                                 <label className="block text-sm font-bold text-gray-700 mb-1">Danh mục <span className="text-red-500">*</span></label>
+                                 <input type="text" value={editData.category} onChange={e=>setEditData({...editData, category: e.target.value})} className="w-full p-3 rounded-xl border border-gray-200 focus:outline-none focus:border-orange-500" placeholder="VD: Nước uống"/>
+                               </div>
+                               <div>
+                                 <label className="block text-sm font-bold text-gray-700 mb-1">Emoji (1 Icon)</label>
+                                 <input type="text" value={editData.emoji} onChange={e=>setEditData({...editData, emoji: e.target.value})} className="w-full p-3 rounded-xl border border-gray-200 focus:outline-none focus:border-orange-500 text-2xl text-center" placeholder="🍹"/>
+                               </div>
+                               <div>
+                                 <label className="block text-sm font-bold text-gray-700 mb-1">Màu nền</label>
+                                 <select value={editData.color} onChange={e=>setEditData({...editData, color: e.target.value})} className="w-full p-3 rounded-xl border border-gray-200 focus:outline-none focus:border-orange-500 appearance-none bg-white">
+                                    {COLOR_OPTIONS.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+                                 </select>
+                               </div>
+                            </div>
+                            {/* Preview box */}
+                            <div className="mt-4 flex items-center justify-center p-4 bg-gray-50 rounded-2xl border border-gray-100 border-dashed">
+                               <div className="flex items-center gap-3 bg-white p-3 rounded-2xl shadow-sm border border-gray-100">
+                                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl ${editData.color}`}>{editData.emoji}</div>
+                                  <div>
+                                     <p className="font-bold text-sm text-gray-800">{editData.name || 'Tên món'}</p>
+                                     <p className="text-orange-600 font-bold text-xs">{editData.price ? formatVND(editData.price) : '0 ₫'}</p>
+                                  </div>
+                               </div>
+                            </div>
+                         </div>
+                         <div className="p-5 border-t border-gray-100 bg-gray-50 flex justify-end gap-3">
+                            <button onClick={() => setIsEditing(false)} className="px-6 py-2.5 bg-white border border-gray-200 text-gray-700 font-bold rounded-xl hover:bg-gray-100">Hủy</button>
+                            <button onClick={handleSave} disabled={isSaving} className="px-6 py-2.5 bg-orange-500 text-white font-bold rounded-xl hover:bg-orange-600 flex items-center gap-2">
+                               {isSaving ? <Icon name="spinner" className="fa-spin"/> : <Icon name="save"/>} Lưu món
+                            </button>
+                         </div>
+                      </div>
+                   </div>
                 )}
-              </div>
-            </div>
+             </div>
           );
         };
 
-        const AdminView = ({ scriptUrl }) => {
+        const AdminView = ({ scriptUrl, menuItems, refreshMenu }) => {
+          const [viewMode, setViewMode] = useState('dashboard'); // 'dashboard' | 'menu'
           const [orders, setOrders] = useState([]);
           const [loading, setLoading] = useState(true);
           const [isChangePwdOpen, setIsChangePwdOpen] = useState(false);
@@ -790,9 +898,7 @@
             const existingIds = new Set(prevOrdersRef.current.map(o => o.id));
             const newOrders = data.filter(o => !existingIds.has(o.id));
 
-            if (newOrders.length > 0 && prevOrdersRef.current.length > 0) {
-              playNotificationSound();
-            }
+            if (newOrders.length > 0 && prevOrdersRef.current.length > 0) playNotificationSound();
 
             data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
             setOrders(data);
@@ -811,28 +917,33 @@
 
           return (
             <div className="space-y-6">
-              <div className="flex justify-between items-center mb-6">
-                <div>
-                  <h2 className="text-2xl font-extrabold text-gray-800 flex items-center gap-2">
-                    <Icon name="columns" className="text-orange-500" size={24} /> Tổng quan Quản lý
-                  </h2>
-                  <p className="text-sm text-gray-500 mt-1">Theo dõi doanh thu và tình trạng đơn hàng toàn hệ thống</p>
+              <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6 border-b border-gray-200 pb-4">
+                <div className="flex bg-gray-200/50 p-1.5 rounded-2xl w-full md:w-auto shadow-inner">
+                   <button onClick={() => setViewMode('dashboard')} className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${viewMode === 'dashboard' ? 'bg-white text-orange-600 shadow' : 'text-gray-500 hover:text-gray-800'}`}>
+                     <Icon name="chart-pie" className="mr-2"/> Tổng quan
+                   </button>
+                   <button onClick={() => setViewMode('menu')} className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${viewMode === 'menu' ? 'bg-white text-orange-600 shadow' : 'text-gray-500 hover:text-gray-800'}`}>
+                     <Icon name="list" className="mr-2"/> Thực đơn
+                   </button>
                 </div>
+                
                 <button 
                   onClick={() => setIsChangePwdOpen(true)}
-                  className="bg-white border-2 border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2.5 rounded-xl font-bold flex items-center gap-2 text-sm transition-colors shadow-sm"
+                  className="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 text-sm transition-colors shadow-sm w-full md:w-auto"
                 >
                   <Icon name="key" size={14}/> Đổi mật khẩu
                 </button>
               </div>
 
-              {loading ? (
+              {viewMode === 'menu' ? (
+                 <MenuManager menuItems={menuItems} scriptUrl={scriptUrl} refreshMenu={refreshMenu} />
+              ) : loading ? (
                 <div className="flex justify-center p-12 text-gray-400">
                   <Icon name="spinner" size={40} className="fa-spin opacity-50" />
                 </div>
               ) : (
-                <>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="animate-fade-in-up">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                     <div className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 flex items-center gap-4">
                       <div className="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center"><Icon name="chart-line" size={20}/></div>
                       <div>
@@ -919,34 +1030,137 @@
                         </table>
                      </div>
                   </div>
-                </>
+                </div>
               )}
-
               <ChangePasswordModal isOpen={isChangePwdOpen} onClose={() => setIsChangePwdOpen(false)} />
+            </div>
+          );
+        };
+
+        const ChangePasswordModal = ({ isOpen, onClose }) => {
+          const [currentPwd, setCurrentPwd] = useState('');
+          const [newPwd, setNewPwd] = useState('');
+          const [confirmPwd, setConfirmPwd] = useState('');
+          const [error, setError] = useState('');
+          const [success, setSuccess] = useState(false);
+
+          if (!isOpen) return null;
+
+          const handleSave = () => {
+            if (currentPwd !== getAdminPassword()) { setError('Mật khẩu hiện tại không đúng!'); return; }
+            if (newPwd.length < 6) { setError('Mật khẩu mới phải có ít nhất 6 ký tự!'); return; }
+            if (newPwd !== confirmPwd) { setError('Xác nhận mật khẩu không khớp!'); return; }
+            setAdminPassword(newPwd);
+            setSuccess(true);
+            setError('');
+            setTimeout(() => { setSuccess(false); setCurrentPwd(''); setNewPwd(''); setConfirmPwd(''); onClose(); }, 2000);
+          };
+
+          return (
+            <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[60] p-4 backdrop-blur-sm">
+              <div className="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl animate-fade-in-up">
+                <h2 className="text-xl font-extrabold mb-4 flex items-center gap-2 text-gray-800"><Icon name="key" className="text-orange-500" size={20} /> Đổi Mật Khẩu</h2>
+                {success ? (
+                  <div className="py-10 flex flex-col items-center">
+                    <div className="w-16 h-16 bg-green-100 text-green-500 rounded-full flex items-center justify-center mb-4"><Icon name="check-circle" size={32} /></div>
+                    <h3 className="text-lg font-bold text-green-600">Đổi mật khẩu thành công!</h3>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div><label className="block text-sm font-bold text-gray-700 mb-1">Mật khẩu hiện tại</label><input type="password" value={currentPwd} onChange={e => setCurrentPwd(e.target.value)} className="w-full p-3 rounded-xl border border-gray-200 focus:outline-none focus:border-orange-500" /></div>
+                    <div><label className="block text-sm font-bold text-gray-700 mb-1">Mật khẩu mới</label><input type="password" value={newPwd} onChange={e => setNewPwd(e.target.value)} className="w-full p-3 rounded-xl border border-gray-200 focus:outline-none focus:border-orange-500" /></div>
+                    <div><label className="block text-sm font-bold text-gray-700 mb-1">Xác nhận mật khẩu mới</label><input type="password" value={confirmPwd} onChange={e => setConfirmPwd(e.target.value)} className="w-full p-3 rounded-xl border border-gray-200 focus:outline-none focus:border-orange-500" /></div>
+                    {error && <p className="text-red-500 text-sm font-semibold">{error}</p>}
+                    <div className="flex justify-end gap-3 mt-6">
+                      <button onClick={onClose} className="px-5 py-2.5 bg-gray-100 font-bold rounded-xl text-gray-700 hover:bg-gray-200">Hủy</button>
+                      <button onClick={handleSave} className="px-6 py-2.5 bg-orange-500 text-white rounded-xl font-bold hover:bg-orange-600 shadow-md">Cập nhật</button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        };
+
+        const SettingsModal = ({ isOpen, onClose, scriptUrl, setScriptUrl }) => {
+          const [url, setUrl] = useState(scriptUrl);
+          const handleSave = () => { setScriptUrl(url); localStorage.setItem('msTrangScriptUrl', url); window.location.reload(); };
+          if (!isOpen) return null;
+
+          return (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-4 backdrop-blur-sm">
+               <div className="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl animate-fade-in-up">
+                 <h2 className="text-xl font-extrabold mb-4 flex items-center gap-2"><Icon name="cog" className="text-gray-500" size={20}/> Cài đặt Hệ thống</h2>
+                 <label className="block text-sm font-bold text-gray-700 mb-2">Google Apps Script Web App URL</label>
+                 <input type="text" className="w-full border-2 border-gray-200 p-3 rounded-xl mb-4 focus:outline-none focus:border-orange-500 font-mono text-xs" placeholder="https://script.google.com/.../exec" value={url} onChange={e => setUrl(e.target.value)} />
+                 <div className="text-sm mb-6 bg-blue-50 text-blue-800 p-4 rounded-xl border border-blue-100 leading-relaxed">
+                    <p className="font-bold mb-1">💡 URL Hệ thống:</p>Đã được đặt mặc định là App Script URL của bạn. Thay đổi sẽ tải lại trang.
+                 </div>
+                 <div className="flex justify-end gap-3">
+                    <button onClick={onClose} className="px-5 py-2.5 bg-gray-100 font-bold rounded-xl text-gray-700 hover:bg-gray-200">Đóng</button>
+                    <button onClick={handleSave} className="px-6 py-2.5 bg-gray-900 text-white rounded-xl font-bold hover:bg-black">Lưu cài đặt</button>
+                 </div>
+               </div>
+            </div>
+          );
+        };
+
+        const LoginView = ({ onLogin }) => {
+          const [pwd, setPwd] = useState('');
+          const [error, setError] = useState('');
+          const [showPwd, setShowPwd] = useState(false);
+
+          const handleLogin = (e) => {
+            e.preventDefault();
+            if (pwd === getAdminPassword()) { onLogin(); setError(''); } 
+            else { setError('Mật khẩu không chính xác!'); }
+          };
+
+          return (
+            <div className="flex justify-center items-center py-10 md:py-20 animate-fade-in-up">
+              <div className="bg-white p-8 rounded-3xl shadow-lg border border-gray-100 w-full max-w-sm">
+                <div className="w-16 h-16 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center mx-auto mb-4"><Icon name="lock" size={32} /></div>
+                <h2 className="text-2xl font-black text-center text-gray-800 mb-2">Xác thực Quyền</h2>
+                <p className="text-center text-sm text-gray-500 mb-6">Vui lòng nhập mật khẩu để tiếp tục</p>
+                <form onSubmit={handleLogin}>
+                  <div className="relative mb-4">
+                    <input type={showPwd ? "text" : "password"} placeholder="Nhập mật khẩu..." className="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:border-orange-500 bg-gray-50 pr-12" value={pwd} onChange={e => setPwd(e.target.value)} />
+                    <button type="button" onClick={() => setShowPwd(!showPwd)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                      {showPwd ? <Icon name="eye-slash" size={20}/> : <Icon name="eye" size={20}/>}
+                    </button>
+                  </div>
+                  {error && <p className="text-red-500 text-sm font-semibold mb-4 text-center">{error}</p>}
+                  <button type="submit" className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-xl font-bold text-lg shadow-lg shadow-orange-200 transition-all active:scale-[0.98]">Đăng nhập</button>
+                </form>
+              </div>
             </div>
           );
         };
 
         function App() {
           const [activeTab, setActiveTab] = useState('customer');
-          
-          // Lấy URL từ LocalStorage, nếu không có thì lấy MẶC ĐỊNH
           const savedUrl = localStorage.getItem('msTrangScriptUrl');
           const [scriptUrl, setScriptUrl] = useState(savedUrl !== null ? savedUrl : DEFAULT_SCRIPT_URL);
-          
           const [isSettingsOpen, setIsSettingsOpen] = useState(false);
           const [isAuthenticated, setIsAuthenticated] = useState(localStorage.getItem('msTrangAuth') === 'true');
+          
+          // Trạng thái Quản lý Thực đơn Toàn cục
+          const [globalMenu, setGlobalMenu] = useState([]);
+          const [isMenuLoading, setIsMenuLoading] = useState(true);
 
-          const handleLoginSuccess = () => {
-            setIsAuthenticated(true);
-            localStorage.setItem('msTrangAuth', 'true');
-          };
+          const loadMenu = useCallback(async () => {
+             setIsMenuLoading(true);
+             const menuData = await api.getMenu(scriptUrl);
+             setGlobalMenu(menuData);
+             setIsMenuLoading(false);
+          }, [scriptUrl]);
 
-          const handleLogout = () => {
-            setIsAuthenticated(false);
-            localStorage.removeItem('msTrangAuth');
-            setActiveTab('customer');
-          };
+          useEffect(() => {
+             loadMenu();
+          }, [loadMenu]);
+
+          const handleLoginSuccess = () => { setIsAuthenticated(true); localStorage.setItem('msTrangAuth', 'true'); };
+          const handleLogout = () => { setIsAuthenticated(false); localStorage.removeItem('msTrangAuth'); setActiveTab('customer'); };
 
           return (
             <div className="min-h-screen text-gray-800 selection:bg-orange-200">
@@ -962,56 +1176,17 @@
                     </div>
                   </div>
                   
-                  <div className="flex items-center gap-2 bg-gray-100 p-1.5 rounded-full shadow-inner border border-gray-200/50">
-                    <button
-                      onClick={() => setActiveTab('customer')}
-                      className={`px-4 md:px-6 py-2.5 rounded-full text-sm font-extrabold transition-all duration-300 ${
-                        activeTab === 'customer' 
-                          ? 'bg-white shadow text-orange-600 scale-100' 
-                          : 'text-gray-500 hover:text-gray-700 scale-95'
-                      }`}
-                    >
-                      Đặt món
-                    </button>
-                    <button
-                      onClick={() => { setActiveTab('staff'); playNotificationSound(); }}
-                      className={`px-4 md:px-6 py-2.5 rounded-full text-sm font-extrabold transition-all duration-300 ${
-                        activeTab === 'staff' 
-                          ? 'bg-white shadow text-orange-600 scale-100' 
-                          : 'text-gray-500 hover:text-gray-700 scale-95'
-                      }`}
-                    >
-                      Nhân viên
-                    </button>
-                    <button
-                      onClick={() => { setActiveTab('admin'); playNotificationSound(); }}
-                      className={`px-4 md:px-6 py-2.5 rounded-full text-sm font-extrabold transition-all duration-300 ${
-                        activeTab === 'admin' 
-                          ? 'bg-white shadow text-orange-600 scale-100' 
-                          : 'text-gray-500 hover:text-gray-700 scale-95'
-                      }`}
-                    >
-                      Quản lý
-                    </button>
-                    <div className="w-[1px] h-6 bg-gray-300 mx-1"></div>
+                  <div className="flex items-center gap-2 bg-gray-100 p-1.5 rounded-full shadow-inner border border-gray-200/50 overflow-x-auto w-full md:w-auto">
+                    <button onClick={() => setActiveTab('customer')} className={`flex-shrink-0 px-4 md:px-6 py-2.5 rounded-full text-sm font-extrabold transition-all duration-300 ${activeTab === 'customer' ? 'bg-white shadow text-orange-600 scale-100' : 'text-gray-500 hover:text-gray-700 scale-95'}`}>Đặt món</button>
+                    <button onClick={() => { setActiveTab('staff'); playNotificationSound(); }} className={`flex-shrink-0 px-4 md:px-6 py-2.5 rounded-full text-sm font-extrabold transition-all duration-300 ${activeTab === 'staff' ? 'bg-white shadow text-orange-600 scale-100' : 'text-gray-500 hover:text-gray-700 scale-95'}`}>Nhân viên</button>
+                    <button onClick={() => { setActiveTab('admin'); playNotificationSound(); }} className={`flex-shrink-0 px-4 md:px-6 py-2.5 rounded-full text-sm font-extrabold transition-all duration-300 ${activeTab === 'admin' ? 'bg-white shadow text-orange-600 scale-100' : 'text-gray-500 hover:text-gray-700 scale-95'}`}>Quản lý</button>
+                    
+                    <div className="w-[1px] h-6 bg-gray-300 mx-1 flex-shrink-0"></div>
                     
                     {isAuthenticated && (activeTab === 'staff' || activeTab === 'admin') && (
-                      <button
-                        onClick={handleLogout}
-                        title="Đăng xuất"
-                        className="w-10 h-10 flex items-center justify-center text-red-500 hover:bg-red-50 hover:text-red-600 rounded-full transition-colors mr-1"
-                      >
-                        <Icon name="sign-out-alt" size={18} />
-                      </button>
+                      <button onClick={handleLogout} title="Đăng xuất" className="flex-shrink-0 w-10 h-10 flex items-center justify-center text-red-500 hover:bg-red-50 hover:text-red-600 rounded-full transition-colors mr-1"><Icon name="sign-out-alt" size={18} /></button>
                     )}
-
-                    <button
-                      onClick={() => setIsSettingsOpen(true)}
-                      className="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-gray-800 rounded-full transition-colors relative"
-                    >
-                      <Icon name="cog" size={20} />
-                      {!scriptUrl && <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full animate-ping"></span>}
-                    </button>
+                    <button onClick={() => setIsSettingsOpen(true)} className="flex-shrink-0 w-10 h-10 flex items-center justify-center text-gray-500 hover:text-gray-800 rounded-full transition-colors relative"><Icon name="cog" size={20} />{!scriptUrl && <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full animate-ping"></span>}</button>
                   </div>
                 </div>
               </nav>
@@ -1023,21 +1198,22 @@
                    </div>
                  )}
                  
-                 {activeTab === 'customer' && <CustomerView scriptUrl={scriptUrl} />}
-                 {activeTab === 'staff' && (
-                   isAuthenticated ? <StaffView scriptUrl={scriptUrl} /> : <LoginView onLogin={handleLoginSuccess} />
-                 )}
-                 {activeTab === 'admin' && (
-                   isAuthenticated ? <AdminView scriptUrl={scriptUrl} /> : <LoginView onLogin={handleLoginSuccess} />
+                 {/* Chỉ load nội dung nếu đã fetch xong menu */}
+                 {isMenuLoading ? (
+                    <div className="flex flex-col items-center justify-center py-20 text-orange-500">
+                       <Icon name="spinner" size={40} className="fa-spin mb-4" />
+                       <p className="font-bold">Đang tải dữ liệu quán...</p>
+                    </div>
+                 ) : (
+                    <>
+                       {activeTab === 'customer' && <CustomerView scriptUrl={scriptUrl} menuItems={globalMenu} />}
+                       {activeTab === 'staff' && (isAuthenticated ? <StaffView scriptUrl={scriptUrl} menuItems={globalMenu} /> : <LoginView onLogin={handleLoginSuccess} />)}
+                       {activeTab === 'admin' && (isAuthenticated ? <AdminView scriptUrl={scriptUrl} menuItems={globalMenu} refreshMenu={loadMenu} /> : <LoginView onLogin={handleLoginSuccess} />)}
+                    </>
                  )}
               </main>
 
-              <SettingsModal 
-                isOpen={isSettingsOpen} 
-                onClose={() => setIsSettingsOpen(false)} 
-                scriptUrl={scriptUrl}
-                setScriptUrl={setScriptUrl}
-              />
+              <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} scriptUrl={scriptUrl} setScriptUrl={setScriptUrl}/>
             </div>
           );
         }
