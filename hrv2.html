@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <link rel="icon" href="https://i.pinimg.com/736x/35/8b/25/358b256963f71ae1b21877a35ca7c593.jpg" type="image/jpeg">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HR Hệ Thống - TikTok Idol Recruitment</title>
@@ -59,14 +58,18 @@
                     <i class="fa-solid fa-layer-group"></i>
                 </button>
             </div>
-            <label class="flex items-center gap-2 text-xs text-gray-300 cursor-pointer" title="Tự động lưu lên Cloud mỗi 5 phút">
+            <label class="flex items-center gap-2 text-xs text-gray-300 cursor-pointer" title="Tự động lưu lên Cloud ngay sau khi có thay đổi (Thêm/Sửa/Xóa)">
                 <span class="hidden sm:inline">Auto-Sync</span>
                 <span class="switch"><input type="checkbox" id="autoSyncToggle" onchange="toggleAutoSync(this.checked)"><span class="slider"></span></span>
             </label>
-            <button onclick="openAppsScriptModal()" class="text-gray-300 hover:text-white transition-colors" title="Cài đặt đồng bộ">
+            <button onclick="openAppsScriptModal()" class="text-gray-300 hover:text-white transition-colors relative" title="Cài đặt đồng bộ">
                 <i class="fa-solid fa-cloud-arrow-up text-lg"></i>
+                <span id="unsyncedDot" class="hidden absolute -top-1 -right-1 w-2.5 h-2.5 bg-orange-400 rounded-full pulse-dot" title="Có thay đổi chưa đồng bộ"></span>
             </button>
             <div id="lastSyncBadge" class="text-[10px] text-gray-500 hidden sm:block"></div>
+            <button onclick="showShortcutsHelp()" class="text-gray-300 hover:text-white transition-colors" title="Phím tắt (?)">
+                <i class="fa-regular fa-circle-question text-lg"></i>
+            </button>
             <div class="w-8 h-8 rounded-full bg-gradient-to-r from-tiktok-cyan to-tiktok-pink flex items-center justify-center text-white font-bold cursor-pointer shadow-lg shadow-tiktok-pink/20">
                 HR
             </div>
@@ -165,6 +168,12 @@
             <i class="fa-solid fa-table-list text-4xl mb-3 text-gray-300"></i>
             <p>Bảng chưa có dữ liệu hoặc tiêu đề. Bấm "Thêm Cột" hoặc "Thêm Dữ Liệu".</p>
         </div>
+        <!-- No Filter Results State -->
+        <div id="noResultsState" class="hidden flex-col items-center justify-center py-20 text-gray-400">
+            <i class="fa-solid fa-magnifying-glass text-4xl mb-3 text-gray-300"></i>
+            <p>Không tìm thấy dòng nào khớp với bộ lọc hiện tại.</p>
+            <button onclick="clearAllFilters()" class="mt-2 text-xs text-tiktok-pink hover:underline font-semibold">Xóa bộ lọc</button>
+        </div>
     </div>
 
     <!-- Modal Tích hợp Apps Script -->
@@ -195,17 +204,16 @@
                     <div class="absolute right-2 top-2">
                         <button onclick="copyScriptCode()" class="text-xs bg-gray-700 text-white px-3 py-1.5 rounded hover:bg-tiktok-pink transition-colors"><i class="fa-regular fa-copy mr-1"></i>Copy Code</button>
                     </div>
-                    <pre class="bg-gray-800 text-gray-100 p-4 rounded text-xs overflow-x-auto h-72"><code id="scriptCode">
-// ==== HR IDOL RECRUIT - APPS SCRIPT BACKEND v4.1 (Bản chính thức) ====
+                    <pre class="bg-gray-800 text-gray-100 p-4 rounded text-xs overflow-auto h-96"><code id="scriptCode">// ==== HR IDOL RECRUIT - APPS SCRIPT BACKEND v4.1 (Bản đầy đủ, dán 1 lần) ====
 const TABS = ['ungVien', 'tienIch', 'noiDung', 'luuTruKhac'];
-const NOTIFY_EMAIL = ""; // Điền email HR vào đây để nhận thông báo
+const NOTIFY_EMAIL = ""; // Điền email HR vào đây để nhận thông báo mặc định
 const MAX_BACKUPS = 10;
 
 function doPost(e) {
   try {
     const doc = SpreadsheetApp.getActiveSpreadsheet();
     let data;
-    
+
     if (e.parameter && e.parameter.data) {
       data = JSON.parse(e.parameter.data);
     } else if (e.postData && e.postData.contents) {
@@ -255,11 +263,146 @@ function doPost(e) {
     logActivity(doc, "SYNC_SAVE", `Đồng bộ ${TABS.filter(k => data[k]).length} trang`);
     return ContentService.createTextOutput(JSON.stringify({ status: "success", time: new Date() })).setMimeType(ContentService.MimeType.JSON);
   } catch (error) {
+    logErrorSafe("SYNC_SAVE_ERROR", error);
     return ContentService.createTextOutput(JSON.stringify({ status: "error", message: error.message })).setMimeType(ContentService.MimeType.JSON);
   }
 }
-// (Các hàm còn lại vui lòng xem ở mục hướng dẫn Apps Script)
-                    </code></pre>
+
+// GET dùng để "Tải Từ Cloud". Hỗ trợ ?tab=ungVien để tải nhanh 1 trang riêng lẻ.
+function doGet(e) {
+  try {
+    const doc = SpreadsheetApp.getActiveSpreadsheet();
+    const tab = e && e.parameter && e.parameter.tab;
+    let result;
+    if (tab && TABS.indexOf(tab) > -1) {
+      result = {};
+      result[tab] = readOneTab(doc, tab);
+    } else {
+      result = readAllTabs(doc);
+    }
+    return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(ContentService.MimeType.JSON);
+  } catch (error) {
+    logErrorSafe("LOAD_ERROR", error);
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: error.message })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function readOneTab(doc, key) {
+  const sheet = doc.getSheetByName(key);
+  if (!sheet || sheet.getLastRow() === 0) return { headers: [], rows: [] };
+  const values = sheet.getDataRange().getValues();
+  const headers = (values[0] || []).map(h => h.toString());
+  const rows = values.slice(1).map(r => r.map(c => (c === null || c === undefined) ? "" : c.toString()));
+  return { headers: headers, rows: rows };
+}
+
+function readAllTabs(doc) {
+  const out = {};
+  TABS.forEach(key => { out[key] = readOneTab(doc, key); });
+  return out;
+}
+
+// Gửi email khi phát hiện dòng nào đó vừa CHUYỂN sang trạng thái "Đã nhận"/"Đạt"
+function notifyNewHires(before, after, notifyEmail) {
+  if (!notifyEmail) return;
+  try {
+    const beforeData = before['ungVien'];
+    const afterData = after['ungVien'];
+    if (!beforeData || !afterData || !afterData.headers) return;
+
+    const statusIdx = afterData.headers.findIndex(h => h.toLowerCase().includes('trạng thái'));
+    const nameIdx = afterData.headers.findIndex(h => h.toLowerCase().includes('tên'));
+    if (statusIdx === -1) return;
+
+    const wasHired = {};
+    (beforeData.rows || []).forEach(r => {
+      const key = nameIdx > -1 ? r[nameIdx] : JSON.stringify(r);
+      const v = (r[statusIdx] || '').toString().toLowerCase();
+      if (v.includes('đã nhận') || v.includes('đạt')) wasHired[key] = true;
+    });
+
+    const newlyHired = [];
+    (afterData.rows || []).forEach(r => {
+      const key = nameIdx > -1 ? r[nameIdx] : JSON.stringify(r);
+      const v = (r[statusIdx] || '').toString().toLowerCase();
+      const isHired = v.includes('đã nhận') || v.includes('đạt');
+      if (isHired && !wasHired[key]) newlyHired.push(r);
+    });
+
+    if (newlyHired.length > 0) {
+      const names = newlyHired.map(r => nameIdx > -1 ? r[nameIdx] : '(?)').join(', ');
+      MailApp.sendEmail({
+        to: notifyEmail,
+        subject: `[HR IdolRecruit] ${newlyHired.length} ứng viên vừa được nhận`,
+        body: `Các ứng viên sau vừa chuyển sang trạng thái "Đã nhận":\n\n${names}\n\nXem chi tiết trong Google Sheet.`
+      });
+    }
+  } catch (err) {
+    logErrorSafe("NOTIFY_ERROR", err);
+  }
+}
+
+// Lưu bản sao lưu (giữ tối đa MAX_BACKUPS bản gần nhất) trước mỗi lần ghi đè
+function backupSnapshot(doc, snapshot) {
+  try {
+    let sheet = doc.getSheetByName('_Backup');
+    if (!sheet) {
+      sheet = doc.insertSheet('_Backup');
+      sheet.appendRow(['Thời gian', 'Dữ liệu (JSON)']);
+      sheet.getRange(1, 1, 1, 2).setFontWeight('bold').setBackground('#111827').setFontColor('#ffffff');
+      sheet.setFrozenRows(1);
+    }
+    sheet.insertRowAfter(1);
+    sheet.getRange(2, 1, 1, 2).setValues([[new Date(), JSON.stringify(snapshot)]]);
+
+    const lastRow = sheet.getLastRow();
+    if (lastRow > MAX_BACKUPS + 1) {
+      sheet.deleteRows(MAX_BACKUPS + 2, lastRow - (MAX_BACKUPS + 1));
+    }
+  } catch (err) {
+    logErrorSafe("BACKUP_ERROR", err);
+  }
+}
+
+// Tô màu cột "Trạng Thái" theo giá trị để nhìn trực quan ngay trên Google Sheets
+function colorStatusColumn(sheet, headers, rowCount) {
+  const statusIdx = headers.findIndex(h => h.toLowerCase().includes('trạng thái'));
+  if (statusIdx === -1 || rowCount === 0) return;
+  const colors = {
+    'mới': '#dbeafe', 'phỏng vấn': '#fef9c3', 'đã nhận': '#dcfce7',
+    'từ chối': '#fee2e2', 'đang đào tạo': '#f3e8ff', 'nghỉ việc': '#fee2e2'
+  };
+  const range = sheet.getRange(2, statusIdx + 1, rowCount, 1);
+  const values = range.getValues();
+  const backgrounds = values.map(row => {
+    const v = (row[0] || '').toString().toLowerCase();
+    for (const key in colors) { if (v.includes(key)) return [colors[key]]; }
+    return ['#ffffff'];
+  });
+  range.setBackgrounds(backgrounds);
+}
+
+// Ghi nhật ký mọi lần đồng bộ vào sheet ẩn "_NhatKy"
+function logActivity(doc, action, detail) {
+  try {
+    let sheet = doc.getSheetByName('_NhatKy');
+    if (!sheet) {
+      sheet = doc.insertSheet('_NhatKy');
+      sheet.appendRow(['Thời gian', 'Hành động', 'Chi tiết']);
+      sheet.getRange(1, 1, 1, 3).setFontWeight('bold').setBackground('#111827').setFontColor('#ffffff');
+      sheet.setFrozenRows(1);
+    }
+    sheet.appendRow([new Date(), action, detail]);
+  } catch (err) { /* im lặng bỏ qua lỗi log */ }
+}
+
+function logErrorSafe(action, error) {
+  try {
+    const doc = SpreadsheetApp.getActiveSpreadsheet();
+    logActivity(doc, action, error && error.message ? error.message : String(error));
+  } catch (e) { /* bỏ qua */ }
+}
+</code></pre>
                 </div>
             </div>
             <div class="px-6 py-3 border-t bg-gray-50 flex justify-end gap-2">
@@ -289,8 +432,16 @@ function doPost(e) {
         let globalSearchMode = false; 
         let selectedRows = new Set();
         let lastDeleted = null; 
-        let autoSyncTimer = null;
+        let cloudSaveTimeout = null; // Tích hợp timeout cho Auto-Sync thông minh
         const AUTOSAVE_KEY = 'hr_autosave_draft_v4';
+
+        // --- Trạng thái mới: Undo/Redo, theo dõi đồng bộ, mạng ---
+        let historyStack = [];
+        let redoStack = [];
+        const MAX_HISTORY = 30;
+        let unsyncedChanges = false;
+        let isSyncing = false;
+        let showOnlyIssues = false;
 
         const STATUS_OPTIONS = ["Mới", "Phỏng vấn", "Đã nhận", "Từ chối", "Đang đào tạo", "Nghỉ việc"];
         const RATING_OPTIONS = ["Chưa đánh giá", "⭐", "⭐⭐", "⭐⭐⭐", "⭐⭐⭐⭐", "⭐⭐⭐⭐⭐"];
@@ -314,6 +465,7 @@ function doPost(e) {
             }
         };
 
+        // Khởi tạo
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('scriptUrl').value = appsScriptUrl;
             document.getElementById('notifyEmail').value = localStorage.getItem('hr_notify_email') || "";
@@ -323,7 +475,7 @@ function doPost(e) {
 
             document.getElementById('searchInput').addEventListener('input', (e) => {
                 filterText = e.target.value.toLowerCase();
-                renderTable();
+                renderTable(); // Lọc thì không kích hoạt onDataModified
             });
 
             document.getElementById('notifyEmail').addEventListener('change', (e) => {
@@ -341,11 +493,99 @@ function doPost(e) {
         function setupKeyboardShortcuts() {
             document.addEventListener('keydown', (e) => {
                 const cmd = e.ctrlKey || e.metaKey;
+                const typingInField = document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.isContentEditable);
+
                 if (cmd && e.key.toLowerCase() === 's') { e.preventDefault(); saveToCloud(); }
                 else if (cmd && e.key.toLowerCase() === 'f') { e.preventDefault(); document.getElementById('searchInput').focus(); }
                 else if (cmd && e.key.toLowerCase() === 'n') { e.preventDefault(); addNewRow(); }
-                else if (e.key === 'Escape') { closeAppsScriptModal(); }
+                else if (cmd && e.shiftKey && e.key.toLowerCase() === 'z') { e.preventDefault(); redoLast(); }
+                else if (cmd && e.key.toLowerCase() === 'z') { e.preventDefault(); undoLast(); }
+                else if (cmd && e.key.toLowerCase() === 'y') { e.preventDefault(); redoLast(); }
+                else if (e.key === '?' && !typingInField) { showShortcutsHelp(); }
+                else if (e.key === 'Escape') { closeAppsScriptModal(); if (document.activeElement) document.activeElement.blur(); }
             });
+
+            window.addEventListener('beforeunload', (e) => {
+                if (unsyncedChanges) { e.preventDefault(); e.returnValue = ''; }
+            });
+
+            window.addEventListener('online', () => {
+                setLastSyncBadge('<span class="text-green-500"><i class="fa-solid fa-wifi mr-1"></i>Đã có mạng trở lại</span>');
+                if (unsyncedChanges && localStorage.getItem('hr_autosync') === 'on' && appsScriptUrl) {
+                    showToast("Đã có mạng", "Đang tự động đồng bộ lại các thay đổi còn đang chờ...", "info");
+                    saveToCloud(true);
+                }
+            });
+            window.addEventListener('offline', () => {
+                setLastSyncBadge('<span class="text-orange-400"><i class="fa-solid fa-wifi mr-1"></i>Mất kết nối mạng</span>');
+                showToast("Mất kết nối mạng", "Các thay đổi vẫn được lưu tạm cục bộ, sẽ tự đồng bộ khi có mạng lại", "warning");
+            });
+        }
+
+        // --- CƠ CHẾ AUTO-SAVE THÔNG MINH MỚI ---
+        function onDataModified() {
+            autoSaveDraft(); // Lưu ngay vào Local Storage
+            unsyncedChanges = true;
+            updateSyncIndicator();
+
+            // Nếu có bật Auto-Sync và có cấu hình Cloud, tiến hành debounced save
+            if (localStorage.getItem('hr_autosync') === 'on' && appsScriptUrl) {
+                if (cloudSaveTimeout) clearTimeout(cloudSaveTimeout);
+
+                if (!navigator.onLine) {
+                    setLastSyncBadge('<span class="text-orange-400"><i class="fa-solid fa-wifi mr-1"></i>Mất mạng - chờ có mạng lại</span>');
+                    return;
+                }
+
+                setLastSyncBadge('<i class="fa-solid fa-clock mr-1 text-tiktok-cyan"></i>Đang chờ lưu...');
+
+                // Đợi 2 giây sau khi người dùng ngừng thao tác mới đẩy lên Cloud
+                cloudSaveTimeout = setTimeout(() => {
+                    saveToCloud(true); // Lưu ẩn (silent = true)
+                }, 2000);
+            }
+        }
+
+        function updateSyncIndicator() {
+            const dot = document.getElementById('unsyncedDot');
+            if (dot) dot.classList.toggle('hidden', !unsyncedChanges);
+        }
+
+        // --- UNDO / REDO nhiều cấp (Ctrl+Z / Ctrl+Shift+Z) ---
+        function pushHistory() {
+            try {
+                historyStack.push(JSON.stringify(state));
+                if (historyStack.length > MAX_HISTORY) historyStack.shift();
+                redoStack = [];
+            } catch (e) { }
+        }
+
+        function undoLast() {
+            if (historyStack.length === 0) { showToast("Không có gì để hoàn tác", "Chưa có thao tác nào được ghi nhận", "info"); return; }
+            redoStack.push(JSON.stringify(state));
+            state = JSON.parse(historyStack.pop());
+            selectedRows.clear();
+            onDataModified();
+            renderTable();
+            showToast("Đã hoàn tác", "Ctrl+Z: khôi phục thao tác trước đó", "success");
+        }
+
+        function redoLast() {
+            if (redoStack.length === 0) { showToast("Không có gì để làm lại", "Chưa có thao tác nào bị hoàn tác", "info"); return; }
+            historyStack.push(JSON.stringify(state));
+            state = JSON.parse(redoStack.pop());
+            selectedRows.clear();
+            onDataModified();
+            renderTable();
+            showToast("Đã làm lại", "Ctrl+Shift+Z: áp dụng lại thao tác", "success");
+        }
+
+        function showShortcutsHelp() {
+            showToast(
+                "Phím tắt nhanh",
+                "Ctrl+S: Lưu Cloud · Ctrl+F: Tìm kiếm · Ctrl+N: Thêm dòng · Ctrl+Z: Hoàn tác · Ctrl+Shift+Z: Làm lại · Esc: Đóng hộp thoại",
+                "info"
+            );
         }
 
         function autoSaveDraft() {
@@ -361,6 +601,7 @@ function doPost(e) {
                 const minutesAgo = Math.round((Date.now() - draft.savedAt) / 60000);
                 showToast("Tìm thấy bản nháp", `Có dữ liệu chưa lưu từ ${minutesAgo} phút trước. Bấm để khôi phục.`, "info", "Khôi phục", () => {
                     state = draft.state;
+                    onDataModified(); // Đánh dấu đã sửa để kích hoạt Cloud Sync nếu đang bật
                     renderTable();
                     showToast("Đã khôi phục", "Dữ liệu nháp đã được áp dụng", "success");
                 });
@@ -374,12 +615,13 @@ function doPost(e) {
                 return;
             }
             localStorage.setItem('hr_autosync', enabled ? 'on' : 'off');
-            if (autoSyncTimer) clearInterval(autoSyncTimer);
             if (enabled) {
-                autoSyncTimer = setInterval(saveToCloud, 5 * 60 * 1000); 
-                if (!silent) showToast("Đã bật Auto-Sync", "Dữ liệu sẽ tự động lưu lên Cloud mỗi 5 phút", "success");
-            } else if (!silent) {
-                showToast("Đã tắt Auto-Sync", "Ngừng tự động đồng bộ định kỳ", "info");
+                if (!silent) showToast("Đã bật Auto-Sync", "Dữ liệu sẽ tự động lưu lên Cloud sau khi bạn thêm/sửa/xóa", "success");
+                onDataModified(); // Chủ động kích hoạt 1 lần khi vừa bật
+            } else {
+                if (cloudSaveTimeout) clearTimeout(cloudSaveTimeout);
+                setLastSyncBadge("");
+                if (!silent) showToast("Đã tắt Auto-Sync", "Ngừng tự động đồng bộ lên Google Sheets", "info");
             }
         }
 
@@ -455,14 +697,19 @@ function doPost(e) {
                 counts[v] = (counts[v] || 0) + 1;
             });
             let html = `<span class="text-xs text-gray-400 font-semibold mr-1"><i class="fa-solid fa-filter mr-1"></i>Lọc nhanh:</span>`;
-            html += `<span class="chip ${quickStatusFilter === '' ? 'active' : ''} text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded-full" onclick="setQuickFilter('')">Tất cả (${data.rows.length})</span>`;
+            html += `<span class="chip ${quickStatusFilter === '' && !showOnlyIssues ? 'active' : ''} text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded-full" onclick="setQuickFilter('')">Tất cả (${data.rows.length})</span>`;
             Object.keys(counts).forEach(k => {
                 html += `<span class="chip ${quickStatusFilter === k ? 'active' : ''} text-xs px-3 py-1 rounded-full ${getStatusColor(k)}" onclick="setQuickFilter('${k.replace(/'/g, "\\'")}')">${k} (${counts[k]})</span>`;
             });
+            const issueCount = countNeedsAttention(data);
+            if (issueCount > 0) {
+                html += `<span class="chip ${showOnlyIssues ? 'active' : ''} text-xs px-3 py-1 rounded-full bg-orange-100 text-orange-700" onclick="toggleIssuesFilter()"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Cần chú ý (${issueCount})</span>`;
+            }
             box.innerHTML = html;
         }
 
-        function setQuickFilter(status) { quickStatusFilter = status; renderTable(); }
+        function setQuickFilter(status) { quickStatusFilter = status; showOnlyIssues = false; renderTable(); }
+        function toggleIssuesFilter() { showOnlyIssues = !showOnlyIssues; if (showOnlyIssues) quickStatusFilter = ""; renderTable(); }
 
         function renderTable() {
             const data = state[activeTab];
@@ -530,9 +777,22 @@ function doPost(e) {
                 if(phoneIdx > -1 && r[phoneIdx]) { let v=r[phoneIdx].trim(); phoneCounts[v] = (phoneCounts[v] || 0) + 1; }
             });
 
+            if (showOnlyIssues) {
+                let nameIdxForFilter = data.headers.findIndex(h => h.toLowerCase().includes('tên'));
+                displayRows = displayRows.filter(item => {
+                    const r = item.row;
+                    const isDup = (tiktokIdx > -1 && r[tiktokIdx] && tiktokCounts[r[tiktokIdx].trim().toLowerCase()] > 1) ||
+                                  (phoneIdx > -1 && r[phoneIdx] && phoneCounts[r[phoneIdx].trim()] > 1);
+                    const isIncomplete = nameIdxForFilter > -1 && !(r[nameIdxForFilter] || "").trim();
+                    return isDup || isIncomplete;
+                });
+            }
+
             const tbody = document.getElementById('gridBody');
             tbody.innerHTML = '';
-            toggleEmptyState(displayRows.length === 0 && data.headers.length === 0);
+            const isTrulyEmpty = data.headers.length === 0 || data.rows.length === 0;
+            const isFilteredEmpty = !isTrulyEmpty && displayRows.length === 0;
+            toggleEmptyState(isTrulyEmpty, isFilteredEmpty);
 
             displayRows.forEach((item, rIdxOnScreen) => {
                 const originalRIdx = item.originalIndex;
@@ -614,13 +874,30 @@ function doPost(e) {
             });
             updateStats();
             updateBulkBar();
-            autoSaveDraft();
+            // Đã chuyển autoSaveDraft() sang hàm onDataModified() để tối ưu hơn
         }
 
-        function toggleEmptyState(isEmpty) {
+        function toggleEmptyState(isTrulyEmpty, isFilteredEmpty) {
             const emptyState = document.getElementById('emptyState');
-            if (isEmpty) { emptyState.classList.remove('hidden'); emptyState.classList.add('flex'); } 
-            else { emptyState.classList.add('hidden'); emptyState.classList.remove('flex'); }
+            const noResultsState = document.getElementById('noResultsState');
+            if (isTrulyEmpty) {
+                emptyState.classList.remove('hidden'); emptyState.classList.add('flex');
+                noResultsState.classList.add('hidden'); noResultsState.classList.remove('flex');
+            } else if (isFilteredEmpty) {
+                noResultsState.classList.remove('hidden'); noResultsState.classList.add('flex');
+                emptyState.classList.add('hidden'); emptyState.classList.remove('flex');
+            } else {
+                emptyState.classList.add('hidden'); emptyState.classList.remove('flex');
+                noResultsState.classList.add('hidden'); noResultsState.classList.remove('flex');
+            }
+        }
+
+        function clearAllFilters() {
+            filterText = "";
+            quickStatusFilter = "";
+            showOnlyIssues = false;
+            document.getElementById('searchInput').value = "";
+            renderTable();
         }
 
         function preventEnterNewline(tr) {
@@ -647,7 +924,7 @@ function doPost(e) {
             
             document.getElementById('searchInput').value = "";
             filterText = "";
-            renderTable();
+            renderTable(); // Switch tab không làm thay đổi data nên không gọi onDataModified
         }
 
         function toggleGlobalSearch() {
@@ -690,25 +967,55 @@ function doPost(e) {
         }
 
         function updateHeader(cIdx, value) {
-            state[activeTab].headers[cIdx] = value.trim() || `Cột ${cIdx + 1}`;
-            renderTable();
+            let val = value.trim() || `Cột ${cIdx + 1}`;
+            if (state[activeTab].headers[cIdx] !== val) {
+                pushHistory();
+                state[activeTab].headers[cIdx] = val;
+                onDataModified();
+                renderTable();
+            }
         }
 
         function addColumn() {
+            pushHistory();
             state[activeTab].headers.push(`Tiêu đề mới`);
             state[activeTab].rows.forEach(r => r.push(""));
+            onDataModified();
             renderTable();
             showToast("Đã thêm", "Một cột mới đã được tạo", "success");
         }
 
         function removeColumn(cIdx) {
             if(confirm(`Bạn có chắc muốn xóa cột "${state[activeTab].headers[cIdx]}" và TOÀN BỘ dữ liệu của cột này?`)) {
+                pushHistory();
                 state[activeTab].headers.splice(cIdx, 1);
                 state[activeTab].rows.forEach(r => r.splice(cIdx, 1));
                 if(sortColIndex === cIdx) sortColIndex = -1;
+                onDataModified();
                 renderTable();
-                showToast("Đã xóa", "Đã xóa cột dữ liệu", "info");
+                showToast("Đã xóa", "Đã xóa cột dữ liệu (Ctrl+Z để hoàn tác)", "info");
             }
+        }
+
+        // Hiểu được kiểu viết tắt: "10k" -> 10000, "1.2tr"/"1.2m" -> 1200000, "500 nghìn" -> 500000
+        function parseFollowerSmart(raw) {
+            if (!raw) return "";
+            let s = raw.toString().trim().toLowerCase().replace(/\s+/g, '');
+            let mult = 1;
+            if (/(triệu|trieu|tr|m)$/.test(s)) { mult = 1000000; s = s.replace(/(triệu|trieu|tr|m)$/, ''); }
+            else if (/(nghìn|nghin|ngàn|ngan|k)$/.test(s)) { mult = 1000; s = s.replace(/(nghìn|nghin|ngàn|ngan|k)$/, ''); }
+            s = s.replace(',', '.');
+            let num = parseFloat(s.replace(/[^0-9.]/g, ''));
+            if (isNaN(num)) return raw.toString().replace(/[^0-9]/g, '');
+            return Math.round(num * mult).toString();
+        }
+
+        // Chuẩn hóa SĐT Việt Nam kiểu +84/84 về dạng 0xxxxxxxxx
+        function normalizePhone(raw) {
+            let s = raw.toString().trim().replace(/[\s.\-()]/g, '');
+            if (/^\+84\d{9,10}$/.test(s)) return '0' + s.slice(3);
+            if (/^84\d{9,10}$/.test(s)) return '0' + s.slice(2);
+            return raw.toString().trim();
         }
 
         function updateCell(rIdx, cIdx, value) {
@@ -716,19 +1023,47 @@ function doPost(e) {
             const data = state[activeTab];
             const headerName = data.headers[cIdx].toLowerCase();
 
+            let oldVal = data.rows[rIdx][cIdx] || "";
+            let isChanged = false;
+
             if (headerName.includes('follower')) {
-                val = val.replace(/[^0-9]/g, ''); 
-                data.rows[rIdx][cIdx] = val;
-                
-                let tierIdx = data.headers.findIndex(h => h.toLowerCase().includes('phân loại'));
-                if (tierIdx > -1) {
-                    data.rows[rIdx][tierIdx] = calculateTier(val);
+                val = parseFollowerSmart(val);
+                if (oldVal !== val) {
+                    pushHistory();
+                    data.rows[rIdx][cIdx] = val;
+                    isChanged = true;
+                    let tierIdx = data.headers.findIndex(h => h.toLowerCase().includes('phân loại'));
+                    if (tierIdx > -1) {
+                        data.rows[rIdx][tierIdx] = calculateTier(val);
+                    }
+                }
+            } else if (headerName.includes('điện thoại') || headerName.includes('phone')) {
+                val = normalizePhone(val);
+                if (oldVal !== val) {
+                    pushHistory();
+                    data.rows[rIdx][cIdx] = val;
+                    isChanged = true;
+                }
+            } else if (headerName.includes('tiktok') && val !== "" && !val.startsWith('@') && !val.startsWith('http')) {
+                val = '@' + val.replace(/^@+/, '');
+                if (oldVal !== val) {
+                    pushHistory();
+                    data.rows[rIdx][cIdx] = val;
+                    isChanged = true;
                 }
             } else {
-                data.rows[rIdx][cIdx] = val;
+                if (oldVal !== val) {
+                    pushHistory();
+                    data.rows[rIdx][cIdx] = val;
+                    isChanged = true;
+                }
             }
             
-            renderTable(); 
+            // Chỉ kích hoạt lưu khi dữ liệu thực sự bị chỉnh sửa, tránh lưu rác khi chỉ focus/blur
+            if (isChanged) {
+                onDataModified();
+                renderTable(); 
+            }
         }
 
         function addNewRow() {
@@ -745,7 +1080,9 @@ function doPost(e) {
             let ratingIdx = state[activeTab].headers.findIndex(h => h.toLowerCase().includes('đánh giá'));
             if(ratingIdx > -1) newRow[ratingIdx] = "Chưa đánh giá";
 
+            pushHistory();
             state[activeTab].rows.unshift(newRow);
+            onDataModified();
             renderTable();
             
             setTimeout(() => {
@@ -760,8 +1097,10 @@ function doPost(e) {
         function deleteRow(rIdx) {
             const removedRow = state[activeTab].rows[rIdx];
             lastDeleted = { tab: activeTab, index: rIdx, row: removedRow };
+            pushHistory();
             state[activeTab].rows.splice(rIdx, 1);
             selectedRows.delete(rIdx);
+            onDataModified();
             renderTable();
             showToast("Đã xóa", "Đã xóa 1 dòng dữ liệu", "info", "Hoàn tác", undoDelete);
         }
@@ -771,6 +1110,7 @@ function doPost(e) {
             const { tab, index, row } = lastDeleted;
             state[tab].rows.splice(index, 0, row);
             lastDeleted = null;
+            onDataModified();
             if (activeTab === tab) renderTable();
             showToast("Đã khôi phục", "Dòng dữ liệu đã được hoàn tác", "success");
         }
@@ -811,18 +1151,31 @@ function doPost(e) {
             const statusIdx = data.headers.findIndex(h => h.toLowerCase().includes('trạng thái'));
             if (statusIdx === -1) { showToast("Không thể áp dụng", "Trang này không có cột Trạng thái", "warning"); return; }
             const newStatus = document.getElementById('bulkStatusSelect').value;
-            selectedRows.forEach(rIdx => { if (data.rows[rIdx]) data.rows[rIdx][statusIdx] = newStatus; });
+            let isChanged = false;
+            pushHistory();
+
+            selectedRows.forEach(rIdx => { 
+                if (data.rows[rIdx] && data.rows[rIdx][statusIdx] !== newStatus) {
+                    data.rows[rIdx][statusIdx] = newStatus; 
+                    isChanged = true;
+                }
+            });
+            
+            if (isChanged) onDataModified();
             const n = selectedRows.size;
             selectedRows.clear();
             renderTable();
-            showToast("Đã cập nhật hàng loạt", `Đã đổi trạng thái cho ${n} dòng thành "${newStatus}"`, "success");
+            if (isChanged) showToast("Đã cập nhật hàng loạt", `Đã đổi trạng thái cho ${n} dòng thành "${newStatus}"`, "success");
         }
 
         function bulkDelete() {
             if (!confirm(`Xóa ${selectedRows.size} dòng đã chọn? Hành động này không thể hoàn tác hàng loạt.`)) return;
             const data = state[activeTab];
             const indices = Array.from(selectedRows).sort((a, b) => b - a);
+            pushHistory();
             indices.forEach(i => data.rows.splice(i, 1));
+            
+            onDataModified();
             const n = selectedRows.size;
             selectedRows.clear();
             renderTable();
@@ -853,17 +1206,47 @@ function doPost(e) {
             document.body.removeChild(tempTextArea);
         }
 
-        // Tích hợp phương thức chống lỗi CORS URLSearchParams
-        async function saveToCloud() {
+        function setLastSyncBadge(text) {
+            const badge = document.getElementById('lastSyncBadge');
+            if (text.includes("Đang chờ") || text.includes("Đang lưu")) {
+                badge.innerHTML = text; 
+            } else if (text !== "") {
+                const now = new Date();
+                badge.innerHTML = `${text} lúc ${now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`;
+            } else {
+                badge.innerHTML = "";
+            }
+        }
+
+        // Tích hợp param silent để lưu ngầm cho hệ thống Auto-Sync thông minh
+        // attempt: dùng nội bộ để tự động thử lại (retry với backoff) khi lưu ngầm bị lỗi
+        async function saveToCloud(silent = false, attempt = 1) {
             if (!appsScriptUrl) {
-                openAppsScriptModal();
-                showToast("Thiếu cấu hình", "Cần nhập URL Apps Script trước", "warning");
+                if (!silent) {
+                    openAppsScriptModal();
+                    showToast("Thiếu cấu hình", "Cần nhập URL Apps Script trước", "warning");
+                }
                 return;
             }
+
+            if (!navigator.onLine) {
+                setLastSyncBadge('<span class="text-orange-400"><i class="fa-solid fa-wifi mr-1"></i>Mất mạng - sẽ tự lưu lại</span>');
+                if (!silent) showToast("Mất kết nối mạng", "Hệ thống sẽ tự động đồng bộ lại khi có mạng trở lại", "warning");
+                return;
+            }
+
+            if (isSyncing) return; // tránh 2 lần lưu chồng lên nhau
+            isSyncing = true;
+
             const btn = document.getElementById('btnSave');
             const originalHtml = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Đang lưu...';
-            btn.disabled = true;
+            
+            if (!silent) {
+                btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Đang lưu...';
+                btn.disabled = true;
+            }
+            
+            setLastSyncBadge('<i class="fa-solid fa-spinner fa-spin mr-1 text-tiktok-cyan"></i>Đang đồng bộ...');
 
             const notifyEmail = document.getElementById('notifyEmail').value.trim();
             const payload = { ...state, _meta: { notifyEmail, savedAt: new Date().toISOString() } };
@@ -880,24 +1263,35 @@ function doPost(e) {
                 const result = await response.json();
                 
                 if (result.status === "success") {
-                    showToast("Đồng bộ thành công", "Toàn bộ hệ thống đã được đồng bộ chuẩn xác với cơ sở dữ liệu.", "success");
-                    setLastSyncBadge("Đã lưu");
+                    if (!silent) showToast("Đồng bộ thành công", "Toàn bộ hệ thống đã được đồng bộ chuẩn xác với cơ sở dữ liệu.", "success");
+                    setLastSyncBadge('<i class="fa-solid fa-cloud-check text-green-500 mr-1"></i>Đã lưu Cloud');
+                    unsyncedChanges = false;
+                    updateSyncIndicator();
                 } else {
                     throw new Error(result.message || "Lỗi máy chủ");
                 }
             } catch (error) {
                 console.error("Lỗi đồng bộ:", error);
-                showToast("Đã xảy ra lỗi", "Lưu thất bại. Vui lòng kiểm tra lại URL kết nối Apps Script.", "error");
+                if (silent && attempt < 3) {
+                    // Tự động thử lại ngầm tối đa 3 lần, giãn cách tăng dần (backoff)
+                    setLastSyncBadge(`<span class="text-orange-400"><i class="fa-solid fa-rotate-right mr-1"></i>Thử lại lần ${attempt + 1}...</span>`);
+                    isSyncing = false;
+                    setTimeout(() => saveToCloud(true, attempt + 1), attempt * 4000);
+                    return;
+                }
+                if (!silent) {
+                    showToast("Đã xảy ra lỗi", "Lưu thất bại. Kiểm tra URL Apps Script hoặc kết nối mạng.", "error", "Thử lại", () => saveToCloud(false));
+                } else {
+                    showToast("Tự động đồng bộ thất bại", "Đã thử 3 lần không thành công. Bấm nút Lưu để thử thủ công.", "error", "Thử lại", () => saveToCloud(false));
+                }
+                setLastSyncBadge('<span class="text-red-400"><i class="fa-solid fa-circle-xmark mr-1"></i>Lỗi lưu</span>');
             } finally {
-                btn.innerHTML = originalHtml;
-                btn.disabled = false;
+                isSyncing = false;
+                if (!silent) {
+                    btn.innerHTML = originalHtml;
+                    btn.disabled = false;
+                }
             }
-        }
-
-        function setLastSyncBadge(prefix) {
-            const badge = document.getElementById('lastSyncBadge');
-            const now = new Date();
-            badge.innerText = `${prefix} lúc ${now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}`;
         }
 
         async function loadFromCloud() {
@@ -906,6 +1300,15 @@ function doPost(e) {
                 showToast("Thiếu cấu hình", "Cần nhập URL Apps Script trước", "warning");
                 return;
             }
+            if (!navigator.onLine) {
+                showToast("Mất kết nối mạng", "Không thể tải dữ liệu khi đang offline", "warning");
+                return;
+            }
+            if (unsyncedChanges) {
+                const proceed = confirm("Bạn đang có thay đổi CHƯA đồng bộ lên Cloud.\nTải từ Cloud sẽ GHI ĐÈ dữ liệu đang chỉnh sửa hiện tại.\nBấm OK để tiếp tục tải (mất thay đổi local), Cancel để hủy.");
+                if (!proceed) return;
+            }
+
             const btn = document.getElementById('btnLoad');
             const originalHtml = btn.innerHTML;
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Đang tải...';
@@ -914,16 +1317,33 @@ function doPost(e) {
             try {
                 const response = await fetch(appsScriptUrl);
                 const data = await response.json();
-                
-                if (data && Object.keys(data).length > 0) {
-                    state = data;
+
+                if (data && data.status === "error") {
+                    throw new Error(data.message || "Lỗi máy chủ Apps Script");
+                }
+
+                const validTabs = ['ungVien', 'tienIch', 'noiDung', 'luuTruKhac'];
+                const hasValidData = data && validTabs.some(t => data[t] && Array.isArray(data[t].headers));
+
+                if (hasValidData) {
+                    pushHistory();
+                    validTabs.forEach(t => {
+                        if (data[t] && Array.isArray(data[t].headers)) {
+                            state[t] = { headers: data[t].headers, rows: data[t].rows || [] };
+                        }
+                    });
+                    unsyncedChanges = false;
+                    updateSyncIndicator();
+                    autoSaveDraft(); // Lưu ngay vào bản nháp local khi tải về thành công
                     renderTable();
                     showToast("Tải hoàn tất", "Dữ liệu 4 trang đã được cập nhật từ Google Sheets", "success");
-                    setLastSyncBadge("Đã tải");
+                    setLastSyncBadge("Đã tải từ Cloud");
+                } else {
+                    showToast("Không có dữ liệu", "Google Sheet chưa có dữ liệu hoặc chưa dán đúng mã Apps Script (cần có hàm doGet)", "warning");
                 }
             } catch (error) {
                 console.error(error);
-                showToast("Lỗi kết nối", "Không thể tải dữ liệu, kiểm tra lại URL", "error");
+                showToast("Lỗi kết nối", error.message || "Không thể tải dữ liệu, kiểm tra lại URL", "error");
             } finally {
                 btn.innerHTML = originalHtml;
                 btn.disabled = false;
@@ -990,6 +1410,7 @@ function doPost(e) {
                         ? confirm(`Trang "${activeTab}" đang có ${data.rows.length} dòng.\nBấm OK để THAY THẾ toàn bộ, Cancel để NỐI THÊM vào cuối.`)
                         : true;
 
+                    pushHistory();
                     if (replace) {
                         data.headers = headerRow;
                         data.rows = dataRows;
@@ -1000,6 +1421,7 @@ function doPost(e) {
                             data.rows.push(newRow);
                         });
                     }
+                    onDataModified(); // Dữ liệu đổi do import CSV -> Đánh dấu thay đổi
                     renderTable();
                     showToast("Nhập CSV thành công", `Đã nạp ${dataRows.length} dòng dữ liệu vào trang "${activeTab}"`, "success");
                 } catch (err) {
