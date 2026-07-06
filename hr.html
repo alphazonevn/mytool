@@ -1206,7 +1206,21 @@ function logErrorSafe(action, error) {
             localStorage.setItem('hr_script_url', url);
             appsScriptUrl = url;
             closeAppsScriptModal();
-            showToast("Cấu hình lưu thành công", "Đã lưu đường dẫn Apps Script", "success");
+
+            if (url) {
+                // Có URL hợp lệ -> tự động BẬT Auto-Sync ngay, không bắt người dùng
+                // phải gạt công tắc thêm 1 bước nữa. Mọi thao tác Thêm/Sửa/Xóa sau đó
+                // sẽ tự động đồng bộ lên Google Sheets.
+                if (localStorage.getItem('hr_autosync') !== 'on') {
+                    document.getElementById('autoSyncToggle').checked = true;
+                    toggleAutoSync(true, true);
+                }
+                showToast("Cấu hình lưu thành công", "Đã lưu URL và tự động bật Auto-Sync — mọi thao tác Thêm/Sửa/Xóa sẽ tự động đồng bộ lên Cloud", "success");
+            } else {
+                document.getElementById('autoSyncToggle').checked = false;
+                toggleAutoSync(false, true);
+                showToast("Đã xóa cấu hình", "Chưa có URL nên Auto-Sync đã được tắt", "info");
+            }
         }
 
         function copyScriptCode() {
