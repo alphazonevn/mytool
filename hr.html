@@ -1,15 +1,28 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="icon" type="image/webp" href="https://i.pinimg.com/736x/35/8b/25/358b256963f71ae1b21877a35ca7c593.jpg">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HR Hệ Thống - TikTok Idol Recruitment</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Be Vietnam Pro"', 'ui-sans-serif', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
+        html, body { font-family: 'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif; }
         .chip { cursor: pointer; user-select: none; transition: all .15s; }
         .chip.active { box-shadow: 0 0 0 2px #fe2c55 inset; }
         .switch { position: relative; display: inline-block; width: 36px; height: 20px; }
@@ -40,22 +53,22 @@
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         
-        .toast { position: fixed; bottom: 20px; right: -400px; transition: right 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 50; }
+        .toast { position: fixed; bottom: 20px; right: -400px; max-width: calc(100vw - 40px); transition: right 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 50; }
         .toast.show { right: 20px; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 h-screen flex flex-col font-sans overflow-hidden">
 
     <!-- Header -->
-    <header class="bg-black text-white p-4 shadow-md flex justify-between items-center shrink-0">
+    <header class="bg-black text-white p-4 shadow-md flex flex-wrap justify-between items-center gap-3 shrink-0">
         <div class="flex items-center gap-3">
             <i class="fa-brands fa-tiktok text-tiktok-pink text-3xl drop-shadow-[2px_2px_0px_#25f4ee]"></i>
-            <h1 class="text-xl font-bold tracking-wide">IDOL<span class="text-tiktok-cyan">RECRUIT</span> <span class="text-xs font-normal text-gray-400">v4.1 Smart+</span></h1>
+            <h1 class="text-xl font-bold tracking-wide">IDOL<span class="text-tiktok-cyan">RECRUIT</span> <span class="text-xs font-normal text-gray-400">v5.0 Smart+</span></h1>
         </div>
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-4 flex-wrap">
             <div class="relative">
                 <i class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                <input type="text" id="searchInput" placeholder="Tìm kiếm dữ liệu..." class="pl-9 pr-8 py-1.5 rounded-full bg-gray-800 text-sm text-white focus:outline-none focus:ring-2 focus:ring-tiktok-pink w-64 transition-all">
+                <input type="text" id="searchInput" placeholder="Tìm kiếm dữ liệu..." class="pl-9 pr-8 py-1.5 rounded-full bg-gray-800 text-sm text-white focus:outline-none focus:ring-2 focus:ring-tiktok-pink w-40 sm:w-64 transition-all">
                 <button onclick="toggleGlobalSearch()" id="btnGlobalSearch" title="Tìm trên cả 4 trang" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-tiktok-cyan text-xs">
                     <i class="fa-solid fa-layer-group"></i>
                 </button>
@@ -90,7 +103,7 @@
     </div>
 
     <!-- Thống kê tự động -->
-    <div id="statsSection" class="px-6 py-4 grid grid-cols-5 gap-4 shrink-0 transition-all">
+    <div id="statsSection" class="px-6 py-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 shrink-0 transition-all">
         <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 flex items-center gap-4 border-l-4 border-l-blue-500">
             <div class="bg-blue-100 text-blue-600 p-3 rounded-full"><i class="fa-solid fa-users text-xl"></i></div>
             <div><p class="text-sm text-gray-500">Tổng Dòng Dữ Liệu</p><p class="text-2xl font-bold" id="statTotal">0</p></div>
@@ -179,8 +192,8 @@
     </div>
 
     <!-- Modal Tích hợp Apps Script -->
-    <div id="appsScriptModal" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50 backdrop-blur-sm">
-        <div class="bg-white rounded-xl shadow-2xl w-[700px] max-h-[90vh] overflow-hidden flex flex-col">
+    <div id="appsScriptModal" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-[700px] max-h-[90vh] overflow-hidden flex flex-col">
             <div class="px-6 py-4 border-b flex justify-between items-center bg-gray-50">
                 <h2 class="text-lg font-bold"><i class="fa-brands fa-google text-blue-500 mr-2"></i>Cài đặt Kết Nối Google Sheets (Tự Động 100%)</h2>
                 <button onclick="closeAppsScriptModal()" class="text-gray-400 hover:text-gray-700"><i class="fa-solid fa-times text-xl"></i></button>
@@ -486,7 +499,8 @@ function logErrorSafe(action, error) {
 
             if (localStorage.getItem('hr_autosync') === 'on' && appsScriptUrl) {
                 document.getElementById('autoSyncToggle').checked = true;
-                toggleAutoSync(true, true);
+                // Chỉ khôi phục trạng thái công tắc, KHÔNG tự đẩy dữ liệu lên Cloud
+                // ngay khi vừa mở trang (tránh ghi đè Cloud khi chưa có thay đổi thật sự).
             }
 
             setupKeyboardShortcuts();
@@ -1208,15 +1222,16 @@ function logErrorSafe(action, error) {
             document.body.removeChild(tempTextArea);
         }
 
-        function setLastSyncBadge(text) {
+        // showTime=true: đây là trạng thái CUỐI (thành công/lỗi) nên hiển thị kèm mốc giờ.
+        // showTime=false (mặc định): trạng thái tạm thời/đang xử lý, không cần mốc giờ.
+        function setLastSyncBadge(html, showTime = false) {
             const badge = document.getElementById('lastSyncBadge');
-            if (text.includes("Đang chờ") || text.includes("Đang lưu")) {
-                badge.innerHTML = text; 
-            } else if (text !== "") {
+            if (html === "") { badge.innerHTML = ""; return; }
+            if (showTime) {
                 const now = new Date();
-                badge.innerHTML = `${text} lúc ${now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`;
+                badge.innerHTML = `${html} lúc ${now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`;
             } else {
-                badge.innerHTML = "";
+                badge.innerHTML = html;
             }
         }
 
@@ -1266,7 +1281,7 @@ function logErrorSafe(action, error) {
                 
                 if (result.status === "success") {
                     if (!silent) showToast("Đồng bộ thành công", "Toàn bộ hệ thống đã được đồng bộ chuẩn xác với cơ sở dữ liệu.", "success");
-                    setLastSyncBadge('<i class="fa-solid fa-cloud-check text-green-500 mr-1"></i>Đã lưu Cloud');
+                    setLastSyncBadge('<i class="fa-solid fa-cloud-check text-green-500 mr-1"></i>Đã lưu Cloud', true);
                     unsyncedChanges = false;
                     updateSyncIndicator();
                 } else {
@@ -1286,7 +1301,7 @@ function logErrorSafe(action, error) {
                 } else {
                     showToast("Tự động đồng bộ thất bại", "Đã thử 3 lần không thành công. Bấm nút Lưu để thử thủ công.", "error", "Thử lại", () => saveToCloud(false));
                 }
-                setLastSyncBadge('<span class="text-red-400"><i class="fa-solid fa-circle-xmark mr-1"></i>Lỗi lưu</span>');
+                setLastSyncBadge('<span class="text-red-400"><i class="fa-solid fa-circle-xmark mr-1"></i>Lỗi lưu</span>', true);
             } finally {
                 isSyncing = false;
                 if (!silent) {
@@ -1339,7 +1354,7 @@ function logErrorSafe(action, error) {
                     autoSaveDraft(); // Lưu ngay vào bản nháp local khi tải về thành công
                     renderTable();
                     showToast("Tải hoàn tất", "Dữ liệu 4 trang đã được cập nhật từ Google Sheets", "success");
-                    setLastSyncBadge("Đã tải từ Cloud");
+                    setLastSyncBadge("Đã tải từ Cloud", true);
                 } else {
                     showToast("Không có dữ liệu", "Google Sheet chưa có dữ liệu hoặc chưa dán đúng mã Apps Script (cần có hàm doGet)", "warning");
                 }
