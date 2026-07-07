@@ -1,0 +1,1948 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Hệ Thống - TikTok Idol Recruitment</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Be Vietnam Pro"', 'ui-sans-serif', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        html, body { font-family: 'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif; }
+        .chip { cursor: pointer; user-select: none; transition: all .15s; }
+        .chip.active { box-shadow: 0 0 0 2px #fe2c55 inset; }
+        .switch { position: relative; display: inline-block; width: 36px; height: 20px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; inset: 0; background-color: #4b5563; transition: .3s; border-radius: 20px; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+        input:checked + .slider { background-color: #25f4ee; }
+        input:checked + .slider:before { transform: translateX(16px); }
+        .row-selected td { background-color: #fef2f5 !important; }
+        .needs-attention { box-shadow: inset 3px 0 0 0 #f59e0b; }
+        @keyframes pulse-badge { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
+        .pulse-dot { animation: pulse-badge 1.5s infinite; }
+        .text-tiktok-pink { color: #fe2c55; }
+        .bg-tiktok-pink { background-color: #fe2c55; }
+        .hover-bg-tiktok-pink:hover { background-color: #e0264b; }
+        .text-tiktok-cyan { color: #25f4ee; }
+        .border-tiktok-cyan { border-color: #25f4ee; }
+        
+        .excel-table { border-collapse: collapse; width: 100%; background-color: white; }
+        .excel-table th, .excel-table td { border: 1px solid #d1d5db; padding: 8px 12px; text-align: left; font-size: 0.875rem; vertical-align: middle; }
+        .excel-table th { background-color: #f3f4f6; color: #374151; font-weight: 600; position: sticky; top: 0; z-index: 10; }
+        .excel-table td[contenteditable="true"]:focus, .excel-table select:focus { outline: 2px solid #25f4ee; background-color: #f8fafc; }
+        .excel-table select { width: 100%; border: none; background: transparent; outline: none; cursor: pointer; }
+        .excel-table tr:hover td { background-color: #f9fafb; }
+        
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        .toast { position: fixed; bottom: 20px; right: -400px; max-width: calc(100vw - 40px); transition: right 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 50; }
+        .toast.show { right: 20px; }
+
+        /* ---- Dark mode ---- */
+        html.dark body { background-color: #0f1115; color: #e5e7eb; }
+        html.dark .bg-white { background-color: #171a21 !important; }
+        html.dark .bg-slate-50 { background-color: #0f1115 !important; }
+        html.dark .bg-gray-50 { background-color: #1c1f27 !important; }
+        html.dark .bg-gray-100 { background-color: #232631 !important; }
+        html.dark .text-gray-800, html.dark .text-gray-700, html.dark .text-slate-800 { color: #e5e7eb !important; }
+        html.dark .text-gray-500, html.dark .text-gray-400 { color: #9ca3af !important; }
+        html.dark .border, html.dark .border-gray-100, html.dark .border-gray-200, html.dark .border-gray-300,
+        html.dark .border-b, html.dark .border-t, html.dark .excel-table th, html.dark .excel-table td { border-color: #2b2f3a !important; }
+        html.dark .excel-table th { background-color: #1c1f27 !important; color: #d1d5db !important; }
+        html.dark .excel-table tr:hover td { background-color: #1f2330 !important; }
+        html.dark .row-selected td { background-color: #2a1a20 !important; }
+        html.dark ::-webkit-scrollbar-track { background: #171a21; }
+        html.dark ::-webkit-scrollbar-thumb { background: #3a3f4d; }
+        html.dark #toast { background-color: #171a21 !important; border-color: #2b2f3a !important; }
+
+        /* ---- Kanban board ---- */
+        .kanban-col { min-width: 260px; max-width: 260px; }
+        .kanban-card { cursor: grab; transition: transform .15s, box-shadow .15s; }
+        .kanban-card:active { cursor: grabbing; }
+        .kanban-card.dragging { opacity: .4; }
+        .kanban-col.drag-over { box-shadow: 0 0 0 2px #25f4ee inset; background-color: rgba(37,244,238,0.06); }
+        .score-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 34px; padding: 2px 6px; border-radius: 9999px; font-size: 11px; font-weight: 700; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 h-screen flex flex-col font-sans overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-black text-white p-4 shadow-md flex flex-wrap justify-between items-center gap-3 shrink-0">
+        <div class="flex items-center gap-3">
+            <i class="fa-brands fa-tiktok text-tiktok-pink text-3xl drop-shadow-[2px_2px_0px_#25f4ee]"></i>
+            <h1 class="text-xl font-bold tracking-wide">IDOL<span class="text-tiktok-cyan">RECRUIT</span> <span class="text-xs font-normal text-gray-400">v6.0 Smart+ AI</span></h1>
+        </div>
+        <div class="flex items-center gap-4 flex-wrap">
+            <div class="relative">
+                <i class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                <input type="text" id="searchInput" placeholder="Tìm kiếm dữ liệu..." class="pl-9 pr-8 py-1.5 rounded-full bg-gray-800 text-sm text-white focus:outline-none focus:ring-2 focus:ring-tiktok-pink w-40 sm:w-64 transition-all">
+                <button onclick="toggleGlobalSearch()" id="btnGlobalSearch" title="Tìm trên cả 4 trang" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-tiktok-cyan text-xs">
+                    <i class="fa-solid fa-layer-group"></i>
+                </button>
+            </div>
+            <label class="flex items-center gap-2 text-xs text-gray-300 cursor-pointer" title="Tự động lưu lên Cloud ngay sau khi có thay đổi (Thêm/Sửa/Xóa)">
+                <span class="hidden sm:inline">Auto-Sync</span>
+                <span class="switch"><input type="checkbox" id="autoSyncToggle" onchange="toggleAutoSync(this.checked)"><span class="slider"></span></span>
+            </label>
+            <button onclick="openAppsScriptModal()" class="text-gray-300 hover:text-white transition-colors relative" title="Cài đặt đồng bộ">
+                <i class="fa-solid fa-cloud-arrow-up text-lg"></i>
+                <span id="unsyncedDot" class="hidden absolute -top-1 -right-1 w-2.5 h-2.5 bg-orange-400 rounded-full pulse-dot" title="Có thay đổi chưa đồng bộ"></span>
+            </button>
+            <div id="lastSyncBadge" class="text-[10px] text-gray-500 hidden sm:block"></div>
+            <button onclick="showShortcutsHelp()" class="text-gray-300 hover:text-white transition-colors" title="Phím tắt (?)">
+                <i class="fa-regular fa-circle-question text-lg"></i>
+            </button>
+            <button onclick="toggleDarkMode()" id="btnDarkMode" class="text-gray-300 hover:text-tiktok-cyan transition-colors" title="Chế độ tối / sáng">
+                <i class="fa-solid fa-moon text-lg"></i>
+            </button>
+            <div class="w-8 h-8 rounded-full bg-gradient-to-r from-tiktok-cyan to-tiktok-pink flex items-center justify-center text-white font-bold cursor-pointer shadow-lg shadow-tiktok-pink/20">
+                HR
+            </div>
+        </div>
+    </header>
+
+    <!-- Global Search Results Banner -->
+    <div id="globalSearchBanner" class="hidden bg-tiktok-cyan/10 border-b border-tiktok-cyan/30 px-6 py-2 text-xs text-gray-700 shrink-0"></div>
+
+    <!-- Tab Navigation -->
+    <div class="bg-white border-b px-6 flex gap-2 shrink-0 overflow-x-auto shadow-sm">
+        <button onclick="switchTab('ungVien')" id="tab-ungVien" class="tab-btn active px-4 py-3 text-sm font-bold border-b-2 border-tiktok-pink text-tiktok-pink transition-colors whitespace-nowrap"><i class="fa-solid fa-user-check mr-1"></i> Ứng Viên</button>
+        <button onclick="switchTab('tienIch')" id="tab-tienIch" class="tab-btn px-4 py-3 text-sm font-bold border-b-2 border-transparent text-gray-500 hover:text-gray-800 transition-colors whitespace-nowrap"><i class="fa-solid fa-toolbox mr-1"></i> Tiện Ích</button>
+        <button onclick="switchTab('noiDung')" id="tab-noiDung" class="tab-btn px-4 py-3 text-sm font-bold border-b-2 border-transparent text-gray-500 hover:text-gray-800 transition-colors whitespace-nowrap"><i class="fa-solid fa-video mr-1"></i> Nội Dung Lưu Trữ</button>
+        <button onclick="switchTab('luuTruKhac')" id="tab-luuTruKhac" class="tab-btn px-4 py-3 text-sm font-bold border-b-2 border-transparent text-gray-500 hover:text-gray-800 transition-colors whitespace-nowrap"><i class="fa-solid fa-folder-open mr-1"></i> Lưu Trữ Khác</button>
+        <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn px-4 py-3 text-sm font-bold border-b-2 border-transparent text-gray-500 hover:text-gray-800 transition-colors whitespace-nowrap"><i class="fa-solid fa-chart-pie mr-1"></i> Thống Kê Thông Minh</button>
+    </div>
+
+    <!-- Thống kê tự động -->
+    <div id="statsSection" class="px-6 py-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 shrink-0 transition-all">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 flex items-center gap-4 border-l-4 border-l-blue-500">
+            <div class="bg-blue-100 text-blue-600 p-3 rounded-full"><i class="fa-solid fa-users text-xl"></i></div>
+            <div><p class="text-sm text-gray-500">Tổng Dòng Dữ Liệu</p><p class="text-2xl font-bold" id="statTotal">0</p></div>
+        </div>
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 flex items-center gap-4 border-l-4 border-l-yellow-400">
+            <div class="bg-yellow-100 text-yellow-600 p-3 rounded-full"><i class="fa-solid fa-comments text-xl"></i></div>
+            <div><p class="text-sm text-gray-500">Đang Phỏng Vấn</p><p class="text-2xl font-bold" id="statInterview">0</p></div>
+        </div>
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 flex items-center gap-4 border-l-4 border-l-green-500">
+            <div class="bg-green-100 text-green-600 p-3 rounded-full"><i class="fa-solid fa-check-circle text-xl"></i></div>
+            <div><p class="text-sm text-gray-500">Đã Nhận / Đạt</p><p class="text-2xl font-bold" id="statHired">0</p></div>
+        </div>
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 flex items-center gap-4 border-l-4 border-l-red-500">
+            <div class="bg-red-100 text-red-600 p-3 rounded-full"><i class="fa-solid fa-times-circle text-xl"></i></div>
+            <div><p class="text-sm text-gray-500">Từ Chối / Hủy</p><p class="text-2xl font-bold" id="statRejected">0</p></div>
+        </div>
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 flex items-center gap-4 border-l-4 border-l-orange-400">
+            <div class="bg-orange-100 text-orange-600 p-3 rounded-full"><i class="fa-solid fa-triangle-exclamation text-xl"></i></div>
+            <div><p class="text-sm text-gray-500">Cần Chú Ý</p><p class="text-2xl font-bold" id="statAttention">0</p></div>
+        </div>
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 flex items-center gap-4 border-l-4 border-l-purple-500" title="Ứng viên đang 'Phỏng vấn' nhưng chưa cập nhật trạng thái sau nhiều ngày">
+            <div class="bg-purple-100 text-purple-600 p-3 rounded-full"><i class="fa-solid fa-clock-rotate-left text-xl"></i></div>
+            <div><p class="text-sm text-gray-500">Cần Theo Dõi</p><p class="text-2xl font-bold" id="statFollowUp">0</p></div>
+        </div>
+    </div>
+
+    <!-- Bộ lọc nhanh theo trạng thái -->
+    <div id="quickFilters" class="px-6 pb-2 flex flex-wrap gap-2 items-center shrink-0"></div>
+
+    <!-- Thanh hành động hàng loạt -->
+    <div id="bulkBar" class="hidden mx-6 mb-2 bg-black text-white rounded-lg px-4 py-2 flex items-center justify-between shrink-0 shadow-md">
+        <span class="text-sm"><i class="fa-solid fa-check-square mr-2 text-tiktok-cyan"></i><span id="bulkCount">0</span> dòng được chọn</span>
+        <div class="flex gap-2 items-center">
+            <select id="bulkStatusSelect" class="text-xs bg-gray-800 border border-gray-700 rounded px-2 py-1.5"></select>
+            <button onclick="bulkUpdateStatus()" class="text-xs bg-tiktok-cyan text-black font-semibold px-3 py-1.5 rounded hover:opacity-90">Áp dụng trạng thái</button>
+            <button onclick="bulkDelete()" class="text-xs bg-red-600 px-3 py-1.5 rounded hover:bg-red-700"><i class="fa-solid fa-trash mr-1"></i>Xóa đã chọn</button>
+            <button onclick="clearSelection()" class="text-xs text-gray-400 hover:text-white px-2"><i class="fa-solid fa-times"></i></button>
+        </div>
+    </div>
+
+    <!-- Thanh công cụ -->
+    <div id="toolbarRow" class="px-6 pb-2 flex justify-between items-center shrink-0 flex-wrap gap-2">
+        <div class="flex gap-2">
+            <button onclick="addNewRow()" class="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded shadow-sm text-sm font-medium transition-colors">
+                <i class="fa-solid fa-plus mr-1 text-tiktok-cyan"></i> Thêm Dữ Liệu
+            </button>
+            <button onclick="openQuickAddModal()" class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded shadow-sm text-sm font-medium transition-colors" title="Dán nhiều dòng, hệ thống tự tách cột thông minh">
+                <i class="fa-solid fa-wand-magic-sparkles mr-1 text-tiktok-pink"></i> Thêm Nhanh AI
+            </button>
+            <button id="btnKanbanToggle" onclick="toggleKanbanView()" class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded shadow-sm text-sm font-medium transition-colors" title="Xem dạng bảng theo dõi tuyển dụng (kéo-thả)">
+                <i class="fa-solid fa-table-columns mr-1 text-blue-600"></i> <span id="kanbanBtnLabel">Xem Kanban</span>
+            </button>
+            <button onclick="document.getElementById('csvImportInput').click()" class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded shadow-sm text-sm font-medium transition-colors">
+                <i class="fa-solid fa-file-import mr-1 text-purple-600"></i> Nhập CSV
+            </button>
+            <input type="file" id="csvImportInput" accept=".csv" class="hidden" onchange="importCSV(event)">
+            <button onclick="exportToCSV()" class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded shadow-sm text-sm font-medium transition-colors">
+                <i class="fa-solid fa-file-csv mr-1 text-green-600"></i> Xuất CSV
+            </button>
+            <button onclick="exportToExcel()" class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded shadow-sm text-sm font-medium transition-colors">
+                <i class="fa-solid fa-file-excel mr-1 text-emerald-600"></i> Xuất Excel (4 trang)
+            </button>
+        </div>
+        <div class="flex gap-2">
+            <button onclick="loadFromCloud()" class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded shadow-sm text-sm font-medium transition-colors" id="btnLoad">
+                <i class="fa-solid fa-download mr-1 text-blue-500"></i> Tải Từ Cloud
+            </button>
+            <button onclick="saveToCloud()" class="bg-tiktok-pink hover-bg-tiktok-pink text-white px-4 py-2 rounded shadow-sm text-sm font-medium transition-colors" id="btnSave">
+                <i class="fa-solid fa-cloud-upload-alt mr-1"></i> Lưu Đồng Bộ Cloud
+            </button>
+        </div>
+    </div>
+
+    <!-- Không gian làm việc chuẩn Excel -->
+    <div id="tableWorkspace" class="flex-1 overflow-auto mx-6 mb-6 border border-gray-200 rounded-lg shadow-sm bg-white relative">
+        <table class="excel-table min-w-max">
+            <thead id="gridHead">
+                <!-- Headers dynamically rendered here -->
+            </thead>
+            <tbody id="gridBody">
+                <!-- Data will be rendered here -->
+            </tbody>
+        </table>
+        
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden flex-col items-center justify-center py-20 text-gray-400">
+            <i class="fa-solid fa-table-list text-4xl mb-3 text-gray-300"></i>
+            <p>Bảng chưa có dữ liệu hoặc tiêu đề. Bấm "Thêm Cột" hoặc "Thêm Dữ Liệu".</p>
+        </div>
+        <!-- No Filter Results State -->
+        <div id="noResultsState" class="hidden flex-col items-center justify-center py-20 text-gray-400">
+            <i class="fa-solid fa-magnifying-glass text-4xl mb-3 text-gray-300"></i>
+            <p>Không tìm thấy dòng nào khớp với bộ lọc hiện tại.</p>
+            <button onclick="clearAllFilters()" class="mt-2 text-xs text-tiktok-pink hover:underline font-semibold">Xóa bộ lọc</button>
+        </div>
+    </div>
+
+    <!-- Không gian Kanban (chỉ dành cho trang Ứng Viên) -->
+    <div id="kanbanWorkspace" class="hidden flex-1 overflow-x-auto overflow-y-hidden mx-6 mb-6 gap-4 pb-2" style="display:none;">
+        <!-- Các cột Kanban được render động ở đây -->
+    </div>
+
+    <!-- Không gian Dashboard / Thống kê thông minh -->
+    <div id="dashboardWorkspace" class="hidden flex-1 overflow-auto mx-6 mb-6">
+        <!-- Nội dung dashboard được render động ở đây -->
+    </div>
+
+    <!-- Modal Tích hợp Apps Script -->
+    <div id="appsScriptModal" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-[700px] max-h-[90vh] overflow-hidden flex flex-col">
+            <div class="px-6 py-4 border-b flex justify-between items-center bg-gray-50">
+                <h2 class="text-lg font-bold"><i class="fa-brands fa-google text-blue-500 mr-2"></i>Cài đặt Kết Nối Google Sheets (Tự Động 100%)</h2>
+                <button onclick="closeAppsScriptModal()" class="text-gray-400 hover:text-gray-700"><i class="fa-solid fa-times text-xl"></i></button>
+            </div>
+            <div class="p-6 overflow-y-auto">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Google Apps Script Web App URL:</label>
+                    <input type="text" id="scriptUrl" placeholder="https://script.google.com/macros/s/AKfycbyGCsYHxH57CLyaKSdnDUnDQsKP-E5rRLzqsQT-BfE3UWz8MNwOF9y3brAKFGK7ZEYk1A/exec" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-tiktok-pink">
+                </div>
+                
+                <div class="bg-blue-50 border border-blue-100 rounded p-4 mb-4">
+                    <h3 class="text-sm font-bold text-blue-800 mb-2">Đoạn mã v4.1 - Khai thác triệt để Apps Script (Đã tối ưu CORS):</h3>
+                    <p class="text-xs text-blue-700 mb-1">✅ Tự nhận diện cột/tiêu đề động cho 4 sheet · ✅ Định dạng SĐT dạng text (không mất số 0) · ✅ Đóng băng dòng tiêu đề + tô màu Trạng thái tự động</p>
+                    <p class="text-xs text-blue-700 mb-1">✅ Tự động sao lưu (giữ 10 bản gần nhất trong sheet "_Backup") · ✅ Ghi nhật ký mọi lần đồng bộ vào sheet "_NhatKy"</p>
+                    <p class="text-xs text-blue-700">✅ Gửi email tự động khi có Ứng viên mới chuyển trạng thái "Đã nhận" · ✅ Hỗ trợ tải riêng từng tab (?tab=ungVien) cho tốc độ nhanh hơn</p>
+                    <label class="flex items-center gap-2 mt-3 text-xs font-medium text-blue-800">
+                        Email nhận thông báo (tùy chọn):
+                        <input type="text" id="notifyEmail" placeholder="hr@congty.com" class="border border-blue-200 rounded px-2 py-1 text-xs flex-1">
+                    </label>
+                </div>
+                
+                <div class="relative group">
+                    <div class="absolute right-2 top-2">
+                        <button onclick="copyScriptCode()" class="text-xs bg-gray-700 text-white px-3 py-1.5 rounded hover:bg-tiktok-pink transition-colors"><i class="fa-regular fa-copy mr-1"></i>Copy Code</button>
+                    </div>
+                    <pre class="bg-gray-800 text-gray-100 p-4 rounded text-xs overflow-auto h-96"><code id="scriptCode">// ==== HR IDOL RECRUIT - APPS SCRIPT BACKEND v4.1 (Bản đầy đủ, dán 1 lần) ====
+const TABS = ['ungVien', 'tienIch', 'noiDung', 'luuTruKhac'];
+const NOTIFY_EMAIL = ""; // Điền email HR vào đây để nhận thông báo mặc định
+const MAX_BACKUPS = 10;
+
+function doPost(e) {
+  try {
+    const doc = SpreadsheetApp.getActiveSpreadsheet();
+    let data;
+
+    if (e.parameter && e.parameter.data) {
+      data = JSON.parse(e.parameter.data);
+    } else if (e.postData && e.postData.contents) {
+      data = JSON.parse(e.postData.contents);
+    } else {
+      throw new Error("Không nhận được dữ liệu hợp lệ.");
+    }
+
+    const before = readAllTabs(doc);
+    const notifyEmail = (data._meta && data._meta.notifyEmail) || NOTIFY_EMAIL;
+    notifyNewHires(before, data, notifyEmail);
+
+    backupSnapshot(doc, before);
+
+    for (const key of TABS) {
+      if (!data[key]) continue;
+      let sheet = doc.getSheetByName(key);
+      if (!sheet) sheet = doc.insertSheet(key);
+      sheet.clear();
+      const tabData = data[key];
+
+      if (tabData.headers && tabData.headers.length > 0) {
+        sheet.appendRow(tabData.headers);
+        const headerRange = sheet.getRange(1, 1, 1, tabData.headers.length);
+        headerRange.setFontWeight("bold").setBackground("#111827").setFontColor("#ffffff");
+        sheet.setFrozenRows(1);
+
+        tabData.headers.forEach((h, i) => {
+          if (h.toLowerCase().includes('điện thoại') || h.toLowerCase().includes('phone')) {
+            sheet.getRange(2, i + 1, Math.max(tabData.rows.length, 1), 1).setNumberFormat('@');
+          }
+        });
+      }
+
+      if (tabData.rows && tabData.rows.length > 0) {
+        const safeRows = tabData.rows.map(row => {
+          const newRow = [];
+          for (let i = 0; i < tabData.headers.length; i++) newRow.push(row[i] || "");
+          return newRow;
+        });
+        sheet.getRange(2, 1, safeRows.length, tabData.headers.length).setValues(safeRows);
+        colorStatusColumn(sheet, tabData.headers, safeRows.length);
+      }
+      sheet.autoResizeColumns(1, Math.max(tabData.headers.length, 1));
+    }
+
+    logActivity(doc, "SYNC_SAVE", `Đồng bộ ${TABS.filter(k => data[k]).length} trang`);
+    return ContentService.createTextOutput(JSON.stringify({ status: "success", time: new Date() })).setMimeType(ContentService.MimeType.JSON);
+  } catch (error) {
+    logErrorSafe("SYNC_SAVE_ERROR", error);
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: error.message })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+// GET dùng để "Tải Từ Cloud". Hỗ trợ ?tab=ungVien để tải nhanh 1 trang riêng lẻ.
+function doGet(e) {
+  try {
+    const doc = SpreadsheetApp.getActiveSpreadsheet();
+    const tab = e && e.parameter && e.parameter.tab;
+    let result;
+    if (tab && TABS.indexOf(tab) > -1) {
+      result = {};
+      result[tab] = readOneTab(doc, tab);
+    } else {
+      result = readAllTabs(doc);
+    }
+    return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(ContentService.MimeType.JSON);
+  } catch (error) {
+    logErrorSafe("LOAD_ERROR", error);
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: error.message })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function readOneTab(doc, key) {
+  const sheet = doc.getSheetByName(key);
+  if (!sheet || sheet.getLastRow() === 0) return { headers: [], rows: [] };
+  const values = sheet.getDataRange().getValues();
+  const headers = (values[0] || []).map(h => h.toString());
+  const rows = values.slice(1).map(r => r.map(c => (c === null || c === undefined) ? "" : c.toString()));
+  return { headers: headers, rows: rows };
+}
+
+function readAllTabs(doc) {
+  const out = {};
+  TABS.forEach(key => { out[key] = readOneTab(doc, key); });
+  return out;
+}
+
+// Gửi email khi phát hiện dòng nào đó vừa CHUYỂN sang trạng thái "Đã nhận"/"Đạt"
+function notifyNewHires(before, after, notifyEmail) {
+  if (!notifyEmail) return;
+  try {
+    const beforeData = before['ungVien'];
+    const afterData = after['ungVien'];
+    if (!beforeData || !afterData || !afterData.headers) return;
+
+    const statusIdx = afterData.headers.findIndex(h => h.toLowerCase().includes('trạng thái'));
+    const nameIdx = afterData.headers.findIndex(h => h.toLowerCase().includes('tên'));
+    if (statusIdx === -1) return;
+
+    const wasHired = {};
+    (beforeData.rows || []).forEach(r => {
+      const key = nameIdx > -1 ? r[nameIdx] : JSON.stringify(r);
+      const v = (r[statusIdx] || '').toString().toLowerCase();
+      if (v.includes('đã nhận') || v.includes('đạt')) wasHired[key] = true;
+    });
+
+    const newlyHired = [];
+    (afterData.rows || []).forEach(r => {
+      const key = nameIdx > -1 ? r[nameIdx] : JSON.stringify(r);
+      const v = (r[statusIdx] || '').toString().toLowerCase();
+      const isHired = v.includes('đã nhận') || v.includes('đạt');
+      if (isHired && !wasHired[key]) newlyHired.push(r);
+    });
+
+    if (newlyHired.length > 0) {
+      const names = newlyHired.map(r => nameIdx > -1 ? r[nameIdx] : '(?)').join(', ');
+      MailApp.sendEmail({
+        to: notifyEmail,
+        subject: `[HR IdolRecruit] ${newlyHired.length} ứng viên vừa được nhận`,
+        body: `Các ứng viên sau vừa chuyển sang trạng thái "Đã nhận":\n\n${names}\n\nXem chi tiết trong Google Sheet.`
+      });
+    }
+  } catch (err) {
+    logErrorSafe("NOTIFY_ERROR", err);
+  }
+}
+
+// Lưu bản sao lưu (giữ tối đa MAX_BACKUPS bản gần nhất) trước mỗi lần ghi đè
+function backupSnapshot(doc, snapshot) {
+  try {
+    let sheet = doc.getSheetByName('_Backup');
+    if (!sheet) {
+      sheet = doc.insertSheet('_Backup');
+      sheet.appendRow(['Thời gian', 'Dữ liệu (JSON)']);
+      sheet.getRange(1, 1, 1, 2).setFontWeight('bold').setBackground('#111827').setFontColor('#ffffff');
+      sheet.setFrozenRows(1);
+    }
+    sheet.insertRowAfter(1);
+    sheet.getRange(2, 1, 1, 2).setValues([[new Date(), JSON.stringify(snapshot)]]);
+
+    const lastRow = sheet.getLastRow();
+    if (lastRow > MAX_BACKUPS + 1) {
+      sheet.deleteRows(MAX_BACKUPS + 2, lastRow - (MAX_BACKUPS + 1));
+    }
+  } catch (err) {
+    logErrorSafe("BACKUP_ERROR", err);
+  }
+}
+
+// Tô màu cột "Trạng Thái" theo giá trị để nhìn trực quan ngay trên Google Sheets
+function colorStatusColumn(sheet, headers, rowCount) {
+  const statusIdx = headers.findIndex(h => h.toLowerCase().includes('trạng thái'));
+  if (statusIdx === -1 || rowCount === 0) return;
+  const colors = {
+    'mới': '#dbeafe', 'phỏng vấn': '#fef9c3', 'đã nhận': '#dcfce7',
+    'từ chối': '#fee2e2', 'đang đào tạo': '#f3e8ff', 'nghỉ việc': '#fee2e2'
+  };
+  const range = sheet.getRange(2, statusIdx + 1, rowCount, 1);
+  const values = range.getValues();
+  const backgrounds = values.map(row => {
+    const v = (row[0] || '').toString().toLowerCase();
+    for (const key in colors) { if (v.includes(key)) return [colors[key]]; }
+    return ['#ffffff'];
+  });
+  range.setBackgrounds(backgrounds);
+}
+
+// Ghi nhật ký mọi lần đồng bộ vào sheet ẩn "_NhatKy"
+function logActivity(doc, action, detail) {
+  try {
+    let sheet = doc.getSheetByName('_NhatKy');
+    if (!sheet) {
+      sheet = doc.insertSheet('_NhatKy');
+      sheet.appendRow(['Thời gian', 'Hành động', 'Chi tiết']);
+      sheet.getRange(1, 1, 1, 3).setFontWeight('bold').setBackground('#111827').setFontColor('#ffffff');
+      sheet.setFrozenRows(1);
+    }
+    sheet.appendRow([new Date(), action, detail]);
+  } catch (err) { /* im lặng bỏ qua lỗi log */ }
+}
+
+function logErrorSafe(action, error) {
+  try {
+    const doc = SpreadsheetApp.getActiveSpreadsheet();
+    logActivity(doc, action, error && error.message ? error.message : String(error));
+  } catch (e) { /* bỏ qua */ }
+}
+</code></pre>
+                </div>
+            </div>
+            <div class="px-6 py-3 border-t bg-gray-50 flex justify-end gap-2">
+                <button onclick="closeAppsScriptModal()" class="px-4 py-2 border rounded text-sm text-gray-600 hover:bg-gray-100 font-medium">Đóng</button>
+                <button onclick="saveSettings()" class="px-4 py-2 bg-black text-white rounded text-sm hover:bg-gray-800 font-medium shadow-md">Lưu Cấu Hình</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Thêm Nhanh AI -->
+    <div id="quickAddModal" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-50 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-[650px] max-h-[90vh] overflow-hidden flex flex-col">
+            <div class="px-6 py-4 border-b flex justify-between items-center bg-gray-50">
+                <h2 class="text-lg font-bold"><i class="fa-solid fa-wand-magic-sparkles text-tiktok-pink mr-2"></i>Thêm Nhanh Thông Minh</h2>
+                <button onclick="closeQuickAddModal()" class="text-gray-400 hover:text-gray-700"><i class="fa-solid fa-times text-xl"></i></button>
+            </div>
+            <div class="p-6 overflow-y-auto">
+                <p class="text-sm text-gray-600 mb-2">Dán mỗi ứng viên/dữ liệu trên 1 dòng, phân tách bằng dấu phẩy <b>,</b> hoặc gạch <b>-</b>. Hệ thống tự nhận diện Follower ("50k", "1.2tr"), SĐT, TikTok, xếp theo đúng thứ tự cột hiện tại của trang <span id="quickAddTabName" class="font-semibold text-tiktok-pink"></span>.</p>
+                <p class="text-xs text-gray-400 mb-3" id="quickAddHeaderHint"></p>
+                <textarea id="quickAddText" rows="8" placeholder="Vd: Nguyễn Văn A, @vana_tiktok, 50k, 0909123456
+Trần Thị B - @b.tiktok - 1.2tr - 0912345678" class="w-full border border-gray-300 rounded px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-tiktok-pink"></textarea>
+                <div id="quickAddPreview" class="mt-3 text-xs text-gray-500"></div>
+            </div>
+            <div class="px-6 py-3 border-t bg-gray-50 flex justify-between items-center gap-2">
+                <span class="text-xs text-gray-400"><i class="fa-solid fa-circle-info mr-1"></i>Mỗi dòng hợp lệ sẽ tạo 1 dòng dữ liệu mới, giữ nguyên dữ liệu hiện có.</span>
+                <div class="flex gap-2">
+                    <button onclick="closeQuickAddModal()" class="px-4 py-2 border rounded text-sm text-gray-600 hover:bg-gray-100 font-medium">Đóng</button>
+                    <button onclick="submitQuickAdd()" class="px-4 py-2 bg-tiktok-pink hover-bg-tiktok-pink text-white rounded text-sm font-medium shadow-md"><i class="fa-solid fa-plus mr-1"></i>Thêm Vào Bảng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Component -->
+    <div id="toast" class="toast bg-white border border-gray-200 shadow-xl rounded-lg p-4 flex items-center gap-4 min-w-[300px]">
+        <div id="toastIcon" class="text-3xl"></div>
+        <div class="flex-1">
+            <h4 id="toastTitle" class="font-bold text-base text-gray-800"></h4>
+            <p id="toastMsg" class="text-sm text-gray-500 mt-0.5"></p>
+        </div>
+        <button id="toastAction" class="hidden text-xs font-bold text-tiktok-pink hover:underline whitespace-nowrap"></button>
+    </div>
+
+    <script>
+        let activeTab = 'ungVien';
+        let filterText = "";
+        let appsScriptUrl = localStorage.getItem('hr_script_url') || "";
+        let sortColIndex = -1;
+        let sortAsc = true;
+        let quickStatusFilter = ""; 
+        let globalSearchMode = false; 
+        let selectedRows = new Set();
+        let lastDeleted = null; 
+        let cloudSaveTimeout = null; // Tích hợp timeout cho Auto-Sync thông minh
+        const AUTOSAVE_KEY = 'hr_autosave_draft_v4';
+
+        // --- Trạng thái mới: Undo/Redo, theo dõi đồng bộ, mạng ---
+        let historyStack = [];
+        let redoStack = [];
+        const MAX_HISTORY = 30;
+        let unsyncedChanges = false;
+        let isSyncing = false;
+        let showOnlyIssues = false;
+
+        // --- Tính năng mới v6.0 Smart+ AI ---
+        let isDashboardView = false;
+        let kanbanMode = false;
+        const STALE_DAYS = 3; // Ngưỡng số ngày "Phỏng vấn" chưa cập nhật -> nhắc theo dõi
+        let rowActivity = {};
+        try { rowActivity = JSON.parse(localStorage.getItem('hr_row_activity') || '{}'); } catch (e) { rowActivity = {}; }
+
+        const STATUS_OPTIONS = ["Mới", "Phỏng vấn", "Đã nhận", "Từ chối", "Đang đào tạo", "Nghỉ việc"];
+        const RATING_OPTIONS = ["Chưa đánh giá", "⭐", "⭐⭐", "⭐⭐⭐", "⭐⭐⭐⭐", "⭐⭐⭐⭐⭐"];
+
+        let state = {
+            ungVien: {
+                headers: ["Tên Ứng Viên", "Kênh TikTok", "Lượng Follower", "Số Điện Thoại", "Phân Loại IDOL", "Trạng Thái", "Đánh giá", "Ghi chú"],
+                rows: []
+            },
+            tienIch: {
+                headers: ["Tên Tiện Ích", "Đường Dẫn (Link)", "Mô tả", "Trạng Thái", "Ghi chú"],
+                rows: []
+            },
+            noiDung: {
+                headers: ["Tên Nội Dung", "Nền tảng", "Kênh TikTok", "Lượt xem", "Trạng Thái"],
+                rows: []
+            },
+            luuTruKhac: {
+                headers: ["Tiêu Đề", "Phân loại", "Người phụ trách", "Trạng Thái", "Ghi chú"],
+                rows: []
+            }
+        };
+
+        // Khởi tạo
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('scriptUrl').value = appsScriptUrl;
+            document.getElementById('notifyEmail').value = localStorage.getItem('hr_notify_email') || "";
+
+            if (localStorage.getItem('hr_dark_mode') === 'on') toggleDarkMode(true);
+
+            tryRestoreDraft();
+            renderTable();
+
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                filterText = e.target.value.toLowerCase();
+                renderTable(); // Lọc thì không kích hoạt onDataModified
+            });
+
+            document.getElementById('notifyEmail').addEventListener('change', (e) => {
+                localStorage.setItem('hr_notify_email', e.target.value.trim());
+            });
+
+            if (localStorage.getItem('hr_autosync') === 'on' && appsScriptUrl) {
+                document.getElementById('autoSyncToggle').checked = true;
+                // Chỉ khôi phục trạng thái công tắc, KHÔNG tự đẩy dữ liệu lên Cloud
+                // ngay khi vừa mở trang (tránh ghi đè Cloud khi chưa có thay đổi thật sự).
+            }
+
+            setupKeyboardShortcuts();
+        });
+
+        function setupKeyboardShortcuts() {
+            document.addEventListener('keydown', (e) => {
+                const cmd = e.ctrlKey || e.metaKey;
+                const typingInField = document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.isContentEditable);
+
+                if (cmd && e.key.toLowerCase() === 's') { e.preventDefault(); saveToCloud(); }
+                else if (cmd && e.key.toLowerCase() === 'f') { e.preventDefault(); document.getElementById('searchInput').focus(); }
+                else if (cmd && e.key.toLowerCase() === 'n') { e.preventDefault(); addNewRow(); }
+                else if (cmd && e.shiftKey && e.key.toLowerCase() === 'z') { e.preventDefault(); redoLast(); }
+                else if (cmd && e.key.toLowerCase() === 'z') { e.preventDefault(); undoLast(); }
+                else if (cmd && e.key.toLowerCase() === 'y') { e.preventDefault(); redoLast(); }
+                else if (e.key === '?' && !typingInField) { showShortcutsHelp(); }
+                else if (e.key === 'Escape') { closeAppsScriptModal(); if (document.activeElement) document.activeElement.blur(); }
+            });
+
+            window.addEventListener('beforeunload', (e) => {
+                if (unsyncedChanges) { e.preventDefault(); e.returnValue = ''; }
+            });
+
+            window.addEventListener('online', () => {
+                setLastSyncBadge('<span class="text-green-500"><i class="fa-solid fa-wifi mr-1"></i>Đã có mạng trở lại</span>');
+                if (unsyncedChanges && localStorage.getItem('hr_autosync') === 'on' && appsScriptUrl) {
+                    showToast("Đã có mạng", "Đang tự động đồng bộ lại các thay đổi còn đang chờ...", "info");
+                    saveToCloud(true);
+                }
+            });
+            window.addEventListener('offline', () => {
+                setLastSyncBadge('<span class="text-orange-400"><i class="fa-solid fa-wifi mr-1"></i>Mất kết nối mạng</span>');
+                showToast("Mất kết nối mạng", "Các thay đổi vẫn được lưu tạm cục bộ, sẽ tự đồng bộ khi có mạng lại", "warning");
+            });
+        }
+
+        // --- CƠ CHẾ AUTO-SAVE THÔNG MINH MỚI ---
+        function onDataModified() {
+            autoSaveDraft(); // Lưu ngay vào Local Storage
+            unsyncedChanges = true;
+            updateSyncIndicator();
+
+            // Nếu có bật Auto-Sync và có cấu hình Cloud, tiến hành debounced save
+            if (localStorage.getItem('hr_autosync') === 'on' && appsScriptUrl) {
+                if (cloudSaveTimeout) clearTimeout(cloudSaveTimeout);
+
+                if (!navigator.onLine) {
+                    setLastSyncBadge('<span class="text-orange-400"><i class="fa-solid fa-wifi mr-1"></i>Mất mạng - chờ có mạng lại</span>');
+                    return;
+                }
+
+                setLastSyncBadge('<i class="fa-solid fa-clock mr-1 text-tiktok-cyan"></i>Đang chờ lưu...');
+
+                // Đợi 2 giây sau khi người dùng ngừng thao tác mới đẩy lên Cloud
+                cloudSaveTimeout = setTimeout(() => {
+                    saveToCloud(true); // Lưu ẩn (silent = true)
+                }, 2000);
+            }
+        }
+
+        function updateSyncIndicator() {
+            const dot = document.getElementById('unsyncedDot');
+            if (dot) dot.classList.toggle('hidden', !unsyncedChanges);
+        }
+
+        // --- UNDO / REDO nhiều cấp (Ctrl+Z / Ctrl+Shift+Z) ---
+        function pushHistory() {
+            try {
+                historyStack.push(JSON.stringify(state));
+                if (historyStack.length > MAX_HISTORY) historyStack.shift();
+                redoStack = [];
+            } catch (e) { }
+        }
+
+        function undoLast() {
+            if (historyStack.length === 0) { showToast("Không có gì để hoàn tác", "Chưa có thao tác nào được ghi nhận", "info"); return; }
+            redoStack.push(JSON.stringify(state));
+            state = JSON.parse(historyStack.pop());
+            selectedRows.clear();
+            onDataModified();
+            renderTable();
+            showToast("Đã hoàn tác", "Ctrl+Z: khôi phục thao tác trước đó", "success");
+        }
+
+        function redoLast() {
+            if (redoStack.length === 0) { showToast("Không có gì để làm lại", "Chưa có thao tác nào bị hoàn tác", "info"); return; }
+            historyStack.push(JSON.stringify(state));
+            state = JSON.parse(redoStack.pop());
+            selectedRows.clear();
+            onDataModified();
+            renderTable();
+            showToast("Đã làm lại", "Ctrl+Shift+Z: áp dụng lại thao tác", "success");
+        }
+
+        function showShortcutsHelp() {
+            showToast(
+                "Phím tắt nhanh",
+                "Ctrl+S: Lưu Cloud · Ctrl+F: Tìm kiếm · Ctrl+N: Thêm dòng · Ctrl+Z: Hoàn tác · Ctrl+Shift+Z: Làm lại · Esc: Đóng hộp thoại",
+                "info"
+            );
+        }
+
+        function autoSaveDraft() {
+            try { localStorage.setItem(AUTOSAVE_KEY, JSON.stringify({ state, savedAt: Date.now() })); } catch (e) { }
+        }
+
+        function tryRestoreDraft() {
+            try {
+                const raw = localStorage.getItem(AUTOSAVE_KEY);
+                if (!raw) return;
+                const draft = JSON.parse(raw);
+                if (!draft || !draft.state) return;
+                const minutesAgo = Math.round((Date.now() - draft.savedAt) / 60000);
+                showToast("Tìm thấy bản nháp", `Có dữ liệu chưa lưu từ ${minutesAgo} phút trước. Bấm để khôi phục.`, "info", "Khôi phục", () => {
+                    state = draft.state;
+                    onDataModified(); // Đánh dấu đã sửa để kích hoạt Cloud Sync nếu đang bật
+                    renderTable();
+                    showToast("Đã khôi phục", "Dữ liệu nháp đã được áp dụng", "success");
+                });
+            } catch (e) { }
+        }
+
+        function toggleAutoSync(enabled, silent) {
+            if (enabled && !appsScriptUrl) {
+                showToast("Thiếu cấu hình", "Cần nhập URL Apps Script trước khi bật Auto-Sync", "warning");
+                document.getElementById('autoSyncToggle').checked = false;
+                return;
+            }
+            localStorage.setItem('hr_autosync', enabled ? 'on' : 'off');
+            if (enabled) {
+                if (!silent) showToast("Đã bật Auto-Sync", "Dữ liệu sẽ tự động lưu lên Cloud sau khi bạn thêm/sửa/xóa", "success");
+                onDataModified(); // Chủ động kích hoạt 1 lần khi vừa bật
+            } else {
+                if (cloudSaveTimeout) clearTimeout(cloudSaveTimeout);
+                setLastSyncBadge("");
+                if (!silent) showToast("Đã tắt Auto-Sync", "Ngừng tự động đồng bộ lên Google Sheets", "info");
+            }
+        }
+
+        // --- Dark Mode ---
+        function toggleDarkMode(forceState) {
+            const enable = typeof forceState === 'boolean' ? forceState : !document.documentElement.classList.contains('dark');
+            document.documentElement.classList.toggle('dark', enable);
+            localStorage.setItem('hr_dark_mode', enable ? 'on' : 'off');
+            const icon = document.querySelector('#btnDarkMode i');
+            if (icon) icon.className = enable ? 'fa-solid fa-sun text-lg' : 'fa-solid fa-moon text-lg';
+        }
+
+        // --- Ghi nhận hoạt động của từng dòng (phục vụ nhắc "Cần Theo Dõi") ---
+        function activityKey(tab, row) { return tab + '|' + row.join('§'); }
+        function markRowActivity(tab, row) {
+            rowActivity[activityKey(tab, row)] = Date.now();
+            try { localStorage.setItem('hr_row_activity', JSON.stringify(rowActivity)); } catch (e) { }
+        }
+        function getRowActivity(tab, row) {
+            const key = activityKey(tab, row);
+            if (!rowActivity[key]) { markRowActivity(tab, row); return Date.now(); }
+            return rowActivity[key];
+        }
+        function daysSince(ts) { return Math.floor((Date.now() - ts) / 86400000); }
+
+        // --- Điểm AI cho ứng viên (dựa vào follower, đánh giá, trạng thái) ---
+        function calculateCandidateScore(row, headers) {
+            const followerIdx = headers.findIndex(h => h.toLowerCase().includes('follower'));
+            const ratingIdx = headers.findIndex(h => h.toLowerCase().includes('đánh giá'));
+            const statusIdx = headers.findIndex(h => h.toLowerCase().includes('trạng thái'));
+            let score = 0;
+
+            let followers = followerIdx > -1 ? (parseInt((row[followerIdx] || '0').toString().replace(/[^0-9]/g, '')) || 0) : 0;
+            score += Math.min(50, Math.log10(followers + 1) * 10); // tối đa 50 điểm theo quy mô follower
+
+            if (ratingIdx > -1) {
+                const stars = (row[ratingIdx] || '').toString().match(/⭐/g);
+                score += (stars ? stars.length : 0) * 6; // tối đa 30 điểm
+            }
+
+            if (statusIdx > -1) {
+                const s = (row[statusIdx] || '').toLowerCase();
+                if (s.includes('đã nhận') || s.includes('đạt')) score += 20;
+                else if (s.includes('phỏng vấn')) score += 12;
+                else if (s.includes('đào tạo')) score += 15;
+                else if (s.includes('mới')) score += 5;
+            }
+            return Math.max(0, Math.min(100, Math.round(score)));
+        }
+        function scoreBadgeColor(score) {
+            if (score >= 75) return 'bg-green-100 text-green-700';
+            if (score >= 50) return 'bg-yellow-100 text-yellow-700';
+            if (score >= 25) return 'bg-orange-100 text-orange-700';
+            return 'bg-gray-100 text-gray-500';
+        }
+
+        function calculateTier(followers) {
+            let f = parseInt(followers.toString().replace(/[^0-9]/g, '')) || 0;
+            if (f >= 500000) return "Diamond 💎";
+            if (f >= 100000) return "Gold 🥇";
+            if (f >= 10000) return "Silver 🥈";
+            return "Bronze 🥉";
+        }
+
+        function getStatusColor(status) {
+            let s = status ? status.toString().toLowerCase() : "";
+            if (s.includes("mới")) return "text-blue-600 bg-blue-50";
+            if (s.includes("phỏng vấn")) return "text-yellow-600 bg-yellow-50";
+            if (s.includes("đã nhận") || s.includes("đạt")) return "text-green-600 bg-green-50";
+            if (s.includes("từ chối") || s.includes("hủy") || s.includes("nghỉ")) return "text-red-600 bg-red-50";
+            if (s.includes("đào tạo")) return "text-purple-600 bg-purple-50";
+            return "text-gray-700 bg-gray-100";
+        }
+
+        function updateStats() {
+            let data = state[activeTab];
+            let statusColIdx = data.headers.findIndex(h => h.toLowerCase().includes('trạng thái'));
+            
+            document.getElementById('statTotal').innerText = data.rows.length;
+            
+            if (statusColIdx !== -1) {
+                document.getElementById('statInterview').innerText = data.rows.filter(r => (r[statusColIdx]||"").toLowerCase().includes("phỏng vấn")).length;
+                document.getElementById('statHired').innerText = data.rows.filter(r => {
+                    let v = (r[statusColIdx]||"").toLowerCase();
+                    return v.includes("đã nhận") || v.includes("đạt");
+                }).length;
+                document.getElementById('statRejected').innerText = data.rows.filter(r => {
+                    let v = (r[statusColIdx]||"").toLowerCase();
+                    return v.includes("từ chối") || v.includes("hủy");
+                }).length;
+            } else {
+                document.getElementById('statInterview').innerText = "-";
+                document.getElementById('statHired').innerText = "-";
+                document.getElementById('statRejected').innerText = "-";
+            }
+
+            document.getElementById('statAttention').innerText = countNeedsAttention(data);
+            document.getElementById('statFollowUp').innerText = countFollowUp(data, statusColIdx);
+            renderQuickFilters(data, statusColIdx);
+        }
+
+        // Đếm số ứng viên đang "Phỏng vấn" nhưng chưa có cập nhật gì trong >= STALE_DAYS ngày
+        function countFollowUp(data, statusColIdx) {
+            if (statusColIdx === -1) return 0;
+            let count = 0;
+            data.rows.forEach(r => {
+                const s = (r[statusColIdx] || '').toLowerCase();
+                if (!s.includes('phỏng vấn')) return;
+                const ts = getRowActivity(activeTab, r);
+                if (daysSince(ts) >= STALE_DAYS) count++;
+            });
+            return count;
+        }
+
+        function countNeedsAttention(data) {
+            let tiktokIdx = data.headers.findIndex(h => h.toLowerCase().includes('tiktok'));
+            let phoneIdx = data.headers.findIndex(h => h.toLowerCase().includes('điện thoại') || h.toLowerCase().includes('phone'));
+            let nameIdx = data.headers.findIndex(h => h.toLowerCase().includes('tên'));
+            let tiktokCounts = {}, phoneCounts = {};
+            data.rows.forEach(r => {
+                if (tiktokIdx > -1 && r[tiktokIdx]) { let v = r[tiktokIdx].trim().toLowerCase(); tiktokCounts[v] = (tiktokCounts[v] || 0) + 1; }
+                if (phoneIdx > -1 && r[phoneIdx]) { let v = r[phoneIdx].trim(); phoneCounts[v] = (phoneCounts[v] || 0) + 1; }
+            });
+            let count = 0;
+            data.rows.forEach(r => {
+                let isDup = (tiktokIdx > -1 && r[tiktokIdx] && tiktokCounts[r[tiktokIdx].trim().toLowerCase()] > 1) ||
+                            (phoneIdx > -1 && r[phoneIdx] && phoneCounts[r[phoneIdx].trim()] > 1);
+                let isIncomplete = nameIdx > -1 && !(r[nameIdx] || "").trim();
+                if (isDup || isIncomplete) count++;
+            });
+            return count;
+        }
+
+        function renderQuickFilters(data, statusColIdx) {
+            const box = document.getElementById('quickFilters');
+            if (statusColIdx === -1) { box.innerHTML = ""; quickStatusFilter = ""; return; }
+            const counts = {};
+            data.rows.forEach(r => {
+                const v = (r[statusColIdx] || "Chưa xác định").trim();
+                counts[v] = (counts[v] || 0) + 1;
+            });
+            let html = `<span class="text-xs text-gray-400 font-semibold mr-1"><i class="fa-solid fa-filter mr-1"></i>Lọc nhanh:</span>`;
+            html += `<span class="chip ${quickStatusFilter === '' && !showOnlyIssues ? 'active' : ''} text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded-full" onclick="setQuickFilter('')">Tất cả (${data.rows.length})</span>`;
+            Object.keys(counts).forEach(k => {
+                html += `<span class="chip ${quickStatusFilter === k ? 'active' : ''} text-xs px-3 py-1 rounded-full ${getStatusColor(k)}" onclick="setQuickFilter('${k.replace(/'/g, "\\'")}')">${k} (${counts[k]})</span>`;
+            });
+            const issueCount = countNeedsAttention(data);
+            if (issueCount > 0) {
+                html += `<span class="chip ${showOnlyIssues ? 'active' : ''} text-xs px-3 py-1 rounded-full bg-orange-100 text-orange-700" onclick="toggleIssuesFilter()"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Cần chú ý (${issueCount})</span>`;
+            }
+            box.innerHTML = html;
+        }
+
+        function setQuickFilter(status) { quickStatusFilter = status; showOnlyIssues = false; renderTable(); }
+        function toggleIssuesFilter() { showOnlyIssues = !showOnlyIssues; if (showOnlyIssues) quickStatusFilter = ""; renderTable(); }
+
+        function renderTable() {
+            const data = state[activeTab];
+            const thead = document.getElementById('gridHead');
+            
+            let headHtml = `<tr><th class="w-8 text-center"><input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this.checked)" title="Chọn tất cả"></th><th class="w-12 text-center text-gray-400"><i class="fa-solid fa-hashtag"></i></th>`;
+            data.headers.forEach((h, cIdx) => {
+                let sortIcon = "";
+                if (sortColIndex === cIdx) {
+                    sortIcon = sortAsc ? '<i class="fa-solid fa-sort-up text-tiktok-pink ml-2"></i>' : '<i class="fa-solid fa-sort-down text-tiktok-pink ml-2"></i>';
+                } else {
+                    sortIcon = '<i class="fa-solid fa-sort text-gray-300 ml-2 opacity-0 group-hover:opacity-100 transition-opacity"></i>';
+                }
+
+                headHtml += `
+                    <th class="group relative min-w-[150px] cursor-pointer hover:bg-gray-200 transition select-none" onclick="sortTable(${cIdx})">
+                        <div class="flex items-center justify-between pr-4">
+                            <div contenteditable="true" onblur="updateHeader(${cIdx}, this.innerText)" onclick="event.stopPropagation()" class="outline-none focus:bg-white p-1 rounded border border-transparent hover:border-gray-300 transition-colors flex-1" title="Sửa tên tiêu đề">${h}</div>
+                            ${sortIcon}
+                        </div>
+                        <button onclick="event.stopPropagation(); removeColumn(${cIdx})" title="Xóa cột" class="absolute right-1 top-1/2 -translate-y-1/2 text-red-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-200 rounded-full w-6 h-6 flex items-center justify-center"><i class="fa fa-times text-xs"></i></button>
+                    </th>`;
+            });
+            if (activeTab === 'ungVien') {
+                headHtml += `<th class="w-20 text-center bg-gray-50" title="Điểm AI: ước tính dựa trên follower, đánh giá & trạng thái"><i class="fa-solid fa-brain text-tiktok-pink mr-1"></i>Điểm AI</th>`;
+            }
+            headHtml += `<th class="w-28 text-center cursor-pointer text-tiktok-cyan hover:bg-gray-200 transition bg-gray-50 border-dashed border-l-2" onclick="addColumn()"><i class="fa fa-plus"></i> Thêm Cột</th>`;
+            headHtml += `<th class="w-16 text-center text-gray-400"><i class="fa-solid fa-trash-can"></i></th></tr>`;
+            thead.innerHTML = headHtml;
+
+            let displayRows = data.rows.map((row, originalIndex) => ({ row, originalIndex }));
+            
+            if (filterText) {
+                displayRows = displayRows.filter(item => item.row.some(cell => (cell||"").toLowerCase().includes(filterText)));
+            }
+
+            const quickStatusIdxForFilter = data.headers.findIndex(h => h.toLowerCase().includes('trạng thái'));
+            if (quickStatusFilter && quickStatusIdxForFilter !== -1) {
+                displayRows = displayRows.filter(item => (item.row[quickStatusIdxForFilter] || "Chưa xác định").trim() === quickStatusFilter);
+            }
+
+            if (globalSearchMode && filterText) updateGlobalSearchBanner();
+            else document.getElementById('globalSearchBanner').classList.add('hidden');
+
+            if (sortColIndex > -1) {
+                displayRows.sort((a, b) => {
+                    let valA = a.row[sortColIndex] || "";
+                    let valB = b.row[sortColIndex] || "";
+                    let numA = parseFloat(valA.toString().replace(/[^0-9.-]+/g,""));
+                    let numB = parseFloat(valB.toString().replace(/[^0-9.-]+/g,""));
+                    if (!isNaN(numA) && !isNaN(numB) && valA.toString().match(/\d/) && valB.toString().match(/\d/)) {
+                        return sortAsc ? numA - numB : numB - numA;
+                    }
+                    return sortAsc ? valA.toString().localeCompare(valB.toString()) : valB.toString().localeCompare(valA.toString());
+                });
+            }
+
+            let statusIdx = data.headers.findIndex(h => h.toLowerCase().includes('trạng thái'));
+            let ratingIdx = data.headers.findIndex(h => h.toLowerCase().includes('đánh giá'));
+            let tiktokIdx = data.headers.findIndex(h => h.toLowerCase().includes('tiktok'));
+            let phoneIdx = data.headers.findIndex(h => h.toLowerCase().includes('điện thoại') || h.toLowerCase().includes('phone'));
+            let followerIdx = data.headers.findIndex(h => h.toLowerCase().includes('follower'));
+
+            let tiktokCounts = {};
+            let phoneCounts = {};
+            data.rows.forEach(r => {
+                if(tiktokIdx > -1 && r[tiktokIdx]) { let v=r[tiktokIdx].trim().toLowerCase(); tiktokCounts[v] = (tiktokCounts[v] || 0) + 1; }
+                if(phoneIdx > -1 && r[phoneIdx]) { let v=r[phoneIdx].trim(); phoneCounts[v] = (phoneCounts[v] || 0) + 1; }
+            });
+
+            if (showOnlyIssues) {
+                let nameIdxForFilter = data.headers.findIndex(h => h.toLowerCase().includes('tên'));
+                displayRows = displayRows.filter(item => {
+                    const r = item.row;
+                    const isDup = (tiktokIdx > -1 && r[tiktokIdx] && tiktokCounts[r[tiktokIdx].trim().toLowerCase()] > 1) ||
+                                  (phoneIdx > -1 && r[phoneIdx] && phoneCounts[r[phoneIdx].trim()] > 1);
+                    const isIncomplete = nameIdxForFilter > -1 && !(r[nameIdxForFilter] || "").trim();
+                    return isDup || isIncomplete;
+                });
+            }
+
+            const tbody = document.getElementById('gridBody');
+            tbody.innerHTML = '';
+            const isTrulyEmpty = data.headers.length === 0 || data.rows.length === 0;
+            const isFilteredEmpty = !isTrulyEmpty && displayRows.length === 0;
+            toggleEmptyState(isTrulyEmpty, isFilteredEmpty);
+
+            displayRows.forEach((item, rIdxOnScreen) => {
+                const originalRIdx = item.originalIndex;
+                const row = item.row;
+                let tr = document.createElement('tr');
+                let rowHasIssue = (tiktokIdx > -1 && row[tiktokIdx] && tiktokCounts[row[tiktokIdx].trim().toLowerCase()] > 1) ||
+                                   (phoneIdx > -1 && row[phoneIdx] && phoneCounts[row[phoneIdx].trim()] > 1);
+                tr.className = "group" + (selectedRows.has(originalRIdx) ? " row-selected" : "") + (rowHasIssue ? " needs-attention" : "");
+                let rowHtml = `<td class="text-center"><input type="checkbox" class="rowCheckbox" data-ridx="${originalRIdx}" ${selectedRows.has(originalRIdx) ? 'checked' : ''} onchange="toggleRowSelect(${originalRIdx}, this.checked)"></td>`;
+                rowHtml += `<td class="text-center text-gray-400 text-xs font-mono">${rIdxOnScreen + 1}</td>`;
+                
+                for (let cIdx = 0; cIdx < data.headers.length; cIdx++) {
+                    let cellValue = row[cIdx] || "";
+                    let cellContent = "";
+                    let tdClass = "";
+
+                    if (cIdx === statusIdx) {
+                        cellContent = `<select onchange="updateCell(${originalRIdx}, ${cIdx}, this.value)" class="text-xs font-semibold px-2 py-1.5 rounded-full ${getStatusColor(cellValue)}">`;
+                        let hasVal = false;
+                        STATUS_OPTIONS.forEach(opt => {
+                            if(cellValue === opt) hasVal = true;
+                            cellContent += `<option value="${opt}" ${cellValue === opt ? 'selected' : ''}>${opt}</option>`;
+                        });
+                        if(cellValue && !hasVal) cellContent += `<option value="${cellValue}" selected>${cellValue}</option>`; 
+                        cellContent += `</select>`;
+                    } 
+                    else if (cIdx === ratingIdx) {
+                        cellContent = `<select onchange="updateCell(${originalRIdx}, ${cIdx}, this.value)" class="text-sm">`;
+                        let hasVal = false;
+                        RATING_OPTIONS.forEach(opt => {
+                            if(cellValue === opt) hasVal = true;
+                            cellContent += `<option value="${opt}" ${cellValue === opt ? 'selected' : ''}>${opt}</option>`;
+                        });
+                        if(cellValue && !hasVal) cellContent += `<option value="${cellValue}" selected>${cellValue}</option>`;
+                        cellContent += `</select>`;
+                    }
+                    else {
+                        let extraHtml = "";
+                        tdClass = "relative ";
+                        
+                        if (cIdx === tiktokIdx && cellValue.includes("@")) {
+                            tdClass += "text-tiktok-pink font-medium ";
+                            let cleanId = cellValue.replace("@", "").trim();
+                            extraHtml = `<a href="https://www.tiktok.com/@${cleanId}" target="_blank" title="Mở TikTok" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-tiktok-cyan" contenteditable="false"><i class="fa-solid fa-external-link-alt"></i></a>`;
+                        }
+
+                        if (cIdx === tiktokIdx && tiktokCounts[cellValue.trim().toLowerCase()] > 1 && cellValue.trim() !== "") {
+                            tdClass += "bg-yellow-50 border-yellow-200 ";
+                            extraHtml += `<i class="fa-solid fa-triangle-exclamation text-yellow-500 absolute left-1 top-1/2 -translate-y-1/2" title="Trùng lặp TikTok!"></i>`;
+                        }
+                        if (cIdx === phoneIdx && phoneCounts[cellValue.trim()] > 1 && cellValue.trim() !== "") {
+                            tdClass += "bg-yellow-50 border-yellow-200 ";
+                            extraHtml += `<i class="fa-solid fa-triangle-exclamation text-yellow-500 absolute left-1 top-1/2 -translate-y-1/2" title="Trùng lặp SĐT!"></i>`;
+                        }
+                        if (cIdx === phoneIdx && cellValue.trim() !== "" && !/^0\d{9,10}$/.test(cellValue.trim())) {
+                            tdClass += "bg-red-50 ";
+                            extraHtml += `<i class="fa-solid fa-circle-exclamation text-red-400 absolute left-1 top-1/2 -translate-y-1/2" title="SĐT không đúng định dạng VN"></i>`;
+                        }
+                        if (cIdx === followerIdx) {
+                            tdClass += "text-right font-mono text-blue-700 ";
+                        }
+
+                        let paddingLeft = (cIdx === tiktokIdx && tiktokCounts[cellValue.trim().toLowerCase()] > 1) || (cIdx === phoneIdx && phoneCounts[cellValue.trim()] > 1) ? 'pl-6' : 'pl-2';
+                        
+                        cellContent = `<div contenteditable="true" onblur="updateCell(${originalRIdx}, ${cIdx}, this.innerText)" class="w-full h-full min-h-[24px] outline-none ${paddingLeft}">${cellValue}</div>` + extraHtml;
+                    }
+
+                    rowHtml += `<td class="${tdClass}">${cellContent}</td>`;
+                }
+                
+                if (activeTab === 'ungVien') {
+                    const score = calculateCandidateScore(row, data.headers);
+                    const followUpTs = getRowActivity(activeTab, row);
+                    const isStale = (data.headers.findIndex(h => h.toLowerCase().includes('trạng thái')) > -1 &&
+                        (row[data.headers.findIndex(h => h.toLowerCase().includes('trạng thái'))] || '').toLowerCase().includes('phỏng vấn') &&
+                        daysSince(followUpTs) >= STALE_DAYS);
+                    rowHtml += `<td class="text-center bg-gray-50"><span class="score-badge ${scoreBadgeColor(score)}" title="Điểm AI ước tính">${score}</span>${isStale ? ` <i class="fa-solid fa-clock-rotate-left text-purple-500 ml-1" title="Đã ${daysSince(followUpTs)} ngày chưa cập nhật - cần theo dõi"></i>` : ''}</td>`;
+                }
+                rowHtml += `<td class="bg-gray-50 border-l-2"></td>`;
+                rowHtml += `<td class="text-center">
+                    <button onclick="deleteRow(${originalRIdx})" class="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-1"><i class="fa-solid fa-trash"></i></button>
+                </td>`;
+                
+                tr.innerHTML = rowHtml;
+                preventEnterNewline(tr);
+                tbody.appendChild(tr);
+            });
+            updateStats();
+            updateBulkBar();
+            // Đã chuyển autoSaveDraft() sang hàm onDataModified() để tối ưu hơn
+        }
+
+        function toggleEmptyState(isTrulyEmpty, isFilteredEmpty) {
+            const emptyState = document.getElementById('emptyState');
+            const noResultsState = document.getElementById('noResultsState');
+            if (isTrulyEmpty) {
+                emptyState.classList.remove('hidden'); emptyState.classList.add('flex');
+                noResultsState.classList.add('hidden'); noResultsState.classList.remove('flex');
+            } else if (isFilteredEmpty) {
+                noResultsState.classList.remove('hidden'); noResultsState.classList.add('flex');
+                emptyState.classList.add('hidden'); emptyState.classList.remove('flex');
+            } else {
+                emptyState.classList.add('hidden'); emptyState.classList.remove('flex');
+                noResultsState.classList.add('hidden'); noResultsState.classList.remove('flex');
+            }
+        }
+
+        function clearAllFilters() {
+            filterText = "";
+            quickStatusFilter = "";
+            showOnlyIssues = false;
+            document.getElementById('searchInput').value = "";
+            renderTable();
+        }
+
+        function preventEnterNewline(tr) {
+            const editables = tr.querySelectorAll('div[contenteditable="true"]');
+            editables.forEach(el => {
+                el.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') { e.preventDefault(); el.blur(); }
+                });
+            });
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('border-tiktok-pink', 'text-tiktok-pink');
+                btn.classList.add('border-transparent', 'text-gray-500');
+            });
+            const activeBtn = document.getElementById(`tab-${tabId}`);
+            activeBtn.classList.remove('border-transparent', 'text-gray-500');
+            activeBtn.classList.add('border-tiktok-pink', 'text-tiktok-pink');
+
+            if (tabId === 'dashboard') {
+                isDashboardView = true;
+                if (kanbanMode) toggleKanbanView(true);
+                document.getElementById('statsSection').classList.add('hidden');
+                document.getElementById('quickFilters').classList.add('hidden');
+                document.getElementById('bulkBar').classList.add('hidden');
+                document.getElementById('toolbarRow').classList.add('hidden');
+                document.getElementById('tableWorkspace').classList.add('hidden');
+                document.getElementById('kanbanWorkspace').classList.add('hidden');
+                document.getElementById('kanbanWorkspace').style.display = 'none';
+                document.getElementById('dashboardWorkspace').classList.remove('hidden');
+                renderDashboard();
+                return;
+            }
+
+            isDashboardView = false;
+            document.getElementById('statsSection').classList.remove('hidden');
+            document.getElementById('quickFilters').classList.remove('hidden');
+            document.getElementById('toolbarRow').classList.remove('hidden');
+            document.getElementById('dashboardWorkspace').classList.add('hidden');
+
+            activeTab = tabId;
+            sortColIndex = -1;
+            quickStatusFilter = "";
+            selectedRows.clear();
+
+            document.getElementById('btnKanbanToggle').classList.toggle('hidden', activeTab !== 'ungVien');
+            if (kanbanMode && activeTab !== 'ungVien') toggleKanbanView(true);
+
+            document.getElementById('searchInput').value = "";
+            filterText = "";
+            if (kanbanMode) { renderKanban(); } else { renderTable(); }
+        }
+
+        function toggleGlobalSearch() {
+            globalSearchMode = !globalSearchMode;
+            document.getElementById('btnGlobalSearch').classList.toggle('text-tiktok-cyan', globalSearchMode);
+            renderTable();
+        }
+
+        function updateGlobalSearchBanner() {
+            const banner = document.getElementById('globalSearchBanner');
+            const matches = [];
+            Object.keys(state).forEach(tabKey => {
+                if (tabKey === activeTab) return;
+                const count = state[tabKey].rows.filter(row => row.some(cell => (cell || "").toLowerCase().includes(filterText))).length;
+                if (count > 0) matches.push({ tabKey, count });
+            });
+            if (matches.length === 0) { banner.classList.add('hidden'); return; }
+            const tabNames = { ungVien: 'Ứng Viên', tienIch: 'Tiện Ích', noiDung: 'Nội Dung Lưu Trữ', luuTruKhac: 'Lưu Trữ Khác' };
+            banner.innerHTML = '<i class="fa-solid fa-layer-group text-tiktok-cyan mr-1"></i> Cũng tìm thấy ở: ' +
+                matches.map(m => `<span class="underline cursor-pointer font-semibold hover:text-tiktok-pink" onclick="jumpToTabWithSearch('${m.tabKey}')">${tabNames[m.tabKey]} (${m.count})</span>`).join(' · ');
+            banner.classList.remove('hidden');
+        }
+
+        function jumpToTabWithSearch(tabKey) {
+            const kept = filterText;
+            switchTab(tabKey);
+            document.getElementById('searchInput').value = kept;
+            filterText = kept;
+            renderTable();
+        }
+
+        function sortTable(cIdx) {
+            if (sortColIndex === cIdx) {
+                sortAsc = !sortAsc;
+            } else {
+                sortColIndex = cIdx;
+                sortAsc = true;
+            }
+            renderTable();
+        }
+
+        function updateHeader(cIdx, value) {
+            let val = value.trim() || `Cột ${cIdx + 1}`;
+            if (state[activeTab].headers[cIdx] !== val) {
+                pushHistory();
+                state[activeTab].headers[cIdx] = val;
+                onDataModified();
+                renderTable();
+            }
+        }
+
+        function addColumn() {
+            pushHistory();
+            state[activeTab].headers.push(`Tiêu đề mới`);
+            state[activeTab].rows.forEach(r => r.push(""));
+            onDataModified();
+            renderTable();
+            showToast("Đã thêm", "Một cột mới đã được tạo", "success");
+        }
+
+        function removeColumn(cIdx) {
+            if(confirm(`Bạn có chắc muốn xóa cột "${state[activeTab].headers[cIdx]}" và TOÀN BỘ dữ liệu của cột này?`)) {
+                pushHistory();
+                state[activeTab].headers.splice(cIdx, 1);
+                state[activeTab].rows.forEach(r => r.splice(cIdx, 1));
+                if(sortColIndex === cIdx) sortColIndex = -1;
+                onDataModified();
+                renderTable();
+                showToast("Đã xóa", "Đã xóa cột dữ liệu (Ctrl+Z để hoàn tác)", "info");
+            }
+        }
+
+        // Hiểu được kiểu viết tắt: "10k" -> 10000, "1.2tr"/"1.2m" -> 1200000, "500 nghìn" -> 500000
+        function parseFollowerSmart(raw) {
+            if (!raw) return "";
+            let s = raw.toString().trim().toLowerCase().replace(/\s+/g, '');
+            let mult = 1;
+            if (/(triệu|trieu|tr|m)$/.test(s)) { mult = 1000000; s = s.replace(/(triệu|trieu|tr|m)$/, ''); }
+            else if (/(nghìn|nghin|ngàn|ngan|k)$/.test(s)) { mult = 1000; s = s.replace(/(nghìn|nghin|ngàn|ngan|k)$/, ''); }
+            s = s.replace(',', '.');
+            let num = parseFloat(s.replace(/[^0-9.]/g, ''));
+            if (isNaN(num)) return raw.toString().replace(/[^0-9]/g, '');
+            return Math.round(num * mult).toString();
+        }
+
+        // Chuẩn hóa SĐT Việt Nam kiểu +84/84 về dạng 0xxxxxxxxx
+        function normalizePhone(raw) {
+            let s = raw.toString().trim().replace(/[\s.\-()]/g, '');
+            if (/^\+84\d{9,10}$/.test(s)) return '0' + s.slice(3);
+            if (/^84\d{9,10}$/.test(s)) return '0' + s.slice(2);
+            return raw.toString().trim();
+        }
+
+        function updateCell(rIdx, cIdx, value) {
+            let val = value.trim();
+            const data = state[activeTab];
+            const headerName = data.headers[cIdx].toLowerCase();
+
+            let oldVal = data.rows[rIdx][cIdx] || "";
+            let isChanged = false;
+
+            if (headerName.includes('follower')) {
+                val = parseFollowerSmart(val);
+                if (oldVal !== val) {
+                    pushHistory();
+                    data.rows[rIdx][cIdx] = val;
+                    isChanged = true;
+                    let tierIdx = data.headers.findIndex(h => h.toLowerCase().includes('phân loại'));
+                    if (tierIdx > -1) {
+                        data.rows[rIdx][tierIdx] = calculateTier(val);
+                    }
+                }
+            } else if (headerName.includes('điện thoại') || headerName.includes('phone')) {
+                val = normalizePhone(val);
+                if (oldVal !== val) {
+                    pushHistory();
+                    data.rows[rIdx][cIdx] = val;
+                    isChanged = true;
+                }
+            } else if (headerName.includes('tiktok') && val !== "" && !val.startsWith('@') && !val.startsWith('http')) {
+                val = '@' + val.replace(/^@+/, '');
+                if (oldVal !== val) {
+                    pushHistory();
+                    data.rows[rIdx][cIdx] = val;
+                    isChanged = true;
+                }
+            } else {
+                if (oldVal !== val) {
+                    pushHistory();
+                    data.rows[rIdx][cIdx] = val;
+                    isChanged = true;
+                }
+            }
+            
+            // Chỉ kích hoạt lưu khi dữ liệu thực sự bị chỉnh sửa, tránh lưu rác khi chỉ focus/blur
+            if (isChanged) {
+                markRowActivity(activeTab, data.rows[rIdx]);
+                onDataModified();
+                if (kanbanMode) renderKanban(); else renderTable();
+            }
+        }
+
+        function addNewRow() {
+            const cols = state[activeTab].headers.length;
+            if(cols === 0) {
+                showToast("Cảnh báo", "Vui lòng thêm ít nhất 1 cột tiêu đề trước!", "warning");
+                return;
+            }
+            let newRow = new Array(cols).fill("");
+            
+            let statusIdx = state[activeTab].headers.findIndex(h => h.toLowerCase().includes('trạng thái'));
+            if(statusIdx > -1) newRow[statusIdx] = "Mới";
+            
+            let ratingIdx = state[activeTab].headers.findIndex(h => h.toLowerCase().includes('đánh giá'));
+            if(ratingIdx > -1) newRow[ratingIdx] = "Chưa đánh giá";
+
+            pushHistory();
+            state[activeTab].rows.unshift(newRow);
+            markRowActivity(activeTab, newRow);
+            onDataModified();
+            if (kanbanMode) renderKanban(); else renderTable();
+            
+            setTimeout(() => {
+                const firstCell = document.querySelector('#gridBody tr:first-child td:nth-child(3) div[contenteditable="true"]');
+                if(firstCell) {
+                    firstCell.focus();
+                    document.execCommand('selectAll', false, null);
+                }
+            }, 50);
+        }
+
+        function deleteRow(rIdx) {
+            const removedRow = state[activeTab].rows[rIdx];
+            lastDeleted = { tab: activeTab, index: rIdx, row: removedRow };
+            pushHistory();
+            state[activeTab].rows.splice(rIdx, 1);
+            selectedRows.delete(rIdx);
+            onDataModified();
+            renderTable();
+            showToast("Đã xóa", "Đã xóa 1 dòng dữ liệu", "info", "Hoàn tác", undoDelete);
+        }
+
+        function undoDelete() {
+            if (!lastDeleted) return;
+            const { tab, index, row } = lastDeleted;
+            state[tab].rows.splice(index, 0, row);
+            lastDeleted = null;
+            onDataModified();
+            if (activeTab === tab) renderTable();
+            showToast("Đã khôi phục", "Dòng dữ liệu đã được hoàn tác", "success");
+        }
+
+        function toggleRowSelect(rIdx, checked) {
+            if (checked) selectedRows.add(rIdx); else selectedRows.delete(rIdx);
+            updateBulkBar();
+            document.querySelector(`tr td input.rowCheckbox[data-ridx="${rIdx}"]`)?.closest('tr')?.classList.toggle('row-selected', checked);
+        }
+
+        function toggleSelectAll(checked) {
+            document.querySelectorAll('.rowCheckbox').forEach(cb => {
+                cb.checked = checked;
+                const rIdx = parseInt(cb.dataset.ridx);
+                if (checked) selectedRows.add(rIdx); else selectedRows.delete(rIdx);
+            });
+            renderTable();
+        }
+
+        function clearSelection() {
+            selectedRows.clear();
+            renderTable();
+        }
+
+        function updateBulkBar() {
+            const bar = document.getElementById('bulkBar');
+            const count = selectedRows.size;
+            document.getElementById('bulkCount').innerText = count;
+            bar.classList.toggle('hidden', count === 0);
+            const sel = document.getElementById('bulkStatusSelect');
+            if (sel && sel.children.length === 0) {
+                sel.innerHTML = STATUS_OPTIONS.map(s => `<option value="${s}">${s}</option>`).join('');
+            }
+        }
+
+        function bulkUpdateStatus() {
+            const data = state[activeTab];
+            const statusIdx = data.headers.findIndex(h => h.toLowerCase().includes('trạng thái'));
+            if (statusIdx === -1) { showToast("Không thể áp dụng", "Trang này không có cột Trạng thái", "warning"); return; }
+            const newStatus = document.getElementById('bulkStatusSelect').value;
+            let isChanged = false;
+            pushHistory();
+
+            selectedRows.forEach(rIdx => { 
+                if (data.rows[rIdx] && data.rows[rIdx][statusIdx] !== newStatus) {
+                    data.rows[rIdx][statusIdx] = newStatus; 
+                    markRowActivity(activeTab, data.rows[rIdx]);
+                    isChanged = true;
+                }
+            });
+            
+            if (isChanged) onDataModified();
+            const n = selectedRows.size;
+            selectedRows.clear();
+            renderTable();
+            if (isChanged) showToast("Đã cập nhật hàng loạt", `Đã đổi trạng thái cho ${n} dòng thành "${newStatus}"`, "success");
+        }
+
+        function bulkDelete() {
+            if (!confirm(`Xóa ${selectedRows.size} dòng đã chọn? Hành động này không thể hoàn tác hàng loạt.`)) return;
+            const data = state[activeTab];
+            const indices = Array.from(selectedRows).sort((a, b) => b - a);
+            pushHistory();
+            indices.forEach(i => data.rows.splice(i, 1));
+            
+            onDataModified();
+            const n = selectedRows.size;
+            selectedRows.clear();
+            renderTable();
+            showToast("Đã xóa hàng loạt", `Đã xóa ${n} dòng dữ liệu`, "info");
+        }
+
+        // --- Chế độ Kanban (kéo-thả pipeline tuyển dụng) ---
+        function toggleKanbanView(forceOff) {
+            kanbanMode = forceOff === true ? false : !kanbanMode;
+            const label = document.getElementById('kanbanBtnLabel');
+            const tableWs = document.getElementById('tableWorkspace');
+            const kanbanWs = document.getElementById('kanbanWorkspace');
+            if (kanbanMode) {
+                label.innerText = "Xem Bảng";
+                tableWs.classList.add('hidden');
+                kanbanWs.classList.remove('hidden');
+                kanbanWs.style.display = 'flex';
+                renderKanban();
+            } else {
+                label.innerText = "Xem Kanban";
+                tableWs.classList.remove('hidden');
+                kanbanWs.classList.add('hidden');
+                kanbanWs.style.display = 'none';
+                renderTable();
+            }
+        }
+
+        function renderKanban() {
+            if (activeTab !== 'ungVien') return;
+            const data = state[activeTab];
+            const box = document.getElementById('kanbanWorkspace');
+            const statusIdx = data.headers.findIndex(h => h.toLowerCase().includes('trạng thái'));
+            const nameIdx = data.headers.findIndex(h => h.toLowerCase().includes('tên'));
+            const tiktokIdx = data.headers.findIndex(h => h.toLowerCase().includes('tiktok'));
+            const followerIdx = data.headers.findIndex(h => h.toLowerCase().includes('follower'));
+
+            if (statusIdx === -1) {
+                box.innerHTML = `<div class="text-gray-400 text-sm p-6">Trang này chưa có cột "Trạng Thái" nên không thể hiển thị Kanban.</div>`;
+                return;
+            }
+
+            let itemsByStatus = {};
+            STATUS_OPTIONS.forEach(s => itemsByStatus[s] = []);
+            data.rows.forEach((row, idx) => {
+                let s = row[statusIdx] || 'Mới';
+                if (!itemsByStatus[s]) itemsByStatus[s] = [];
+                itemsByStatus[s].push({ row, idx });
+            });
+
+            let html = '';
+            Object.keys(itemsByStatus).forEach(status => {
+                const items = itemsByStatus[status];
+                html += `<div class="kanban-col bg-gray-50 border border-gray-200 rounded-lg shrink-0 flex flex-col" ondragover="kanbanDragOver(event)" ondragleave="kanbanDragLeave(event)" ondrop="kanbanDrop(event, '${status.replace(/'/g, "\\'")}')">
+                    <div class="px-3 py-2 border-b font-bold text-sm flex items-center justify-between ${getStatusColor(status)} rounded-t-lg">
+                        <span>${status}</span><span class="text-xs bg-white/60 rounded-full px-2">${items.length}</span>
+                    </div>
+                    <div class="p-2 flex-1 overflow-y-auto space-y-2" style="max-height: calc(100vh - 320px);">`;
+                items.forEach(({ row, idx }) => {
+                    const score = calculateCandidateScore(row, data.headers);
+                    const name = nameIdx > -1 ? (row[nameIdx] || '(Chưa có tên)') : '(?)';
+                    const tk = tiktokIdx > -1 ? (row[tiktokIdx] || '') : '';
+                    const fl = followerIdx > -1 ? (row[followerIdx] || '0') : '';
+                    html += `<div class="kanban-card bg-white border border-gray-200 rounded-lg shadow-sm p-3" draggable="true" data-ridx="${idx}" ondragstart="kanbanDragStart(event, ${idx})" ondragend="kanbanDragEnd(event)">
+                        <div class="flex justify-between items-start gap-2">
+                            <p class="font-semibold text-sm text-gray-800">${name}</p>
+                            <span class="score-badge ${scoreBadgeColor(score)}">${score}</span>
+                        </div>
+                        ${tk ? `<p class="text-xs text-tiktok-pink mt-1"><i class="fa-brands fa-tiktok mr-1"></i>${tk}</p>` : ''}
+                        ${fl ? `<p class="text-xs text-blue-600 font-mono mt-0.5">${Number(fl).toLocaleString('vi-VN')} followers</p>` : ''}
+                    </div>`;
+                });
+                html += `</div></div>`;
+            });
+            box.innerHTML = html;
+        }
+
+        let kanbanDraggedIdx = null;
+        function kanbanDragStart(e, idx) { kanbanDraggedIdx = idx; e.target.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; }
+        function kanbanDragEnd(e) { e.target.classList.remove('dragging'); }
+        function kanbanDragOver(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+        function kanbanDragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
+        function kanbanDrop(e, newStatus) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over');
+            if (kanbanDraggedIdx === null) return;
+            const data = state[activeTab];
+            const statusIdx = data.headers.findIndex(h => h.toLowerCase().includes('trạng thái'));
+            if (statusIdx === -1) return;
+            if (data.rows[kanbanDraggedIdx][statusIdx] !== newStatus) {
+                pushHistory();
+                data.rows[kanbanDraggedIdx][statusIdx] = newStatus;
+                markRowActivity(activeTab, data.rows[kanbanDraggedIdx]);
+                onDataModified();
+                showToast("Đã cập nhật", `Ứng viên đã chuyển sang trạng thái "${newStatus}"`, "success");
+            }
+            kanbanDraggedIdx = null;
+            renderKanban();
+        }
+
+        // --- Dashboard / Thống kê thông minh ---
+        function renderDashboard() {
+            const box = document.getElementById('dashboardWorkspace');
+            const ung = state.ungVien;
+            const statusIdx = ung.headers.findIndex(h => h.toLowerCase().includes('trạng thái'));
+            const tierIdx = ung.headers.findIndex(h => h.toLowerCase().includes('phân loại'));
+            const nameIdx = ung.headers.findIndex(h => h.toLowerCase().includes('tên'));
+            const followerIdx = ung.headers.findIndex(h => h.toLowerCase().includes('follower'));
+
+            const statusCounts = {};
+            STATUS_OPTIONS.forEach(s => statusCounts[s] = 0);
+            ung.rows.forEach(r => { const s = statusIdx > -1 ? (r[statusIdx] || 'Mới') : 'Mới'; statusCounts[s] = (statusCounts[s] || 0) + 1; });
+
+            const tierCounts = { 'Diamond 💎': 0, 'Gold 🥇': 0, 'Silver 🥈': 0, 'Bronze 🥉': 0 };
+            ung.rows.forEach(r => { const t = tierIdx > -1 ? r[tierIdx] : ''; if (tierCounts[t] !== undefined) tierCounts[t]++; });
+
+            const total = ung.rows.length;
+            const hired = ung.rows.filter(r => statusIdx > -1 && /đã nhận|đạt/i.test(r[statusIdx] || '')).length;
+            const conversionRate = total > 0 ? Math.round((hired / total) * 100) : 0;
+            const followUpCount = countFollowUp(ung, statusIdx);
+
+            const topCandidates = ung.rows
+                .map(r => ({ row: r, score: calculateCandidateScore(r, ung.headers), followers: followerIdx > -1 ? (parseInt((r[followerIdx] || '0').replace(/[^0-9]/g, '')) || 0) : 0 }))
+                .sort((a, b) => b.score - a.score)
+                .slice(0, 5);
+
+            const barColors = { 'Mới': '#3b82f6', 'Phỏng vấn': '#eab308', 'Đã nhận': '#22c55e', 'Từ chối': '#ef4444', 'Đang đào tạo': '#a855f7', 'Nghỉ việc': '#ef4444' };
+            const maxCount = Math.max(1, ...Object.values(statusCounts));
+            let barsHtml = Object.keys(statusCounts).map((s, i) => {
+                const h = Math.round((statusCounts[s] / maxCount) * 140);
+                return `<div class="flex flex-col items-center gap-1 flex-1">
+                    <span class="text-xs font-bold text-gray-600">${statusCounts[s]}</span>
+                    <div style="height:${h}px; background:${barColors[s] || '#94a3b8'};" class="w-8 rounded-t transition-all"></div>
+                    <span class="text-[10px] text-gray-500 text-center leading-tight">${s}</span>
+                </div>`;
+            }).join('');
+
+            const tierTotal = Object.values(tierCounts).reduce((a, b) => a + b, 0) || 1;
+            const tierColors = { 'Diamond 💎': '#38bdf8', 'Gold 🥇': '#f59e0b', 'Silver 🥈': '#94a3b8', 'Bronze 🥉': '#b45309' };
+            let cumulative = 0;
+            const donutStops = Object.keys(tierCounts).map(t => {
+                const pct = (tierCounts[t] / tierTotal) * 100;
+                const start = cumulative;
+                cumulative += pct;
+                return `${tierColors[t]} ${start}% ${cumulative}%`;
+            }).join(', ');
+
+            box.innerHTML = `
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-5 lg:col-span-2">
+                        <h3 class="font-bold text-gray-700 mb-4"><i class="fa-solid fa-chart-column text-tiktok-pink mr-2"></i>Phễu Trạng Thái Ứng Viên</h3>
+                        <div class="flex items-end gap-2 h-[170px] px-2">${barsHtml}</div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-5 flex flex-col items-center">
+                        <h3 class="font-bold text-gray-700 mb-4 self-start"><i class="fa-solid fa-circle-notch text-tiktok-cyan mr-2"></i>Phân Hạng IDOL</h3>
+                        <div class="rounded-full w-32 h-32" style="background: conic-gradient(${donutStops});"></div>
+                        <div class="grid grid-cols-2 gap-x-4 gap-y-1 mt-4 text-xs">
+                            ${Object.keys(tierCounts).map(t => `<div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full inline-block" style="background:${tierColors[t]}"></span>${t} (${tierCounts[t]})</div>`).join('')}
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-5 text-center">
+                        <p class="text-sm text-gray-500">Tỷ Lệ Chuyển Đổi (Đã Nhận / Tổng)</p>
+                        <p class="text-4xl font-extrabold text-green-500 mt-2">${conversionRate}%</p>
+                        <p class="text-xs text-gray-400 mt-1">${hired}/${total} ứng viên</p>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-5 text-center">
+                        <p class="text-sm text-gray-500">Cần Theo Dõi Ngay</p>
+                        <p class="text-4xl font-extrabold text-purple-500 mt-2">${followUpCount}</p>
+                        <p class="text-xs text-gray-400 mt-1">Đang "Phỏng vấn" ≥ ${STALE_DAYS} ngày chưa cập nhật</p>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-5 text-center">
+                        <p class="text-sm text-gray-500">Tổng Ứng Viên</p>
+                        <p class="text-4xl font-extrabold text-blue-500 mt-2">${total}</p>
+                        <p class="text-xs text-gray-400 mt-1">Trên toàn bộ hệ thống</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-5 mt-4">
+                    <h3 class="font-bold text-gray-700 mb-3"><i class="fa-solid fa-ranking-star text-yellow-500 mr-2"></i>Top 5 Ứng Viên Điểm AI Cao Nhất</h3>
+                    ${topCandidates.length === 0 ? '<p class="text-sm text-gray-400">Chưa có dữ liệu ứng viên.</p>' : `
+                    <div class="space-y-2">
+                        ${topCandidates.map((c, i) => `
+                            <div class="flex items-center justify-between border-b last:border-0 py-2">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-6 h-6 rounded-full bg-gray-100 text-xs font-bold flex items-center justify-center text-gray-600">${i + 1}</span>
+                                    <span class="text-sm font-medium text-gray-700">${nameIdx > -1 ? (c.row[nameIdx] || '(Chưa có tên)') : '(?)'}</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-xs text-blue-600 font-mono">${c.followers.toLocaleString('vi-VN')} followers</span>
+                                    <span class="score-badge ${scoreBadgeColor(c.score)}">${c.score}</span>
+                                </div>
+                            </div>`).join('')}
+                    </div>`}
+                </div>
+            `;
+        }
+
+        // --- Thêm Nhanh Thông Minh (Quick Add AI) ---
+        function openQuickAddModal() {
+            document.getElementById('quickAddTabName').innerText = tabDisplayName(activeTab);
+            document.getElementById('quickAddHeaderHint').innerText = "Thứ tự cột: " + state[activeTab].headers.join(' → ');
+            document.getElementById('quickAddText').value = '';
+            document.getElementById('quickAddPreview').innerText = '';
+            document.getElementById('quickAddModal').classList.remove('hidden');
+        }
+        function closeQuickAddModal() { document.getElementById('quickAddModal').classList.add('hidden'); }
+        function tabDisplayName(t) {
+            return { ungVien: 'Ứng Viên', tienIch: 'Tiện Ích', noiDung: 'Nội Dung Lưu Trữ', luuTruKhac: 'Lưu Trữ Khác' }[t] || t;
+        }
+
+        function parseQuickAddLine(line, headers) {
+            let parts = line.includes(',') ? line.split(',') : line.split(/\s+-\s+/);
+            parts = parts.map(p => p.trim()).filter(p => p !== '');
+            if (parts.length === 0) return null;
+            const newRow = new Array(headers.length).fill("");
+            headers.forEach((h, i) => {
+                const hl = h.toLowerCase();
+                let val = parts[i] || "";
+                if (!val) return;
+                if (hl.includes('follower')) val = parseFollowerSmart(val);
+                else if (hl.includes('điện thoại') || hl.includes('phone')) val = normalizePhone(val);
+                else if (hl.includes('tiktok') && val !== "" && !val.startsWith('@') && !val.startsWith('http')) val = '@' + val.replace(/^@+/, '');
+                newRow[i] = val;
+            });
+            const statusIdx = headers.findIndex(h => h.toLowerCase().includes('trạng thái'));
+            if (statusIdx > -1 && !newRow[statusIdx]) newRow[statusIdx] = 'Mới';
+            const ratingIdx = headers.findIndex(h => h.toLowerCase().includes('đánh giá'));
+            if (ratingIdx > -1 && !newRow[ratingIdx]) newRow[ratingIdx] = 'Chưa đánh giá';
+            const tierIdx = headers.findIndex(h => h.toLowerCase().includes('phân loại'));
+            const followerIdx = headers.findIndex(h => h.toLowerCase().includes('follower'));
+            if (tierIdx > -1 && followerIdx > -1) newRow[tierIdx] = calculateTier(newRow[followerIdx] || "0");
+            return newRow;
+        }
+
+        document.addEventListener('input', (e) => {
+            if (e.target && e.target.id === 'quickAddText') {
+                const lines = e.target.value.split('\n').map(l => l.trim()).filter(l => l !== '');
+                document.getElementById('quickAddPreview').innerText = lines.length > 0 ? `Sẽ thêm ${lines.length} dòng dữ liệu mới.` : '';
+            }
+        });
+
+        function submitQuickAdd() {
+            const text = document.getElementById('quickAddText').value;
+            const lines = text.split('\n').map(l => l.trim()).filter(l => l !== '');
+            if (lines.length === 0) { showToast("Chưa có dữ liệu", "Vui lòng dán ít nhất 1 dòng dữ liệu", "warning"); return; }
+
+            const headers = state[activeTab].headers;
+            if (headers.length === 0) { showToast("Thiếu tiêu đề cột", "Trang này chưa có cột tiêu đề nào", "warning"); return; }
+
+            pushHistory();
+            let added = 0;
+            lines.forEach(line => {
+                const row = parseQuickAddLine(line, headers);
+                if (row) { state[activeTab].rows.unshift(row); markRowActivity(activeTab, row); added++; }
+            });
+            onDataModified();
+            closeQuickAddModal();
+            if (kanbanMode) renderKanban(); else renderTable();
+            showToast("Thêm nhanh thành công", `Đã tự động thêm ${added} dòng vào trang "${tabDisplayName(activeTab)}"`, "success");
+        }
+
+        function openAppsScriptModal() { document.getElementById('appsScriptModal').classList.remove('hidden'); }
+        function closeAppsScriptModal() { document.getElementById('appsScriptModal').classList.add('hidden'); }
+
+        function saveSettings() {
+            const url = document.getElementById('scriptUrl').value.trim();
+            localStorage.setItem('hr_script_url', url);
+            appsScriptUrl = url;
+            closeAppsScriptModal();
+
+            if (url) {
+                // Có URL hợp lệ -> tự động BẬT Auto-Sync ngay, không bắt người dùng
+                // phải gạt công tắc thêm 1 bước nữa. Mọi thao tác Thêm/Sửa/Xóa sau đó
+                // sẽ tự động đồng bộ lên Google Sheets.
+                if (localStorage.getItem('hr_autosync') !== 'on') {
+                    document.getElementById('autoSyncToggle').checked = true;
+                    toggleAutoSync(true, true);
+                }
+                showToast("Cấu hình lưu thành công", "Đã lưu URL và tự động bật Auto-Sync — mọi thao tác Thêm/Sửa/Xóa sẽ tự động đồng bộ lên Cloud", "success");
+            } else {
+                document.getElementById('autoSyncToggle').checked = false;
+                toggleAutoSync(false, true);
+                showToast("Đã xóa cấu hình", "Chưa có URL nên Auto-Sync đã được tắt", "info");
+            }
+        }
+
+        function copyScriptCode() {
+            const code = document.getElementById('scriptCode').innerText;
+            const tempTextArea = document.createElement("textarea");
+            tempTextArea.value = code;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            try {
+                document.execCommand('copy');
+                showToast("Đã sao chép", "Bạn hãy dán mã này vào file Apps Script", "success");
+            } catch (err) { console.error('Lỗi copy:', err); }
+            document.body.removeChild(tempTextArea);
+        }
+
+        // showTime=true: đây là trạng thái CUỐI (thành công/lỗi) nên hiển thị kèm mốc giờ.
+        // showTime=false (mặc định): trạng thái tạm thời/đang xử lý, không cần mốc giờ.
+        function setLastSyncBadge(html, showTime = false) {
+            const badge = document.getElementById('lastSyncBadge');
+            if (html === "") { badge.innerHTML = ""; return; }
+            if (showTime) {
+                const now = new Date();
+                badge.innerHTML = `${html} lúc ${now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`;
+            } else {
+                badge.innerHTML = html;
+            }
+        }
+
+        // Tích hợp param silent để lưu ngầm cho hệ thống Auto-Sync thông minh
+        // attempt: dùng nội bộ để tự động thử lại (retry với backoff) khi lưu ngầm bị lỗi
+        async function saveToCloud(silent = false, attempt = 1) {
+            if (!appsScriptUrl) {
+                if (!silent) {
+                    openAppsScriptModal();
+                    showToast("Thiếu cấu hình", "Cần nhập URL Apps Script trước", "warning");
+                }
+                return;
+            }
+
+            if (!navigator.onLine) {
+                setLastSyncBadge('<span class="text-orange-400"><i class="fa-solid fa-wifi mr-1"></i>Mất mạng - sẽ tự lưu lại</span>');
+                if (!silent) showToast("Mất kết nối mạng", "Hệ thống sẽ tự động đồng bộ lại khi có mạng trở lại", "warning");
+                return;
+            }
+
+            if (isSyncing) return; // tránh 2 lần lưu chồng lên nhau
+            isSyncing = true;
+
+            const btn = document.getElementById('btnSave');
+            const originalHtml = btn.innerHTML;
+            
+            if (!silent) {
+                btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Đang lưu...';
+                btn.disabled = true;
+            }
+            
+            setLastSyncBadge('<i class="fa-solid fa-spinner fa-spin mr-1 text-tiktok-cyan"></i>Đang đồng bộ...');
+
+            const notifyEmail = document.getElementById('notifyEmail').value.trim();
+            const payload = { ...state, _meta: { notifyEmail, savedAt: new Date().toISOString() } };
+
+            try {
+                const formData = new URLSearchParams();
+                formData.append("data", JSON.stringify(payload));
+
+                const response = await fetch(appsScriptUrl, { 
+                    method: 'POST', 
+                    body: formData 
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === "success") {
+                    if (!silent) showToast("Đồng bộ thành công", "Toàn bộ hệ thống đã được đồng bộ chuẩn xác với cơ sở dữ liệu.", "success");
+                    setLastSyncBadge('<i class="fa-solid fa-cloud-check text-green-500 mr-1"></i>Đã lưu Cloud', true);
+                    unsyncedChanges = false;
+                    updateSyncIndicator();
+                } else {
+                    throw new Error(result.message || "Lỗi máy chủ");
+                }
+            } catch (error) {
+                console.error("Lỗi đồng bộ:", error);
+                if (silent && attempt < 3) {
+                    // Tự động thử lại ngầm tối đa 3 lần, giãn cách tăng dần (backoff)
+                    setLastSyncBadge(`<span class="text-orange-400"><i class="fa-solid fa-rotate-right mr-1"></i>Thử lại lần ${attempt + 1}...</span>`);
+                    isSyncing = false;
+                    setTimeout(() => saveToCloud(true, attempt + 1), attempt * 4000);
+                    return;
+                }
+                if (!silent) {
+                    showToast("Đã xảy ra lỗi", "Lưu thất bại. Kiểm tra URL Apps Script hoặc kết nối mạng.", "error", "Thử lại", () => saveToCloud(false));
+                } else {
+                    showToast("Tự động đồng bộ thất bại", "Đã thử 3 lần không thành công. Bấm nút Lưu để thử thủ công.", "error", "Thử lại", () => saveToCloud(false));
+                }
+                setLastSyncBadge('<span class="text-red-400"><i class="fa-solid fa-circle-xmark mr-1"></i>Lỗi lưu</span>', true);
+            } finally {
+                isSyncing = false;
+                if (!silent) {
+                    btn.innerHTML = originalHtml;
+                    btn.disabled = false;
+                }
+            }
+        }
+
+        async function loadFromCloud() {
+            if (!appsScriptUrl) {
+                openAppsScriptModal();
+                showToast("Thiếu cấu hình", "Cần nhập URL Apps Script trước", "warning");
+                return;
+            }
+            if (!navigator.onLine) {
+                showToast("Mất kết nối mạng", "Không thể tải dữ liệu khi đang offline", "warning");
+                return;
+            }
+            if (unsyncedChanges) {
+                const proceed = confirm("Bạn đang có thay đổi CHƯA đồng bộ lên Cloud.\nTải từ Cloud sẽ GHI ĐÈ dữ liệu đang chỉnh sửa hiện tại.\nBấm OK để tiếp tục tải (mất thay đổi local), Cancel để hủy.");
+                if (!proceed) return;
+            }
+
+            const btn = document.getElementById('btnLoad');
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Đang tải...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(appsScriptUrl);
+                const data = await response.json();
+
+                if (data && data.status === "error") {
+                    throw new Error(data.message || "Lỗi máy chủ Apps Script");
+                }
+
+                const validTabs = ['ungVien', 'tienIch', 'noiDung', 'luuTruKhac'];
+                const hasValidData = data && validTabs.some(t => data[t] && Array.isArray(data[t].headers));
+
+                if (hasValidData) {
+                    pushHistory();
+                    validTabs.forEach(t => {
+                        if (data[t] && Array.isArray(data[t].headers)) {
+                            state[t] = { headers: data[t].headers, rows: data[t].rows || [] };
+                        }
+                    });
+                    unsyncedChanges = false;
+                    updateSyncIndicator();
+                    autoSaveDraft(); // Lưu ngay vào bản nháp local khi tải về thành công
+                    renderTable();
+                    showToast("Tải hoàn tất", "Dữ liệu 4 trang đã được cập nhật từ Google Sheets", "success");
+                    setLastSyncBadge("Đã tải từ Cloud", true);
+                } else {
+                    showToast("Không có dữ liệu", "Google Sheet chưa có dữ liệu hoặc chưa dán đúng mã Apps Script (cần có hàm doGet)", "warning");
+                }
+            } catch (error) {
+                console.error(error);
+                showToast("Lỗi kết nối", error.message || "Không thể tải dữ liệu, kiểm tra lại URL", "error");
+            } finally {
+                btn.innerHTML = originalHtml;
+                btn.disabled = false;
+            }
+        }
+
+        function exportToCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; 
+            const data = state[activeTab];
+            
+            csvContent += data.headers.map(h => `"${h}"`).join(",") + "\n";
+            data.rows.forEach(row => {
+                let r = row.map(cell => `"${(cell||"").toString().replace(/"/g, '""')}"`);
+                csvContent += r.join(",") + "\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Data_${activeTab}_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast("Xuất file thành công", `File CSV trang "${activeTab}" đã được tải xuống`, "success");
+        }
+
+        function showToast(title, msg, type = 'info', actionLabel = null, actionFn = null) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastTitle').innerText = title;
+            document.getElementById('toastMsg').innerText = msg;
+            const icon = document.getElementById('toastIcon');
+            
+            if(type === 'success') { icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>'; } 
+            else if (type === 'error') { icon.innerHTML = '<i class="fa-solid fa-circle-exclamation text-red-500"></i>'; } 
+            else if (type === 'warning') { icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>'; } 
+            else { icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>'; }
+
+            const actionBtn = document.getElementById('toastAction');
+            if (actionLabel && actionFn) {
+                actionBtn.innerText = actionLabel;
+                actionBtn.classList.remove('hidden');
+                actionBtn.onclick = () => { actionFn(); toast.classList.remove('show'); };
+            } else {
+                actionBtn.classList.add('hidden');
+                actionBtn.onclick = null;
+            }
+            
+            toast.classList.add('show');
+            clearTimeout(window._toastTimer);
+            window._toastTimer = setTimeout(() => { toast.classList.remove('show'); }, actionLabel ? 6000 : 3500);
+        }
+
+        function importCSV(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const rows = parseCSV(e.target.result);
+                    if (rows.length === 0) { showToast("File rỗng", "Không tìm thấy dữ liệu trong file CSV", "warning"); return; }
+                    const [headerRow, ...dataRows] = rows;
+                    const data = state[activeTab];
+                    const replace = data.rows.length > 0
+                        ? confirm(`Trang "${activeTab}" đang có ${data.rows.length} dòng.\nBấm OK để THAY THẾ toàn bộ, Cancel để NỐI THÊM vào cuối.`)
+                        : true;
+
+                    pushHistory();
+                    if (replace) {
+                        data.headers = headerRow;
+                        data.rows = dataRows;
+                    } else {
+                        dataRows.forEach(r => {
+                            const newRow = new Array(data.headers.length).fill("");
+                            for (let i = 0; i < data.headers.length; i++) newRow[i] = r[i] || "";
+                            data.rows.push(newRow);
+                        });
+                    }
+                    onDataModified(); // Dữ liệu đổi do import CSV -> Đánh dấu thay đổi
+                    renderTable();
+                    showToast("Nhập CSV thành công", `Đã nạp ${dataRows.length} dòng dữ liệu vào trang "${activeTab}"`, "success");
+                } catch (err) {
+                    showToast("Lỗi đọc file", "File CSV không đúng định dạng", "error");
+                } finally {
+                    event.target.value = "";
+                }
+            };
+            reader.readAsText(file, 'UTF-8');
+        }
+
+        function parseCSV(text) {
+            const rows = [];
+            let row = [], field = "", inQuotes = false;
+            text = text.replace(/^\uFEFF/, ''); 
+            for (let i = 0; i < text.length; i++) {
+                const c = text[i];
+                if (inQuotes) {
+                    if (c === '"' && text[i + 1] === '"') { field += '"'; i++; }
+                    else if (c === '"') { inQuotes = false; }
+                    else { field += c; }
+                } else {
+                    if (c === '"') inQuotes = true;
+                    else if (c === ',') { row.push(field); field = ""; }
+                    else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ""; }
+                    else if (c === '\r') {  }
+                    else { field += c; }
+                }
+            }
+            if (field.length > 0 || row.length > 0) { row.push(field); rows.push(row); }
+            return rows.filter(r => r.some(f => f.trim() !== ""));
+        }
+
+        function exportToExcel() {
+            if (typeof XLSX === 'undefined') { showToast("Lỗi thư viện", "Không thể tải thư viện xuất Excel", "error"); return; }
+            const wb = XLSX.utils.book_new();
+            const tabNames = { ungVien: 'Ung Vien', tienIch: 'Tien Ich', noiDung: 'Noi Dung', luuTruKhac: 'Luu Tru Khac' };
+            Object.keys(state).forEach(key => {
+                const data = state[key];
+                const aoa = [data.headers, ...data.rows];
+                const ws = XLSX.utils.aoa_to_sheet(aoa);
+                XLSX.utils.book_append_sheet(wb, ws, tabNames[key] || key);
+            });
+            XLSX.writeFile(wb, `HR_IdolRecruit_${new Date().toISOString().split('T')[0]}.xlsx`);
+            showToast("Xuất Excel thành công", "File .xlsx gồm đủ 4 trang đã được tải xuống", "success");
+        }
+    </script>
+</body>
+</html>
