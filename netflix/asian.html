@@ -11,8 +11,8 @@
 
     <style>
         /* Phông chữ hình học, siêu mỏng */
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500&display=swap');
-        
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600&display=swap');
+
         :root {
             --glass-bg: rgba(15, 15, 15, 0.45);
             --glass-panel: rgba(10, 10, 10, 0.75);
@@ -20,6 +20,7 @@
             --glass-highlight: rgba(255, 255, 255, 0.1);
             --text-main: #f8fafc;
             --text-muted: #64748b;
+            --accent-red: #e50914;
         }
 
         body {
@@ -45,14 +46,14 @@
         }
 
         /* Hiệu ứng Glassmorphism */
-        .glass-container { 
-            background: var(--glass-bg); 
-            backdrop-filter: blur(28px); 
-            -webkit-backdrop-filter: blur(28px); 
-            border: 1px solid var(--glass-border); 
+        .glass-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid var(--glass-border);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
         }
-        
+
         .glass-input {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--glass-border);
@@ -68,18 +69,66 @@
         .font-thin-geo { font-weight: 200; letter-spacing: 0.03em; }
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        @keyframes slideUpFade { 
-            0% { opacity: 0; transform: translateY(10px) scale(0.98); } 
-            100% { opacity: 1; transform: translateY(0) scale(1); } 
+
+        @keyframes slideUpFade {
+            0% { opacity: 0; transform: translateY(10px) scale(0.98); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
         }
         .msg-enter { animation: slideUpFade 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
-        
+
         @keyframes pulse-ring { 0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(255,255,255,0.2); } 100% { transform: scale(1); box-shadow: 0 0 0 10px rgba(255,255,255,0); } }
         .status-dot { animation: pulse-ring 2s infinite; }
+        .status-dot.offline { animation: none; background-color: #ef4444 !important; }
+
+        /* --- New: Toasts --- */
+        #toast-stack { position: fixed; top: env(safe-area-inset-top, 16px); left: 50%; transform: translateX(-50%); z-index: 100; display: flex; flex-direction: column; gap: 8px; align-items: center; pointer-events: none; }
+        .toast { pointer-events: auto; background: rgba(20,20,20,0.92); border: 1px solid var(--glass-border); backdrop-filter: blur(20px); color: #fff; font-size: 13px; font-weight: 300; padding: 10px 18px; border-radius: 999px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); animation: slideUpFade 0.25s ease forwards; display:flex; align-items:center; gap:8px; max-width:88vw; }
+        .toast.error { border-color: rgba(239,68,68,0.4); }
+        .toast.success { border-color: rgba(16,185,129,0.4); }
+
+        /* --- New: password eye toggle --- */
+        .eye-toggle { position:absolute; right:16px; top:50%; transform:translateY(-50%); cursor:pointer; color:rgba(255,255,255,0.3); }
+        .eye-toggle:hover { color:rgba(255,255,255,0.8); }
+
+        /* --- New: search bar --- */
+        #search-bar { max-height:0; overflow:hidden; transition: max-height 0.25s ease, padding 0.25s ease; }
+        #search-bar.open { max-height:70px; }
+
+        /* --- New: date separator --- */
+        .date-sep { display:flex; align-items:center; justify-content:center; margin: 6px 0; }
+        .date-sep span { font-size:10px; letter-spacing:0.15em; text-transform:uppercase; color:rgba(255,255,255,0.3); background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.05); padding:4px 14px; border-radius:999px; }
+
+        /* --- New: scroll to bottom fab --- */
+        #scroll-fab { position:absolute; bottom:90px; right:20px; z-index:25; background:rgba(20,20,20,0.85); border:1px solid var(--glass-border); backdrop-filter: blur(16px); color:white; width:42px; height:42px; border-radius:9999px; display:flex; align-items:center; justify-content:center; box-shadow:0 10px 25px rgba(0,0,0,0.5); transition: all 0.2s ease; transform: scale(0); opacity:0; }
+        #scroll-fab.show { transform:scale(1); opacity:1; }
+        #scroll-fab .badge { position:absolute; top:-4px; right:-4px; background:var(--accent-red); font-size:10px; min-width:18px; height:18px; border-radius:999px; display:flex; align-items:center; justify-content:center; padding:0 4px; font-weight:500; }
+
+        /* --- New: emoji picker panel --- */
+        #emoji-panel { position:absolute; bottom:calc(100% + 10px); left:0; z-index:40; border-radius:1.25rem; overflow:hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.7); border:1px solid var(--glass-border); display:none; }
+        #emoji-panel.show { display:block; }
+        emoji-picker { --background: rgba(12,12,12,0.97); --border-color: rgba(255,255,255,0.06); --indicator-color: #fff; --input-border-color: rgba(255,255,255,0.1); --input-font-color: #fff; --input-placeholder-color: rgba(255,255,255,0.3); --category-font-color: rgba(255,255,255,0.4); --outline-color: rgba(255,255,255,0.2); width: min(320px, 88vw); height: 360px; }
+
+        /* --- New: file preview card --- */
+        .chat-image { max-width: 240px; max-height: 320px; border-radius: 14px; cursor: zoom-in; display:block; object-fit:cover; }
+        .file-chip { display:flex; align-items:center; gap:8px; }
+
+        /* --- New: image lightbox --- */
+        #lightbox { position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:200; display:none; align-items:center; justify-content:center; padding:24px; }
+        #lightbox.show { display:flex; }
+        #lightbox img { max-width:100%; max-height:100%; border-radius:12px; }
+
+        /* --- New: grouped message spacer (aligns bubbles when avatar hidden) --- */
+        .avatar-spacer { width: 2rem; flex-shrink:0; }
+
+        /* Hint text */
+        .input-hint { font-size:10px; color:rgba(255,255,255,0.15); text-align:center; margin-top:6px; letter-spacing:0.05em; }
+
+        mark { background: rgba(255,255,255,0.25); color:inherit; border-radius:3px; padding:0 2px; }
     </style>
 </head>
 <body class="fixed inset-0 w-full flex items-center justify-center antialiased overflow-hidden overscroll-none">
+
+    <div id="toast-stack"></div>
 
     <!-- LOGIN SCREEN -->
     <div id="login-screen" class="glass-container p-10 rounded-[2rem] w-[90%] sm:w-full max-w-sm transition-all duration-700 relative z-10 flex flex-col items-center">
@@ -88,36 +137,43 @@
             <p class="text-[11px] text-white/40 tracking-widest uppercase">Secure Communication</p>
         </div>
 
-        <form id="login-form" class="w-full space-y-6">
+        <form id="login-form" class="w-full space-y-4">
             <div class="relative">
-                <input type="text" id="username" required placeholder="Tên truy cập..." class="w-full px-5 py-4 rounded-xl glass-input text-white focus:outline-none placeholder-white/20 font-light text-center text-lg">
+                <input type="text" id="username" required autocomplete="username" placeholder="Tên truy cập..." class="w-full px-5 py-4 rounded-xl glass-input text-white focus:outline-none placeholder-white/20 font-light text-center text-lg">
             </div>
-            
+            <div class="relative">
+                <input type="password" id="password" required autocomplete="current-password" placeholder="Mật khẩu..." class="w-full px-5 py-4 rounded-xl glass-input text-white focus:outline-none placeholder-white/20 font-light text-center text-lg">
+                <span id="toggle-pw" class="eye-toggle" title="Hiện/ẩn mật khẩu">
+                    <svg id="eye-icon" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                </span>
+            </div>
+
             <button type="submit" id="login-btn" class="w-full bg-white/90 hover:bg-white text-black font-medium py-4 rounded-xl transition-colors flex justify-center items-center group">
                 <span class="tracking-wide">KẾT NỐI</span>
                 <svg class="w-4 h-4 ml-2 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
             </button>
         </form>
+        <p class="input-hint mt-4">Nhấn Enter để kết nối nhanh</p>
     </div>
 
     <!-- CHAT SCREEN -->
     <div id="chat-screen" class="hidden w-full h-full md:h-[95vh] md:max-w-4xl md:mx-auto md:rounded-[2rem] shadow-2xl glass-container flex flex-col overflow-hidden relative z-10">
-        
+
         <!-- TOP NAVIGATION -->
         <div class="px-6 py-4 flex items-center justify-between border-b border-white/5 bg-black/40 backdrop-blur-xl z-20">
             <div class="flex items-center space-x-4">
                 <div class="relative">
                     <img id="my-avatar" src="" class="w-11 h-11 rounded-full border border-white/10 p-0.5 object-cover">
-                    <div class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-black rounded-full status-dot"></div>
+                    <div id="status-dot" class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-black rounded-full status-dot"></div>
                 </div>
                 <div>
                     <h2 class="text-lg font-medium text-white tracking-wide" id="smart-greeting">Đang kết nối...</h2>
-                    <p class="text-[11px] text-white/40 font-light uppercase tracking-wider mt-0.5">Phòng: TUI NÈ MÌNH</p>
+                    <p class="text-[11px] text-white/40 font-light uppercase tracking-wider mt-0.5" id="conn-status">NETFLIX ASIAN: OPERATION</p>
                 </div>
             </div>
-            
+
             <div class="flex items-center space-x-2">
-                <button class="p-2.5 rounded-full hover:bg-white/5 text-white/40 hover:text-white transition-colors">
+                <button id="search-toggle-btn" class="p-2.5 rounded-full hover:bg-white/5 text-white/40 hover:text-white transition-colors">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 </button>
                 <button id="logout-btn" class="p-2.5 rounded-full hover:bg-red-500/10 text-white/40 hover:text-red-400 transition-colors">
@@ -126,10 +182,24 @@
             </div>
         </div>
 
+        <!-- SEARCH BAR -->
+        <div id="search-bar" class="border-b border-white/5 bg-black/30 z-20 px-5">
+            <div class="py-3 flex items-center glass-input rounded-xl px-4">
+                <svg class="w-4 h-4 text-white/30 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <input id="search-input" type="text" placeholder="Tìm tin nhắn..." class="bg-transparent flex-1 text-sm text-white placeholder-white/20 focus:outline-none font-light">
+                <span id="search-count" class="text-[11px] text-white/30 ml-2 whitespace-nowrap"></span>
+            </div>
+        </div>
+
         <!-- MESSAGE AREA -->
-        <div id="chat-messages" class="flex-1 p-5 sm:p-8 overflow-y-auto flex flex-col space-y-6 hide-scroll scroll-smooth relative z-10">
+        <div id="chat-messages" class="flex-1 p-5 sm:p-8 overflow-y-auto flex flex-col space-y-3 hide-scroll scroll-smooth relative z-10">
             <!-- Messages inject here -->
         </div>
+
+        <button id="scroll-fab">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+            <span id="scroll-fab-badge" class="badge hidden">0</span>
+        </button>
 
         <!-- SMART SUGGESTIONS -->
         <div id="smart-suggestions" class="px-5 py-2 flex space-x-2 overflow-x-auto hide-scroll whitespace-nowrap opacity-0 transition-opacity duration-300 pointer-events-none absolute bottom-[80px] w-full z-20 bg-gradient-to-t from-black/80 to-transparent pb-4">
@@ -140,19 +210,21 @@
 
         <!-- INPUT AREA -->
         <div class="p-4 bg-black/60 backdrop-blur-2xl border-t border-white/5 z-30">
-            <form id="chat-form" class="flex items-end space-x-3 max-w-4xl mx-auto">
-                <button type="button" class="p-3.5 text-white/40 hover:text-white rounded-xl glass-input transition-colors mb-0.5 flex-shrink-0">
+            <form id="chat-form" class="flex items-end space-x-3 max-w-4xl mx-auto relative">
+                <input type="file" id="file-input" accept="image/*" class="hidden">
+                <button type="button" id="attach-btn" class="p-3.5 text-white/40 hover:text-white rounded-xl glass-input transition-colors mb-0.5 flex-shrink-0" title="Gửi ảnh">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
                 </button>
 
                 <div class="flex-1 relative glass-input rounded-2xl flex items-end overflow-hidden border border-white/10">
+                    <div id="emoji-panel"><emoji-picker></emoji-picker></div>
                     <textarea id="message-input" rows="1" placeholder="Nhập nội dung..." class="w-full pl-5 pr-12 py-4 bg-transparent focus:outline-none placeholder-white/20 text-white font-light resize-none overflow-y-auto max-h-[150px] hide-scroll text-[15px] leading-relaxed"></textarea>
-                    
-                    <button type="button" class="absolute right-3 bottom-3 p-1.5 text-white/30 hover:text-white transition-colors">
+
+                    <button type="button" id="emoji-btn" class="absolute right-3 bottom-3 p-1.5 text-white/30 hover:text-white transition-colors" title="Emoji">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     </button>
                 </div>
-                
+
                 <button type="submit" id="send-btn" class="bg-white/90 hover:bg-white text-black p-4 rounded-xl mb-0.5 transition-all shadow-[0_0_15px_rgba(255,255,255,0.2)] disabled:opacity-50 flex-shrink-0">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
                 </button>
@@ -160,22 +232,88 @@
         </div>
     </div>
 
+    <!-- LIGHTBOX -->
+    <div id="lightbox"><img id="lightbox-img" src=""></div>
+
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwHB9moxO9jfz7al50ssSBXl3TanpxsFPqW6VcFw1XHgFec3TtRwnaQI3qiob8zaCZK/exec';
-        let currentUser = ''; 
-        let pollingInterval = null; 
-        let lastMessageCount = 0;
+        let currentUser = '';
+        let pollingInterval = null;
         let isUserScrolling = false;
+        let renderedMessages = [];
+        let unreadCount = 0;
+        let consecutiveFailures = 0;
+        const MAX_IMAGE_B64_CHARS = 45000; // stay safely under typical Google Sheets cell limits
 
         const els = {
             login: document.getElementById('login-screen'), chat: document.getElementById('chat-screen'),
             loginForm: document.getElementById('login-form'), chatForm: document.getElementById('chat-form'),
             messages: document.getElementById('chat-messages'), input: document.getElementById('message-input'),
             sendBtn: document.getElementById('send-btn'), myAvatar: document.getElementById('my-avatar'),
-            greeting: document.getElementById('smart-greeting'), suggestions: document.getElementById('smart-suggestions')
+            greeting: document.getElementById('smart-greeting'), suggestions: document.getElementById('smart-suggestions'),
+            connStatus: document.getElementById('conn-status'), statusDot: document.getElementById('status-dot'),
+            toastStack: document.getElementById('toast-stack'),
+            searchToggleBtn: document.getElementById('search-toggle-btn'), searchBar: document.getElementById('search-bar'),
+            searchInput: document.getElementById('search-input'), searchCount: document.getElementById('search-count'),
+            scrollFab: document.getElementById('scroll-fab'), scrollFabBadge: document.getElementById('scroll-fab-badge'),
+            emojiBtn: document.getElementById('emoji-btn'), emojiPanel: document.getElementById('emoji-panel'),
+            attachBtn: document.getElementById('attach-btn'), fileInput: document.getElementById('file-input'),
+            lightbox: document.getElementById('lightbox'), lightboxImg: document.getElementById('lightbox-img'),
+            togglePw: document.getElementById('toggle-pw'), pwInput: document.getElementById('password')
         };
 
-        // --- SMART FEATURE: Chào hỏi theo ngữ cảnh thời gian ---
+        // ================= TOAST SYSTEM =================
+        function showToast(message, type = 'info') {
+            const t = document.createElement('div');
+            t.className = `toast ${type}`;
+            t.textContent = message;
+            els.toastStack.appendChild(t);
+            setTimeout(() => {
+                t.style.transition = 'opacity 0.3s ease';
+                t.style.opacity = '0';
+                setTimeout(() => t.remove(), 300);
+            }, 3200);
+        }
+
+        // ================= SOUND NOTIFICATION =================
+        let audioCtx = null;
+        function playNotifySound() {
+            try {
+                audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o.type = 'sine';
+                o.frequency.setValueAtTime(880, audioCtx.currentTime);
+                g.gain.setValueAtTime(0.001, audioCtx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.08, audioCtx.currentTime + 0.02);
+                g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+                o.connect(g); g.connect(audioCtx.destination);
+                o.start(); o.stop(audioCtx.currentTime + 0.35);
+            } catch (e) {}
+        }
+
+        function notifyNewMessage(msg) {
+            playNotifySound();
+            if (document.hidden && 'Notification' in window && Notification.permission === 'granted') {
+                try {
+                    new Notification(msg.username, { body: msg.isFile ? '📷 Đã gửi một hình ảnh' : msg.text, silent: true });
+                } catch (e) {}
+            }
+        }
+
+        function requestNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission().catch(() => {});
+            }
+        }
+
+        // ================= PASSWORD EYE TOGGLE =================
+        els.togglePw.addEventListener('click', () => {
+            const isPw = els.pwInput.type === 'password';
+            els.pwInput.type = isPw ? 'text' : 'password';
+        });
+
+        // ================= SMART FEATURE: Chào hỏi theo ngữ cảnh thời gian =================
         function setSmartGreeting(name) {
             const hour = new Date().getHours();
             let greet = 'Chào buổi sáng';
@@ -184,25 +322,40 @@
             els.greeting.innerText = `${greet}, ${name}`;
         }
 
-        // --- SMART FEATURE: Tự động cuộn thông minh (Auto-Scroll Logic) ---
+        // ================= AUTO-SCROLL / SCROLL FAB =================
         els.messages.addEventListener('scroll', () => {
             const { scrollTop, scrollHeight, clientHeight } = els.messages;
-            // Nếu người dùng cuộn lên trên cách đáy hơn 100px, đánh dấu là đang đọc tin cũ
             isUserScrolling = (scrollHeight - scrollTop - clientHeight) > 100;
+            if (!isUserScrolling) clearUnread();
         });
 
         function scrollToBottom(force = false) {
             if (!isUserScrolling || force) {
-                els.messages.scrollTo({ top: els.messages.scrollHeight, behavior: 'smooth' });
+                els.messages.scrollTo({ top: els.messages.scrollHeight, behavior: force ? 'auto' : 'smooth' });
             }
         }
 
-        // --- SMART FEATURE: Draft & Suggestions ---
+        function clearUnread() {
+            unreadCount = 0;
+            els.scrollFab.classList.remove('show');
+            els.scrollFabBadge.classList.add('hidden');
+        }
+
+        els.scrollFab.addEventListener('click', () => { scrollToBottom(true); clearUnread(); });
+
+        function bumpUnread() {
+            unreadCount++;
+            els.scrollFab.classList.add('show');
+            els.scrollFabBadge.classList.remove('hidden');
+            els.scrollFabBadge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+        }
+
+        // ================= DRAFT & SUGGESTIONS =================
         els.input.addEventListener('input', function() {
             this.style.height = 'auto';
             this.style.height = (this.scrollHeight) + 'px';
             localStorage.setItem('nexus_draft_v2', this.value);
-            
+
             if (this.value.trim() === '') {
                 els.suggestions.classList.remove('opacity-0', 'pointer-events-none');
             } else {
@@ -215,15 +368,119 @@
                 els.input.value = btn.innerText;
                 els.suggestions.classList.add('opacity-0', 'pointer-events-none');
                 els.input.focus();
-                // Tự động trigger gửi
-                els.sendBtn.click(); 
+                els.sendBtn.click();
             });
         });
 
-        els.input.addEventListener('keydown', (e) => { 
-            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); els.sendBtn.click(); } 
+        els.input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); els.sendBtn.click(); }
         });
 
+        // ================= EMOJI PICKER =================
+        els.emojiBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            els.emojiPanel.classList.toggle('show');
+        });
+        document.addEventListener('click', (e) => {
+            if (!els.emojiPanel.contains(e.target) && e.target !== els.emojiBtn) {
+                els.emojiPanel.classList.remove('show');
+            }
+        });
+        const emojiPickerEl = els.emojiPanel.querySelector('emoji-picker');
+        if (emojiPickerEl) {
+            emojiPickerEl.addEventListener('emoji-click', (e) => {
+                const emoji = e.detail.unicode || '';
+                const start = els.input.selectionStart || els.input.value.length;
+                const end = els.input.selectionEnd || els.input.value.length;
+                els.input.value = els.input.value.slice(0, start) + emoji + els.input.value.slice(end);
+                els.input.dispatchEvent(new Event('input'));
+                els.input.focus();
+                els.input.selectionStart = els.input.selectionEnd = start + emoji.length;
+            });
+        }
+
+        // ================= SEARCH =================
+        let searchOpen = false;
+        els.searchToggleBtn.addEventListener('click', () => {
+            searchOpen = !searchOpen;
+            els.searchBar.classList.toggle('open', searchOpen);
+            if (searchOpen) { setTimeout(() => els.searchInput.focus(), 150); }
+            else { els.searchInput.value = ''; applySearchFilter(''); }
+        });
+
+        els.searchInput.addEventListener('input', () => applySearchFilter(els.searchInput.value.trim().toLowerCase()));
+
+        function applySearchFilter(query) {
+            const bubbles = els.messages.querySelectorAll('[data-search]');
+            let matches = 0;
+            bubbles.forEach(b => {
+                const hay = b.getAttribute('data-search') || '';
+                const isMatch = query === '' || hay.includes(query);
+                b.style.display = isMatch ? '' : 'none';
+                b.classList.toggle('ring-1', isMatch && query !== '');
+                b.classList.toggle('ring-white/20', isMatch && query !== '');
+                if (isMatch && query !== '') matches++;
+            });
+            els.searchCount.textContent = query === '' ? '' : `${matches} kết quả`;
+        }
+
+        // ================= IMAGE ATTACH & COMPRESSION =================
+        els.attachBtn.addEventListener('click', () => els.fileInput.click());
+
+        function compressImage(file, maxWidth = 640, quality = 0.6) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                const reader = new FileReader();
+                reader.onload = (e) => { img.src = e.target.result; };
+                reader.onerror = reject;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const scale = Math.min(1, maxWidth / img.width);
+                    canvas.width = Math.round(img.width * scale);
+                    canvas.height = Math.round(img.height * scale);
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    resolve(canvas.toDataURL('image/jpeg', quality));
+                };
+                img.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        els.fileInput.addEventListener('change', async () => {
+            const file = els.fileInput.files[0];
+            els.fileInput.value = '';
+            if (!file) return;
+            if (!file.type.startsWith('image/')) { showToast('Chỉ hỗ trợ gửi hình ảnh.', 'error'); return; }
+
+            showToast('Đang xử lý ảnh...', 'info');
+            try {
+                let quality = 0.6, maxWidth = 640, dataUrl = await compressImage(file, maxWidth, quality);
+                let attempts = 0;
+                while (dataUrl.length > MAX_IMAGE_B64_CHARS && attempts < 4) {
+                    quality = Math.max(0.25, quality - 0.15);
+                    maxWidth = Math.max(240, maxWidth - 120);
+                    dataUrl = await compressImage(file, maxWidth, quality);
+                    attempts++;
+                }
+                if (dataUrl.length > MAX_IMAGE_B64_CHARS) {
+                    showToast('Ảnh quá lớn, vui lòng chọn ảnh khác nhỏ hơn.', 'error');
+                    return;
+                }
+                await sendMessage(dataUrl, true);
+            } catch (err) {
+                showToast('Không thể xử lý ảnh này.', 'error');
+            }
+        });
+
+        // ================= LIGHTBOX =================
+        els.lightbox.addEventListener('click', () => els.lightbox.classList.remove('show'));
+        function openLightbox(src) {
+            els.lightboxImg.src = src;
+            els.lightbox.classList.add('show');
+        }
+
+        // ================= API =================
         async function apiCall(action, payload = {}) {
             if (action === 'getMessages') { const res = await fetch(`${SCRIPT_URL}?action=${action}`); return await res.json(); }
             payload.action = action;
@@ -232,119 +489,228 @@
         }
 
         els.loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault(); 
+            e.preventDefault();
             const userVal = document.getElementById('username').value.trim();
-            if(!userVal) return;
+            const pwVal = els.pwInput.value;
+            if (!userVal || !pwVal) { showToast('Vui lòng nhập đầy đủ thông tin.', 'error'); return; }
             const btnSpan = els.loginForm.querySelector('button span');
             btnSpan.innerText = 'ĐANG XÁC THỰC...';
-            
+            els.loginForm.querySelector('button').disabled = true;
+
             try {
-                const res = await apiCall('checkLogin', { username: userVal, password: '123456' });
-                if (res.success) enterRoom(userVal); 
-                else alert(res.message);
-            } catch (err) { alert('Lỗi hệ thống máy chủ!'); }
-            finally { btnSpan.innerText = 'KẾT NỐI'; }
+                const res = await apiCall('checkLogin', { username: userVal, password: pwVal });
+                if (res.success) enterRoom(userVal);
+                else showToast(res.message || 'Sai tên đăng nhập hoặc mật khẩu.', 'error');
+            } catch (err) { showToast('Lỗi hệ thống máy chủ!', 'error'); }
+            finally { btnSpan.innerText = 'KẾT NỐI'; els.loginForm.querySelector('button').disabled = false; }
         });
 
-        function getAvatarUrl(name) { 
-            return `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}&backgroundColor=000000&textColor=ffffff`; 
+        function getAvatarUrl(name) {
+            return `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}&backgroundColor=000000&textColor=ffffff`;
         }
 
         function enterRoom(username) {
-            currentUser = username; 
-            localStorage.setItem('nexusUser', username); 
+            currentUser = username;
+            localStorage.setItem('nexusUser', username);
             els.myAvatar.src = getAvatarUrl(currentUser);
             setSmartGreeting(currentUser);
-            
-            // Phục hồi nháp
-            const draft = localStorage.getItem('nexus_draft_v2');
-            if(draft) els.input.value = draft;
-            if(!draft) els.suggestions.classList.remove('opacity-0', 'pointer-events-none');
+            requestNotificationPermission();
 
-            els.login.classList.add('hidden'); 
+            const draft = localStorage.getItem('nexus_draft_v2');
+            if (draft) els.input.value = draft;
+            if (!draft) els.suggestions.classList.remove('opacity-0', 'pointer-events-none');
+
+            els.login.classList.add('hidden');
             els.chat.classList.remove('hidden');
-            
-            fetchMessages(); 
-            pollingInterval = setInterval(fetchMessages, 3000); 
+
+            fetchMessages();
+            pollingInterval = setInterval(fetchMessages, 3000);
+            window.addEventListener('online', updateConnStatus);
+            window.addEventListener('offline', updateConnStatus);
+        }
+
+        function updateConnStatus() {
+            if (!navigator.onLine || consecutiveFailures >= 2) {
+                els.connStatus.textContent = 'Mất kết nối — đang thử lại...';
+                els.statusDot.classList.add('offline');
+            } else {
+                els.connStatus.textContent = 'Phòng: TUI NÈ MÌNH';
+                els.statusDot.classList.remove('offline');
+            }
         }
 
         document.getElementById('logout-btn').addEventListener('click', () => {
             clearInterval(pollingInterval); localStorage.removeItem('nexusUser'); location.reload();
         });
 
-        // --- SMART FEATURE: Text Auto-Formatting ---
+        // ================= TEXT FORMATTING =================
         function formatMessage(text) {
             if (!text) return '';
             let safe = text.replace(/[&<>'"]/g, tag => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'}[tag] || tag));
-            
-            // Làm nổi bật Link thành dạng text tinh tế
             safe = safe.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" class="text-white font-medium border-b border-white/30 hover:border-white transition-colors pb-0.5">$1</a>');
             return safe;
         }
 
-        async function fetchMessages() { 
-            try { 
-                const messages = await apiCall('getMessages'); 
-                if (messages.length === lastMessageCount) return;
-                lastMessageCount = messages.length; 
-                els.messages.innerHTML = ''; 
-                
-                messages.forEach((msg) => {
-                    const isMe = msg.username === currentUser;
-                    const date = new Date(msg.timestamp); 
-                    const timeStr = date.getHours().toString().padStart(2,'0') + ':' + date.getMinutes().toString().padStart(2,'0');
-                    const msgDiv = document.createElement('div'); 
-                    
-                    if (msg.username === 'Hệ thống') {
-                        msgDiv.className = 'flex justify-center msg-enter w-full';
-                        msgDiv.innerHTML = `<span class="text-[10px] uppercase tracking-widest text-white/30 font-light border border-white/5 bg-white/5 px-4 py-1.5 rounded-full">${msg.text}</span>`;
-                    } else {
-                        msgDiv.className = `flex w-full msg-enter ${isMe ? 'justify-end' : 'justify-start'}`;
-                        const bubbleStyle = isMe 
-                            ? 'bg-white text-black rounded-2xl rounded-tr-sm' 
-                            : 'glass-input text-white rounded-2xl rounded-tl-sm border-white/10';
-                            
-                        msgDiv.innerHTML = `
-                            <div class="flex max-w-[85%] items-end ${isMe ? 'flex-row-reverse space-x-reverse space-x-3' : 'space-x-3'}">
-                                ${!isMe ? `<img src="${getAvatarUrl(msg.username)}" class="w-8 h-8 rounded-full border border-white/10 mb-1 opacity-80">` : ''}
-                                <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'}">
-                                    ${!isMe ? `<span class="text-[11px] text-white/40 font-light tracking-wide mb-1.5 ml-1">${msg.username}</span>` : ''}
-                                    <div class="px-5 py-3.5 shadow-sm ${bubbleStyle}">
-                                        <div class="text-[14.5px] font-light leading-relaxed whitespace-pre-wrap">${formatMessage(msg.text)}</div>
-                                    </div>
-                                    <span class="text-[10px] mt-1.5 text-white/20 font-light">${timeStr}</span>
-                                </div>
-                            </div>`;
-                    }
-                    els.messages.appendChild(msgDiv);
-                });
-                
-                // Kích hoạt tính năng cuộn thông minh
-                scrollToBottom();
-            } catch (e) {} 
+        function isImageData(text) {
+            return typeof text === 'string' && text.startsWith('data:image');
         }
 
-        els.chatForm.addEventListener('submit', async (e) => {
-            e.preventDefault(); 
-            const text = els.input.value.trim(); 
-            if (!text) return;
-            
-            els.sendBtn.disabled = true; 
-            els.input.value = ''; 
-            els.input.style.height = 'auto';
-            localStorage.removeItem('nexus_draft_v2'); 
-            els.suggestions.classList.remove('opacity-0', 'pointer-events-none');
+        // ================= DATE HELPERS =================
+        function formatDateLabel(ts) {
+            const d = new Date(ts);
+            const today = new Date();
+            const yesterday = new Date(); yesterday.setDate(today.getDate() - 1);
+            const sameDay = (a, b) => a.toDateString() === b.toDateString();
+            if (sameDay(d, today)) return 'Hôm nay';
+            if (sameDay(d, yesterday)) return 'Hôm qua';
+            return d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        }
 
-            // Tạo mockup "Đang gửi..." cho mượt
+        // ================= MESSAGE RENDERING =================
+        function msgSignature(m) {
+            return `${m.username}|${m.timestamp}|${(m.text || '').length}`;
+        }
+
+        function buildMessageNode(msg, prevMsg) {
+            const frag = document.createDocumentFragment();
+            const date = new Date(msg.timestamp);
+
+            if (!prevMsg || new Date(prevMsg.timestamp).toDateString() !== date.toDateString()) {
+                const sep = document.createElement('div');
+                sep.className = 'date-sep';
+                sep.innerHTML = `<span>${formatDateLabel(msg.timestamp)}</span>`;
+                frag.appendChild(sep);
+            }
+
+            const timeStr = date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0');
+            const msgDiv = document.createElement('div');
+            const searchable = `${(msg.username || '').toLowerCase()} ${msg.isFile ? '' : (msg.text || '').toLowerCase()}`;
+            msgDiv.setAttribute('data-search', searchable);
+
+            if (msg.username === 'Hệ thống') {
+                msgDiv.className = 'flex justify-center msg-enter w-full';
+                msgDiv.innerHTML = `<span class="text-[10px] uppercase tracking-widest text-white/30 font-light border border-white/5 bg-white/5 px-4 py-1.5 rounded-full">${formatMessage(msg.text)}</span>`;
+                frag.appendChild(msgDiv);
+                return frag;
+            }
+
+            const isMe = msg.username === currentUser;
+            const grouped = prevMsg && prevMsg.username === msg.username && prevMsg.username !== 'Hệ thống' &&
+                             (date - new Date(prevMsg.timestamp)) < 3 * 60 * 1000;
+
+            msgDiv.className = `flex w-full msg-enter ${isMe ? 'justify-end' : 'justify-start'}`;
+            const bubbleStyle = isMe
+                ? 'bg-white text-black rounded-2xl rounded-tr-sm'
+                : 'glass-input text-white rounded-2xl rounded-tl-sm border-white/10';
+
+            const bodyHtml = msg.isFile && isImageData(msg.text)
+                ? `<img src="${msg.text}" class="chat-image" loading="lazy">`
+                : msg.isFile
+                    ? `<div class="file-chip text-[13px]"><svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg><span>Tệp đính kèm</span></div>`
+                    : `<div class="text-[14.5px] font-light leading-relaxed whitespace-pre-wrap">${formatMessage(msg.text)}</div>`;
+
+            msgDiv.innerHTML = `
+                <div class="flex max-w-[85%] items-end ${isMe ? 'flex-row-reverse space-x-reverse space-x-3' : 'space-x-3'}">
+                    ${!isMe ? (grouped ? '<div class="avatar-spacer"></div>' : `<img src="${getAvatarUrl(msg.username)}" class="w-8 h-8 rounded-full border border-white/10 mb-1 opacity-80">`) : ''}
+                    <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'}">
+                        ${!isMe && !grouped ? `<span class="text-[11px] text-white/40 font-light tracking-wide mb-1.5 ml-1">${msg.username}</span>` : ''}
+                        <div class="px-5 py-3.5 shadow-sm ${bubbleStyle}${msg.isFile && isImageData(msg.text) ? ' !p-1.5 !bg-transparent' : ''}">
+                            ${bodyHtml}
+                        </div>
+                        <span class="text-[10px] mt-1.5 text-white/20 font-light">${timeStr}</span>
+                    </div>
+                </div>`;
+
+            frag.appendChild(msgDiv);
+            return frag;
+        }
+
+        function fullRebuild(messages) {
+            els.messages.innerHTML = '';
+            let prev = null;
+            messages.forEach(m => {
+                els.messages.appendChild(buildMessageNode(m, prev));
+                prev = m;
+            });
+            attachImageHandlers();
+            renderedMessages = messages;
+        }
+
+        function appendNew(messages, fromIndex) {
+            let prev = fromIndex > 0 ? messages[fromIndex - 1] : null;
+            for (let i = fromIndex; i < messages.length; i++) {
+                const m = messages[i];
+                els.messages.appendChild(buildMessageNode(m, prev));
+                if (m.username !== currentUser && m.username !== 'Hệ thống') {
+                    if (isUserScrolling) bumpUnread();
+                    notifyNewMessage(m);
+                }
+                prev = m;
+            }
+            attachImageHandlers();
+            renderedMessages = messages;
+        }
+
+        function attachImageHandlers() {
+            els.messages.querySelectorAll('.chat-image').forEach(img => {
+                if (img.dataset.bound) return;
+                img.dataset.bound = '1';
+                img.addEventListener('click', () => openLightbox(img.src));
+            });
+        }
+
+        function processMessages(messages) {
+            if (messages.length === renderedMessages.length) {
+                // quick check last item for edits/no-op
+                if (messages.length === 0) return;
+                const lastSig = msgSignature(messages[messages.length - 1]);
+                const prevSig = renderedMessages.length ? msgSignature(renderedMessages[renderedMessages.length - 1]) : '';
+                if (lastSig === prevSig) return;
+                fullRebuild(messages);
+                return;
+            }
+            if (messages.length < renderedMessages.length) {
+                fullRebuild(messages);
+                return;
+            }
+            let prefixOk = true;
+            for (let i = 0; i < renderedMessages.length; i++) {
+                if (msgSignature(messages[i]) !== msgSignature(renderedMessages[i])) { prefixOk = false; break; }
+            }
+            if (!prefixOk) { fullRebuild(messages); return; }
+            appendNew(messages, renderedMessages.length);
+        }
+
+        async function fetchMessages() {
+            try {
+                const messages = await apiCall('getMessages');
+                consecutiveFailures = 0;
+                updateConnStatus();
+                processMessages(Array.isArray(messages) ? messages : []);
+                if (!isUserScrolling) scrollToBottom();
+                if (searchOpen && els.searchInput.value.trim()) applySearchFilter(els.searchInput.value.trim().toLowerCase());
+            } catch (e) {
+                consecutiveFailures++;
+                updateConnStatus();
+            }
+        }
+
+        // ================= SEND =================
+        async function sendMessage(text, isFile) {
+            els.sendBtn.disabled = true;
+
             const tempId = Date.now();
             const tempDiv = document.createElement('div');
             tempDiv.id = `temp-${tempId}`;
             tempDiv.className = `flex w-full justify-end msg-enter opacity-50`;
+            const previewBody = isFile
+                ? `<img src="${text}" class="chat-image !p-0">`
+                : `<div class="text-[14.5px] font-light leading-relaxed whitespace-pre-wrap">${formatMessage(text)}</div>`;
             tempDiv.innerHTML = `
                 <div class="flex max-w-[85%] items-end flex-row-reverse space-x-reverse space-x-3">
                     <div class="flex flex-col items-end">
-                        <div class="px-5 py-3.5 bg-white text-black rounded-2xl rounded-tr-sm">
-                            <div class="text-[14.5px] font-light leading-relaxed whitespace-pre-wrap">${formatMessage(text)}</div>
+                        <div class="px-5 py-3.5 ${isFile ? '!p-1.5 !bg-transparent' : 'bg-white text-black'} rounded-2xl rounded-tr-sm">
+                            ${previewBody}
                         </div>
                         <span class="text-[10px] mt-1.5 text-white/40 font-light animate-pulse">Đang mã hóa...</span>
                     </div>
@@ -353,10 +719,30 @@
             scrollToBottom(true);
 
             try {
-                await apiCall('saveMessage', { username: currentUser, text: text, isFile: false });
-                fetchMessages();
-            } catch (err) { alert("Lỗi mạng, vui lòng thử lại!"); document.getElementById(`temp-${tempId}`).remove(); } 
-            finally { els.sendBtn.disabled = false; els.input.focus(); }
+                await apiCall('saveMessage', { username: currentUser, text: text, isFile: !!isFile });
+                document.getElementById(`temp-${tempId}`)?.remove();
+                await fetchMessages();
+            } catch (err) {
+                showToast('Lỗi mạng, vui lòng thử lại!', 'error');
+                document.getElementById(`temp-${tempId}`)?.remove();
+            } finally {
+                els.sendBtn.disabled = false;
+                els.input.focus();
+            }
+        }
+
+        els.chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const text = els.input.value.trim();
+            if (!text) return;
+
+            els.input.value = '';
+            els.input.style.height = 'auto';
+            localStorage.removeItem('nexus_draft_v2');
+            els.suggestions.classList.remove('opacity-0', 'pointer-events-none');
+            els.emojiPanel.classList.remove('show');
+
+            await sendMessage(text, false);
         });
 
         if (localStorage.getItem('nexusUser')) enterRoom(localStorage.getItem('nexusUser'));
