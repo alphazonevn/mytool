@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <link rel="icon" type="image/png" sizes="32x32" href="music-logo-32x32.png">
+    
+<link rel="icon" type="image/png" sizes="16x16" href="music-logo-16x16.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Livestream Audio Mixer Pro V3</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617; /* Slate 950 */
+            color: #f8fafc;
+            user-select: none;
+            overflow: hidden;
+        }
+        
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        .sound-pad { transition: all 0.05s ease-in-out; }
+        .sound-pad:active { transform: scale(0.92); filter: brightness(1.2); }
+        .sound-pad.playing {
+            box-shadow: 0 0 15px 2px var(--pad-color, rgba(255,255,255,0.5));
+            border-color: #fff;
+            filter: brightness(1.3);
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 12px; width: 12px;
+            border-radius: 50%;
+            background: #cbd5e1;
+            cursor: pointer;
+            margin-top: -4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+            transition: transform 0.1s;
+        }
+        input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.2); }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%; height: 4px;
+            cursor: pointer;
+            background: #334155;
+            border-radius: 2px;
+        }
+        input[type=range]:focus { outline: none; }
+        
+        .drag-over {
+            border: 2px dashed #3b82f6 !important;
+            background-color: rgba(59, 130, 246, 0.1) !important;
+        }
+
+        @keyframes slideInUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .toast-enter { animation: slideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    </style>
+</head>
+<body class="h-screen flex flex-col">
+
+    <header class="bg-slate-900 border-b border-slate-800 p-3 flex justify-between items-center shrink-0 z-20">
+        <div class="flex items-center gap-3">
+            <div class="bg-gradient-to-br from-indigo-500 to-blue-600 p-2 rounded-lg shadow-lg shadow-blue-500/20">
+                <i class="fa-solid fa-layer-group text-xl text-white"></i>
+            </div>
+            <div>
+                <h1 class="text-lg font-bold tracking-tight text-white leading-tight">Mixer Pro V4</h1>
+                <p class="text-[10px] text-slate-400 font-mono flex items-center gap-1">
+                    <span>Cloud Sync + Studio Edition</span>
+                </p>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-4">
+            <!-- Trạng thái Cloud Sync -->
+            <div id="cloud-status" class="flex items-center gap-2 text-[10px] bg-slate-800 px-3 py-1.5 rounded-full border border-slate-700 transition-colors">
+                <i class="fa-solid fa-spinner fa-spin text-slate-400"></i>
+                <span class="text-slate-400 font-medium tracking-wide uppercase">Khởi tạo lưu trữ...</span>
+            </div>
+
+            <!-- Nút Ghi Âm Mix -->
+            <button id="btn-record" onclick="window.toggleRecording()" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 transition-all">
+                <i class="fa-solid fa-record-vinyl"></i>
+                <div class="flex flex-col text-left leading-none">
+                    <span class="text-xs font-bold">Ghi Âm Mix</span>
+                    <span class="text-[9px] opacity-70" id="record-timer">00:00</span>
+                </div>
+            </button>
+
+            <!-- Nút Smart Talkover -->
+            <button id="btn-talkover" onclick="window.toggleTalkover()" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 transition-all ml-2">
+                <i class="fa-solid fa-microphone-lines"></i>
+                <div class="flex flex-col text-left leading-none">
+                    <span class="text-xs font-bold">Talkover (MC)</span>
+                    <span class="text-[9px] opacity-70">Giảm nhạc 70%</span>
+                </div>
+            </button>
+
+            <!-- Master Volume -->
+            <div class="flex items-center gap-3 bg-slate-950 px-4 py-2 rounded-xl border border-slate-800">
+                <i class="fa-solid fa-volume-high text-slate-500 text-sm"></i>
+                <div class="flex flex-col w-32">
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Master Vol</label>
+                        <span id="master-vol-val" class="text-xs font-mono text-blue-400">100%</span>
+                    </div>
+                    <input type="range" id="master-volume" min="0" max="1" step="0.01" value="1">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 flex gap-4 p-4 overflow-hidden">
+        <!-- Cột trái: Kênh nhạc -->
+        <div class="flex-[3] flex flex-col gap-4 overflow-y-auto pr-2" id="decks-container">
+            <div class="flex justify-between items-center shrink-0">
+                <h2 class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-layer-group text-blue-400"></i> Các Kênh Nhạc</h2>
+                <button onclick="window.addDeck()" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors shadow-lg shadow-blue-500/20 flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Thêm Kênh
+                </button>
+            </div>
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-4" id="decks-grid"></div>
+        </div>
+
+        <!-- Cột phải: Soundboard -->
+        <div class="flex-[1] min-w-[280px] max-w-[400px] bg-slate-900 rounded-xl border border-slate-800 p-3 shadow-lg flex flex-col relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-teal-400"></div>
+            
+            <div class="flex justify-between items-center mb-3">
+                <h2 class="text-sm font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-table-cells-large text-emerald-400"></i> Soundboard
+                </h2>
+                <div class="flex items-center gap-2">
+                    <button onclick="window.addPad()" class="text-[10px] bg-blue-900/30 hover:bg-blue-800/80 text-blue-400 px-2 py-1 rounded border border-blue-900/50 transition-colors tooltip" title="Thêm ô hiệu ứng">
+                        <i class="fa-solid fa-plus"></i> Thêm
+                    </button>
+                    <div class="flex items-center bg-slate-950 px-2 py-1 rounded border border-slate-800" title="Âm lượng Soundboard">
+                        <i class="fa-solid fa-volume-low text-[10px] text-slate-500 mr-2"></i>
+                        <input type="range" id="soundboard-vol" min="0" max="1" step="0.05" value="1" oninput="window.updateSoundboardVol()" class="w-16">
+                    </div>
+                    <button onclick="window.stopAllSounds()" class="text-[10px] bg-red-900/30 hover:bg-red-800/80 text-red-400 px-2 py-1 rounded border border-red-900/50 transition-colors tooltip" title="Dừng Hết">
+                        <i class="fa-solid fa-hand"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <p class="text-[10px] text-slate-500 mb-3 leading-tight">Kéo thả file .mp3 trực tiếp vào ô trống để nạp âm thanh nhanh.</p>
+            <div class="grid grid-cols-3 auto-rows-[80px] gap-2 overflow-y-auto flex-1 pr-1" id="soundboard-grid"></div>
+        </div>
+    </main>
+
+    <!-- Custom Modal cho Link URL -->
+    <div id="url-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity">
+        <div class="bg-slate-900 border border-slate-700 p-6 rounded-2xl shadow-2xl w-[400px] transform scale-95 transition-transform" id="url-modal-content">
+            <h3 class="text-lg font-bold text-white mb-2"><i class="fa-solid fa-link text-blue-400 mr-2"></i>Thêm âm thanh từ Link</h3>
+            <p class="text-xs text-slate-400 mb-4">Nhập link trực tiếp đến file .mp3 hoặc .mp4 (Không hỗ trợ link Youtube do bản quyền).</p>
+            <input type="text" id="url-input" placeholder="https://example.com/audio.mp3" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 mb-4">
+            <div class="flex justify-end gap-2">
+                <button onclick="window.closeUrlModal()" class="px-4 py-2 rounded-lg text-sm bg-slate-800 hover:bg-slate-700 text-slate-300">Hủy</button>
+                <button onclick="window.submitUrlModal()" class="px-4 py-2 rounded-lg text-sm bg-blue-600 hover:bg-blue-500 text-white font-medium">Tải ngay</button>
+            </div>
+            <input type="hidden" id="url-target-deck">
+        </div>
+    </div>
+
+    <!-- Custom Modal Đổi tên Soundboard -->
+    <div id="rename-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity">
+        <div class="bg-slate-900 border border-slate-700 p-6 rounded-2xl shadow-2xl w-[300px] transform scale-95 transition-transform" id="rename-modal-content">
+            <h3 class="text-lg font-bold text-white mb-4">Đổi tên Hiệu ứng</h3>
+            <input type="text" id="rename-input" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 mb-4" onkeypress="if(event.key==='Enter') window.submitRenameModal()">
+            <div class="flex justify-end gap-2">
+                <button onclick="window.closeRenameModal()" class="px-4 py-2 rounded-lg text-sm bg-slate-800 hover:bg-slate-700 text-slate-300">Hủy</button>
+                <button onclick="window.submitRenameModal()" class="px-4 py-2 rounded-lg text-sm bg-blue-600 hover:bg-blue-500 text-white font-medium">Lưu</button>
+            </div>
+            <input type="hidden" id="rename-target-index">
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- LOGIC CHÍNH MODULE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- BIẾN TOÀN CỤC & TRẠNG THÁI ---
+        let audioCtx;
+        let masterGain;
+        let isTalkoverActive = false;
+        const talkoverMultiplier = 0.3; // Giảm còn 30% khi bật Talkover
+
+        const deckColors = ['#3b82f6', '#a855f7', '#f59e0b', '#10b981', '#ec4899', '#ef4444', '#14b8a6', '#8b5cf6'];
+        const padColors = ['#e11d48', '#ea580c', '#d97706', '#16a34a', '#059669', '#0d9488', '#0891b2', '#0284c7', '#4f46e5', '#7c3aed', '#c026d3', '#db2777'];
+        
+        const decks = {}; 
+        const soundPads = [];
+
+        // --- TRẠNG THÁI LƯU TRỮ (STATE) ---
+        let appState = {
+            masterVolume: 1.0,
+            soundboardVolume: 1.0,
+            deckOrder: ['deck_a', 'deck_b', 'deck_c', 'deck_d'],
+            decks: {
+                'deck_a': { id: 'deck_a', name: 'Kênh 1 (A)', hex: '#3b82f6', vol: 1, speed: 1, bass: 0, treb: 0, loop: false, source: null, note: '' },
+                'deck_b': { id: 'deck_b', name: 'Kênh 2 (B)', hex: '#a855f7', vol: 1, speed: 1, bass: 0, treb: 0, loop: false, source: null, note: '' },
+                'deck_c': { id: 'deck_c', name: 'Kênh 3 (C)', hex: '#f59e0b', vol: 1, speed: 1, bass: 0, treb: 0, loop: false, source: null, note: '' },
+                'deck_d': { id: 'deck_d', name: 'Kênh 4 (D)', hex: '#10b981', vol: 1, speed: 1, bass: 0, treb: 0, loop: false, source: null, note: '' }
+            },
+            pads: Array(9).fill(null).map((_, i) => ({ type: null, url: null, name: `Pad ${i + 1}`, hex: padColors[i % padColors.length] }))
+        };
+        let isStateLoading = true; // Chặn lưu trong lúc đang khôi phục dữ liệu
+        let saveTimeout = null;
+
+        // Firebase Setup
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'livestream-mixer-pro-v3';
+        let app, auth, db, userId;
+
+        function updateCloudStatus(status) {
+            const el = document.getElementById('cloud-status');
+            if (!el) return;
+            if (status === 'saving') {
+                el.innerHTML = '<i class="fa-solid fa-sync fa-spin text-blue-400"></i> <span class="text-blue-400 font-medium">Đang lưu...</span>';
+                el.classList.replace('border-slate-700', 'border-blue-900');
+            } else if (status === 'saved') {
+                el.innerHTML = '<i class="fa-solid fa-cloud-check text-emerald-400"></i> <span class="text-emerald-400 font-medium">Đã đồng bộ</span>';
+                el.classList.replace('border-blue-900', 'border-emerald-900');
+                el.classList.replace('border-slate-700', 'border-emerald-900');
+            } else if (status === 'error') {
+                el.innerHTML = '<i class="fa-solid fa-cloud-xmark text-red-400"></i> <span class="text-red-400 font-medium">Lỗi kết nối</span>';
+                el.classList.replace('border-slate-700', 'border-red-900');
+            }
+        }
+
+        async function initCloudStorage() {
+            try {
+                const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+                if (!firebaseConfig) {
+                    console.warn("Khởi chạy Offline (Không có Cloud Storage)");
+                    isStateLoading = false;
+                    document.getElementById('cloud-status').style.display = 'none';
+                    return;
+                }
+
+                app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+
+                if (typeof __initial_auth_token !== 'undefined') {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                userId = auth.currentUser.uid;
+                
+                await loadStateFromCloud();
+            } catch (e) {
+                console.error("Cloud Auth Error:", e);
+                updateCloudStatus('error');
+                isStateLoading = false;
+            }
+        }
+
+        function saveStateToCloud() {
+            if (!userId || isStateLoading || !db) return;
+            updateCloudStatus('saving');
+            clearTimeout(saveTimeout);
+            
+            // Debounce 1.5 giây để tránh gọi API liên tục khi kéo thanh trượt
+            saveTimeout = setTimeout(async () => {
+                try {
+                    const docRef = doc(db, 'artifacts', appId, 'users', userId, 'mixer_config', 'default');
+                    await setDoc(docRef, appState);
+                    updateCloudStatus('saved');
+                } catch (e) {
+                    console.error("Lỗi lưu trữ:", e);
+                    updateCloudStatus('error');
+                }
+            }, 1500);
+        }
+
+        async function loadStateFromCloud() {
+            isStateLoading = true;
+            try {
+                const docRef = doc(db, 'artifacts', appId, 'users', userId, 'mixer_config', 'default');
+                const snap = await getDoc(docRef);
+                
+                if (snap.exists()) {
+                    const data = snap.data();
+                    
+                    appState.masterVolume = data.masterVolume ?? 1.0;
+                    appState.soundboardVolume = data.soundboardVolume ?? 1.0;
+                    
+                    // Migrate dữ liệu cũ nếu có
+                    if (data.decks) {
+                        if (data.decks['a'] && !data.decks['a'].id) {
+                            appState.deckOrder = ['a', 'b', 'c', 'd'];
+                            const defaultConfigs = [
+                                { id: 'a', name: 'Kênh 1 (A)', hex: '#3b82f6' },
+                                { id: 'b', name: 'Kênh 2 (B)', hex: '#a855f7' },
+                                { id: 'c', name: 'Kênh 3 (C)', hex: '#f59e0b' },
+                                { id: 'd', name: 'Kênh 4 (D)', hex: '#10b981' }
+                            ];
+                            defaultConfigs.forEach(conf => {
+                                appState.decks[conf.id] = { ...appState.decks[conf.id], ...data.decks[conf.id], id: conf.id, name: conf.name, hex: conf.hex };
+                            });
+                        } else {
+                            appState.decks = data.decks;
+                            appState.deckOrder = data.deckOrder || Object.keys(data.decks);
+                        }
+                    }
+
+                    appState.pads = data.pads || appState.pads;
+                    
+                    applyStateToUI();
+                    showToast("Đã khôi phục cài đặt gần nhất từ Cloud!", "success");
+                }
+                updateCloudStatus('saved');
+            } catch (e) {
+                console.error("Load state error:", e);
+                updateCloudStatus('error');
+            }
+            
+            setTimeout(() => { isStateLoading = false; }, 500); 
+        }
+
+        function applyStateToUI() {
+            document.getElementById('master-volume').value = appState.masterVolume;
+            document.getElementById('master-vol-val').innerText = Math.round(appState.masterVolume * 100) + '%';
+            if (masterGain) masterGain.gain.value = appState.masterVolume;
+
+            const sbVolEl = document.getElementById('soundboard-vol');
+            if (sbVolEl) sbVolEl.value = appState.soundboardVolume;
+
+            // Render lại DOM theo State
+            renderDecks();
+            renderSoundboard();
+
+            // Áp dụng Audio Nodes (EQ, Vol, Speed) nếu đã init
+            appState.deckOrder.forEach(id => {
+                const state = appState.decks[id];
+                if (decks[id] && decks[id].nodes) {
+                    decks[id].nodes.bassEQ.gain.value = state.bass;
+                    decks[id].nodes.trebleEQ.gain.value = state.treb;
+                    decks[id].audioEl.playbackRate = state.speed;
+                    decks[id].nodes.gainNode.gain.value = state.vol;
+                }
+            });
+        }
+
+        function initAudioContext() {
+            if (audioCtx) return;
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+                masterGain = audioCtx.createGain();
+                masterGain.gain.value = appState.masterVolume;
+                masterGain.connect(audioCtx.destination);
+                
+                Object.values(decks).forEach(deck => setupDeckAudioNodes(deck));
+                drawVisualizers();
+                console.log("Web Audio API Initialized");
+            } catch (e) {
+                showToast("Trình duyệt không hỗ trợ Web Audio", "error");
+            }
+        }
+
+        function setupDeckAudioNodes(deck) {
+            if (deck.nodes) return; 
+
+            const source = audioCtx.createMediaElementSource(deck.audioEl);
+            const bassEQ = audioCtx.createBiquadFilter();
+            const trebleEQ = audioCtx.createBiquadFilter();
+            const gainNode = audioCtx.createGain();
+            const analyser = audioCtx.createAnalyser();
+
+            bassEQ.type = "lowshelf";
+            bassEQ.frequency.value = 250;
+            trebleEQ.type = "highshelf";
+            trebleEQ.frequency.value = 4000;
+            analyser.fftSize = 64;
+
+            source.connect(bassEQ);
+            bassEQ.connect(trebleEQ);
+            trebleEQ.connect(gainNode);
+            gainNode.connect(analyser);
+            analyser.connect(masterGain);
+
+            deck.nodes = { source, bassEQ, trebleEQ, gainNode, analyser };
+            
+            const state = appState.decks[deck.id];
+            bassEQ.gain.value = state.bass;
+            trebleEQ.gain.value = state.treb;
+            const ducking = isTalkoverActive ? talkoverMultiplier : 1.0;
+            gainNode.gain.value = state.vol * ducking;
+        }
+
+        function renderDecks() {
+            const container = document.getElementById('decks-grid');
+            let html = '';
+            
+            appState.deckOrder.forEach(id => {
+                const conf = appState.decks[id];
+                
+                if (!decks[id]) {
+                    decks[id] = {
+                        id: id,
+                        audioEl: new Audio(),
+                        nodes: null,
+                        isFading: false,
+                        isLoop: conf.loop || false
+                    };
+                    decks[id].audioEl.crossOrigin = "anonymous";
+                    decks[id].audioEl.id = `audio-el-${id}`;
+                    document.body.appendChild(decks[id].audioEl);
+                    
+                    if (conf.source && conf.source.type === 'url' && conf.source.url) {
+                        decks[id].audioEl.src = conf.source.url;
+                        decks[id].audioEl.load();
+                    }
+
+                    decks[id].audioEl.addEventListener('timeupdate', () => updateProgress(id));
+                    decks[id].audioEl.addEventListener('loadedmetadata', () => {
+                        const totalEl = document.getElementById(`time-total-${id}`);
+                        if(totalEl) totalEl.innerText = formatTime(decks[id].audioEl.duration);
+                    });
+                    decks[id].audioEl.addEventListener('ended', () => {
+                        if(!decks[id].isLoop) {
+                            const btn = document.getElementById(`play-btn-${id}`);
+                            if(btn) {
+                                btn.innerHTML = '<i class="fa-solid fa-play ml-1"></i>';
+                                btn.style.backgroundColor = conf.hex;
+                            }
+                        }
+                    });
+                }
+                
+                let trackNameHtml = 'Kéo thả file vào đây...';
+                let trackNameClass = 'text-slate-500';
+                if (conf.source) {
+                    if (conf.source.type === 'local') {
+                        trackNameHtml = `<i class="fa-solid fa-triangle-exclamation text-amber-500 mr-1"></i> ${conf.source.name} (Kéo thả lại)`;
+                        trackNameClass = 'text-amber-500';
+                    } else {
+                        trackNameHtml = conf.source.name;
+                        trackNameClass = `text-white`;
+                    }
+                }
+
+                html += `
+                <div id="deck-container-${id}" class="relative bg-slate-900 rounded-xl border border-slate-800 p-4 shadow-lg flex flex-col gap-3 transition-colors duration-200"
+                     ondragover="window.handleDragOver(event, '${id}')" 
+                     ondragleave="window.handleDragLeave(event, '${id}')" 
+                     ondrop="window.handleDrop(event, '${id}', 'deck')">
+                     
+                    <div class="absolute top-0 left-0 w-1 h-full rounded-l-xl" style="background-color: ${conf.hex}"></div>
+                    
+                    <div class="flex justify-between items-center pl-2">
+                        <div class="flex items-center gap-2 flex-1">
+                            <i class="fa-solid fa-compact-disc" style="color: ${conf.hex}"></i>
+                            <input type="text" value="${conf.name}" onchange="window.renameDeck('${id}', this.value)" class="bg-transparent border-b border-transparent hover:border-slate-700 focus:border-slate-500 focus:outline-none text-sm font-bold text-white w-full max-w-[150px] transition-colors" title="Đổi tên kênh">
+                        </div>
+                        <div class="flex gap-1 shrink-0">
+                            <button onclick="document.getElementById('file-${id}').click()" class="bg-slate-800 hover:bg-slate-700 px-2 py-1 rounded text-[10px] text-slate-300 transition-colors tooltip" title="Tải từ máy tính">
+                                <i class="fa-solid fa-folder-open"></i>
+                            </button>
+                            <input type="file" id="file-${id}" accept="audio/*,video/mp4" class="hidden" onchange="window.handleFileSelect(event, '${id}', 'deck')">
+                            
+                            <button onclick="window.openUrlModal('${id}')" class="bg-slate-800 hover:bg-slate-700 px-2 py-1 rounded text-[10px] text-slate-300 transition-colors tooltip" title="Tải từ Link để tự động lưu">
+                                <i class="fa-solid fa-link"></i>
+                            </button>
+                            
+                            <button onclick="window.deleteDeck('${id}')" class="bg-red-900/30 hover:bg-red-800/80 px-2 py-1 rounded text-[10px] text-red-400 transition-colors tooltip ml-1" title="Xóa Kênh">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-950 rounded-lg p-2 border border-slate-800 relative group overflow-hidden h-20 flex flex-col justify-between">
+                        <div class="text-[11px] truncate font-mono z-10 ${trackNameClass}" id="track-name-${id}" style="${conf.source && conf.source.type !== 'local' ? `color: ${conf.hex}` : ''}">${trackNameHtml}</div>
+                        
+                        <canvas id="canvas-${id}" class="absolute bottom-0 left-0 w-full h-12 opacity-80"></canvas>
+                        
+                        <div class="absolute bottom-0 left-0 w-full h-full cursor-pointer z-20" id="progress-bg-${id}" onclick="window.seekTrack(event, '${id}')">
+                            <div class="h-full bg-white/10 pointer-events-none w-0 transition-all duration-75 border-r border-white/50" id="progress-bar-${id}"></div>
+                        </div>
+                        
+                        <div class="flex justify-between text-[9px] text-slate-400 font-mono relative z-10 mt-auto pointer-events-none">
+                            <span id="time-current-${id}">00:00</span>
+                            <span id="time-total-${id}">00:00</span>
+                        </div>
+                    </div>
+                    
+                    <input type="text" id="note-${id}" value="${conf.note || ''}" placeholder="Ghi chú (VD: Nhạc dạo đầu...)" class="w-full bg-slate-950/80 border border-slate-800 rounded px-2 py-1 text-[10px] text-slate-300 focus:outline-none focus:border-slate-500 transition-colors" oninput="window.updateNote('${id}')">
+
+                    <div class="flex flex-col gap-3 pl-2 mt-1">
+                        <div class="flex items-center gap-3">
+                            <button id="play-btn-${id}" onclick="window.togglePlay('${id}')" class="w-12 h-12 shrink-0 rounded-full flex items-center justify-center text-lg shadow-lg transition-transform transform hover:scale-105 active:scale-95 text-white" style="background-color: ${conf.hex}">
+                                <i class="fa-solid fa-play ml-1"></i>
+                            </button>
+                            <button onclick="window.stopTrack('${id}')" class="w-8 h-8 bg-slate-800 hover:bg-slate-700 rounded-full flex items-center justify-center transition-colors">
+                                <i class="fa-solid fa-stop text-slate-400 text-xs"></i>
+                            </button>
+                            <button id="loop-btn-${id}" onclick="window.toggleLoop('${id}')" class="w-8 h-8 ${conf.loop ? 'text-white' : 'bg-slate-800 text-slate-500'} hover:bg-slate-700 rounded-full flex items-center justify-center transition-colors" style="${conf.loop ? `background-color: ${conf.hex}` : ''}">
+                                <i class="fa-solid fa-repeat text-xs"></i>
+                            </button>
+                            
+                            <div class="flex-1 grid grid-cols-2 gap-2 ml-2 bg-slate-950 p-2 rounded-lg border border-slate-800/50">
+                                <div class="flex flex-col">
+                                    <div class="flex justify-between text-[9px] text-slate-400 mb-1">
+                                        <span>BASS</span>
+                                        <span id="lbl-bass-${id}">${conf.bass > 0 ? '+'+conf.bass : conf.bass}</span>
+                                    </div>
+                                    <input type="range" id="eq-bass-${id}" min="-15" max="15" step="1" value="${conf.bass}" oninput="window.updateEQ('${id}')">
+                                </div>
+                                <div class="flex flex-col">
+                                    <div class="flex justify-between text-[9px] text-slate-400 mb-1">
+                                        <span>TREBLE</span>
+                                        <span id="lbl-treb-${id}">${conf.treb > 0 ? '+'+conf.treb : conf.treb}</span>
+                                    </div>
+                                    <input type="range" id="eq-treb-${id}" min="-15" max="15" step="1" value="${conf.treb}" oninput="window.updateEQ('${id}')">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-3 items-end">
+                            <div class="flex-1 flex flex-col">
+                                <div class="flex justify-between text-[10px] text-slate-400 mb-1">
+                                    <span>Tốc độ</span>
+                                    <span id="lbl-speed-${id}">${parseFloat(conf.speed).toFixed(2)}x</span>
+                                </div>
+                                <input type="range" id="speed-${id}" min="0.5" max="2" step="0.05" value="${conf.speed}" oninput="window.updateSpeed('${id}')" ondblclick="window.resetSpeed('${id}')">
+                            </div>
+                            
+                            <div class="flex-1 flex flex-col">
+                                <div class="flex justify-between text-[10px] mb-1" style="color: ${conf.hex}">
+                                    <span class="font-bold">Âm lượng</span>
+                                    <span id="lbl-vol-${id}">${Math.round(conf.vol * 100)}%</span>
+                                </div>
+                                <input type="range" id="vol-${id}" min="0" max="1" step="0.01" value="${conf.vol}" oninput="window.updateDeckVolume('${id}')">
+                            </div>
+
+                            <div class="flex flex-col gap-1 w-20">
+                                <button onclick="window.fadeDeck('${id}', 'in')" class="text-[9px] bg-slate-800 hover:bg-slate-700 py-1 rounded text-slate-300 font-medium">Fade In</button>
+                                <button onclick="window.fadeDeck('${id}', 'out')" class="text-[9px] bg-slate-800 hover:bg-slate-700 py-1 rounded text-slate-300 font-medium">Fade Out</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function renderSoundboard() {
+            const grid = document.getElementById('soundboard-grid');
+            let html = '';
+            
+            appState.pads.forEach((padConf, index) => {
+                if (!soundPads[index]) {
+                    soundPads[index] = {
+                        audioEl: new Audio(),
+                        isMissing: false
+                    };
+                    if (padConf.type === 'url' && padConf.url) {
+                        soundPads[index].audioEl.src = padConf.url;
+                    } else if (padConf.type === 'local') {
+                        soundPads[index].isMissing = true;
+                    }
+                }
+
+                const isMissing = soundPads[index].isMissing;
+                const hasFile = padConf.type !== null;
+
+                let textHtml = hasFile ? padConf.name : 'Trống';
+                let style = hasFile ? `background-color: ${padConf.hex}33; border: 1px solid ${padConf.hex};` : '';
+                let textClass = hasFile ? 'text-white' : 'text-slate-600';
+                
+                if (isMissing) {
+                    textHtml = `<i class="fa-solid fa-triangle-exclamation mr-1"></i>${padConf.name}`;
+                    style = `background-color: rgba(245,158,11,0.1); border: 1px solid #f59e0b;`;
+                    textClass = 'text-amber-500';
+                }
+
+                html += `
+                <div class="relative w-full h-[70px] rounded-lg border border-slate-700 shadow-inner p-1 group bg-slate-950 transition-colors"
+                     ondragover="window.handleDragOver(event, ${index})" 
+                     ondragleave="window.handleDragLeave(event, ${index})" 
+                     ondrop="window.handleDrop(event, ${index}, 'pad')"
+                     id="pad-container-${index}">
+                     
+                    <button onclick="window.playSoundPad(${index})" id="pad-btn-${index}" 
+                            class="sound-pad absolute inset-1 rounded-md flex items-center justify-center flex-col gap-1 ${hasFile ? '' : 'bg-slate-900'} z-10"
+                            style="--pad-color: ${padConf.hex}; ${style}" title="${isMissing ? 'Vui lòng kéo thả lại file' : ''}">
+                        
+                        <span class="font-bold text-[10px] text-center px-1 truncate w-full drop-shadow-md z-20 ${textClass}">
+                            ${textHtml}
+                        </span>
+                        
+                        ${!hasFile ? '<i class="fa-solid fa-plus text-slate-700 text-sm absolute opacity-50"></i>' : ''}
+                    </button>
+
+                    <div class="absolute top-1 right-1 z-30 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button onclick="event.stopPropagation(); window.renamePad(${index})" class="bg-black/80 hover:bg-black p-1 rounded backdrop-blur text-slate-300 tooltip" title="Đổi tên">
+                            <i class="fa-solid fa-pen text-[8px]"></i>
+                        </button>
+                        <button onclick="event.stopPropagation(); document.getElementById('pad-file-${index}').click()" class="bg-black/80 hover:bg-black p-1 rounded backdrop-blur text-slate-300 tooltip" title="Tải file">
+                            <i class="fa-solid fa-folder-open text-[8px]"></i>
+                        </button>
+                        <button onclick="event.stopPropagation(); window.deletePad(${index})" class="bg-red-900/80 hover:bg-red-900 p-1 rounded backdrop-blur text-red-400 tooltip" title="Xóa ô">
+                            <i class="fa-solid fa-trash text-[8px]"></i>
+                        </button>
+                    </div>
+                    
+                    <input type="file" id="pad-file-${index}" accept="audio/*" class="hidden" onchange="window.handleFileSelect(event, ${index}, 'pad')">
+                </div>
+                `;
+            });
+            grid.innerHTML = html;
+        }
+
+        // --- DYNAMIC FUNCTIONS ---
+        function addDeck() {
+            const id = 'deck_' + Math.random().toString(36).substring(2, 9);
+            const colorHex = deckColors[appState.deckOrder.length % deckColors.length];
+            const newCount = appState.deckOrder.length + 1;
+            
+            appState.deckOrder.push(id);
+            appState.decks[id] = {
+                id: id, name: `Kênh Mới ${newCount}`, hex: colorHex,
+                vol: 1, speed: 1, bass: 0, treb: 0, loop: false, source: null, note: ''
+            };
+            
+            renderDecks();
+            saveStateToCloud();
+            if (audioCtx && audioCtx.state !== 'suspended') setupDeckAudioNodes(decks[id]);
+            showToast("Đã thêm kênh nhạc mới!", "success");
+        }
+
+        function deleteDeck(id) {
+            if (appState.deckOrder.length <= 1) {
+                showToast("Phải giữ lại ít nhất 1 kênh nhạc!", "error");
+                return;
+            }
+            if (decks[id] && decks[id].audioEl) {
+                decks[id].audioEl.pause();
+                decks[id].audioEl.src = "";
+                decks[id].audioEl.remove();
+            }
+            delete decks[id];
+            delete appState.decks[id];
+            appState.deckOrder = appState.deckOrder.filter(deckId => deckId !== id);
+            
+            renderDecks();
+            saveStateToCloud();
+            showToast("Đã xóa kênh nhạc", "info");
+        }
+
+        function renameDeck(id, newName) {
+            if(!newName.trim()) return;
+            appState.decks[id].name = newName.trim();
+            saveStateToCloud();
+        }
+
+        function addPad() {
+            const newIndex = appState.pads.length;
+            const colorHex = padColors[newIndex % padColors.length];
+            
+            appState.pads.push({ type: null, url: null, name: `Pad ${newIndex + 1}`, hex: colorHex });
+            
+            renderSoundboard();
+            saveStateToCloud();
+        }
+
+        function deletePad(index) {
+            if (soundPads[index] && soundPads[index].audioEl) {
+                soundPads[index].audioEl.pause();
+                soundPads[index].audioEl.src = "";
+            }
+            appState.pads.splice(index, 1);
+            soundPads.splice(index, 1);
+            
+            renderSoundboard();
+            saveStateToCloud();
+        }
+
+        function renamePad(index) {
+            document.getElementById('rename-target-index').value = index;
+            document.getElementById('rename-input').value = appState.pads[index].name;
+            const modal = document.getElementById('rename-modal');
+            const content = document.getElementById('rename-modal-content');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.replace('opacity-0', 'opacity-100');
+                content.classList.replace('scale-95', 'scale-100');
+            }, 10);
+            document.getElementById('rename-input').focus();
+        }
+
+        function closeRenameModal() {
+            const modal = document.getElementById('rename-modal');
+            const content = document.getElementById('rename-modal-content');
+            modal.classList.replace('opacity-100', 'opacity-0');
+            content.classList.replace('scale-100', 'scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 200);
+        }
+
+        function submitRenameModal() {
+            const index = parseInt(document.getElementById('rename-target-index').value);
+            const newName = document.getElementById('rename-input').value.trim();
+            if (newName) {
+                appState.pads[index].name = newName;
+                renderSoundboard();
+                saveStateToCloud();
+                closeRenameModal();
+            } else {
+                showToast("Tên không được để trống!", "error");
+            }
+        }
+
+        function handleFileSelect(event, targetId, type) {
+            const file = event.target.files[0];
+            if (!file) return;
+            loadMediaData(file, targetId, type);
+            event.target.value = '';
+        }
+
+        function loadMediaData(file, targetId, type) {
+            const url = URL.createObjectURL(file);
+            let cleanName = file.name.replace(/\.[^/.]+$/, "");
+            
+            // Gửi 'local' type để nhắc nhở khi reload
+            if (type === 'deck') applyMediaToDeck(targetId, url, cleanName, 'local');
+            else applyMediaToPad(targetId, url, cleanName, 'local');
+        }
+
+        function applyMediaToDeck(deckId, srcUrl, displayName, mediaType = 'url') {
+            const deck = decks[deckId];
+            deck.audioEl.src = srcUrl;
+            deck.audioEl.load();
+            
+            initAudioContext();
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            setupDeckAudioNodes(deck);
+            
+            const nameEl = document.getElementById(`track-name-${deckId}`);
+            if (nameEl) {
+                nameEl.innerHTML = displayName;
+                nameEl.classList.remove('text-slate-500', 'text-amber-500');
+                nameEl.classList.add('text-white');
+                nameEl.style.color = appState.decks[deckId].hex;
+            }
+            
+            const pb = document.getElementById(`progress-bar-${deckId}`);
+            if (pb) pb.style.width = '0%';
+            stopTrack(deckId);
+            
+            if (!isStateLoading) {
+                showToast(`Đã tải: ${displayName.substring(0, 20)}...`, "success");
+            }
+
+            appState.decks[deckId].source = { type: mediaType, url: mediaType === 'url' ? srcUrl : null, name: displayName };
+            saveStateToCloud();
+        }
+
+        function applyMediaToPad(index, srcUrl, displayName, mediaType = 'url') {
+            const padRuntime = soundPads[index];
+            if (displayName.length > 12) displayName = displayName.substring(0, 10) + "..";
+            
+            padRuntime.audioEl.src = srcUrl;
+            padRuntime.isMissing = false;
+            
+            appState.pads[index].name = displayName;
+            appState.pads[index].type = mediaType;
+            appState.pads[index].url = mediaType === 'url' ? srcUrl : null;
+            
+            renderSoundboard();
+            saveStateToCloud();
+        }
+
+        function handleDragOver(e, id) {
+            e.preventDefault();
+            const el = document.getElementById(typeof id === 'string' ? `deck-container-${id}` : `pad-container-${id}`);
+            if(el) el.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e, id) {
+            e.preventDefault();
+            const el = document.getElementById(typeof id === 'string' ? `deck-container-${id}` : `pad-container-${id}`);
+            if(el) el.classList.remove('drag-over');
+        }
+
+        function handleDrop(e, targetId, type) {
+            e.preventDefault();
+            const el = document.getElementById(typeof targetId === 'string' ? `deck-container-${targetId}` : `pad-container-${targetId}`);
+            if(el) el.classList.remove('drag-over');
+
+            if (e.dataTransfer.items) {
+                const item = e.dataTransfer.items[0];
+                if (item.kind === 'file') {
+                    const file = item.getAsFile();
+                    if(file.type.startsWith('audio/') || file.type.startsWith('video/')) {
+                        loadMediaData(file, targetId, type);
+                    } else showToast("Chỉ hỗ trợ file âm thanh/video!", "error");
+                }
+            }
+        }
+
+        function openUrlModal(deckId) {
+            document.getElementById('url-target-deck').value = deckId;
+            const modal = document.getElementById('url-modal');
+            const content = document.getElementById('url-modal-content');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.replace('opacity-0', 'opacity-100');
+                content.classList.replace('scale-95', 'scale-100');
+            }, 10);
+            document.getElementById('url-input').focus();
+        }
+
+        function closeUrlModal() {
+            const modal = document.getElementById('url-modal');
+            const content = document.getElementById('url-modal-content');
+            modal.classList.replace('opacity-100', 'opacity-0');
+            content.classList.replace('scale-100', 'scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 200);
+        }
+
+        function submitUrlModal() {
+            const url = document.getElementById('url-input').value.trim();
+            const deckId = document.getElementById('url-target-deck').value;
+            if (url) {
+                // Tách tên file từ URL
+                let name = url.split('/').pop().split('?')[0] || "Audio từ Link Web";
+                applyMediaToDeck(deckId, url, decodeURIComponent(name), 'url');
+                closeUrlModal();
+                document.getElementById('url-input').value = '';
+            } else showToast("Vui lòng nhập link!", "error");
+        }
+
+        function showToast(message, type = "info") {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            let bg = 'bg-slate-800', icon = 'fa-info-circle text-blue-400';
+            if(type === 'success') { bg = 'bg-emerald-900/90'; icon = 'fa-check-circle text-emerald-400'; }
+            else if(type === 'error') { bg = 'bg-red-900/90'; icon = 'fa-exclamation-circle text-red-400'; }
+            
+            toast.className = `${bg} border border-slate-600 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 text-sm toast-enter`;
+            toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${message}</span>`;
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(100%)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 2500);
+        }
+
+        function togglePlay(id) {
+            initAudioContext();
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            
+            const deck = decks[id];
+            const btn = document.getElementById(`play-btn-${id}`);
+            
+            if (!deck.audioEl.src || deck.audioEl.src.endsWith(window.location.pathname)) {
+                if (appState.decks[id].source?.type === 'local') {
+                    showToast("Vui lòng thả lại file này vào kênh!", "error");
+                } else showToast("Vui lòng tải bài hát trước!", "error");
+                return;
+            }
+
+            if (deck.audioEl.paused) {
+                deck.audioEl.play().catch(e => showToast("Lỗi phát audio", "error"));
+                btn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+                btn.style.backgroundColor = '#10b981';
+            } else {
+                deck.audioEl.pause();
+                btn.innerHTML = '<i class="fa-solid fa-play ml-1"></i>';
+                btn.style.backgroundColor = appState.decks[id].hex;
+            }
+        }
+
+        function toggleLoop(id, forceValue = null) {
+            const deck = decks[id];
+            if (forceValue !== null) deck.isLoop = forceValue;
+            else deck.isLoop = !deck.isLoop;
+            
+            deck.audioEl.loop = deck.isLoop;
+            appState.decks[id].loop = deck.isLoop;
+            saveStateToCloud();
+            
+            const btn = document.getElementById(`loop-btn-${id}`);
+            if (btn) {
+                if (deck.isLoop) {
+                    btn.classList.replace('text-slate-500', 'text-white');
+                    btn.classList.remove('bg-slate-800');
+                    btn.style.backgroundColor = appState.decks[id].hex;
+                } else {
+                    btn.classList.replace('text-white', 'text-slate-500');
+                    btn.style.backgroundColor = '';
+                    btn.classList.add('bg-slate-800');
+                }
+            }
+        }
+        
+        function stopTrack(id) {
+            const deck = decks[id];
+            deck.audioEl.pause();
+            deck.audioEl.currentTime = 0;
+            const btn = document.getElementById(`play-btn-${id}`);
+            if(btn) {
+                btn.innerHTML = '<i class="fa-solid fa-play ml-1"></i>';
+                btn.style.backgroundColor = appState.decks[id].hex;
+            }
+        }
+
+        function updateProgress(id) {
+            const audio = decks[id].audioEl;
+            if(isNaN(audio.duration)) return;
+            const percent = (audio.currentTime / audio.duration) * 100;
+            document.getElementById(`progress-bar-${id}`).style.width = `${percent}%`;
+            document.getElementById(`time-current-${id}`).innerText = formatTime(audio.currentTime);
+        }
+
+        function seekTrack(event, id) {
+            const audio = decks[id].audioEl;
+            if(!audio.src || isNaN(audio.duration)) return;
+            const bg = document.getElementById(`progress-bg-${id}`);
+            const clickX = event.clientX - bg.getBoundingClientRect().left;
+            audio.currentTime = Math.max(0, Math.min(1, clickX / bg.getBoundingClientRect().width)) * audio.duration;
+        }
+
+        function updateEQ(id) {
+            const bass = parseFloat(document.getElementById(`eq-bass-${id}`).value);
+            const treb = parseFloat(document.getElementById(`eq-treb-${id}`).value);
+            
+            if (decks[id].nodes) {
+                decks[id].nodes.bassEQ.gain.value = bass;
+                decks[id].nodes.trebleEQ.gain.value = treb;
+            }
+            
+            document.getElementById(`lbl-bass-${id}`).innerText = bass > 0 ? `+${bass}` : bass;
+            document.getElementById(`lbl-treb-${id}`).innerText = treb > 0 ? `+${treb}` : treb;
+            
+            appState.decks[id].bass = bass;
+            appState.decks[id].treb = treb;
+            saveStateToCloud();
+        }
+
+        function updateSpeed(id) {
+            const speed = parseFloat(document.getElementById(`speed-${id}`).value);
+            decks[id].audioEl.playbackRate = speed;
+            document.getElementById(`lbl-speed-${id}`).innerText = speed.toFixed(2) + 'x';
+            
+            appState.decks[id].speed = speed;
+            saveStateToCloud();
+        }
+
+        function resetSpeed(id) {
+            document.getElementById(`speed-${id}`).value = 1;
+            updateSpeed(id);
+        }
+
+        function updateDeckVolume(id, forceLogic = false) {
+            const deck = decks[id];
+            const volSlider = parseFloat(document.getElementById(`vol-${id}`).value);
+            
+            document.getElementById(`lbl-vol-${id}`).innerText = Math.round(volSlider * 100) + '%';
+            
+            if (deck.nodes || forceLogic) {
+                const duck = isTalkoverActive ? talkoverMultiplier : 1.0;
+                if(deck.nodes) deck.nodes.gainNode.gain.setTargetAtTime(volSlider * duck, audioCtx.currentTime, 0.05);
+            }
+
+            appState.decks[id].vol = volSlider;
+            saveStateToCloud();
+        }
+
+        function fadeDeck(id, direction) {
+            const deck = decks[id];
+            if(!deck.audioEl.src || (deck.audioEl.paused && direction==='out')) return;
+            if(deck.isFading) return;
+            
+            deck.isFading = true;
+            const slider = document.getElementById(`vol-${id}`);
+            
+            if (direction === 'in') {
+                slider.value = 0;
+                updateDeckVolume(id);
+                if (deck.audioEl.paused) togglePlay(id);
+            }
+
+            const step = 0.02;
+            const fadeInterval = setInterval(() => {
+                let nextVal = parseFloat(slider.value) + (direction === 'in' ? step : -step);
+                nextVal = Math.max(0, Math.min(1, nextVal));
+                
+                slider.value = nextVal;
+                updateDeckVolume(id); // Gọi hàm này sẽ kích hoạt trigger lưu mây (có debounce nên an toàn)
+
+                if ((direction === 'in' && nextVal >= 1) || (direction === 'out' && nextVal <= 0)) {
+                    clearInterval(fadeInterval);
+                    deck.isFading = false;
+                    if (direction === 'out' && nextVal <= 0) stopTrack(id);
+                }
+            }, 50);
+        }
+
+        document.getElementById('master-volume').addEventListener('input', (e) => {
+            appState.masterVolume = parseFloat(e.target.value);
+            document.getElementById('master-vol-val').innerText = Math.round(appState.masterVolume * 100) + '%';
+            if (masterGain) masterGain.gain.setTargetAtTime(appState.masterVolume, audioCtx.currentTime, 0.05);
+            saveStateToCloud();
+        });
+
+        function toggleTalkover() {
+            isTalkoverActive = !isTalkoverActive;
+            const btn = document.getElementById('btn-talkover');
+            
+            if (isTalkoverActive) {
+                btn.classList.replace('bg-slate-800', 'bg-red-600');
+                btn.classList.replace('text-slate-300', 'text-white');
+                btn.classList.add('shadow-[0_0_15px_rgba(220,38,38,0.5)]');
+                showToast("Đã bật chế độ MC (Giảm nhạc)", "info");
+            } else {
+                btn.classList.replace('bg-red-600', 'bg-slate-800');
+                btn.classList.replace('text-white', 'text-slate-300');
+                btn.classList.remove('shadow-[0_0_15px_rgba(220,38,38,0.5)]');
+            }
+            Object.keys(decks).forEach(id => updateDeckVolume(id, true));
+        }
+
+        function playSoundPad(index) {
+            const padRuntime = soundPads[index];
+            const padConf = appState.pads[index];
+            
+            if (!padConf.type) {
+                document.getElementById(`pad-file-${index}`).click();
+                return;
+            }
+            if (padRuntime.isMissing) {
+                showToast("Vui lòng thả lại file audio này vào ô trống!", "error");
+                return;
+            }
+
+            padRuntime.audioEl.pause();
+            padRuntime.audioEl.currentTime = 0;
+            padRuntime.audioEl.volume = appState.masterVolume * appState.soundboardVolume; 
+            padRuntime.audioEl.play().catch(e => console.error("Pad error:", e));
+            
+            const btn = document.getElementById(`pad-btn-${index}`);
+            if(btn) btn.classList.add('playing');
+            padRuntime.audioEl.onended = () => { if(btn) btn.classList.remove('playing'); };
+        }
+
+        function stopAllSounds() {
+            soundPads.forEach((pad, index) => {
+                if (pad && pad.audioEl) {
+                    pad.audioEl.pause();
+                    pad.audioEl.currentTime = 0;
+                }
+                const btn = document.getElementById(`pad-btn-${index}`);
+                if(btn) btn.classList.remove('playing');
+            });
+        }
+
+        function drawVisualizers() {
+            requestAnimationFrame(drawVisualizers);
+            Object.keys(decks).forEach(id => {
+                const deck = decks[id];
+                if (!deck.nodes) return;
+                const canvas = document.getElementById(`canvas-${id}`);
+                if(!canvas) return;
+                
+                const ctx = canvas.getContext('2d');
+                canvas.width = canvas.parentElement.getBoundingClientRect().width;
+                canvas.height = 48;
+
+                const analyser = deck.nodes.analyser;
+                const bufferLength = analyser.frequencyBinCount;
+                const dataArray = new Uint8Array(bufferLength);
+                analyser.getByteFrequencyData(dataArray);
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                const barWidth = (canvas.width / bufferLength) * 2.5;
+                let x = 0;
+
+                for (let i = 0; i < bufferLength; i++) {
+                    const barHeight = (dataArray[i] / 255) * canvas.height;
+                    const state = appState.decks[id];
+                    const r = parseInt(state.hex.slice(1, 3), 16);
+                    const g = parseInt(state.hex.slice(3, 5), 16);
+                    const b = parseInt(state.hex.slice(5, 7), 16);
+                    ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${barHeight/canvas.height + 0.2})`;
+                    ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+                    x += barWidth + 1;
+                }
+            });
+        }
+
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return "00:00";
+            const m = Math.floor(seconds / 60);
+            const s = Math.floor(seconds % 60);
+            return (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
+        }
+
+        // --- TÍNH NĂNG MỚI: GHI CHÚ, RECORDING, SOUNDBOARD VOL ---
+        function updateNote(id) {
+            const val = document.getElementById(`note-${id}`).value;
+            appState.decks[id].note = val;
+            saveStateToCloud();
+        }
+
+        function updateSoundboardVol() {
+            appState.soundboardVolume = parseFloat(document.getElementById('soundboard-vol').value);
+            saveStateToCloud();
+        }
+
+        // Module Ghi Âm Độc Lập
+        let mediaRecorder;
+        let recordedChunks = [];
+        let isRecording = false;
+        let streamDestination;
+        let recordInterval;
+        let recordSeconds = 0;
+
+        function toggleRecording() {
+            initAudioContext();
+            
+            const btn = document.getElementById('btn-record');
+            const timerEl = document.getElementById('record-timer');
+
+            if (!isRecording) {
+                streamDestination = audioCtx.createMediaStreamDestination();
+                masterGain.connect(streamDestination);
+                
+                try {
+                    mediaRecorder = new MediaRecorder(streamDestination.stream);
+                } catch (e) {
+                    showToast("Trình duyệt chưa hỗ trợ ghi âm nội bộ!", "error");
+                    return;
+                }
+
+                mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(recordedChunks, { type: 'audio/webm' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = `Livestream_Mix_${new Date().toISOString().slice(0,10)}.webm`;
+                    document.body.appendChild(a);
+                    a.click();
+                    setTimeout(() => { document.body.removeChild(a); window.URL.revokeObjectURL(url); }, 100);
+                    recordedChunks = [];
+                    showToast("Đã lưu file âm thanh WebM thành công!", "success");
+                };
+                
+                mediaRecorder.start();
+                isRecording = true;
+                
+                // Cập nhật UI
+                btn.classList.replace('bg-slate-800', 'bg-red-900/50');
+                btn.classList.replace('border-slate-700', 'border-red-500/50');
+                btn.querySelector('i').classList.add('text-red-500', 'animate-pulse');
+                showToast("Bắt đầu ghi âm bộ trộn...", "info");
+                
+                recordSeconds = 0;
+                recordInterval = setInterval(() => {
+                    recordSeconds++;
+                    timerEl.innerText = formatTime(recordSeconds);
+                }, 1000);
+                
+            } else {
+                mediaRecorder.stop();
+                masterGain.disconnect(streamDestination);
+                isRecording = false;
+                
+                clearInterval(recordInterval);
+                timerEl.innerText = "00:00";
+                btn.classList.replace('bg-red-900/50', 'bg-slate-800');
+                btn.classList.replace('border-red-500/50', 'border-slate-700');
+                btn.querySelector('i').classList.remove('text-red-500', 'animate-pulse');
+            }
+        }
+
+        // Đính các hàm lên window để gọi từ HTML on...="..."
+        Object.assign(window, {
+            toggleTalkover, handleDragOver, handleDragLeave, handleDrop,
+            handleFileSelect, openUrlModal, closeUrlModal, submitUrlModal,
+            togglePlay, stopTrack, toggleLoop, seekTrack, updateEQ, updateSpeed,
+            resetSpeed, updateDeckVolume, fadeDeck, playSoundPad, stopAllSounds,
+            updateNote, updateSoundboardVol, toggleRecording,
+            addDeck, deleteDeck, renameDeck, addPad, deletePad, renamePad,
+            closeRenameModal, submitRenameModal
+        });
+
+        // Khởi động
+        window.addEventListener('DOMContentLoaded', () => {
+            renderDecks();
+            renderSoundboard();
+            initCloudStorage();
+            
+            document.body.addEventListener('click', initAudioContext, { once: true });
+            document.body.addEventListener('touchstart', initAudioContext, { once: true });
+        });
+    </script>
+</body>
+</html>
