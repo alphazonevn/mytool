@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+      <link rel="icon" href="https://i.pinimg.com/control1/1200x/7a/4b/16/7a4b16207c03cda833102183f6287c09.jpg" type="image/jpeg">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G1 - PAUL - Super Live Filter Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: #a0aec0;
+            --accent: #3b82f6;
+            --success: #10b981;
+            --danger: #ef4444;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-style: normal !important; }
+        body { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); color: var(--text-primary); min-height: 100vh; padding: 2rem; display: flex; flex-direction: column; align-items: center; }
+        .container { width: 100%; max-width: 1400px; }
+        .header { text-align: center; margin-bottom: 2rem; }
+        .header h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.025em; }
+        
+        .glass-panel {
+            background: var(--glass-bg); backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border); border-radius: 24px; padding: 2rem;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); margin-bottom: 2rem;
+        }
+
+        .top-controls {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;
+            flex-wrap: wrap; gap: 1rem;
+        }
+
+        .btn { background: var(--accent); color: white; border: none; padding: 1rem 2rem; border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-size: 1rem; display: inline-flex; align-items: center; gap: 0.5rem; }
+        .btn:hover { background: #2563eb; transform: translateY(-2px); }
+        .btn:disabled { background: #475569; cursor: not-allowed; transform: none; }
+        .btn-success { background: var(--success); }
+        .btn-success:hover { background: #059669; }
+
+        .switch-container { display: flex; align-items: center; gap: 0.75rem; background: rgba(0,0,0,0.3); padding: 0.75rem 1.5rem; border-radius: 12px; border: 1px solid var(--glass-border); }
+        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #475569; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--success); }
+        input:checked + .slider:before { transform: translateX(24px); }
+        
+        .status-msg { color: var(--text-secondary); font-size: 0.9rem; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 1rem; }
+        .stat-card { background: rgba(0, 0, 0, 0.3); border: 1px solid var(--glass-border); border-radius: 16px; padding: 1.5rem; text-align: center; }
+        .stat-card h3 { color: var(--text-secondary); font-size: 0.875rem; text-transform: uppercase; margin-bottom: 0.5rem; }
+        .stat-card .val { font-size: 2rem; font-weight: 700; color: var(--text-primary); }
+
+        .table-container { overflow-x: auto; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(0, 0, 0, 0.1); margin-top: 2rem; max-height: 500px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th, td { padding: 1rem; border-bottom: 1px solid var(--glass-border); font-size: 0.9rem; vertical-align: middle; }
+        th { background: rgba(0, 0, 0, 0.6); font-weight: 600; position: sticky; top: 0; z-index: 10; white-space: nowrap; }
+        tr:hover td { background: rgba(255, 255, 255, 0.03); }
+        
+        .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; display: none; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .link-text { color: #60a5fa; text-decoration: underline; white-space: nowrap; }
+        .link-text:hover { color: #93c5fd; }
+        
+        .avatar-img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid var(--glass-border); background: rgba(0,0,0,0.2); }
+        .avatar-placeholder { width: 44px; height: 44px; border-radius: 50%; background: var(--glass-border); display: flex; align-items: center; justify-content: center; font-size: 16px; color: #fff;}
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>GINOIR VIRUS - G1</h1>
+            <p style="color: var(--text-secondary)">Hệ thống Quét & Lọc Dữ Liệu Live Siêu Tốc (Real-time)</p>
+        </div>
+
+        <div class="glass-panel">
+            
+            <div class="top-controls">
+                <button class="btn" id="syncBtn">
+                    <div class="spinner" id="spinner"></div>
+                    <span>QUÉT DỮ LIỆU THỦ CÔNG</span>
+                </button>
+
+                <div class="switch-container">
+                    <label class="switch">
+                        <input type="checkbox" id="autoSyncToggle">
+                        <span class="slider"></span>
+                    </label>
+                    <div style="text-align: left;">
+                        <div style="font-weight: 600; font-size: 0.95rem;">Auto-Sync (1s / Lần)</div>
+                        <div class="status-msg" id="lastUpdated">Đang tắt...</div>
+                    </div>
+                </div>
+
+                <button class="btn btn-success" id="downloadBtn">⬇ Tải File Excel Báo Cáo</button>
+            </div>
+
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card"><h3>Tổng User Hợp Lệ</h3><div class="val" id="statUsers">0</div></div>
+                <div class="stat-card"><h3>Lượt Tặng Quà</h3><div class="val" id="statGifts">0</div></div>
+                <div class="stat-card"><h3>Lượt Bình Luận</h3><div class="val" id="statComments">0</div></div>
+            </div>
+
+            <div class="table-container" id="tablePreview">
+                <table id="dataTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 80px; text-align: center;">Avatar</th>
+                            <th>Tên User</th>
+                            <th>Level</th>
+                            <th>Quà Tặng</th>
+                            <th>Hoạt Động Chi Tiết</th>
+                            <th>Bình Luận Chi Tiết</th>
+                            <th>Link Truy Cập</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr><td colspan="7" style="text-align: center; color: #a0aec0; padding: 3rem;">Chưa có dữ liệu. Vui lòng bấm Quét.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =====================================================================
+        // TRẠM API VÀ LINK NGUỒN CỐ ĐỊNH 
+        // =====================================================================
+        const FIXED_API_URL = "https://script.google.com/macros/s/AKfycbwT72JZ8fOZpceyuQ5M3gORt5iAr1Cxq64K61MfMz7yPLUJhH483fVG4-eflIF7wkl-/exec";
+        const FIXED_SHEET_URL = "https://docs.google.com/spreadsheets/d/19fybhxwQ6pi0z7eYFUFdP32sSuztZGDVGBH2FNcRslY/edit?gid=0#gid=0";
+        // =====================================================================
+        
+        let processedGlobalData = [];
+        let autoSyncInterval = null;
+
+        function escapeRegExp(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        // BỘ LỌC AVATAR THÔNG MINH
+        function extractCleanAvatar(rawString) {
+            if (!rawString || rawString === 'nan' || rawString === 'undefined') return "";
+            
+            const urls = rawString.match(/https?:\/\/[^\s\n]+/g);
+            if (!urls) return rawString.startsWith("http") ? rawString.trim() : "";
+            
+            const blacklist = /badge|icon|resource|gift|emoji|level/i;
+            
+            let bestMatch = urls.find(u => /avt/i.test(u) && !blacklist.test(u));
+            if (bestMatch) return bestMatch;
+            
+            let fallback = urls.find(u => !blacklist.test(u));
+            return fallback || "";
+        }
+
+        document.getElementById('syncBtn').addEventListener('click', () => fetchData(false));
+
+        document.getElementById('autoSyncToggle').addEventListener('change', (e) => {
+            if (e.target.checked) {
+                fetchData(true); 
+                autoSyncInterval = setInterval(() => fetchData(true), 1000);
+                document.getElementById('lastUpdated').innerText = "Đang chạy ngầm...";
+                document.getElementById('lastUpdated').style.color = "var(--success)";
+            } else {
+                clearInterval(autoSyncInterval);
+                document.getElementById('lastUpdated').innerText = "Đã tắt cập nhật";
+                document.getElementById('lastUpdated').style.color = "var(--text-secondary)";
+                document.getElementById('spinner').style.display = "none";
+            }
+        });
+
+        async function fetchData(isAuto = false) {
+            const btn = document.getElementById('syncBtn');
+            const spinner = document.getElementById('spinner');
+            const lastUpdated = document.getElementById('lastUpdated');
+
+            if (!isAuto) {
+                btn.disabled = true;
+                btn.querySelector('span').innerText = "ĐANG TẢI...";
+            }
+            spinner.style.display = "block";
+
+            try {
+                const targetEndpoint = `${FIXED_API_URL}?url=${encodeURIComponent(FIXED_SHEET_URL)}`;
+                const response = await fetch(targetEndpoint, { method: 'GET', redirect: 'follow' });
+                
+                if (!response.ok) throw new Error("Lỗi máy chủ Google");
+                
+                const rawJson = await response.json();
+                if (rawJson.error) throw new Error(rawJson.error);
+
+                processData(rawJson);
+
+                const now = new Date();
+                const timeStr = now.getHours().toString().padStart(2, '0') + ":" + 
+                                now.getMinutes().toString().padStart(2, '0') + ":" + 
+                                now.getSeconds().toString().padStart(2, '0');
+
+                if (isAuto) {
+                    lastUpdated.innerText = `Cập nhật lần cuối: ${timeStr}`;
+                }
+
+            } catch (error) {
+                console.error(error);
+                if (isAuto) {
+                    lastUpdated.innerText = "Lỗi kết nối! Đang thử lại...";
+                    lastUpdated.style.color = "var(--danger)";
+                } else {
+                    alert("Lỗi tải dữ liệu: " + error.message);
+                }
+            } finally {
+                if (!isAuto) {
+                    btn.disabled = false;
+                    btn.querySelector('span').innerText = "QUÉT DỮ LIỆU THỦ CÔNG";
+                }
+                if (!document.getElementById('autoSyncToggle').checked) {
+                    spinner.style.display = "none";
+                }
+            }
+        }
+
+        // --- THUẬT TOÁN LỌC THÔNG MINH NÂNG CẤP V2 ---
+        function processData(rawData) {
+            let cleanedData = [];
+
+            rawData.forEach(row => {
+                const rawUser = String(row['Người dùng'] || row['Người Dùng'] || '').trim();
+                const rawLevelCol = String(row['Cấp bậc'] || row['Cấp Bậc'] || '').trim();
+                const rawComment = String(row['Bình luận'] || row['Bình Luận'] || '').trim();
+                const rawActivity = String(row['Hoạt động'] || row['Hoạt Động'] || '').trim();
+                const rawAvatar = String(row['Avatar URL'] || row['Avatar Url'] || row['Avatar url'] || '').trim();
+
+                const testUser = rawUser.replace(/\s+/g, '');
+                if (!rawUser || /^x\d*$/i.test(testUser) || /^\d+$/.test(testUser)) return;
+
+                const sysMsgs = ["TikTok", "Quay lại", "ms.rebels", "rhysman.com", "k5.nightpulse", "Công tyChương trìnhĐiều khoản", "Người xem", "Mới", "Ginoir Nguyen", "Đã lọc một số bình luận", "Chào mừng bạn đến với TikTok", "LIVE Pro", "MS-REBELS", "59K_ORBIT", "Slyour", "Phuc Thinh", "TIN TOK LIVE"];
+                if (sysMsgs.some(msg => rawUser.includes(msg)) || rawUser.match(/(LIVE|Follow|Recharge|More|Bạn thật tuyệt vời|Khám phá phiên LIVE)/i)) return;
+
+                let userName = "", level = "", comment = "", activity = "", gift = "";
+
+                const uLines = rawUser.split(/\r?\n|\\n/);
+                const cLines = rawLevelCol ? rawLevelCol.split(/\r?\n|\\n/) : [];
+
+                let tempUser = rawUser;
+
+                if (cLines.length > 0 && /^\d+$/.test(cLines[0].trim())) {
+                    level = cLines[0].trim();
+                }
+
+                if (uLines.length > 1 && /^\d+$/.test(uLines[0].trim())) {
+                    if (!level) level = uLines[0].trim();
+                    tempUser = uLines.slice(1).join(' '); 
+                } else {
+                    tempUser = uLines[0]; 
+                }
+
+                if (!level) {
+                    let matchRegex = tempUser.match(/^(\d+)(.*)/);
+                    if (matchRegex) {
+                        level = matchRegex[1];
+                        tempUser = matchRegex[2];
+                    }
+                }
+
+                userName = tempUser.trim();
+                userName = userName.replace(/^(EPNV\s*|EPINV\s*)/i, "").trim();
+                userName = userName.replace(/\s+Hạng\s+\d+$/i, "").trim();
+                userName = userName.replace(/\s*đã\s+(tham gia|gửi|thích|chia sẻ|follow).*$/i, "").trim();
+
+                if (!userName || !level || userName === 'nan' || userName === 'undefined') return;
+                if (sysMsgs.includes(userName) || userName.match(/^(LIVE|Follow|Recharge|More)$/i)) return;
+
+                const cleanAvatar = extractCleanAvatar(rawAvatar);
+
+                if (cLines.length > uLines.length && cLines.length >= 3) {
+                    const candidate = cLines[cLines.length - 1].trim();
+                    if (!candidate.includes("Hạng") && candidate !== userName) comment = candidate;
+                }
+
+                if (!comment && rawComment && rawComment !== 'nan') {
+                    let c = rawComment.replace(/\r?\n|\\n/g, ' ').trim();
+                    c = c.replace(/^\d+\s+/, ''); 
+                    c = c.replace(new RegExp(`^${escapeRegExp(userName)}\\s*`, 'i'), '').trim(); 
+                    c = c.replace(/^Hạng\s+\d+\s+/, '').trim(); 
+                    if (c) comment = c;
+                }
+
+                if (rawActivity && rawActivity !== 'nan') {
+                    let actStr = rawActivity.replace(/\r?\n|\\n/g, ' ').trim();
+                    if (actStr.toLowerCase().includes('đã gửi')) {
+                        let parts = actStr.split(/đã gửi/i);
+                        if (parts.length > 1) {
+                            let gRaw = parts[1].trim();
+                            let matchGift = gRaw.match(/(x\s*\d+)/i);
+                            if (matchGift) {
+                                gift = `${gRaw.substring(0, matchGift.index).trim()} ${matchGift[1].replace(/\s+/g, '')}`;
+                            } else {
+                                gift = gRaw;
+                            }
+                        }
+                    } else {
+                        activity = actStr;
+                    }
+                }
+
+                cleanedData.push({
+                    'Avatar URL': cleanAvatar,
+                    'Tên User': userName,
+                    'Level': level,
+                    'Quà Tặng': gift,
+                    'Hoạt Động Chi Tiết': activity,
+                    'Bình Luận Chi Tiết': comment,
+                    'Link Truy Cập': `https://www.tiktok.com/search/user?q=${encodeURIComponent(userName)}`
+                });
+            });
+
+            processedGlobalData = cleanedData.filter((v, i, a) => a.findIndex(t => (
+                t['Tên User'] === v['Tên User'] && 
+                t['Quà Tặng'] === v['Quà Tặng'] && 
+                t['Hoạt Động Chi Tiết'] === v['Hoạt Động Chi Tiết'] && 
+                t['Bình Luận Chi Tiết'] === v['Bình Luận Chi Tiết']
+            )) === i);
+
+            processedGlobalData.sort((a, b) => (b['Quà Tặng'] !== "") - (a['Quà Tặng'] !== ""));
+
+            updateUI();
+        }
+
+        function updateUI() {
+            document.getElementById('statUsers').innerText = new Set(processedGlobalData.map(i => i['Tên User'])).size;
+            document.getElementById('statGifts').innerText = processedGlobalData.filter(i => i['Quà Tặng']).length;
+            document.getElementById('statComments').innerText = processedGlobalData.filter(i => i['Bình Luận Chi Tiết']).length;
+
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            if (processedGlobalData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #a0aec0; padding: 3rem;">Trang tính hiện đang trống hoặc chưa có tương tác hợp lệ (đủ Tên & Level).</td></tr>';
+                return;
+            }
+
+            processedGlobalData.forEach(item => {
+                const tr = document.createElement('tr');
+                
+                const avatarHtml = (item['Avatar URL'] && item['Avatar URL'].startsWith('http')) 
+                    ? `<img src="${item['Avatar URL']}" class="avatar-img" onerror="this.outerHTML='<div class=\\'avatar-placeholder\\'>👤</div>'">`
+                    : `<div class="avatar-placeholder">👤</div>`;
+
+                tr.innerHTML = `
+                    <td style="text-align: center;">${avatarHtml}</td>
+                    <td style="font-weight: 600;">${item['Tên User']}</td>
+                    <td><span style="background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 0.2rem 0.6rem; border-radius: 99px; font-weight: bold;">${item['Level']}</span></td>
+                    <td style="color: #34d399; font-weight: bold;">${item['Quà Tặng']}</td>
+                    <td style="color: #94a3b8;">${item['Hoạt Động Chi Tiết']}</td>
+                    <td>${item['Bình Luận Chi Tiết']}</td>
+                    <td><a href="${item['Link Truy Cập']}" target="_blank" class="link-text">Mở Profile</a></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            if(processedGlobalData.length === 0) {
+                alert("Bảng dữ liệu đang trống!");
+                return;
+            }
+            const headers = ["Avatar URL", "Tên User", "Level", "Quà Tặng", "Hoạt Động Chi Tiết", "Bình Luận Chi Tiết", "Link Truy Cập"];
+            const ws = XLSX.utils.json_to_sheet(processedGlobalData, { header: headers });
+
+            const range = XLSX.utils.decode_range(ws['!ref']);
+            for(let R = range.s.r + 1; R <= range.e.r; ++R) {
+                const cellRef = XLSX.utils.encode_cell({c: 6, r: R});
+                if(!ws[cellRef]) continue;
+                const url = ws[cellRef].v;
+                ws[cellRef].l = { Target: url }; 
+                ws[cellRef].v = "Mở Profile";    
+            }
+
+            ws['!cols'] = [
+                {wch: 50}, 
+                {wch: 25}, 
+                {wch: 10}, 
+                {wch: 30}, 
+                {wch: 35}, 
+                {wch: 50}, 
+                {wch: 15}  
+            ];
+
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Dữ Liệu Lọc");
+            
+            const now = new Date();
+            const timeTag = `${now.getHours()}h${now.getMinutes()}p`;
+            XLSX.writeFile(wb, `Bao_Cao_Live_${timeTag}.xlsx`);
+        });
+    </script>
+</body>
+</html>
