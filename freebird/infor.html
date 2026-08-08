@@ -1,0 +1,1869 @@
+<!DOCTYPE html>
+
+<html lang="vi">
+
+<head>
+
+  <base target="_top">
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Kết quả thông tin</title>
+
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+
+    body {
+
+      font-family:
+        Inter,
+        Arial,
+        sans-serif;
+
+      background: #f4f7fb;
+
+      color: #172033;
+
+      min-height: 100vh;
+
+    }
+
+
+    /* HEADER */
+
+    .header {
+
+      height: 72px;
+
+      background: white;
+
+      border-bottom:
+        1px solid #e5e7eb;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      padding: 0 30px;
+
+      position: sticky;
+
+      top: 0;
+
+      z-index: 20;
+
+    }
+
+
+    .brand {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 12px;
+
+    }
+
+
+    .logo {
+
+      width: 42px;
+
+      height: 42px;
+
+      border-radius: 12px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #2563eb,
+          #4f46e5
+        );
+
+      color: white;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      font-size: 20px;
+
+    }
+
+
+    .title {
+
+      font-size: 18px;
+
+      font-weight: 750;
+
+    }
+
+
+    .subtitle {
+
+      color: #98a2b3;
+
+      font-size: 12px;
+
+      margin-top: 2px;
+
+    }
+
+
+    .refresh {
+
+      border: 1px solid #d9e0ea;
+
+      background: white;
+
+      padding: 10px 15px;
+
+      border-radius: 10px;
+
+      cursor: pointer;
+
+      font-weight: 600;
+
+    }
+
+
+    /* MAIN */
+
+    .main {
+
+      max-width: 1400px;
+
+      margin: auto;
+
+      padding: 28px;
+
+    }
+
+
+    /* STATS */
+
+    .stats {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(3, 1fr);
+
+      gap: 18px;
+
+      margin-bottom: 22px;
+
+    }
+
+
+    .stat {
+
+      background: white;
+
+      border-radius: 17px;
+
+      border:
+        1px solid #e8edf3;
+
+      padding: 22px;
+
+    }
+
+
+    .stat-label {
+
+      font-size: 13px;
+
+      color: #667085;
+
+    }
+
+
+    .stat-value {
+
+      font-size: 28px;
+
+      font-weight: 750;
+
+      margin-top: 8px;
+
+    }
+
+
+    /* SEARCH */
+
+    .search-card {
+
+      background: white;
+
+      padding: 17px;
+
+      border-radius: 17px;
+
+      margin-bottom: 18px;
+
+      border:
+        1px solid #e8edf3;
+
+    }
+
+
+    .search {
+
+      width: 100%;
+
+      padding: 13px;
+
+      border:
+        1px solid #d9e0ea;
+
+      border-radius: 11px;
+
+      outline: none;
+
+      font-size: 14px;
+
+    }
+
+
+    .search:focus {
+
+      border-color: #2563eb;
+
+      box-shadow:
+        0 0 0 4px
+        rgba(37,99,235,.08);
+
+    }
+
+
+    /* TABLE */
+
+    .table-card {
+
+      background: white;
+
+      border-radius: 18px;
+
+      border:
+        1px solid #e8edf3;
+
+      overflow: hidden;
+
+    }
+
+
+    .table-wrap {
+
+      overflow-x: auto;
+
+    }
+
+
+    table {
+
+      width: 100%;
+
+      min-width: 950px;
+
+      border-collapse: collapse;
+
+    }
+
+
+    th {
+
+      background: #f8fafc;
+
+      padding: 14px 18px;
+
+      text-align: left;
+
+      color: #667085;
+
+      font-size: 12px;
+
+      white-space: nowrap;
+
+    }
+
+
+    td {
+
+      padding: 15px 18px;
+
+      border-top:
+        1px solid #f0f2f5;
+
+      font-size: 14px;
+
+    }
+
+
+    tr:hover td {
+
+      background: #fafcff;
+
+    }
+
+
+    .name {
+
+      font-weight: 650;
+
+    }
+
+
+    .id {
+
+      font-size: 11px;
+
+      color: #98a2b3;
+
+      margin-top: 3px;
+
+    }
+
+
+    .badge {
+
+      display: inline-flex;
+
+      padding: 5px 9px;
+
+      border-radius: 8px;
+
+      background: #eff6ff;
+
+      color: #2563eb;
+
+      font-size: 12px;
+
+      font-weight: 700;
+
+    }
+
+
+    .view {
+
+      border: none;
+
+      border-radius: 9px;
+
+      background: #172033;
+
+      color: white;
+
+      padding: 8px 13px;
+
+      cursor: pointer;
+
+    }
+
+
+    .view:hover {
+
+      background: #2563eb;
+
+    }
+
+
+    /* MODAL */
+
+    .modal {
+
+      display: none;
+
+      position: fixed;
+
+      inset: 0;
+
+      background:
+        rgba(15,23,42,.55);
+
+      backdrop-filter: blur(5px);
+
+      z-index: 100;
+
+      padding: 20px;
+
+      overflow-y: auto;
+
+      align-items: center;
+
+      justify-content: center;
+
+    }
+
+
+    .modal.active {
+
+      display: flex;
+
+    }
+
+
+    .modal-box {
+
+      width: 100%;
+
+      max-width: 1050px;
+
+      max-height: 92vh;
+
+      overflow-y: auto;
+
+      background: white;
+
+      border-radius: 23px;
+
+    }
+
+
+    .modal-head {
+
+      position: sticky;
+
+      top: 0;
+
+      background: white;
+
+      z-index: 5;
+
+      padding: 21px 25px;
+
+      border-bottom:
+        1px solid #eaecf0;
+
+      display: flex;
+
+      justify-content: space-between;
+
+      align-items: center;
+
+    }
+
+
+    .modal-head h2 {
+
+      font-size: 20px;
+
+    }
+
+
+    .close {
+
+      border: none;
+
+      width: 36px;
+
+      height: 36px;
+
+      border-radius: 10px;
+
+      font-size: 21px;
+
+      cursor: pointer;
+
+    }
+
+
+    .modal-body {
+
+      padding: 25px;
+
+    }
+
+
+    .info {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(2, 1fr);
+
+      gap: 14px;
+
+      margin-bottom: 28px;
+
+    }
+
+
+    .info-item {
+
+      background: #f8fafc;
+
+      border-radius: 12px;
+
+      padding: 15px;
+
+    }
+
+
+    .label {
+
+      font-size: 12px;
+
+      color: #667085;
+
+      margin-bottom: 5px;
+
+    }
+
+
+    .value {
+
+      font-size: 15px;
+
+      font-weight: 600;
+
+      word-break: break-word;
+
+    }
+
+
+    .photos-title {
+
+      font-size: 17px;
+
+      font-weight: 700;
+
+      margin-bottom: 14px;
+
+    }
+
+
+    .photos {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(5, 1fr);
+
+      gap: 12px;
+
+    }
+
+
+    .photo {
+
+      aspect-ratio: 3 / 4;
+
+      border-radius: 14px;
+
+      overflow: hidden;
+
+      cursor: pointer;
+
+      background: #f2f4f7;
+
+      position: relative;
+
+    }
+
+
+    .photo img {
+
+      width: 100%;
+
+      height: 100%;
+
+      object-fit: cover;
+
+      transition: .2s;
+
+    }
+
+
+    .photo:hover img {
+
+      transform: scale(1.04);
+
+    }
+
+
+    .photo span {
+
+      position: absolute;
+
+      left: 0;
+
+      right: 0;
+
+      bottom: 0;
+
+      padding: 9px;
+
+      color: white;
+
+      font-size: 11px;
+
+      background:
+        linear-gradient(
+          transparent,
+          rgba(0,0,0,.7)
+        );
+
+    }
+
+
+    /* IMAGE VIEW */
+
+    .viewer {
+
+      display: none;
+
+      position: fixed;
+
+      inset: 0;
+
+      background:
+        rgba(0,0,0,.9);
+
+      z-index: 200;
+
+      align-items: center;
+
+      justify-content: center;
+
+      padding: 30px;
+
+    }
+
+
+    .viewer.active {
+
+      display: flex;
+
+    }
+
+
+    .viewer img {
+
+      max-width: 90vw;
+
+      max-height: 90vh;
+
+      object-fit: contain;
+
+      border-radius: 10px;
+
+    }
+
+
+    .viewer-close {
+
+      position: fixed;
+
+      top: 20px;
+
+      right: 25px;
+
+      width: 42px;
+
+      height: 42px;
+
+      border: none;
+
+      border-radius: 50%;
+
+      background:
+        rgba(255,255,255,.15);
+
+      color: white;
+
+      font-size: 25px;
+
+      cursor: pointer;
+
+    }
+
+
+    /* EMPTY */
+
+    .empty {
+
+      text-align: center;
+
+      padding: 60px;
+
+      color: #98a2b3;
+
+    }
+
+
+    /* LOADING */
+
+    .loading {
+
+      display: none;
+
+      position: fixed;
+
+      inset: 0;
+
+      z-index: 300;
+
+      background:
+        rgba(255,255,255,.7);
+
+      align-items: center;
+
+      justify-content: center;
+
+    }
+
+
+    .loading.active {
+
+      display: flex;
+
+    }
+
+
+    .loading-box {
+
+      background: white;
+
+      padding: 25px 35px;
+
+      border-radius: 17px;
+
+      box-shadow:
+        0 20px 60px
+        rgba(0,0,0,.15);
+
+      text-align: center;
+
+    }
+
+
+    .spinner {
+
+      width: 40px;
+
+      height: 40px;
+
+      margin:
+        0 auto 13px;
+
+      border:
+        4px solid #e5e7eb;
+
+      border-top-color:
+        #2563eb;
+
+      border-radius: 50%;
+
+      animation:
+        spin .8s linear infinite;
+
+    }
+
+
+    @keyframes spin {
+
+      to {
+        transform: rotate(360deg);
+      }
+
+    }
+
+
+    @media(max-width:700px) {
+
+      .header {
+        padding: 0 15px;
+      }
+
+      .subtitle {
+        display: none;
+      }
+
+      .main {
+        padding: 16px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .info {
+        grid-template-columns: 1fr;
+      }
+
+      .photos {
+        grid-template-columns:
+          repeat(2, 1fr);
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+<!-- HEADER -->
+
+<header class="header">
+
+  <div class="brand">
+
+    <div class="logo">
+      ✦
+    </div>
+
+    <div>
+
+      <div class="title">
+        Kết quả thông tin
+      </div>
+
+      <div class="subtitle">
+        Danh sách hồ sơ đã thu thập
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <button
+    class="refresh"
+    onclick="loadData()"
+  >
+    ↻ Làm mới
+  </button>
+
+</header>
+
+
+<main class="main">
+
+
+  <!-- STATS -->
+
+  <div class="stats">
+
+    <div class="stat">
+
+      <div class="stat-label">
+        Tổng hồ sơ
+      </div>
+
+      <div
+        class="stat-value"
+        id="total"
+      >
+        0
+      </div>
+
+    </div>
+
+
+    <div class="stat">
+
+      <div class="stat-label">
+        Tổng ảnh
+      </div>
+
+      <div
+        class="stat-value"
+        id="imageTotal"
+      >
+        0
+      </div>
+
+    </div>
+
+
+    <div class="stat">
+
+      <div class="stat-label">
+        Hồ sơ mới nhất
+      </div>
+
+      <div
+        class="stat-value"
+        id="latest"
+        style="font-size:16px"
+      >
+        —
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- SEARCH -->
+
+  <div class="search-card">
+
+    <input
+      class="search"
+      id="search"
+      placeholder="Tìm họ tên, mã hồ sơ, số điện thoại hoặc email..."
+      oninput="searchData()"
+    >
+
+  </div>
+
+
+  <!-- TABLE -->
+
+  <div class="table-card">
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>
+              HỒ SƠ
+            </th>
+
+            <th>
+              NGÀY SINH
+            </th>
+
+            <th>
+              LIÊN HỆ
+            </th>
+
+            <th>
+              CHIỀU CAO
+            </th>
+
+            <th>
+              CÂN NẶNG
+            </th>
+
+            <th>
+              ẢNH
+            </th>
+
+            <th>
+              THỜI GIAN
+            </th>
+
+            <th>
+              CHI TIẾT
+            </th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody
+          id="tbody"
+        ></tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</main>
+
+
+<!-- DETAIL MODAL -->
+
+<div
+  class="modal"
+  id="modal"
+  onclick="outsideClose(event)"
+>
+
+  <div
+    class="modal-box"
+    onclick="event.stopPropagation()"
+  >
+
+    <div class="modal-head">
+
+      <h2 id="modalName">
+        Hồ sơ
+      </h2>
+
+      <button
+        class="close"
+        onclick="closeModal()"
+      >
+        ×
+      </button>
+
+    </div>
+
+
+    <div class="modal-body">
+
+
+      <div
+        class="info"
+        id="info"
+      ></div>
+
+
+      <div class="photos-title">
+        05 ảnh
+      </div>
+
+
+      <div
+        class="photos"
+        id="photos"
+      ></div>
+
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- IMAGE VIEWER -->
+
+<div
+  class="viewer"
+  id="viewer"
+  onclick="closeViewer()"
+>
+
+  <button
+    class="viewer-close"
+  >
+    ×
+  </button>
+
+  <img
+    id="viewerImage"
+    onclick="event.stopPropagation()"
+  >
+
+</div>
+
+
+<!-- LOADING -->
+
+<div
+  class="loading"
+  id="loading"
+>
+
+  <div class="loading-box">
+
+    <div class="spinner"></div>
+
+    <strong>
+      Đang tải dữ liệu...
+    </strong>
+
+  </div>
+
+</div>
+
+
+<script>
+
+
+  let profiles = [];
+
+
+  /* ==========================================
+     LOAD
+  ========================================== */
+
+  function loadData() {
+
+    showLoading();
+
+
+    google.script.run
+
+      .withSuccessHandler(
+        function(data) {
+
+          profiles =
+            data || [];
+
+
+          updateStats();
+
+          render(
+            profiles
+          );
+
+
+          hideLoading();
+
+        }
+      )
+
+      .withFailureHandler(
+        function(error) {
+
+          hideLoading();
+
+          alert(
+            error.message
+          );
+
+        }
+      )
+
+      .getAllProfiles();
+
+  }
+
+
+  /* ==========================================
+     STATS
+  ========================================== */
+
+  function updateStats() {
+
+    const total =
+      profiles.length;
+
+
+    const imageTotal =
+      profiles.reduce(
+        function(sum, profile) {
+
+          return (
+            sum +
+            profile.images.filter(
+              x => !!x
+            ).length
+          );
+
+        },
+        0
+      );
+
+
+    document
+      .getElementById(
+        "total"
+      )
+      .textContent =
+      total;
+
+
+    document
+      .getElementById(
+        "imageTotal"
+      )
+      .textContent =
+      imageTotal;
+
+
+    document
+      .getElementById(
+        "latest"
+      )
+      .textContent =
+      total
+        ? profiles[0].fullName
+        : "—";
+
+  }
+
+
+  /* ==========================================
+     RENDER
+  ========================================== */
+
+  function render(data) {
+
+    const tbody =
+      document.getElementById(
+        "tbody"
+      );
+
+
+    if (!data.length) {
+
+      tbody.innerHTML = `
+
+        <tr>
+
+          <td colspan="8">
+
+            <div class="empty">
+
+              Chưa có dữ liệu
+
+            </div>
+
+          </td>
+
+        </tr>
+
+      `;
+
+      return;
+
+    }
+
+
+    tbody.innerHTML =
+      data.map(
+        function(profile) {
+
+          const index =
+            profiles.indexOf(
+              profile
+            );
+
+
+          const imageCount =
+            profile.images.filter(
+              x => !!x
+            ).length;
+
+
+          return `
+
+            <tr>
+
+              <td>
+
+                <div class="name">
+
+                  ${esc(
+                    profile.fullName
+                  )}
+
+                </div>
+
+                <div class="id">
+
+                  ${esc(
+                    profile.profileId
+                  )}
+
+                </div>
+
+              </td>
+
+
+              <td>
+                ${esc(
+                  profile.birthDate
+                )}
+              </td>
+
+
+              <td>
+
+                ${esc(
+                  profile.phone
+                )}
+
+                <br>
+
+                <span
+                  style="
+                    color:#98a2b3;
+                    font-size:12px;
+                  "
+                >
+                  ${esc(
+                    profile.email
+                  )}
+                </span>
+
+              </td>
+
+
+              <td>
+                ${
+                  profile.height
+                    ? profile.height +
+                      " cm"
+                    : "—"
+                }
+              </td>
+
+
+              <td>
+                ${
+                  profile.weight
+                    ? profile.weight +
+                      " kg"
+                    : "—"
+                }
+              </td>
+
+
+              <td>
+
+                <span class="badge">
+
+                  ${imageCount}/5
+
+                </span>
+
+              </td>
+
+
+              <td>
+                ${esc(
+                  profile.submittedAt
+                )}
+              </td>
+
+
+              <td>
+
+                <button
+                  class="view"
+                  onclick="
+                    openProfile(${index})
+                  "
+                >
+                  Xem
+                </button>
+
+              </td>
+
+            </tr>
+
+          `;
+
+        }
+      ).join("");
+
+  }
+
+
+  /* ==========================================
+     SEARCH
+  ========================================== */
+
+  function searchData() {
+
+    const keyword =
+      document
+        .getElementById(
+          "search"
+        )
+        .value
+        .toLowerCase()
+        .trim();
+
+
+    if (!keyword) {
+
+      render(profiles);
+
+      return;
+
+    }
+
+
+    const result =
+      profiles.filter(
+        function(profile) {
+
+          const text = [
+
+            profile.profileId,
+
+            profile.fullName,
+
+            profile.englishName,
+
+            profile.phone,
+
+            profile.email,
+
+            profile.birthDate
+
+          ]
+            .join(" ")
+            .toLowerCase();
+
+
+          return text.includes(
+            keyword
+          );
+
+        }
+      );
+
+
+    render(result);
+
+  }
+
+
+  /* ==========================================
+     DETAIL
+  ========================================== */
+
+  function openProfile(index) {
+
+    const profile =
+      profiles[index];
+
+
+    if (!profile) {
+      return;
+    }
+
+
+    document
+      .getElementById(
+        "modalName"
+      )
+      .textContent =
+      profile.fullName;
+
+
+    document
+      .getElementById(
+        "info"
+      )
+      .innerHTML = `
+
+        <div class="info-item">
+
+          <div class="label">
+            Mã hồ sơ
+          </div>
+
+          <div class="value">
+            ${esc(
+              profile.profileId
+            )}
+          </div>
+
+        </div>
+
+
+        <div class="info-item">
+
+          <div class="label">
+            Thời gian gửi
+          </div>
+
+          <div class="value">
+            ${esc(
+              profile.submittedAt
+            )}
+          </div>
+
+        </div>
+
+
+        <div class="info-item">
+
+          <div class="label">
+            Họ và tên
+          </div>
+
+          <div class="value">
+            ${esc(
+              profile.fullName
+            )}
+          </div>
+
+        </div>
+
+
+        <div class="info-item">
+
+          <div class="label">
+            Tên tiếng Anh
+          </div>
+
+          <div class="value">
+            ${
+              profile.englishName
+                ? esc(
+                    profile.englishName
+                  )
+                : "—"
+            }
+          </div>
+
+        </div>
+
+
+        <div class="info-item">
+
+          <div class="label">
+            Ngày sinh
+          </div>
+
+          <div class="value">
+            ${esc(
+              profile.birthDate
+            )}
+          </div>
+
+        </div>
+
+
+        <div class="info-item">
+
+          <div class="label">
+            Chiều cao
+          </div>
+
+          <div class="value">
+            ${
+              profile.height
+                ? profile.height +
+                  " cm"
+                : "—"
+            }
+          </div>
+
+        </div>
+
+
+        <div class="info-item">
+
+          <div class="label">
+            Cân nặng
+          </div>
+
+          <div class="value">
+            ${
+              profile.weight
+                ? profile.weight +
+                  " kg"
+                : "—"
+            }
+          </div>
+
+        </div>
+
+
+        <div class="info-item">
+
+          <div class="label">
+            Số điện thoại
+          </div>
+
+          <div class="value">
+            ${esc(
+              profile.phone
+            )}
+          </div>
+
+        </div>
+
+
+        <div class="info-item">
+
+          <div class="label">
+            Email
+          </div>
+
+          <div class="value">
+            ${esc(
+              profile.email
+            )}
+          </div>
+
+        </div>
+
+      `;
+
+
+    document
+      .getElementById(
+        "photos"
+      )
+      .innerHTML =
+      profile.images.map(
+        function(url, i) {
+
+          if (!url) {
+
+            return `
+              <div class="photo">
+                Không có ảnh
+              </div>
+            `;
+
+          }
+
+
+          return `
+
+            <div
+              class="photo"
+              onclick="
+                openViewer(
+                  '${js(url)}'
+                )
+              "
+            >
+
+              <img
+                src="${esc(url)}"
+              >
+
+              <span>
+                ẢNH ${String(
+                  i + 1
+                ).padStart(2,"0")}
+              </span>
+
+            </div>
+
+          `;
+
+        }
+      ).join("");
+
+
+    document
+      .getElementById(
+        "modal"
+      )
+      .classList.add(
+        "active"
+      );
+
+  }
+
+
+  /* ==========================================
+     MODAL
+  ========================================== */
+
+  function closeModal() {
+
+    document
+      .getElementById(
+        "modal"
+      )
+      .classList.remove(
+        "active"
+      );
+
+  }
+
+
+  function outsideClose(e) {
+
+    if (
+      e.target.id ===
+      "modal"
+    ) {
+
+      closeModal();
+
+    }
+
+  }
+
+
+  /* ==========================================
+     IMAGE VIEWER
+  ========================================== */
+
+  function openViewer(url) {
+
+    document
+      .getElementById(
+        "viewerImage"
+      )
+      .src = url;
+
+
+    document
+      .getElementById(
+        "viewer"
+      )
+      .classList.add(
+        "active"
+      );
+
+  }
+
+
+  function closeViewer() {
+
+    document
+      .getElementById(
+        "viewer"
+      )
+      .classList.remove(
+        "active"
+      );
+
+  }
+
+
+  /* ==========================================
+     SECURITY
+  ========================================== */
+
+  function esc(value) {
+
+    if (
+      value === null ||
+      value === undefined
+    ) {
+
+      return "";
+
+    }
+
+
+    return String(value)
+
+      .replace(
+        /&/g,
+        "&amp;"
+      )
+
+      .replace(
+        /</g,
+        "&lt;"
+      )
+
+      .replace(
+        />/g,
+        "&gt;"
+      )
+
+      .replace(
+        /"/g,
+        "&quot;"
+      )
+
+      .replace(
+        /'/g,
+        "&#039;"
+      );
+
+  }
+
+
+  function js(value) {
+
+    return String(value)
+
+      .replace(
+        /\\/g,
+        "\\\\"
+      )
+
+      .replace(
+        /'/g,
+        "\\'"
+      )
+
+      .replace(
+        /\n/g,
+        "\\n"
+      )
+
+      .replace(
+        /\r/g,
+        "\\r"
+      );
+
+  }
+
+
+  /* ==========================================
+     LOADING
+  ========================================== */
+
+  function showLoading() {
+
+    document
+      .getElementById(
+        "loading"
+      )
+      .classList.add(
+        "active"
+      );
+
+  }
+
+
+  function hideLoading() {
+
+    document
+      .getElementById(
+        "loading"
+      )
+      .classList.remove(
+        "active"
+      );
+
+  }
+
+
+  /* ==========================================
+     START
+  ========================================== */
+
+  window.addEventListener(
+    "load",
+    loadData
+  );
+
+
+  document.addEventListener(
+    "keydown",
+    function(e) {
+
+      if (
+        e.key === "Escape"
+      ) {
+
+        closeModal();
+
+        closeViewer();
+
+      }
+
+    }
+  );
+
+</script>
+
+
+</body>
+
+</html>
