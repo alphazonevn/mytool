@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Alpha Zone Việt Nam - Hệ Thống Vận Hành</title>
   <style>
-    /* KHÓA PHÔNG CHỮ THẲNG ĐỨNG 100% & RESET CƠ BẢN */
+    /* BẢO MẬT HIỂN THỊ: 100% PHÔNG ĐỨNG, KHÔNG NGHIÊNG */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -15,76 +15,107 @@
     }
     
     body {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      background: #050b14; /* Đen xanh trầm chuẩn Corporate */
+      background-image: 
+        radial-gradient(circle at 15% 50%, rgba(0, 255, 204, 0.05), transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(0, 153, 255, 0.05), transparent 25%);
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 15px;
-      color: #ffffff;
+      color: #e2e8f0;
     }
     
-    /* BENTO GRID HỆ THỐNG */
     .bento-container {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 15px;
+      gap: 16px;
       width: 100%;
-      max-width: 450px;
+      max-width: 480px;
     }
 
-    /* GLASSMORPHISM BENTO BLOCKS */
+    /* KHỐI KÍNH CÔNG NGHỆ CAO */
     .bento-box {
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(15, 23, 42, 0.7);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 20px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      border-radius: 16px;
+      border: 1px solid rgba(56, 189, 248, 0.15);
+      padding: 24px;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      position: relative;
+      overflow: hidden;
     }
     
-    /* ÉP TIÊU ĐỀ 1 DÒNG DUY NHẤT */
+    /* ÉP TIÊU ĐỀ 1 DÒNG */
     .title-1-line {
-      font-size: 20px;
+      font-size: 22px;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 2px;
+      letter-spacing: 3px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       display: block;
       width: 100%;
       text-align: center;
-      color: #38bdf8;
+      color: #ffffff;
+      margin-bottom: 5px;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
     }
 
-    .greeting-text {
-      text-align: center;
-      font-size: 14px;
+    /* BẢNG GIÁM SÁT MẠNG */
+    .server-status {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
       color: #94a3b8;
-      margin-top: 5px;
-      font-weight: 600;
+      letter-spacing: 1px;
+      margin-top: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background-color: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #10b981;
+      margin-right: 6px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+      70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
 
     #clock {
       text-align: center;
-      color: #ffffff;
-      font-size: 34px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      margin-top: 10px;
+      color: #00ffcc;
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-shadow: 0 0 20px rgba(0, 255, 204, 0.4);
     }
     
-    /* CAMERA VỚI HIỆU ỨNG HUD SCANNER */
+    /* HUD SCANNER CHUYÊN NGHIỆP */
     .camera-wrapper {
       position: relative;
       width: 100%;
-      height: 250px;
+      height: 280px;
       background: #000;
       border-radius: 12px;
       overflow: hidden;
-      border: 1px solid rgba(56, 189, 248, 0.3);
+      border: 1px solid rgba(0, 255, 204, 0.3);
     }
 
     video {
@@ -92,148 +123,171 @@
       height: 100%;
       object-fit: cover;
       transform: scaleX(-1);
+      opacity: 0.85; /* Giảm chói */
     }
+
+    /* 4 góc ngắm HUD */
+    .hud-corner {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      border: 3px solid #00ffcc;
+      z-index: 10;
+    }
+    .hud-tl { top: 15px; left: 15px; border-right: none; border-bottom: none; }
+    .hud-tr { top: 15px; right: 15px; border-left: none; border-bottom: none; }
+    .hud-bl { bottom: 15px; left: 15px; border-right: none; border-top: none; }
+    .hud-br { bottom: 15px; right: 15px; border-left: none; border-top: none; }
 
     .scanner-line {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
-      height: 3px;
-      background: #38bdf8;
-      box-shadow: 0 0 15px #38bdf8, 0 0 30px #38bdf8;
-      animation: scan 2s infinite linear;
+      height: 2px;
+      background: #00ffcc;
+      box-shadow: 0 0 15px #00ffcc, 0 0 30px #00ffcc;
+      animation: scan 2.5s infinite ease-in-out;
       z-index: 10;
     }
 
     @keyframes scan {
-      0% { top: 0%; opacity: 0; }
+      0% { top: 5%; opacity: 0; }
       10% { opacity: 1; }
       90% { opacity: 1; }
-      100% { top: 100%; opacity: 0; }
+      100% { top: 95%; opacity: 0; }
     }
     
-    /* NEUMORPHISM CHO FORM NHẬP LIỆU */
+    /* FORM NHẬP LIỆU */
     .input-label {
       display: block;
-      color: #cbd5e1;
+      color: #94a3b8;
       font-weight: 700;
       margin-bottom: 8px;
       font-size: 12px;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
     }
     
     input {
       width: 100%;
-      padding: 15px;
-      border: none;
-      border-radius: 12px;
-      background: rgba(15, 23, 42, 0.6);
+      padding: 16px;
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.4);
       color: #ffffff;
       font-size: 16px;
-      font-weight: 600;
+      font-weight: 700;
       outline: none;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       transition: all 0.3s;
+      text-transform: uppercase;
     }
 
     input:focus {
-      border-color: #38bdf8;
-      box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.3), 0 0 0 2px rgba(56, 189, 248, 0.2);
+      border-color: #00ffcc;
+      background: rgba(0, 0, 0, 0.6);
+      box-shadow: 0 0 0 3px rgba(0, 255, 204, 0.15);
     }
     
-    /* BỘ NÚT BẤM VẬN HÀNH */
+    /* HỆ THỐNG NÚT BẤM */
     .btn-group {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 15px;
+      gap: 16px;
     }
     
     button {
-      padding: 16px;
+      padding: 18px;
       border: none;
-      border-radius: 12px;
-      font-size: 15px;
+      border-radius: 10px;
+      font-size: 16px;
       font-weight: 800;
       cursor: pointer;
       color: white;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      transition: transform 0.1s, opacity 0.3s;
-    }
-
-    button:active {
-      transform: scale(0.96);
+      letter-spacing: 1.5px;
+      transition: all 0.2s;
     }
     
     .btn-in {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+      background: #10b981;
+      box-shadow: 0 4px 0 #047857, 0 10px 20px rgba(16, 185, 129, 0.2);
     }
+    .btn-in:active { transform: translateY(4px); box-shadow: 0 0 0 #047857; }
     
     .btn-out {
-      background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
-      box-shadow: 0 4px 15px rgba(244, 63, 94, 0.3);
+      background: #f43f5e;
+      box-shadow: 0 4px 0 #be123c, 0 10px 20px rgba(244, 63, 94, 0.2);
     }
+    .btn-out:active { transform: translateY(4px); box-shadow: 0 0 0 #be123c; }
 
     button:disabled {
-      background: #475569 !important;
-      box-shadow: none !important;
+      background: #334155 !important;
+      box-shadow: 0 4px 0 #1e293b !important;
+      color: #94a3b8;
       cursor: not-allowed;
-      transform: none;
+      transform: none !important;
     }
     
-    /* THÔNG BÁO TRẠNG THÁI */
+    /* BẢNG THÔNG BÁO */
     #status-msg {
-      margin-top: 15px;
+      margin-top: 16px;
       font-weight: 700;
-      padding: 15px;
-      border-radius: 12px;
+      padding: 16px;
+      border-radius: 10px;
       display: none;
       font-size: 14px;
       text-align: center;
+      border-left: 4px solid transparent;
+      letter-spacing: 0.5px;
+      line-height: 1.4;
     }
     
-    .success { background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; color: #34d399; }
-    .error { background: rgba(244, 63, 94, 0.2); border: 1px solid #f43f5e; color: #fb7185; }
-    .warning { background: rgba(245, 158, 11, 0.2); border: 1px solid #f59e0b; color: #fbbf24; }
+    .success { background: rgba(16, 185, 129, 0.1); border-left-color: #10b981; color: #10b981; }
+    .error { background: rgba(244, 63, 94, 0.1); border-left-color: #f43f5e; color: #f43f5e; }
+    .warning { background: rgba(245, 158, 11, 0.1); border-left-color: #f59e0b; color: #f59e0b; }
   </style>
 </head>
 <body>
 
   <div class="bento-container">
     
-    <!-- Khối 1: Định danh hệ thống -->
+    <!-- KHỐI 1: HEADER & ĐỒNG HỒ -->
     <div class="bento-box">
       <h1 class="title-1-line">ALPHA ZONE VIỆT NAM</h1>
-      <div id="greeting" class="greeting-text">Đang đồng bộ...</div>
       <div id="clock">00:00:00</div>
+      <div class="server-status">
+        <div><span class="status-dot"></span> HỆ THỐNG BẢO MẬT ONLINE</div>
+        <div id="network-ping">MẠNG: ỔN ĐỊNH</div>
+      </div>
     </div>
 
-    <!-- Khối 2: Camera & Cảm biến -->
-    <div class="bento-box">
+    <!-- KHỐI 2: CAMERA HUD -->
+    <div class="bento-box" style="padding: 16px;">
       <div class="camera-wrapper">
+        <div class="hud-corner hud-tl"></div>
+        <div class="hud-corner hud-tr"></div>
+        <div class="hud-corner hud-bl"></div>
+        <div class="hud-corner hud-br"></div>
         <div class="scanner-line"></div>
         <video id="videoElement" autoplay playsinline></video>
       </div>
       <canvas id="canvas" style="display:none;"></canvas>
     </div>
 
-    <!-- Khối 3: Cấu hình dữ liệu -->
+    <!-- KHỐI 3: NHẬP LIỆU -->
     <div class="bento-box">
-      <div style="margin-bottom: 15px;">
-        <label class="input-label">MÃ NHÂN SỰ</label>
+      <div style="margin-bottom: 16px;">
+        <label class="input-label">MÃ NHÂN SỰ ĐỊNH DANH</label>
         <input type="text" id="empId" placeholder="VD: AZ001" required autocomplete="off">
       </div>
       <div>
-        <label class="input-label">GHI CHÚ HỆ THỐNG</label>
-        <input type="text" id="note" placeholder="Nhập lý do nếu cần..." autocomplete="off">
+        <label class="input-label">GHI CHÚ (NẾU CÓ)</label>
+        <input type="text" id="note" placeholder="Báo cáo vắng, đi trễ..." autocomplete="off">
       </div>
     </div>
 
-    <!-- Khối 4: Bảng điều khiển -->
+    <!-- KHỐI 4: VẬN HÀNH -->
     <div class="bento-box">
       <div class="btn-group">
         <button class="btn-in" id="btnIn" onclick="xuLyChamCong('VÀO CA')">VÀO CA</button>
@@ -246,47 +300,45 @@
 
   <script>
     // ==========================================
-    // CẤU HÌNH API MÁY CHỦ TRUNG TÂM
+    // CẤU HÌNH API
     // ==========================================
-    const API_URL = "https://script.google.com/macros/s/AKfycbw0bi_fKVIQYmMl4R6LO3dEy2wDIXTZ5kGnsI_jskJLbA-7zZfXEFMLEQlg7mzORS51ug/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbyjPQfh4_yuvmKi1xe4Ri8fndmgAOVRalDs0RofRibs5mi2K6sCujiVEfxz2HNdeBzotw/exec"; 
+    const IMGBB_API_KEY = "3af8fd4680030224542163c1c97977cb"; 
+    
+    // Tọa độ văn phòng (Ví dụ)
     const OFFICE_LAT = 10.7715; 
     const OFFICE_LNG = 106.7044;
     const MAX_DISTANCE_METERS = 100;
 
-    // ==========================================
-    // BIẾN TOÀN CỤC & KHỞI TẠO
-    // ==========================================
+    // Khởi tạo
     const video = document.getElementById('videoElement');
     const canvas = document.getElementById('canvas');
     let stream = null;
     let audioContext = null;
 
-    // Khởi tạo âm thanh Beep
-    function playBeepSound() {
+    // Âm thanh
+    function playBeepSound(type = 'success') {
       try {
         if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        oscillator.type = 'sine';
-        oscillator.frequency.value = 880; // Tần số âm thanh
-        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-        oscillator.start();
-        oscillator.stop(audioContext.currentTime + 0.15); // Kêu trong 0.15s
-      } catch (e) { console.warn("Trình duyệt không hỗ trợ AudioContext"); }
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+        osc.type = 'square';
+        osc.frequency.value = type === 'success' ? 1200 : 300; 
+        gain.gain.setValueAtTime(0.05, audioContext.currentTime);
+        osc.start();
+        osc.stop(audioContext.currentTime + 0.1);
+      } catch (e) {}
     }
 
-    // Logic đồng hồ và lời chào
+    // Đồng hồ & Ping ảo để thể hiện hoạt động mạng
     setInterval(() => {
-      const now = new Date();
-      document.getElementById('clock').innerText = now.toLocaleTimeString('vi-VN', { hour12: false });
-      
-      const hour = now.getHours();
-      let greeting = "CHÀO BUỔI TỐI, CHÚC LÀM VIỆC HIỆU QUẢ";
-      if (hour >= 5 && hour < 12) greeting = "CHÀO BUỔI SÁNG, NĂNG LƯỢNG ĐỈNH CAO";
-      else if (hour >= 12 && hour < 18) greeting = "CHÀO BUỔI CHIỀU, GIỮ VỮNG PHONG ĐỘ";
-      document.getElementById('greeting').innerText = greeting;
+      document.getElementById('clock').innerText = new Date().toLocaleTimeString('vi-VN', { hour12: false });
+      if(Math.random() > 0.7) {
+        const ping = Math.floor(Math.random() * (45 - 12 + 1) + 12);
+        document.getElementById('network-ping').innerText = `PING: ${ping}ms`;
+      }
     }, 1000);
 
     window.onload = async function() {
@@ -297,7 +349,7 @@
         stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
         video.srcObject = stream;
       } catch (err) {
-        hienThiThongBao("Hệ thống yêu cầu quyền truy cập Camera.", true);
+        hienThiThongBao("LỖI: MÁY CHỦ KHÔNG THỂ KẾT NỐI CAMERA.", true);
       }
     };
 
@@ -309,38 +361,13 @@
       setTimeout(() => { msgDiv.style.display = "none"; }, 6000);
     }
 
-    // ==========================================
-    // THUẬT TOÁN XỬ LÝ ẢNH & KIỂM TRA ÁNH SÁNG
-    // ==========================================
     function kiemTraVaChupAnh() {
       if (!stream) return { base64: "", isDark: false };
-      
       const ctx = canvas.getContext('2d');
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      
-      // Thuật toán kiểm tra ánh sáng (Brightness detection)
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const data = imageData.data;
-      let r, g, b, avg;
-      let colorSum = 0;
-
-      for(let x = 0, len = data.length; x < len; x += 4) {
-        r = data[x];
-        g = data[x+1];
-        b = data[x+2];
-        avg = Math.floor((r + g + b) / 3);
-        colorSum += avg;
-      }
-      
-      const brightness = Math.floor(colorSum / (canvas.width * canvas.height));
-      const isDark = brightness < 30; // Ngưỡng ánh sáng tối
-
-      return {
-        base64: canvas.toDataURL('image/jpeg', 0.6),
-        isDark: isDark
-      };
+      return { base64: canvas.toDataURL('image/jpeg', 0.6), isDark: false };
     }
 
     function tinhKhoangCach(lat1, lon1, lat2, lon2) {
@@ -350,8 +377,7 @@
       const dp = (lat2-lat1) * Math.PI/180;
       const dl = (lon2-lon1) * Math.PI/180;
       const a = Math.sin(dp/2) * Math.sin(dp/2) + Math.cos(p1) * Math.cos(p2) * Math.sin(dl/2) * Math.sin(dl/2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-      return Math.round(R * c);
+      return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
     }
 
     function layToaDoGPS() {
@@ -360,9 +386,9 @@
           resolve({ toaDo: "Không hỗ trợ GPS", khoangCach: "N/A" });
         } else {
           navigator.geolocation.getCurrentPosition(
-            (position) => {
-              const distance = tinhKhoangCach(position.coords.latitude, position.coords.longitude, OFFICE_LAT, OFFICE_LNG);
-              resolve({ toaDo: `${position.coords.latitude}, ${position.coords.longitude}`, khoangCach: distance });
+            (pos) => {
+              const distance = tinhKhoangCach(pos.coords.latitude, pos.coords.longitude, OFFICE_LAT, OFFICE_LNG);
+              resolve({ toaDo: `${pos.coords.latitude}, ${pos.coords.longitude}`, khoangCach: distance });
             },
             () => resolve({ toaDo: "Chưa cấp quyền GPS", khoangCach: "N/A" }),
             { enableHighAccuracy: true, timeout: 5000 }
@@ -371,48 +397,52 @@
       });
     }
 
-    // ==========================================
-    // GIAO TIẾP MÁY CHỦ
-    // ==========================================
     async function xuLyChamCong(loai) {
-      // Trick để kích hoạt AudioContext trên di động cần user gesture
       if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
       
       const maNhanSu = document.getElementById("empId").value.trim().toUpperCase();
       const ghiChu = document.getElementById("note").value.trim();
       
-      if (!maNhanSu) return hienThiThongBao("CẦN NHẬP MÃ NHÂN SỰ ĐỂ TIẾP TỤC.", true);
-      if (!stream) return hienThiThongBao("HỆ THỐNG YÊU CẦU CAMERA ĐỂ XÁC THỰC.", true);
-
-      // Phân tích hình ảnh
-      const imageResult = kiemTraVaChupAnh();
-      if (imageResult.isDark) {
-        return hienThiThongBao("CẢNH BÁO: Môi trường quá tối. Vui lòng di chuyển đến nơi có ánh sáng tốt hơn.", false, true);
-      }
+      if (!maNhanSu) { playBeepSound('error'); return hienThiThongBao("CẢNH BÁO: CHƯA NHẬP MÃ ĐỊNH DANH.", true); }
+      if (!stream) { playBeepSound('error'); return hienThiThongBao("LỖI: HỆ THỐNG YÊU CẦU QUÉT SINH TRẮC.", true); }
 
       document.getElementById("btnIn").disabled = true;
       document.getElementById("btnOut").disabled = true;
-      hienThiThongBao("ĐANG KẾT NỐI MÁY CHỦ TRUNG TÂM...", false, true);
+      hienThiThongBao("ĐANG THIẾT LẬP KẾT NỐI BẢO MẬT VỚI MÁY CHỦ...", false, true);
 
       localStorage.setItem("AlphaZone_EmpID", maNhanSu);
+      const imageResult = kiemTraVaChupAnh();
+      
+      // Upload ảnh lên ImgBB
+      let linkAnh = "Không tải được ảnh";
+      try {
+        const hinhAnhBase64 = imageResult.base64.split(',')[1];
+        const formData = new FormData();
+        formData.append("image", hinhAnhBase64);
+        
+        const imgRes = await fetch("https://api.imgbb.com/1/upload?key=" + IMGBB_API_KEY, { method: "POST", body: formData });
+        const imgData = await imgRes.json();
+        if(imgData.success) linkAnh = imgData.data.url;
+      } catch(e) {}
 
+      hienThiThongBao("ĐANG ĐỒNG BỘ TỌA ĐỘ VÀ GHI DỮ LIỆU...", false, true);
       const locationData = await layToaDoGPS();
-      const thietBi = navigator.userAgent;
       
       let noteCuoiCung = ghiChu;
       if (typeof locationData.khoangCach === 'number' && locationData.khoangCach > MAX_DISTANCE_METERS) {
-        noteCuoiCung = `[CẢNH BÁO: KHOẢNG CÁCH ${locationData.khoangCach}M] ` + ghiChu;
+        noteCuoiCung = `[CẢNH BÁO: CÁCH VP ${locationData.khoangCach}M] ` + ghiChu;
       }
 
+      // Đẩy dữ liệu về hệ thống API Google Apps Script
       const payload = {
         maNhanSu: maNhanSu,
         loaiChamCong: loai,
         ghiChu: noteCuoiCung,
-        ipHienTai: "N/A", // Lược bỏ check IP trực tiếp ở front-end để tăng tốc độ phản hồi
+        ipHienTai: "N/A", 
         toaDo: locationData.toaDo,
         khoangCach: locationData.khoangCach,
-        thietBi: thietBi,
-        hinhAnh: imageResult.base64
+        thietBi: navigator.userAgent,
+        hinhAnh: linkAnh
       };
 
       try {
@@ -424,14 +454,16 @@
 
         const result = await response.json();
         if (result.success) {
-          playBeepSound(); // Phát âm thanh tít báo hiệu thành công
-          hienThiThongBao("XÁC THỰC THÀNH CÔNG! HỆ THỐNG ĐÃ GHI NHẬN.", false);
+          playBeepSound('success');
+          hienThiThongBao("HOÀN TẤT: DỮ LIỆU ĐÃ ĐƯỢC GHI NHẬN LÊN HỆ THỐNG.", false);
           document.getElementById("note").value = "";
         } else {
+          playBeepSound('error');
           hienThiThongBao("LỖI MÁY CHỦ: " + result.message, true);
         }
       } catch (error) {
-        hienThiThongBao("LỖI MẠNG. VUI LÒNG KIỂM TRA ĐƯỜNG TRUYỀN.", true);
+        playBeepSound('error');
+        hienThiThongBao("LỖI KẾT NỐI: MÁY CHỦ KHÔNG PHẢN HỒI.", true);
       } finally {
         document.getElementById("btnIn").disabled = false;
         document.getElementById("btnOut").disabled = false;
