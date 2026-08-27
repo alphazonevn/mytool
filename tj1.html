@@ -21,7 +21,7 @@
 
 /* SECTIONS */
 .section{padding-top:62px}.section-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:21px}.eyebrow{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--coffee);font-weight:700}.section h2{font-family:"Playfair Display";font-size:37px;font-weight:500;margin:5px 0}.sub{font-size:11px;color:#8b7e73}.categories{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:10px 0}.cat{border:0;background:transparent;color:#655950;padding:12px 5px;font-size:10px;font-weight:600;border-radius:10px}.cat.active,.cat:hover{background:#f1e5d8;color:var(--coffee)}
-.products{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.product{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:.25s;box-shadow:0 6px 25px #47251208}.product:hover{transform:translateY(-7px);box-shadow:var(--shadow)}.photo{height:275px;background:#f0e4d7;position:relative;overflow:hidden;display:grid;place-items:center}.photo img{width:100%;height:100%;object-fit:cover}.image-empty{position:absolute;inset:0;background:linear-gradient(145deg,#f3e7da,#ead8c5)}.fake-cake{width:155px;height:92px;border-radius:18px 18px 30px 30px;background:var(--c);position:relative;box-shadow:0 20px 20px #4725121c}.fake-cake:before{content:"";position:absolute;left:7px;right:7px;top:-18px;height:37px;background:#fff;border-radius:50%}.fake-cake:after{content:"";position:absolute;left:0;right:0;top:43px;height:8px;background:#ffffff99}.fav{position:absolute;right:12px;top:12px;border:1px solid #e6dbcf;background:#fffdf9;width:34px;height:34px;border-radius:10px;color:#6d6057;font-size:16px}.fav.on{color:#7d321f}.tag{position:absolute;left:12px;top:12px;background:#fffdf9d9;color:var(--coffee);padding:6px 8px;border-radius:99px;font-size:8px;font-weight:800;letter-spacing:.7px}.info{padding:14px}.info h3{font-family:"Playfair Display";font-size:18px;font-weight:500;margin:0 0 5px}.info p{height:30px;overflow:hidden;font-size:10px;color:#8a7e73;line-height:1.45;margin:0 0 12px}.bottom{display:flex;align-items:center;justify-content:space-between}.price{color:var(--coffee);font-size:13px;font-weight:800}.add{border:0;background:var(--espresso);color:#fff;width:32px;height:32px;border-radius:10px}
+.products{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.product{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:.25s;box-shadow:0 6px 25px #47251208}.product:hover{transform:translateY(-7px);box-shadow:var(--shadow)}.photo{height:275px;background:#f0e4d7;position:relative;overflow:hidden;display:grid;place-items:center}.photo img{width:100%;height:100%;object-fit:cover;position:relative;z-index:1}.image-empty{position:absolute;inset:0;background:linear-gradient(145deg,#f3e7da,#ead8c5);display:grid;place-items:center;color:#9a8a7c;font-size:10px;text-align:center;padding:20px}.fav{position:absolute;right:12px;top:12px;border:1px solid #e6dbcf;background:#fffdf9;width:34px;height:34px;border-radius:10px;color:#6d6057;font-size:16px}.fav.on{color:#7d321f}.tag{position:absolute;left:12px;top:12px;background:#fffdf9d9;color:var(--coffee);padding:6px 8px;border-radius:99px;font-size:8px;font-weight:800;letter-spacing:.7px}.info{padding:14px}.info h3{font-family:"Playfair Display";font-size:18px;font-weight:500;margin:0 0 5px}.info p{height:30px;overflow:hidden;font-size:10px;color:#8a7e73;line-height:1.45;margin:0 0 12px}.bottom{display:flex;align-items:center;justify-content:space-between}.price{color:var(--coffee);font-size:13px;font-weight:800}.add{border:0;background:var(--espresso);color:#fff;width:32px;height:32px;border-radius:10px}
 
 /* signature */
 .signature{margin-top:65px;border-radius:24px;background:#eee0cf;min-height:270px;display:grid;grid-template-columns:1fr 1fr;overflow:hidden}.sig-art{position:relative;display:grid;place-items:center}.sig-art:before{content:"";width:300px;height:180px;border:1px solid #c29c7a;border-radius:50%;position:absolute}.sig-img{width:260px;height:210px;object-fit:contain;position:relative;z-index:2;filter:drop-shadow(0 20px 14px #45251122)}.sig-copy{padding:40px 55px;display:flex;flex-direction:column;justify-content:center}.sig-copy em{font-family:"Playfair Display";font-size:25px;color:var(--coffee)}.sig-copy h3{font-family:"Playfair Display";font-size:31px;font-weight:500;margin:6px 0 8px}.sig-copy p{font-size:11px;color:#7c6d62;line-height:1.7}.sig-copy .primary{width:max-content;margin-top:8px}
@@ -79,7 +79,7 @@ footer{margin-top:60px;border-top:1px solid var(--line);padding:42px 0 20px;back
 .product-detail.show{display:grid}
 .product-detail-card{width:min(940px,100%);max-height:92vh;overflow:auto;background:#fffdf9;border-radius:24px;display:grid;grid-template-columns:.9fr 1.1fr;box-shadow:0 30px 90px #24150d33}
 .detail-visual{min-height:500px;background:linear-gradient(145deg,#f3e7da,#ead8c5);display:grid;place-items:center;padding:35px;border-radius:24px 0 0 24px}
-.detail-visual img{width:100%;height:430px;object-fit:contain;filter:drop-shadow(0 25px 18px #45251122)}
+.detail-visual img{width:100%;height:430px;object-fit:contain;filter:drop-shadow(0 25px 18px #45251122)}.detail-image-empty{color:#9a8a7c;font-size:11px;text-align:center;padding:20px}
 .detail-copy{padding:34px;position:relative}
 .detail-close{position:absolute;right:18px;top:15px;border:0;background:#fff;border:1px solid var(--line);width:36px;height:36px;border-radius:11px;font-size:21px;color:#777}
 .detail-kicker{font-size:9px;letter-spacing:1.8px;text-transform:uppercase;color:var(--coffee);font-weight:800}
@@ -371,106 +371,312 @@ const $=id=>document.getElementById(id),money=n=>Number(n||0).toLocaleString('vi
  * a standalone API while this page is hosted on GitHub Pages / Netlify / Vercel / etc.
  */
 const API_URL='https://script.google.com/macros/s/AKfycbynCeJ-a8qrulbr-TWqUUQSSzPsFTtpqugsBXIncGDsYBik9x9GfEsrAuxinqdx1UzP/exec';
-const API_READY=!API_URL.includes('PASTE_YOUR_');
-const READ_ACTIONS=new Set(['getProducts','getSettings','getAdminProducts','getDashboard']);
+const API_READY=/^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec(?:\/)?$/i.test(API_URL);
+const READ_ACTIONS=new Set(['getProducts','getSettings','getAdminProducts','getDashboard','getJob']);
+const API_TIMEOUT=12000;
+const WRITE_TIMEOUT=45000;
 let jsonpSeq=0;
-function apiGet(action,args,ok,fail){
-  if(!API_READY){ok(null);return}
+let apiBusy=0;
+
+function apiError(message,code='API_ERROR'){
+  const e=new Error(message);
+  e.code=code;
+  return e;
+}
+
+function parseMaybeJson(value){
+  if(typeof value!=='string')return value;
+  const s=value.trim();
+  if(!s)return null;
+  try{return JSON.parse(s)}catch(_){}
+  return value;
+}
+
+function unwrapApiResponse(res){
+  let v=parseMaybeJson(res);
+  // Support {ok,data}, {success,data}, {result:data}, or direct data.
+  if(v&&typeof v==='object'){
+    if(v.ok===false || v.success===false){
+      throw apiError(String(v.error||v.message||'Apps Script trả về lỗi.'),'REMOTE_ERROR');
+    }
+    if(Object.prototype.hasOwnProperty.call(v,'data'))v=parseMaybeJson(v.data);
+    else if(Object.prototype.hasOwnProperty.call(v,'result'))v=parseMaybeJson(v.result);
+  }
+  return v;
+}
+
+function normalizeApiError(err,action){
+  if(err?.code==='REMOTE_ERROR')return err;
+  const msg=String(err?.message||err||'Lỗi không xác định');
+  if(/JSONP|callback|Unexpected token|not defined|SyntaxError/i.test(msg))
+    return apiError(`Apps Script không trả JSONP cho "${action}". Hãy bật callback trong doGet().`,'JSONP_UNSUPPORTED');
+  if(/timeout/i.test(msg))
+    return apiError(`Apps Script không phản hồi cho "${action}" trong thời gian chờ.`,'TIMEOUT');
+  return apiError(msg,'API_ERROR');
+}
+
+function apiGetJsonp(action,args,ok,fail){
+  if(!API_READY){(fail||(()=>{}))(apiError('API_URL chưa hợp lệ.','CONFIG'));return}
   const cb='tjApiCb'+(++jsonpSeq)+'_'+Date.now();
   const script=document.createElement('script');
-  const timer=setTimeout(()=>{cleanup();(fail||(()=>{}))(new Error('API timeout'))},15000);
-  function cleanup(){clearTimeout(timer);delete window[cb];script.remove()}
-  window[cb]=res=>{cleanup();if(res&&res.ok===false)(fail||(()=>{}))(new Error(res.error||'API error'));else ok(res&&res.data!==undefined?res.data:res)};
-  script.onerror=()=>{cleanup();(fail||(()=>{}))(new Error('Không kết nối được API'))};
-  script.src=API_URL+'?action='+encodeURIComponent(action)+'&args='+encodeURIComponent(JSON.stringify(args||[]))+'&callback='+cb+'&_='+Date.now();
+  let finished=false;
+  const timer=setTimeout(()=>{
+    cleanup();
+    (fail||(()=>{}))(apiError(`Timeout khi đọc Apps Script: ${action}`,'TIMEOUT'));
+  },API_TIMEOUT);
+  function cleanup(){
+    clearTimeout(timer);
+    if(window[cb])delete window[cb];
+    script.remove();
+  }
+  window[cb]=res=>{
+    if(finished)return;
+    finished=true;
+    cleanup();
+    try{(ok||(()=>{}))(unwrapApiResponse(res))}
+    catch(e){(fail||(()=>{}))(normalizeApiError(e,action))}
+  };
+  script.onerror=()=>{
+    if(finished)return;
+    finished=true;
+    cleanup();
+    (fail||(()=>{}))(apiError(`Không tải được Apps Script cho "${action}".`,'JSONP_NETWORK'));
+  };
+  script.src=API_URL+
+    '?action='+encodeURIComponent(action)+
+    '&args='+encodeURIComponent(JSON.stringify(args||[]))+
+    '&callback='+encodeURIComponent(cb)+
+    '&_='+Date.now();
+  script.async=true;
   document.head.appendChild(script);
 }
+
+async function apiGetCors(action,args){
+  if(!API_READY)throw apiError('API_URL chưa hợp lệ.','CONFIG');
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),API_TIMEOUT);
+  try{
+    const url=API_URL+
+      '?action='+encodeURIComponent(action)+
+      '&args='+encodeURIComponent(JSON.stringify(args||[]))+
+      '&_='+Date.now();
+    const res=await fetch(url,{method:'GET',mode:'cors',cache:'no-store',signal:controller.signal});
+    if(!res.ok)throw apiError(`HTTP ${res.status} khi đọc "${action}".`,'HTTP');
+    const text=await res.text();
+    return unwrapApiResponse(text);
+  }catch(e){
+    if(e.name==='AbortError')throw apiError(`Timeout khi đọc Apps Script: ${action}`,'TIMEOUT');
+    throw normalizeApiError(e,action);
+  }finally{clearTimeout(timer)}
+}
+
+function apiGet(action,args,ok,fail){
+  // JSONP is the primary cross-origin read path for static HTML hosting.
+  apiGetJsonp(action,args,ok,e1=>{
+    // If the Apps Script explicitly supports CORS, use it as a safe fallback.
+    apiGetCors(action,args).then(ok).catch(e2=>{
+      const err=normalizeApiError(e2,action);
+      if(err.code==='TIMEOUT' && e1?.code!=='JSONP_UNSUPPORTED'){
+        (fail||(()=>{}))(e1);
+      }else{
+        (fail||(()=>{}))(err);
+      }
+    });
+  });
+}
+
 function apiPost(action,args,ok,fail){
-  if(!API_READY){(fail||(()=>{}))(new Error('Chưa cấu hình API_URL'));return}
-  const requestId=(crypto&&crypto.randomUUID)?crypto.randomUUID():('tj-'+Date.now()+'-'+Math.random().toString(36).slice(2));
-  fetch(API_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({action,args:args||[],requestId})})
-    .then(()=>pollJob(requestId,ok,fail)).catch(fail||(()=>{}));
+  if(!API_READY){(fail||(()=>{}))(apiError('API_URL chưa hợp lệ.','CONFIG'));return}
+  const requestId=(globalThis.crypto&&crypto.randomUUID)?crypto.randomUUID():('tj-'+Date.now()+'-'+Math.random().toString(36).slice(2));
+  const payload={action,args:args||[],requestId};
+  apiBusy++;
+  // Deliberately use no-cors for writes: it prevents CORS preflight, but the
+  // response is read through the server-side getJob(requestId) contract.
+  fetch(API_URL,{
+    method:'POST',
+    mode:'no-cors',
+    headers:{'Content-Type':'text/plain;charset=UTF-8'},
+    body:JSON.stringify(payload),
+    keepalive:true
+  }).then(()=>{
+    pollJob(requestId,ok,fail,0);
+  }).catch(e=>{
+    (fail||(()=>{}))(apiError(e?.message||'Không gửi được dữ liệu lên Apps Script.','NETWORK'));
+  });
 }
+
 function pollJob(requestId,ok,fail,attempt=0){
-  if(attempt>45){(fail||(()=>{}))(new Error('Không nhận được phản hồi từ hệ thống sau 45 giây'));return}
+  if(attempt>=Math.ceil(WRITE_TIMEOUT/700)){
+    (fail||(()=>{}))(apiError('Apps Script không trả kết quả getJob. Kiểm tra doPost()/getJob trong Apps Script.','JOB_TIMEOUT'));
+    return;
+  }
   apiGet('getJob',[requestId],res=>{
-    if(res&&res.pending){setTimeout(()=>pollJob(requestId,ok,fail,attempt+1),650);return}
-    if(res&&res.ok===false){(fail||(()=>{}))(new Error(res.error||'API error'));return}
-    ok(res&&res.data!==undefined?res.data:res)
-  },()=>setTimeout(()=>pollJob(requestId,ok,fail,attempt+1),700));
+    const v=unwrapApiResponse(res);
+    if(v&&v.pending){
+      setTimeout(()=>pollJob(requestId,ok,fail,attempt+1),700);
+      return;
+    }
+    if(v&&v.ok===false){
+      (fail||(()=>{}))(apiError(String(v.error||v.message||'Apps Script báo lỗi.'),'REMOTE_ERROR'));
+      return;
+    }
+    ok(v);
+  },()=>{
+    // JSONP may be temporarily unavailable while the job is being written.
+    setTimeout(()=>pollJob(requestId,ok,fail,attempt+1),800);
+  });
 }
+
 function server(fn,args,ok,fail){
   const done=ok||(()=>{}),bad=fail||(()=>{});
-  if(READ_ACTIONS.has(fn)||fn==='getJob') apiGet(fn,args,done,bad); else apiPost(fn,args,done,bad);
+  if(READ_ACTIONS.has(fn))apiGet(fn,args,done,bad);
+  else apiPost(fn,args,done,bad);
+}
+
+function extractProductsPayload(payload){
+  let v=unwrapApiResponse(payload);
+  if(Array.isArray(v))return v;
+  if(v&&typeof v==='object'){
+    for(const key of ['products','items','rows','data','list']){
+      const x=parseMaybeJson(v[key]);
+      if(Array.isArray(x))return x;
+    }
+  }
+  return null;
+}
+function extractSettingsPayload(payload){
+  let v=unwrapApiResponse(payload);
+  if(v&&typeof v==='object'&&!Array.isArray(v)){
+    if(v.settings&&typeof v.settings==='object')return v.settings;
+    if(v.data&&typeof v.data==='object'&&!Array.isArray(v.data))return v.data;
+  }
+  return (v&&typeof v==='object'&&!Array.isArray(v))?v:{};
+}
+
+function showApiStatus(message,type='error'){
+  toast(message,type,type==='error'?'Kết nối dữ liệu':'Thông báo');
+}
+
+function apiEnvironmentWarning(){
+  if(location.protocol==='file:'){
+    console.warn('Trac Jack Bakery: nên chạy website qua HTTPS/HTTP, không mở trực tiếp file:// để Apps Script/JSONP hoạt động ổn định.');
+  }
 }
 function init(){
-  // KHÔNG dùng FALLBACK để hiển thị ngoài website.
-  // Website chỉ hiển thị dữ liệu thực tế trả về từ Apps Script.
+  apiEnvironmentWarning();
   products=[];
   settings={};
   renderAll();
 
+  // Load settings and products independently. A settings failure must not hide products.
   server('getSettings',[],s=>{
-    settings=(s&&typeof s==='object')?s:{};
-    renderAll();
+    settings=extractSettingsPayload(s);
+    renderCart();
   },e=>{
-    console.warn('getSettings:',e);
+    console.error('[Apps Script:getSettings]',e);
+    showApiStatus(`Không đọc được cài đặt: ${e?.message||e}`,'warning');
   });
 
-  server('getProducts',[],p=>{
-    if(Array.isArray(p)){
-      products=p.map((x,i)=>normalizeApiProduct(x,i))
-               .filter(x=>x.active===true);
-      renderAll();
-    }else{
+  const loadingWatch=setTimeout(()=>{$('loading').style.display='none';showApiStatus('Kết nối Apps Script đang chậm. Bạn có thể tiếp tục xem giao diện và thử tải lại.','warning')},15000);
+  server('getProducts',[],payload=>{
+    clearTimeout(loadingWatch);
+    const list=extractProductsPayload(payload);
+    if(!list){
       products=[];
       renderAll();
-      toast('Apps Script không trả về danh sách sản phẩm hợp lệ.','error','Lỗi dữ liệu');
+      $('loading').style.display='none';
+      showApiStatus('Apps Script đã phản hồi nhưng dữ liệu sản phẩm không đúng định dạng.','error');
+      console.error('[Apps Script:getProducts] payload=',payload);
+      return;
     }
+    products=list.map((x,i)=>normalizeApiProduct(x,i)).filter(x=>x.active!==false);
+    renderAll();
     $('loading').style.display='none';
+    if(!products.length){
+      showApiStatus('Apps Script kết nối được nhưng chưa có sản phẩm đang bán.','warning');
+    }
   },e=>{
+    clearTimeout(loadingWatch);
     products=[];
     renderAll();
     $('loading').style.display='none';
-    toast('Không tải được dữ liệu sản phẩm từ Apps Script.','error','Lỗi dữ liệu');
-    console.error('getProducts:',e);
+    console.error('[Apps Script:getProducts]',e);
+    showApiStatus(`Không đọc được sản phẩm từ Apps Script: ${e?.message||e}`,'error');
   });
 }
 function normalizeApiProduct(p,i=0){
+  const x=(p&&typeof p==='object')?p:{};
+  const active=x.active;
   return {
-    ...p,
-    id:String(p?.id??p?.productId??('P'+String(i+1).padStart(3,'0'))),
-    name:String(p?.name??p?.productName??'Sản phẩm'),
-    category:String(p?.category??'Bánh ngọt'),
-    price:Number(p?.price??p?.salePrice??0),
-    description:String(p?.description??p?.shortDescription??''),
-    imageUrl:String(p?.imageUrl??p?.image??p?.photoUrl??''),
-    cakeColor:String(p?.cakeColor??'#9a5a35'),
-    active:!Object.prototype.hasOwnProperty.call(p||{},'active') || p?.active===true || p?.active===1 || String(p?.active).toLowerCase()==='true'
+    ...x,
+    id:String(x.id??x.productId??x.ID??('P'+String(i+1).padStart(3,'0'))),
+    name:String(x.name??x.productName??x.title??'Sản phẩm'),
+    category:String(x.category??x.Category??'Bánh ngọt'),
+    price:Number(x.price??x.salePrice??x.Price??0)||0,
+    description:String(x.description??x.shortDescription??x.Description??''),
+    imageUrl:String(x.imageUrl??x.image??x.photoUrl??x.ImageURL??''),
+    cakeColor:String(x.cakeColor??'#9a5a35'),
+    taste:String(x.taste??x.flavor??x.huongVi??''),
+    useFor:String(x.useFor??x.occasion??x.phuHop??''),
+    storage:String(x.storage??x.baoQuan??''),
+    packaging:String(x.packaging??x.dongGoi??''),
+    active:!['false','0','no','off'].includes(String(active??'').trim().toLowerCase())
   };
 }
 
-function renderAll(){renderCats();renderProducts();renderCart();buildOrbit()}
+function renderAll(){
+  renderCats();
+  renderProducts();
+  renderCart();
+  buildOrbit();
+}
 function renderCats(){
   const cats=['Tất cả',...new Set(products.map(p=>String(p.category||'').trim()).filter(Boolean))];
   if(!cats.includes(active))active='Tất cả';
-  $('categories').innerHTML=cats.map(c=>`<button class="cat ${active===c?'active':''}" onclick="filterCat('${esc(c)}')">${esc(c)}</button>`).join('');
+  $('categories').innerHTML=cats.map(c=>`<button class="cat ${active===c?'active':''}" data-category="${esc(c)}">${esc(c)}</button>`).join('');
 }
-function filterCat(c){active=c;renderCats();renderProducts()}
+function filterCat(c){
+  active=String(c||'Tất cả');
+  renderCats();
+  renderProducts();
+}
 function renderProducts(){
-  let list=active==='Tất cả'?products:products.filter(p=>String(p.category||'')===active);
-  if(!list.length)list=[];
-  $('productGrid').innerHTML=list.map((p,i)=>{
+  const list=active==='Tất cả'?products:products.filter(p=>String(p.category||'')===active);
+  $('productGrid').innerHTML=list.length?list.map((p,i)=>{
     const id=String(p.id??p.productId??('P'+i));
     const name=String(p.name??p.productName??'Sản phẩm');
-    const price=Number(p.price??p.salePrice??0);
+    const price=Number(p.price??p.salePrice??0)||0;
     const description=String(p.description??p.shortDescription??'');
     const image=String(p.imageUrl??p.image??p.photoUrl??'');
-    const cakeColor=String(p.cakeColor||'#9a5a35');
     const isFav=favs.includes(id);
-    return `<article class="product" onclick="openProductDetail('${esc(id)}')"><div class="photo">${p.badge?`<span class="tag">${esc(p.badge)}</span>`:''}<button class="fav ${isFav?'on':''}" onclick="event.stopPropagation();toggleFav('${esc(id)}')">${isFav?'♥':'♡'}</button>${image?`<img src="${esc(image)}" alt="${esc(name)}" loading="lazy" onerror="this.style.display='none';this.parentElement.querySelector('.image-empty').style.display='grid'">`:''}<div class="image-empty" style="display:${image?'none':'grid'};place-items:center;color:#9a8a7c;font-size:10px;text-align:center;padding:20px">Ảnh sản phẩm chưa được cập nhật</div></div><div class="info"><h3>${esc(name)}</h3><p>${esc(description)}</p><div class="bottom"><span class="price">${money(price)}</span><button class="add" onclick="event.stopPropagation();addToCart('${esc(id)}')">+</button></div></div></article>`;
-  }).join('');
+    return `<article class="product" data-product-id="${esc(id)}">
+      <div class="photo">
+        ${p.badge?`<span class="tag">${esc(p.badge)}</span>`:''}
+        <button class="fav ${isFav?'on':''}" data-fav-id="${esc(id)}" aria-label="Yêu thích">${isFav?'♥':'♡'}</button>
+        ${image?`<img src="${esc(image)}" alt="${esc(name)}" loading="lazy">`:''}
+        <div class="image-empty" ${image?'style="display:none"':''}>Ảnh sản phẩm chưa được cập nhật</div>
+      </div>
+      <div class="info">
+        <h3>${esc(name)}</h3>
+        <p>${esc(description)}</p>
+        <div class="bottom"><span class="price">${money(price)}</span><button class="add" data-add-id="${esc(id)}" aria-label="Thêm vào giỏ">+</button></div>
+      </div>
+    </article>`;
+  }).join(''):`<div style="grid-column:1/-1;padding:35px;text-align:center;border:1px dashed var(--line);border-radius:16px;color:#8b7e73;font-size:11px">Chưa có sản phẩm phù hợp.</div>`;
 }
+
+document.addEventListener('click',e=>{
+  const cat=e.target.closest('[data-category]');
+  if(cat){filterCat(cat.dataset.category);return}
+  const fav=e.target.closest('[data-fav-id]');
+  if(fav){e.stopPropagation();toggleFav(fav.dataset.favId);return}
+  const add=e.target.closest('[data-add-id]');
+  if(add){e.stopPropagation();addToCart(add.dataset.addId);return}
+  const product=e.target.closest('[data-product-id]');
+  if(product){openProductDetail(product.dataset.productId);return}
+  const searchItem=e.target.closest('[data-search-id]');
+  if(searchItem&&!e.target.closest('[data-add-id]')){openProductDetail(searchItem.dataset.searchId);closeSearch();return}
+});
 function toggleFav(id){id=String(id);favs.includes(id)?favs=favs.filter(x=>x!==id):favs.push(id);localStorage.setItem('tj_favs_art',JSON.stringify(favs));renderProducts()}
 function addToCart(id){
   const p=products.find(x=>String(x.id??x.productId)===String(id));
@@ -487,7 +693,7 @@ function changeQty(id,d){const x=cart.find(i=>String(i.id)===String(id));if(!x)r
 function renderCart(){let count=cart.reduce((s,i)=>s+i.qty,0);$('badge').textContent=count;$('cartItems').innerHTML=cart.length?cart.map(i=>`<div class="cart-item"><div class="thumb">${i.imageUrl?`<img src="${esc(i.imageUrl)}">`:''}</div><div><div class="cart-name">${esc(i.name)}</div><div class="qty"><button onclick="changeQty('${esc(i.id)}',-1)">−</button>${i.qty}<button onclick="changeQty('${esc(i.id)}',1)">+</button></div></div><b style="font-size:10px">${money(i.price*i.qty)}</b></div>`).join(''):'<p style="font-size:11px;color:#999">Giỏ hàng đang trống.</p>';const sub=cart.reduce((s,i)=>s+i.price*i.qty,0),fee=sub?(sub>=Number(settings.freeShippingFrom||300000)?0:Number(settings.shippingFee||25000)):0;$('subtotal').textContent=money(sub);$('shipping').textContent=fee?money(fee):'Miễn phí';$('total').textContent=money(sub+fee)}
 function toggleCart(){$('drawer').classList.toggle('open');$('overlay').classList.toggle('show')}
 function openCheckout(){if(!cart.length)return toast('Hãy thêm sản phẩm trước nhé');$('checkout').classList.add('show');togglePaymentInfo()}
-function closeCheckout(){$('checkout').classList.remove('show');$('checkoutForm').style.display='block';$('success').style.display='none';const cod=document.querySelector('input[name=payment][value="COD"]');if(cod)cod.checked=true;togglePaymentInfo()}
+function closeCheckout(){resetConfirmButton();$('checkout').classList.remove('show');$('checkoutForm').style.display='block';$('success').style.display='none';const cod=document.querySelector('input[name=payment][value="COD"]');if(cod)cod.checked=true;togglePaymentInfo()}
 async function placeOrder(){
   const btn=$('confirmOrderBtn');
   if(btn?.disabled)return;
@@ -594,47 +800,96 @@ function resetConfirmButton(){
   btn.style.opacity='';
   btn.style.cursor='';
 }
-function subscribe(){const email=$('memberEmail').value.trim();if(!email)return toast('Vui lòng nhập email');server('subscribeCustomer',[{email}],()=>{toast('Đăng ký thành công');$('memberEmail').value=''})}
-function sendContact(){const d={name:$('customName').value.trim(),phone:$('customPhone').value.trim(),email:$('customEmail').value.trim(),message:$('customMessage').value.trim()};if(!d.name||!d.phone||!d.message)return toast('Vui lòng nhập đủ thông tin');server('saveContact',[d],()=>{toast('Đã gửi yêu cầu');['customName','customPhone','customEmail','customMessage'].forEach(id=>$(id).value='')})}
-  function openSearch(){$('search').classList.add('show');$('searchInput').focus();doSearch()}function closeSearch(){$('search').classList.remove('show')}function doSearch(){const q=$('searchInput').value.toLowerCase().trim(),list=q?products.filter(p=>(p.name+' '+p.category+' '+p.description).toLowerCase().includes(q)):products.slice(0,6);$('searchResults').innerHTML=list.map(p=>`<div style="display:flex;justify-content:space-between;align-items:center;border:1px solid var(--line);border-radius:11px;padding:10px"><span style="font-size:10px"><b>${esc(p.name)}</b><small style="display:block;color:#999">${money(p.price)}</small></span><button class="add" onclick="addToCart('${esc(p.id)}');closeSearch()">+</button></div>`).join('')||'<p style="font-size:10px;color:#999">Không tìm thấy.</p>'}
+function subscribe(){const email=$('memberEmail').value.trim();if(!email)return toast('Vui lòng nhập email');server('subscribeCustomer',[{email}],()=>{toast('Đăng ký thành công','success','Đã đăng ký');$('memberEmail').value=''},e=>toast(e?.message||'Không thể đăng ký lúc này','error','Đăng ký thất bại'))}
+function sendContact(){const d={name:$('customName').value.trim(),phone:$('customPhone').value.trim(),email:$('customEmail').value.trim(),message:$('customMessage').value.trim()};if(!d.name||!d.phone||!d.message)return toast('Vui lòng nhập đủ thông tin');server('saveContact',[d],()=>{toast('Đã gửi yêu cầu tư vấn','success','Đã gửi yêu cầu');['customName','customPhone','customEmail','customMessage'].forEach(id=>$(id).value='')},e=>toast(e?.message||'Không thể gửi yêu cầu','error','Gửi thất bại'))}
+  function openSearch(){$('search').classList.add('show');$('searchInput').focus();doSearch()}
+function closeSearch(){$('search').classList.remove('show')}
+function doSearch(){
+  const q=$('searchInput').value.toLowerCase().trim();
+  const list=q?products.filter(p=>(p.name+' '+p.category+' '+p.description).toLowerCase().includes(q)):products.slice(0,6);
+  $('searchResults').innerHTML=list.map(p=>`<div class="search-result" data-search-id="${esc(p.id)}" style="display:flex;justify-content:space-between;align-items:center;border:1px solid var(--line);border-radius:11px;padding:10px;cursor:pointer"><span style="font-size:10px"><b>${esc(p.name)}</b><small style="display:block;color:#999">${money(p.price)}</small></span><button class="add" data-add-id="${esc(p.id)}">+</button></div>`).join('')||'<p style="font-size:10px;color:#999">Không tìm thấy.</p>';
+}
 
-/* orbit — smooth mathematical motion, depth and gentle parallax */
-const orbitUrls=[
-'https://png.pngtree.com/png-vector/20230902/ourmid/pngtree-tiramisu-cake-isolated-png-image_9242463.png',
-'https://static.vecteezy.com/system/resources/previews/047/523/592/non_2x/delicious-tiramisu-dessert-with-coffee-beans-food-photography-png.png',
-'https://givralbakery.com.vn/wp-content/uploads/2025/05/MOB01-1-1.png',
-'https://png.pngtree.com/png-vector/20230902/ourmid/pngtree-tiramisu-cake-isolated-png-image_9242463.png',
-'https://static.vecteezy.com/system/resources/previews/047/523/592/non_2x/delicious-tiramisu-dessert-with-coffee-beans-food-photography-png.png',
-'https://givralbakery.com.vn/wp-content/uploads/2025/05/MOB01-1-1.png'
-];
-let orbitEls=[];
+/* orbit — single cancellable animation loop; avoids duplicate RAF loops */
+let orbitEls=[],orbitFrame=0,orbitStarted=0;
 function buildOrbit(){
   const stage=$('orbitStage');
+  if(!stage)return;
+  if(orbitFrame)cancelAnimationFrame(orbitFrame);
+  orbitFrame=0;
+  orbitStarted=0;
   stage.innerHTML='';
   const urls=products.map(p=>String(p.imageUrl??p.image??p.photoUrl??'')).filter(Boolean).slice(0,6);
-  const source=urls;
-  orbitEls=source.map(u=>{
+  orbitEls=urls.map(u=>{
     const im=document.createElement('img');
     im.src=u;
     im.className='orbit-product';
+    im.loading='lazy';
+    im.onerror=()=>{im.remove();};
     stage.appendChild(im);
     return im;
   });
-  requestAnimationFrame(animateOrbit);
+  if(orbitEls.length)orbitFrame=requestAnimationFrame(animateOrbit);
 }
-let orbitStarted=0;
-function animateOrbit(t){if(!orbitStarted)orbitStarted=t;const elapsed=(t-orbitStarted)/1000,stage=$('orbitStage');if(!stage)return;const w=stage.clientWidth,h=stage.clientHeight,cx=w/2,cy=h/2,rx=Math.min(w*.40,300),ry=Math.min(h*.29,195),speed=.115;orbitEls.forEach((el,i)=>{const a=elapsed*speed+i*(Math.PI*2/orbitEls.length);const x=cx+Math.cos(a)*rx,y=cy+Math.sin(a)*ry;const depth=(Math.sin(a)+1)/2;const scale=.70+depth*.48;const opacity=.38+depth*.62;const blur=(1-depth)*.8;el.style.transform=`translate(${x-cx}px,${y-cy}px) scale(${scale})`;el.style.opacity=opacity;el.style.filter=`drop-shadow(0 ${12+depth*10}px ${10+depth*7}px rgba(69,37,17,.18)) blur(${blur}px)`;el.style.zIndex=3+Math.round(depth*8)});requestAnimationFrame(animateOrbit)}
+function animateOrbit(t){
+  const stage=$('orbitStage');
+  if(!stage||!orbitEls.length){orbitFrame=0;return}
+  if(!orbitStarted)orbitStarted=t;
+  const elapsed=(t-orbitStarted)/1000,w=stage.clientWidth,h=stage.clientHeight;
+  const cx=w/2,cy=h/2,rx=Math.min(w*.40,300),ry=Math.min(h*.29,195),speed=.115;
+  const n=orbitEls.length;
+  orbitEls.forEach((el,i)=>{
+    const a=elapsed*speed+i*(Math.PI*2/n);
+    const x=cx+Math.cos(a)*rx,y=cy+Math.sin(a)*ry,depth=(Math.sin(a)+1)/2;
+    el.style.transform=`translate(${x-cx}px,${y-cy}px) scale(${.70+depth*.48})`;
+    el.style.opacity=.38+depth*.62;
+    el.style.filter=`drop-shadow(0 ${12+depth*10}px ${10+depth*7}px rgba(69,37,17,.18)) blur(${(1-depth)*.8}px)`;
+    el.style.zIndex=3+Math.round(depth*8);
+  });
+  orbitFrame=requestAnimationFrame(animateOrbit);
+}
 
 /* admin image manager */
 let adminKey='';
 function openAdmin(){$('admin').classList.add('show')}
 function closeAdmin(){$('admin').classList.remove('show')}
 function loadAdmin(){adminKey=$('adminKey').value.trim();if(!adminKey)return toast('Nhập mã quản trị');server('getAdminProducts',[adminKey],list=>renderAdmin(list||[]),e=>toast(e?.message||'Sai mã quản trị'))}
-function renderAdmin(list){$('adminBody').innerHTML=`<div class="admin-head"><div><p class="muted">Thêm/sửa sản phẩm và upload ảnh trực tiếp lên Google Drive.</p></div><button class="primary" onclick="newProduct()">Sản phẩm mới</button></div><div id="editor" style="margin-top:12px"></div><div class="admin-list" id="adminList">${list.map(p=>`<div class="admin-item"><img src="${esc(p.imageUrl||'')}" onerror="this.style.opacity=.2"><span><b>${esc(p.name)}</b><br>${money(p.price)} · ${esc(p.category)}</span><button class="secondary" onclick='editProduct(${JSON.stringify(p).replace(/'/g,"&#39;")})'>Sửa</button></div>`).join('')}</div>`}
+let adminProductsCache=[];
+function renderAdmin(list){
+  adminProductsCache=Array.isArray(list)?list:[];
+  $('adminBody').innerHTML=`<div class="admin-head"><div><p class="muted">Thêm/sửa sản phẩm và upload ảnh trực tiếp lên Google Drive.</p></div><button class="primary" onclick="newProduct()">Sản phẩm mới</button></div><div id="editor" style="margin-top:12px"></div><div class="admin-list" id="adminList">${adminProductsCache.map((p,i)=>`<div class="admin-item"><img src="${esc(p.imageUrl||'')}" onerror="this.style.opacity=.2"><span><b>${esc(p.name||'Sản phẩm')}</b><br>${money(p.price)} · ${esc(p.category||'')}</span><button class="secondary" onclick="editProductByIndex(${i})">Sửa</button></div>`).join('')||'<p class="muted">Chưa có sản phẩm.</p>'}</div>`;
+}
 function newProduct(){editProduct({id:'',name:'',category:'Tiramisu',price:0,description:'',imageUrl:'',active:true})}
-function editProduct(p){$('editor').innerHTML=`<div class="admin-form"><input id="epId" value="${esc(p.id)}" placeholder="ID sản phẩm"><input id="epName" value="${esc(p.name)}" placeholder="Tên sản phẩm"><select id="epCat">${['Tiramisu','Bánh kem','Bánh mousse','Bánh ngọt','Bánh cupcake','Combo ưu đãi'].map(c=>`<option ${p.category===c?'selected':''}>${c}</option>`).join('')}</select><input id="epPrice" type="number" value="${Number(p.price)||0}" placeholder="Giá"><textarea id="epDesc" class="full" placeholder="Mô tả">${esc(p.description||'')}</textarea><div class="upload-box full"><label style="font-size:10px;font-weight:700">ẢNH SẢN PHẨM</label><input id="epFile" type="file" accept="image/png,image/jpeg,image/webp" onchange="previewFile(this)"><input id="epUrl" value="${esc(p.imageUrl||'')}" placeholder="Hoặc dán URL ảnh" style="margin-top:7px;width:100%"><img id="epPreview" class="preview" src="${esc(p.imageUrl||'')}" onerror="this.style.display='none'"></div><label style="font-size:10px"><input id="epActive" type="checkbox" ${p.active!==false?'checked':''}> Đang bán</label><div class="full"><button class="primary" onclick="saveAdminProduct('${esc(p.id)}')">Lưu sản phẩm</button></div></div>`}
-function previewFile(input){const f=input.files?.[0];if(!f)return;if(f.size>7*1024*1024)return toast('Ảnh tối đa 7MB');const r=new FileReader();r.onload=()=>{$('epPreview').src=r.result;$('epPreview').style.display='block'};r.readAsDataURL(f)}
-function saveAdminProduct(oldId){const file=$('epFile').files?.[0],p={id:$('epId').value.trim(),name:$('epName').value.trim(),category:$('epCat').value,price:Number($('epPrice').value)||0,description:$('epDesc').value.trim(),imageUrl:$('epUrl').value.trim(),active:$('epActive').checked};if(!p.name)return toast('Nhập tên sản phẩm');const save=()=>server('saveProduct',[{key:adminKey,product:p}],()=>{toast('Đã lưu sản phẩm');loadAdmin();server('getProducts',[],x=>{if(x?.length){products=x;renderAll()}})},e=>toast(e?.message||'Không thể lưu'));if(file){const r=new FileReader();r.onload=()=>server('uploadProductImage',[{key:adminKey,productId:p.id||'',fileName:file.name,dataUrl:r.result}],res=>{p.imageUrl=res.url;$('epUrl').value=res.url;save()},e=>toast(e?.message||'Upload ảnh thất bại'));r.readAsDataURL(file)}else save()}
+function editProductByIndex(i){const p=adminProductsCache[Number(i)];if(p)editProduct(p)}
+function editProduct(p){
+  const x=p||{};
+  $('editor').innerHTML=`<div class="admin-form"><input id="epId" value="${esc(x.id||'')}" placeholder="ID sản phẩm"><input id="epName" value="${esc(x.name||'')}" placeholder="Tên sản phẩm"><select id="epCat">${['Tiramisu','Bánh kem','Bánh mousse','Bánh ngọt','Bánh cupcake','Combo ưu đãi'].map(c=>`<option ${x.category===c?'selected':''}>${c}</option>`).join('')}</select><input id="epPrice" type="number" value="${Number(x.price)||0}" placeholder="Giá"><textarea id="epDesc" class="full" placeholder="Mô tả">${esc(x.description||'')}</textarea><div class="upload-box full"><label style="font-size:10px;font-weight:700">ẢNH SẢN PHẨM</label><input id="epFile" type="file" accept="image/png,image/jpeg,image/webp" onchange="previewFile(this)"><input id="epUrl" value="${esc(x.imageUrl||'')}" placeholder="Hoặc dán URL ảnh" style="margin-top:7px;width:100%"><img id="epPreview" class="preview" src="${esc(x.imageUrl||'')}" onerror="this.style.display='none'"></div><label style="font-size:10px"><input id="epActive" type="checkbox" ${x.active!==false?'checked':''}> Đang bán</label><div class="full"><button class="primary" onclick="saveAdminProduct('${esc(x.id||'')}')">Lưu sản phẩm</button></div></div>`;
+}
+function previewFile(input){const f=input.files?.[0];if(!f)return;if(f.size>7*1024*1024)return toast('Ảnh tối đa 7MB','warning','Ảnh quá lớn');const r=new FileReader();r.onload=()=>{$('epPreview').src=r.result;$('epPreview').style.display='block'};r.readAsDataURL(f)}
+function saveAdminProduct(oldId){
+  const file=$('epFile').files?.[0];
+  const p={id:$('epId').value.trim(),name:$('epName').value.trim(),category:$('epCat').value,price:Number($('epPrice').value)||0,description:$('epDesc').value.trim(),imageUrl:$('epUrl').value.trim(),active:$('epActive').checked};
+  if(!p.name)return toast('Nhập tên sản phẩm','warning','Thiếu tên');
+  const save=()=>server('saveProduct',[{key:adminKey,product:p}],res=>{
+    toast('Đã lưu sản phẩm','success','Lưu thành công');
+    loadAdmin();
+    server('getProducts',[],payload=>{
+      const list=extractProductsPayload(payload);
+      if(list){products=list.map((x,i)=>normalizeApiProduct(x,i)).filter(x=>x.active!==false);renderAll()}
+    });
+  },e=>toast(e?.message||'Không thể lưu sản phẩm','error','Lưu thất bại'));
+  if(file){
+    const r=new FileReader();
+    r.onload=()=>server('uploadProductImage',[{key:adminKey,productId:p.id||'',fileName:file.name,dataUrl:r.result}],res=>{
+      const v=unwrapApiResponse(res);
+      const url=String(v?.url||v?.imageUrl||v?.data?.url||'').trim();
+      if(!url)throw apiError('Apps Script upload không trả URL ảnh.','REMOTE_ERROR');
+      p.imageUrl=url;$('epUrl').value=url;save();
+    },e=>toast(e?.message||'Upload ảnh thất bại','error','Upload thất bại'));
+    r.readAsDataURL(file);
+  }else save();
+}
+
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}function toast(message,type='info',title=''){
   const x=$('toast');
   const cfg={
@@ -674,6 +929,12 @@ function openProductDetail(id){
 
   $('detailImage').src=image;
   $('detailImage').style.display=image?'block':'none';
+  const detailVisual=$('detailImage').parentElement;
+  let empty=detailVisual.querySelector('.detail-image-empty');
+  if(!empty){empty=document.createElement('div');empty.className='detail-image-empty';detailVisual.appendChild(empty)}
+  empty.textContent='Ảnh sản phẩm chưa được cập nhật';
+  empty.style.display=image?'none':'block';
+  $('detailImage').onerror=()=>{$('detailImage').style.display='none';empty.style.display='block'};
   $('detailImage').alt=name;
   $('detailCategory').textContent=category;
   $('detailName').textContent=name;
@@ -698,7 +959,9 @@ function togglePaymentInfo(){
 }
 function copyBankInfo(){
   const value='Techcombank | 3396076948 | Quang Trắc';
-  navigator.clipboard?.writeText('3396076948').then(()=>toast('Đã sao chép số tài khoản')).catch(()=>toast(value));
+  if(navigator.clipboard?.writeText){
+    navigator.clipboard.writeText('3396076948').then(()=>toast('Đã sao chép số tài khoản','success','Đã sao chép')).catch(()=>toast(value,'info','Thông tin tài khoản'));
+  }else toast(value,'info','Thông tin tài khoản');
 }
 
 
