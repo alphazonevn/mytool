@@ -105,7 +105,7 @@ const $=id=>document.getElementById(id),money=n=>Number(n||0).toLocaleString('vi
  * Writes use POST no-cors + requestId polling, so Google Apps Script can remain
  * a standalone API while this page is hosted on GitHub Pages / Netlify / Vercel / etc.
  */
-const API_URL='PASTE_YOUR_APPS_SCRIPT_WEB_APP_EXEC_URL_HERE';
+const API_URL='https://script.google.com/macros/s/AKfycbynCeJ-a8qrulbr-TWqUUQSSzPsFTtpqugsBXIncGDsYBik9x9GfEsrAuxinqdx1UzP/exec';
 const API_READY=!API_URL.includes('PASTE_YOUR_');
 const READ_ACTIONS=new Set(['getProducts','getSettings','getAdminProducts','getDashboard']);
 let jsonpSeq=0;
