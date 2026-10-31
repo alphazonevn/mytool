@@ -2,982 +2,358 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0755A6">
-  <title>Beta Cinemas Nowzone | Lịch chiếu & vệ sinh phòng</title>
+  <title>Beta Cinemas Nowzone | Lịch chiếu</title>
   <link rel="icon" href="https://play-lh.googleusercontent.com/so_2mIzE8qaobdSafVStIV7olRZL8Q1SkclYErPgbFDPn1SzAUO33stPfshdztJZCVA0eqfWsO_iia59aHLKZL8">
   <style>
-    :root{--blue:#0755a6;--blue2:#0874cf;--navy:#18385e;--orange:#ff951c;--pink:#f58ca7;--green:#b2d834;--bg:#f3f7fd;--muted:#8292a8;--line:#e2eaf4;--white:#fff;--shadow:0 8px 28px #164a800c}
-    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--navy);font:14px Arial,Helvetica,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}.hidden{display:none!important}
-    .topbar{height:74px;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:10px 26px;gap:18px;position:sticky;top:0;z-index:20;box-shadow:0 3px 12px #003a781c}.brand{display:flex;align-items:center;gap:12px;color:#fff;text-decoration:none}.brand-logo{font-size:31px;font-weight:900;letter-spacing:-2px}.brand-logo i{font-style:normal;color:var(--orange)}.brand-text{display:grid;gap:4px}.brand-text strong{font-size:17px;letter-spacing:.2px}.brand-text small{font-size:9px;letter-spacing:1.5px;color:#d7e9ff}.top-actions{display:flex;align-items:center;gap:12px}.clock-box{text-align:right;display:grid;gap:3px}.clock-box strong{font-size:17px}.clock-box small{font-size:10px;color:#d8e8fa}.api-pill{display:flex;align-items:center;gap:7px;padding:8px 12px;border-radius:30px;background:#ffffff1e;font-size:11px;white-space:nowrap}.api-dot{width:8px;height:8px;background:#f3b33d;border-radius:50%}.api-pill.online .api-dot{background:#31d17c;box-shadow:0 0 0 4px #31d17c22}.api-pill.offline .api-dot{background:#ff6576}.icon-btn,.mobile-menu{border:1px solid #ffffff4a;background:#ffffff12;color:#fff;border-radius:9px;padding:9px 12px}.mobile-menu{display:none;font-size:20px}
-    .shell{display:flex;min-height:calc(100vh - 74px)}.sidebar{width:238px;background:#fff;border-right:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column;flex-shrink:0}.side-label{font-size:10px;letter-spacing:1.3px;color:#9aa9bc;font-weight:bold;padding:8px 12px 12px}.nav-btn{display:flex;align-items:center;gap:12px;width:100%;border:0;background:transparent;color:#647991;text-align:left;padding:13px 12px;border-radius:10px;margin-bottom:5px;font-weight:700}.nav-btn:hover,.nav-btn.active{background:#eaf3ff;color:var(--blue)}.nav-ico{width:23px;text-align:center;font-size:18px}.nav-count{margin-left:auto;border-radius:20px;background:#fff0d8;color:#a86a00;padding:3px 8px;font-size:10px}.side-note{margin-top:auto;border-top:1px solid var(--line);padding:18px 10px 0;color:var(--muted);font-size:10px;line-height:1.7}.side-note strong{display:block;color:var(--blue);font-size:16px;margin-bottom:4px}.main{flex:1;min-width:0;padding:27px clamp(15px,3vw,38px)}.page{max-width:1500px;margin:auto}.page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap}.eyebrow{color:var(--blue2);font-size:10px;font-weight:bold;letter-spacing:1.4px;margin-bottom:8px}.page-head h1{font-size:clamp(25px,3vw,36px);margin:0 0 8px}.page-head p{color:var(--muted);margin:0;line-height:1.6}.head-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.live-pill{display:inline-flex;align-items:center;gap:7px;background:#e7f8ed;color:#18834a;padding:9px 12px;border-radius:20px;font-size:10px;font-weight:800}.live-pill i{width:7px;height:7px;border-radius:50%;background:#20ad62;box-shadow:0 0 0 4px #20ad6224;animation:pulse 1.8s infinite}@keyframes pulse{50%{opacity:.4}}.btn-primary,.btn-secondary,.btn-light{border:0;border-radius:9px;padding:11px 15px;font-weight:700}.btn-primary{background:var(--blue);color:#fff}.btn-secondary{background:#eaf2ff;color:var(--blue)}.btn-light{background:#fff;border:1px solid var(--line);color:var(--navy)}
-    .hero{background:linear-gradient(110deg,#0755a6,#0874cf);color:#fff;border-radius:21px;padding:26px 30px;min-height:170px;position:relative;overflow:hidden;display:flex;align-items:center;box-shadow:var(--shadow)}.hero-copy{position:relative;z-index:1;max-width:690px}.hero-tag{display:inline-block;background:var(--orange);padding:7px 12px;border-radius:20px;font-size:10px;font-weight:800;margin-bottom:12px}.hero h2{font-size:clamp(26px,3.5vw,43px);text-transform:uppercase;margin:0 0 9px;line-height:1.05}.hero p{margin:0;color:#dcecff;line-height:1.6}.hero-shapes{position:absolute;right:8%;top:0;width:260px;height:100%;opacity:.9}.shape-a{position:absolute;width:85px;height:85px;border-radius:50%;background:var(--orange);top:13px;left:5px}.shape-b{position:absolute;width:0;height:0;border-left:60px solid transparent;border-right:60px solid transparent;border-bottom:105px solid var(--green);right:0;top:23px;transform:rotate(28deg)}.shape-c{position:absolute;width:75px;height:75px;background:var(--pink);border-radius:15px;left:95px;bottom:8px;transform:rotate(-14deg)}
-    .stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin:18px 0 24px}.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px;box-shadow:var(--shadow)}.stat span{display:block;color:var(--muted);font-size:11px}.stat strong{display:block;font-size:27px;color:var(--blue);margin:7px 0 4px}.stat small{color:#9aa8b9;font-size:10px}.quick-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:15px}.panel{background:#fff;border:1px solid var(--line);border-radius:15px;padding:17px;box-shadow:var(--shadow);min-width:0}.panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}.panel-head h2{font-size:18px;color:var(--blue);margin:0}.panel-head small{color:var(--muted);font-size:10px}.room-glance{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.room-tile{padding:12px;border:1px solid var(--line);border-radius:11px;background:#f9fbfe}.room-tile strong{display:block;color:var(--blue);font-size:13px}.room-tile span{display:block;color:var(--muted);font-size:10px;margin-top:7px;line-height:1.4}.mini-list{display:grid;gap:9px}.mini-row{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #eef2f7;padding:8px 0}.mini-row:last-child{border-bottom:0}.mini-row strong{font-size:12px}.mini-row small{display:block;color:var(--muted);margin-top:4px;font-size:10px}.mini-time{font-weight:800;color:var(--blue);white-space:nowrap}
-    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:13px;padding:12px;margin:16px 0}.tabs{display:flex;gap:6px;flex-wrap:wrap}.tab-btn{border:0;border-radius:8px;background:#f0f4fa;color:#62748b;padding:10px 13px;font-weight:800}.tab-btn.active{background:var(--blue);color:#fff}.filters{display:flex;gap:8px;flex-wrap:wrap}.filters select,.filters input{border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--navy);padding:10px 11px;min-width:135px}.filters input{min-width:210px}.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:10px;margin:12px 3px}.legend span{display:flex;align-items:center;gap:6px}.dot{width:8px;height:8px;border-radius:50%;display:inline-block}.dot.blue{background:#3685dc}.dot.green{background:#1ca76a}.dot.gray{background:#9aa6b5}.dot.amber{background:#e9a52d}.dot.purple{background:#9666d6}
-    .room-list{display:grid;gap:12px}.room-card{background:#fff;border:1px solid var(--line);border-radius:13px;overflow:hidden}.room-title{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 15px;background:#f5f8fc}.room-title strong{color:var(--blue);font-size:14px}.room-title span{font-size:10px;color:var(--muted)}.show-row{display:grid;grid-template-columns:115px minmax(160px,1.5fr) minmax(90px,.7fr) 125px 145px;gap:11px;align-items:center;padding:13px 15px;border-top:1px solid #edf1f6}.show-time strong{display:block;font-size:15px;color:var(--blue)}.show-time small,.show-movie small,.show-format{font-size:10px;color:var(--muted)}.show-movie strong{display:block;font-size:13px;line-height:1.4}.pill{width:max-content;max-width:100%;padding:7px 10px;border-radius:20px;font-size:10px;font-weight:800;background:#e8f1ff;color:#2866af}.pill.playing{background:#e4f7e9;color:#16833e}.pill.ended{background:#eef0f3;color:#697789}.pill.cancelled{background:#fff0f0;color:#b83b48}.pill.waiting{background:#fff2d9;color:#a86a00}.pill.working{background:#f0eaff;color:#7544bd}.pill.done{background:#e4f7e9;color:#16833e}.pill.none{background:#eef2f7;color:#77869a}
-    .clean-tools{display:grid;grid-template-columns:1fr 1fr 1.5fr;gap:10px;background:#f6f9fd;border:1px solid var(--line);padding:13px;border-radius:11px;margin-bottom:14px}.clean-tools label{display:grid;gap:6px;color:#657991;font-size:11px;font-weight:700}.clean-tools input{width:100%;min-width:0;padding:10px;border:1px solid var(--line);border-radius:8px;background:#fff}.clean-tools .wide{grid-column:auto}.cleaning-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.clean-card{border:1px solid var(--line);border-radius:13px;padding:15px;display:grid;gap:11px;background:#fff}.clean-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}.clean-top h3{font-size:14px;line-height:1.4;margin:0;color:var(--navy)}.clean-meta{display:flex;flex-wrap:wrap;gap:7px;color:var(--muted);font-size:10px}.clean-meta span{background:#f3f6fa;border-radius:7px;padding:6px 8px}.clean-note{color:#71839c;font-size:11px;line-height:1.5}.clean-actions{display:flex;gap:8px;flex-wrap:wrap}.clean-actions button{border:0;border-radius:8px;padding:10px 12px;font-size:11px;font-weight:800}.start-btn{background:#eaf2ff;color:var(--blue)}.finish-btn{background:#e5f7eb;color:#16834a}.clean-actions button:disabled{opacity:.45;cursor:not-allowed}.history-table{width:100%;border-collapse:collapse;font-size:12px}.history-table th,.history-table td{padding:11px 9px;text-align:left;border-bottom:1px solid #edf1f6;vertical-align:top}.history-table th{background:#f6f9fd;color:#657991;font-size:10px;letter-spacing:.4px}.history-wrap{overflow:auto}.empty{padding:40px 16px;background:#fff;border:1px dashed #d7e1ee;border-radius:12px;text-align:center;color:var(--muted);grid-column:1/-1}.footnote{margin-top:16px;padding:13px 15px;background:#fff8e9;border:1px solid #f6e7c3;border-radius:10px;color:#80652e;font-size:11px;line-height:1.6}.toast-wrap{position:fixed;right:18px;bottom:18px;z-index:50;display:grid;gap:8px}.toast{background:#17365d;color:#fff;padding:13px 17px;border-radius:10px;box-shadow:0 8px 25px #0002;max-width:min(390px,90vw)}.modal{position:fixed;inset:0;z-index:40;display:none;align-items:center;justify-content:center;padding:15px}.modal.show{display:flex}.modal-bg{position:absolute;inset:0;background:#102b4f99}.modal-box{position:relative;background:#fff;border-radius:16px;padding:24px;width:100%;max-width:470px;box-shadow:0 25px 80px #001c4433}.modal-box h2{margin:0 0 8px;color:var(--blue)}.modal-box p{color:var(--muted);font-size:12px;line-height:1.6}.modal-close{position:absolute;right:12px;top:10px;background:#edf3fa;border:0;width:32px;height:32px;border-radius:50%;font-size:20px}.modal-box label{display:grid;gap:6px;margin:12px 0;color:#657991;font-size:11px;font-weight:700}.modal-box input,.modal-box textarea{width:100%;border:1px solid var(--line);border-radius:8px;padding:10px}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
-    @media(max-width:1150px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.show-row{grid-template-columns:100px minmax(140px,1fr) 110px 130px}.show-format{display:none}}
-
-    /* MODERN 24-HOUR CINEMA TIMELINE */
-    :root{--room-col:154px;--hour-width:52px;--timeline-hours:24;--timeline-width:1248px}
-    .schedule-command{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:15px;padding:13px;margin:15px 0 12px;box-shadow:var(--shadow)}
-    .schedule-date-tools,.schedule-filter-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-    .date-nav-btn{width:37px;height:37px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--blue);font-size:17px;font-weight:800}
-    .date-today-btn{height:37px;border:0;border-radius:9px;padding:0 14px;background:#eaf2ff;color:var(--blue);font-weight:800}
-    .schedule-date-input,.schedule-filter-tools select,.schedule-filter-tools input{height:37px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--navy);padding:0 11px;min-width:130px}
-    .schedule-filter-tools input{min-width:210px}
-    .ended-toggle{height:37px;border:1px solid var(--line);border-radius:9px;background:#fff;color:#71839a;padding:0 12px;font-size:11px;font-weight:800}
-    .ended-toggle.active{background:#fff1e0;border-color:#f4d3a4;color:#9c5c00}
-    .schedule-date-caption{font-size:11px;color:var(--muted);font-weight:700;white-space:nowrap}
-    .timeline-statusbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:12px 2px}
-    .timeline-legend{display:flex;align-items:center;gap:13px;flex-wrap:wrap;color:var(--muted);font-size:10px}
-    .timeline-legend span{display:inline-flex;align-items:center;gap:6px}
-    .timeline-legend i{width:9px;height:9px;border-radius:3px;display:inline-block}
-    .timeline-legend .lg-upcoming{background:#4e83ca}.timeline-legend .lg-playing{background:#1a9b69}.timeline-legend .lg-soon{background:#efa52b}.timeline-legend .lg-cancel{background:#d85c68}
-    .timeline-meta{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:11px}
-    .timeline-scroll{overflow:auto;max-height:calc(100vh - 330px);min-height:270px;border:1px solid var(--line);border-radius:14px;background:#fff;scrollbar-color:#b8cbe1 #f1f5fa;scrollbar-width:thin;overscroll-behavior:contain}
-    .timeline-inner{width:calc(var(--room-col) + var(--timeline-width));min-width:calc(var(--room-col) + var(--timeline-width))}
-    .timeline-header{display:grid;grid-template-columns:var(--room-col) var(--timeline-width);position:sticky;top:0;z-index:8;background:#f7faff;border-bottom:1px solid #dfe8f3;height:67px}
-    .timeline-room-head{position:sticky;left:0;z-index:10;display:flex;align-items:center;padding:0 15px;background:#edf4fc;border-right:1px solid #dfe8f3;color:#55708e;font-size:10px;font-weight:900;letter-spacing:.7px}
-    .timeline-ruler{position:relative;width:var(--timeline-width);height:67px;background:linear-gradient(to right,#e2eaf3 1px,transparent 1px) 0 35px/var(--hour-width) 32px repeat-x}
-    .timeline-date-band{position:absolute;left:0;right:0;top:0;height:25px;display:flex;border-bottom:1px solid #e6edf5;color:#617894;font-size:10px;font-weight:800}
-    .timeline-date-band span{display:flex;align-items:center;justify-content:center;background:#edf4fc}
-    .timeline-date-band span+span{border-left:2px solid #cbd8e7;background:#f7f9fc}
-    .hour-tick{position:absolute;top:31px;transform:translateX(-50%);font-size:10px;color:#667e9b;white-space:nowrap;font-weight:700}
-    .hour-tick.major{color:#0755a6}
-    .timeline-rows{display:grid}
-    .timeline-row{display:grid;grid-template-columns:var(--room-col) var(--timeline-width);min-height:82px;border-bottom:1px solid #e9eff6}
-    .timeline-row:last-child{border-bottom:0}
-    .timeline-room-label{position:sticky;left:0;z-index:5;background:#fff;border-right:1px solid #e3ebf4;padding:12px 13px;display:flex;flex-direction:column;justify-content:center;gap:5px;box-shadow:5px 0 9px #214e7908}
-    .timeline-room-label strong{font-size:12px;color:#0755a6;letter-spacing:.2px}
-    .timeline-room-label small{color:#8999ad;font-size:10px}
-    .timeline-track{height:82px;position:relative;width:var(--timeline-width);background:linear-gradient(to right,#e6edf5 1px,transparent 1px) 0 0/var(--hour-width) 100% repeat-x,linear-gradient(to right,#f1f4f8 1px,transparent 1px) 0 0/calc(var(--hour-width)/4) 100% repeat-x}
-    .timeline-track.has-now:after{content:"";position:absolute;z-index:4;left:var(--now-left);top:0;bottom:0;width:2px;background:#e84c5b;box-shadow:0 0 0 1px #e84c5b1b;pointer-events:none}
-    .timeline-now-tag{position:absolute;z-index:6;top:1px;left:var(--now-left);transform:translateX(-50%);background:#e84c5b;color:#fff;border-radius:5px;padding:3px 6px;font-size:9px;font-weight:900;white-space:nowrap;pointer-events:none}
-    .timeline-block{position:absolute;top:10px;bottom:10px;min-width:42px;border:0;border-left:3px solid #2b67ad;border-radius:7px;background:linear-gradient(135deg,#d9e8fb,#bdd5f1);color:#173c69;text-align:left;padding:7px 8px 6px;display:flex;flex-direction:column;justify-content:center;gap:4px;overflow:hidden;box-shadow:0 2px 7px #154a8017;transition:filter .15s,opacity .15s;z-index:2}
-    .timeline-block:hover{filter:brightness(.97);z-index:3;box-shadow:0 5px 14px #154a8026}
-    .timeline-block strong{font-size:10px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-    .timeline-block small{font-size:9px;white-space:nowrap;opacity:.86;font-weight:700}
-    .timeline-block .block-state{font-size:8px;letter-spacing:.3px;text-transform:uppercase;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .timeline-block.is-playing{background:linear-gradient(135deg,#168b62,#24aa78);color:#fff;border-left-color:#096544;box-shadow:0 3px 12px #168b6230}
-    .timeline-block.is-soon{background:linear-gradient(135deg,#ffe6b8,#ffd28b);color:#754500;border-left-color:#e69a27}
-    .timeline-block.is-cancelled{background:linear-gradient(135deg,#ffe5e7,#f8c4ca);color:#8f2733;border-left-color:#c44c5b}
-    .timeline-block.is-ended{background:#edf0f4;color:#7d8998;border-left-color:#aab3bf;opacity:.75}
-    .timeline-block.is-short{padding:4px 5px}.timeline-block.is-short strong{-webkit-line-clamp:1}
-    .timeline-empty{padding:38px 20px;text-align:center;color:var(--muted);font-size:12px;background:#fbfdff}
-    .timeline-foot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 2px;color:#8b9aab;font-size:10px}
-    .timeline-now-button{border:0;background:#fff0f0;color:#c44150;border-radius:8px;padding:8px 11px;font-size:10px;font-weight:900}
-    .show-detail-box{position:fixed;inset:0;z-index:45;display:none;align-items:center;justify-content:center;padding:18px}.show-detail-box.show{display:flex}.show-detail-box .modal-bg{position:absolute;inset:0;background:#102b4f99}.show-detail-content{position:relative;background:#fff;border-radius:16px;padding:23px;width:min(460px,100%);box-shadow:0 25px 80px #001c4433}.show-detail-content h2{color:var(--blue);margin:0 35px 10px 0}.show-detail-content p{color:#6e8096;line-height:1.6;font-size:12px}.show-detail-close{position:absolute;right:12px;top:12px;border:0;border-radius:50%;width:32px;height:32px;background:#edf3fa;font-size:20px}
-    @media(max-width:850px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.quick-grid{grid-template-columns:1fr}.show-row{grid-template-columns:100px 1fr}.show-row>*:nth-child(n+3){grid-column:2}.cleaning-grid{grid-template-columns:1fr}}
-    @media(max-width:650px){.schedule-command{align-items:stretch}.schedule-date-tools,.schedule-filter-tools{width:100%}.schedule-filter-tools select,.schedule-filter-tools input{flex:1;min-width:0}.schedule-date-caption{width:100%}.timeline-scroll{max-height:calc(100vh - 350px)}.timeline-now-button{flex:1}.timeline-statusbar{align-items:flex-start}.timeline-block{padding:5px}.timeline-block strong{font-size:9px}}
-
-    @media(max-width:850px){.sidebar{width:205px}.quick-grid{grid-template-columns:1fr}.room-glance{grid-template-columns:repeat(3,minmax(0,1fr))}.stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
-    @media(max-width:650px){.topbar{height:auto;min-height:68px;padding:11px 14px;flex-wrap:wrap}.brand-logo{font-size:27px}.brand-text strong{font-size:14px}.brand-text small{font-size:8px}.mobile-menu{display:block}.top-actions{width:100%;justify-content:space-between}.clock-box{text-align:left}.shell{display:block}.sidebar{display:none;position:fixed;top:0;left:0;bottom:0;z-index:30;width:260px;box-shadow:0 0 0 100vw #102b4f66}.sidebar.open{display:flex}.main{padding:19px 12px}.hero{min-height:155px;padding:22px}.hero-shapes{right:-120px;opacity:.2}.hero h2{font-size:30px}.stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.stat{padding:12px}.stat strong{font-size:23px}.toolbar{align-items:stretch}.filters{width:100%}.filters select,.filters input{flex:1;min-width:120px}.show-row{grid-template-columns:88px 1fr;gap:7px 10px}.show-row .show-time{grid-row:1/3}.show-row .show-status,.show-row .clean-status{grid-column:2}.cleaning-grid{grid-template-columns:1fr}.clean-tools{grid-template-columns:1fr}.room-glance{grid-template-columns:repeat(2,minmax(0,1fr))}.page-head{flex-direction:column}.head-actions{width:100%;justify-content:space-between}.history-table{min-width:640px}}
-
-    /* RESPONSIVE EXPERIENCE LAYER: DESKTOP / TABLET / PHONE */
+    :root{
+      --blue:#0755A6;--blue2:#0874CF;--navy:#16385F;--muted:#71849D;
+      --bg:#F2F6FC;--line:#DCE6F2;--white:#fff;--green:#159B68;
+      --orange:#EFA32A;--red:#D95663;--room-col:150px;--hour-width:58px;
+      --timeline-width:1392px;--shadow:0 8px 25px rgba(20,65,112,.07)
+    }
+    *{box-sizing:border-box}
     html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
-    body{min-width:320px;overflow-x:hidden}
-    button,select,input,textarea{touch-action:manipulation}
-    .main,.page,.panel,.schedule-command,.toolbar,.clean-card{min-width:0}
-    .mobile-backdrop,.mobile-bottom-nav{display:none}
-    .schedule-display-tools{display:flex;align-items:center;gap:6px;flex-wrap:wrap;width:100%;padding-top:2px;border-top:1px solid #edf1f6}
-    .display-label{color:var(--muted);font-size:10px;font-weight:800;margin-right:3px}
-    .display-mode{height:34px;border:1px solid var(--line);border-radius:8px;background:#fff;color:#667b94;padding:0 11px;font-size:10px;font-weight:800}
-    .display-mode.active{border-color:#b8d3f5;background:#eaf3ff;color:var(--blue)}
-    .zoom-controls{margin-left:auto;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:9px;padding:3px 5px;background:#f8fafd}
-    .zoom-controls strong{min-width:42px;text-align:center;font-size:10px;color:#60758f}
-    .zoom-btn{width:30px;height:28px;border:0;border-radius:6px;background:#eaf2ff;color:var(--blue);font-size:17px;font-weight:800}
-    .mobile-schedule-list{display:grid;gap:12px;padding:10px;background:#f7faff}
-    .mobile-room-group{background:#fff;border:1px solid var(--line);border-radius:13px;overflow:hidden;min-width:0}
-    .mobile-room-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;background:#edf4fc;border-bottom:1px solid var(--line)}
-    .mobile-room-head strong{font-size:12px;color:var(--blue)}
-    .mobile-room-head span{font-size:10px;color:var(--muted);white-space:nowrap}
-    .mobile-show-stack{display:grid;gap:8px;padding:10px}
-    .mobile-show-card.timeline-block{position:relative;inset:auto!important;left:auto!important;top:auto!important;bottom:auto!important;width:100%!important;min-width:0;min-height:76px;border:1px solid #dbe7f5;border-left:4px solid #2b67ad;border-radius:10px;background:#f5f9ff;color:#173c69;padding:11px 12px;display:grid;grid-template-columns:minmax(88px,.65fr) minmax(0,2fr) 16px;align-items:center;gap:10px;text-align:left;box-shadow:none;overflow:visible}
-    .mobile-show-card.timeline-block.is-playing{background:#eaf8f0;color:#176443;border-color:#cdebd9;border-left-color:#168b62}
-    .mobile-show-card.timeline-block.is-soon{background:#fff7e9;color:#754500;border-color:#f3dfbb;border-left-color:#e69a27}
-    .mobile-show-card.timeline-block.is-cancelled{background:#fff1f2;color:#8f2733;border-color:#f2d4d8;border-left-color:#c44c5b}
-    .mobile-show-card.timeline-block.is-ended{background:#f1f3f6;color:#7d8998;border-color:#e0e5ec;opacity:.72}
-    .mobile-card-time{display:grid;gap:5px;align-content:center}
-    .mobile-card-time strong{font-size:13px;white-space:nowrap;color:inherit}
-    .mobile-card-time small,.mobile-card-main>small{font-size:10px;opacity:.72;overflow-wrap:anywhere}
-    .mobile-card-main{display:grid;gap:5px;min-width:0}
-    .mobile-card-main .block-state{font-size:8px;font-weight:900;letter-spacing:.35px}
-    .mobile-card-main>strong{font-size:12px;line-height:1.35;overflow-wrap:anywhere}
-    .mobile-card-arrow{font-size:22px;opacity:.55;text-align:right}
-    .timeline-scroll{max-width:100%;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;overscroll-behavior-x:contain}
-    .timeline-inner{max-width:none}
-    .timeline-room-label,.timeline-room-head{contain:paint}
-    .schedule-date-tools,.schedule-filter-tools{min-width:0}
-    .schedule-command input,.schedule-command select{max-width:100%}
-    .history-wrap{max-width:100%;-webkit-overflow-scrolling:touch}
-    .history-table{white-space:normal}
-    .btn-primary,.btn-secondary,.btn-light,.date-nav-btn,.date-today-btn,.ended-toggle,.tab-btn,.clean-actions button{min-height:40px}
-    .modal-box,.show-detail-content{max-height:calc(100dvh - 30px);overflow:auto}
-    .toast-wrap{right:max(12px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom))}
-
-    @media(min-width:1600px){
-      .page{max-width:1740px}
-      .main{padding-left:clamp(36px,3.5vw,64px);padding-right:clamp(36px,3.5vw,64px)}
-      .panel{padding:20px}
-      .stats{gap:16px}
-      .stat{padding:18px}
-    }
-    @media(max-width:1200px){
-      .sidebar{width:210px}
-      .main{padding:23px 20px}
-      .stats{grid-template-columns:repeat(3,minmax(0,1fr))}
-      .quick-grid{grid-template-columns:1fr}
-      .hero-shapes{right:2%;opacity:.55}
-      .cleaning-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-      .show-row{grid-template-columns:95px minmax(0,1fr) 110px 130px}
-      .show-format{display:none}
-    }
-    @media(max-width:900px){
-      .topbar{padding:10px 17px}
-      .sidebar{width:188px;padding:18px 10px}
-      .main{padding:20px 15px}
-      .stats{grid-template-columns:repeat(3,minmax(0,1fr))}
-      .room-glance{grid-template-columns:repeat(2,minmax(0,1fr))}
-      .quick-grid{grid-template-columns:1fr}
-      .schedule-command{align-items:flex-start}
-      .schedule-date-tools,.schedule-filter-tools{width:100%}
-      .schedule-filter-tools input{flex:1;min-width:160px}
-      .schedule-display-tools{width:100%}
-      .timeline-scroll{max-height:62vh;min-height:260px}
-      .clean-tools{grid-template-columns:repeat(2,minmax(0,1fr))}
-      .clean-tools label:last-child{grid-column:1/-1}
-    }
-    @media(max-width:820px){
-      body{padding-bottom:calc(66px + env(safe-area-inset-bottom))}
-      .topbar{display:grid;grid-template-columns:minmax(0,1fr) 42px;height:auto;min-height:64px;padding:10px 14px;gap:8px 10px;position:sticky;top:0}
-      .brand{grid-column:1;grid-row:1;min-width:0}.mobile-menu{grid-column:2;grid-row:1}
-      .brand-logo{font-size:27px}.brand-text strong{font-size:14px}.brand-text small{font-size:8px}
-      .mobile-menu{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px}
-      .top-actions{grid-column:1/-1;grid-row:2;width:100%;justify-content:space-between;gap:8px;margin-left:0;padding-top:8px;border-top:1px solid #ffffff26}
-      .clock-box{text-align:right}.clock-box strong{font-size:15px}.clock-box small{font-size:9px}
-      .api-pill{padding:7px 9px;font-size:9px}
-      .icon-btn{padding:8px 10px;min-height:40px}
-      .shell{display:block;min-height:calc(100dvh - 64px)}
-      .sidebar{display:flex;position:fixed;left:0;top:0;bottom:0;height:100dvh;width:min(82vw,290px);z-index:42;transform:translateX(-105%);transition:transform .24s ease;box-shadow:10px 0 35px #102b4f20;padding:22px 14px calc(24px + env(safe-area-inset-bottom));overflow-y:auto}
-      .sidebar.open{display:flex;transform:translateX(0)}
-      .mobile-backdrop{display:block;position:fixed;inset:0;z-index:41;border:0;background:#0d2544a1;opacity:0;visibility:hidden;transition:opacity .2s,visibility .2s}
-      .mobile-backdrop.show{opacity:1;visibility:visible}
-      body.menu-open{overflow:hidden}
-      .main{padding:18px 13px 26px}
-      .page-head{align-items:flex-start;flex-direction:column;gap:12px}
-      .page-head h1{font-size:clamp(24px,6vw,32px)}
-      .page-head p{font-size:12px}
-      .head-actions{width:100%;justify-content:space-between;gap:8px}
-      .hero{min-height:145px;padding:21px 20px;border-radius:16px}
-      .hero h2{font-size:clamp(23px,6vw,31px)}.hero p{font-size:12px;max-width:78%}
-      .hero-shapes{right:-125px;opacity:.17}
-      .stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:13px 0 17px}
-      .stat{padding:12px;border-radius:12px}.stat strong{font-size:24px;margin:5px 0 3px}.stat span{font-size:10px}.stat small{font-size:9px}
-      .panel{padding:13px;border-radius:13px}.panel-head{align-items:flex-start}.panel-head h2{font-size:15px}
-      .room-glance{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.room-tile{padding:10px}
-      .quick-grid{gap:11px}
-      .toolbar{align-items:stretch;padding:10px}.tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%}.tab-btn{min-height:40px;padding:9px 7px;font-size:11px}
-      .filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%}.filters select,.filters input{min-width:0;width:100%}.filters input{grid-column:1/-1}
-      .clean-tools{grid-template-columns:1fr;padding:11px}.clean-tools label:last-child{grid-column:auto}
-      .cleaning-grid{grid-template-columns:1fr;gap:10px}.clean-card{padding:13px}
-      .schedule-command{padding:10px;gap:10px;border-radius:12px}
-      .schedule-date-tools{display:grid;grid-template-columns:40px minmax(0,1fr) 40px;gap:7px}
-      .date-nav-btn{width:40px;height:40px}.schedule-date-tools>[data-action="date-prev"]{grid-column:1;grid-row:1}.date-today-btn{grid-column:2;grid-row:1;height:40px}.schedule-date-tools>[data-action="date-next"]{grid-column:3;grid-row:1}
-      .schedule-date-input{grid-column:1/-1;grid-row:2;width:100%;height:42px}
-      .schedule-date-caption{grid-column:1/-1;grid-row:3;white-space:normal;line-height:1.4}
-      .schedule-filter-tools{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-      .schedule-filter-tools select{grid-column:1/-1;width:100%;height:42px}
-      .schedule-filter-tools input{grid-column:1/-1;width:100%;min-width:0;height:42px}
-      .ended-toggle{grid-column:1/-1;width:100%;height:42px}
-      .schedule-display-tools{gap:5px;padding-top:10px}
-      .display-label{width:100%;margin-bottom:2px}
-      .display-mode{flex:1;min-width:0;padding:0 7px;height:38px;font-size:10px}
-      .zoom-controls{margin-left:0;flex:1;justify-content:space-between}
-      .timeline-statusbar{align-items:flex-start;gap:8px;margin:10px 1px}
-      .timeline-legend{gap:8px;font-size:9px}.timeline-meta{width:100%;justify-content:space-between;font-size:10px}
-      .timeline-scroll{max-height:58vh;min-height:220px;border-radius:11px}
-      .timeline-header{height:58px}.timeline-ruler{height:58px;background-position:0 30px}
-      .timeline-date-band{height:23px;font-size:8px}.hour-tick{top:29px;font-size:9px}
-      .timeline-row,.timeline-track{min-height:70px;height:70px}
-      .timeline-room-label{padding:8px 7px;gap:4px}.timeline-room-label strong{font-size:10px}.timeline-room-label small{font-size:8px}
-      .timeline-block{top:8px;bottom:8px;padding:5px 5px;gap:3px;border-radius:6px}
-      .timeline-block strong{font-size:9px}.timeline-block small{font-size:8px}.timeline-block .block-state{font-size:7px}
-      .timeline-foot{align-items:stretch;font-size:9px;line-height:1.5}.timeline-now-button{min-height:40px;width:100%}
-      .show-row{grid-template-columns:88px minmax(0,1fr);gap:7px 10px;padding:11px}
-      .show-row>*:nth-child(n+3){grid-column:2}
-      .history-wrap{overflow-x:auto}.history-table{min-width:680px;font-size:11px}
-      .history-table th,.history-table td{padding:9px 7px}
-      .footnote{font-size:10px;margin-top:12px}
-      .show-detail-box{padding:10px;align-items:flex-end}.show-detail-content{border-radius:18px 18px 0 0;width:100%;max-height:88dvh;overflow:auto;padding:20px 17px calc(20px + env(safe-area-inset-bottom))}
-      .modal{padding:10px;align-items:flex-end}.modal-box{border-radius:17px 17px 0 0;max-height:88dvh;overflow:auto;padding:21px 17px calc(20px + env(safe-area-inset-bottom))}
-      .toast-wrap{left:12px;right:12px;bottom:calc(76px + env(safe-area-inset-bottom))}.toast{max-width:none}
-      .mobile-bottom-nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));position:fixed;z-index:35;left:0;right:0;bottom:0;padding:7px 8px calc(7px + env(safe-area-inset-bottom));background:#ffffffed;border-top:1px solid #dce6f2;box-shadow:0 -5px 25px #153e6812;backdrop-filter:blur(14px)}
-      .mobile-nav-btn{display:grid;justify-items:center;align-content:center;gap:3px;min-height:48px;border:0;border-radius:10px;background:transparent;color:#7b8ba0;padding:4px 2px}
-      .mobile-nav-btn span{font-size:18px;line-height:1.1}.mobile-nav-btn small{font-size:9px;font-weight:800;white-space:nowrap}
-      .mobile-nav-btn.active{background:#eaf3ff;color:var(--blue)}
-    }
-    @media(max-width:420px){
-      .topbar{padding:9px 10px}.brand{gap:8px}.brand-logo{font-size:24px}.brand-text strong{font-size:12px}.brand-text small{font-size:7px;letter-spacing:1px}
-      .top-actions{gap:5px}.api-pill{padding:6px 7px}.api-pill #apiText{max-width:82px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-      .clock-box strong{font-size:13px}.clock-box small{font-size:8px}.icon-btn{padding:7px 8px;font-size:11px}
-      .main{padding-left:10px;padding-right:10px}.hero{padding:18px 16px}.hero p{max-width:88%;font-size:11px}
-      .stat{padding:10px}.stat strong{font-size:22px}.stat small{line-height:1.3}
-      .mobile-show-card.timeline-block{grid-template-columns:78px minmax(0,1fr) 12px;padding:10px 9px;gap:7px;min-height:72px}
-      .mobile-card-time strong{font-size:11px}.mobile-card-time small{font-size:9px}.mobile-card-main>strong{font-size:11px}
-      .schedule-filter-tools{grid-template-columns:1fr}.schedule-filter-tools select,.schedule-filter-tools input,.ended-toggle{grid-column:1}
-      .timeline-legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
-    }
-    @media(orientation:landscape) and (max-height:520px) and (max-width:900px){
-      .topbar{min-height:54px;padding:6px 12px}.shell{min-height:calc(100svh - 54px)}
-      .main{padding-top:12px}.hero{min-height:115px;padding:15px 20px}.hero h2{font-size:24px}
-      .stats{margin:10px 0}.timeline-scroll{max-height:calc(100svh - 235px);min-height:180px}
-      .mobile-bottom-nav{padding-top:4px}.mobile-nav-btn{min-height:40px}.mobile-nav-btn span{font-size:16px}
-    }
-    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
-
+    body{margin:0;min-width:320px;background:var(--bg);color:var(--navy);font:14px/1.45 Arial,Helvetica,sans-serif;overflow-x:hidden}
+    button,input,select{font:inherit}button{cursor:pointer;touch-action:manipulation}
+    button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #ff951c77;outline-offset:2px}
+    .topbar{height:76px;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:0 clamp(14px,3vw,34px);position:sticky;top:0;z-index:20;box-shadow:0 3px 14px #003d7c22}
+    .brand{display:flex;align-items:center;gap:12px;color:#fff;text-decoration:none;min-width:0}
+    .brand-logo{font-size:34px;font-weight:900;letter-spacing:-2px;line-height:1}
+    .brand-logo i{font-style:normal;color:#FF9A23;font-size:15px;vertical-align:top;margin-left:4px}
+    .brand-copy{display:grid;gap:3px}.brand-copy strong{font-size:16px;letter-spacing:.2px}.brand-copy small{font-size:9px;letter-spacing:1.5px;color:#D8E9FB}
+    .header-right{display:flex;align-items:center;gap:12px;min-width:0}
+    .api-pill{display:inline-flex;align-items:center;gap:7px;border:1px solid #ffffff40;background:#ffffff14;border-radius:30px;padding:8px 11px;font-size:11px;white-space:nowrap}
+    .api-dot{width:8px;height:8px;border-radius:50%;background:#F6BD4D;box-shadow:0 0 0 3px #ffffff15}
+    .api-pill.online .api-dot{background:#4DE0A0}.api-pill.offline .api-dot{background:#FF7C88}
+    .clock{text-align:right;min-width:112px}.clock strong{display:block;font-size:21px;letter-spacing:1px;font-variant-numeric:tabular-nums}.clock small{display:block;color:#D7E8FA;font-size:10px}
+    .btn{border:0;border-radius:10px;padding:10px 14px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:.15s}
+    .btn-light{background:#fff;color:var(--blue)}.btn-light:hover{background:#EAF3FF}.btn-outline{background:#fff;color:var(--blue);border:1px solid var(--line)}.btn-outline:hover{background:#F0F6FE}.btn:disabled{opacity:.55;cursor:wait}
+    main{max-width:1780px;margin:auto;padding:24px clamp(12px,2.5vw,34px) 48px}
+    .page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:4px 0 19px}
+    .eyebrow{color:var(--blue2);font-weight:900;font-size:10px;letter-spacing:1.5px;margin-bottom:6px}
+    h1{font-size:clamp(25px,3vw,36px);line-height:1.12;margin:0;color:var(--navy)}
+    .subhead{margin:8px 0 0;color:var(--muted);font-size:13px}
+    .head-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+    .live-pill{display:inline-flex;align-items:center;gap:7px;color:#117C55;background:#E5F7EF;border:1px solid #CBEFDE;border-radius:30px;padding:8px 11px;font-size:10px;font-weight:900;white-space:nowrap}
+    .live-pill i{width:7px;height:7px;border-radius:50%;background:#18A46D;box-shadow:0 0 0 4px #18A46D1C;animation:pulse 1.8s infinite}
+    @keyframes pulse{50%{box-shadow:0 0 0 7px #18A46D05}}
+    .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:18px 0}
+    .stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;min-width:0}
+    .stat-icon{width:40px;height:40px;display:grid;place-items:center;border-radius:12px;background:#EAF2FF;color:var(--blue);font-size:20px;flex:none}
+    .stat:nth-child(2) .stat-icon{background:#E4F7EE;color:#128A5A}.stat:nth-child(3) .stat-icon{background:#FFF1DB;color:#AD6A0B}.stat:nth-child(4) .stat-icon{background:#F0EAFF;color:#7854B4}
+    .stat-copy{min-width:0}.stat-copy span{display:block;color:var(--muted);font-size:11px}.stat-copy strong{display:block;color:var(--blue);font-size:24px;line-height:1.15;font-variant-numeric:tabular-nums}
+    .command{background:#fff;border:1px solid var(--line);border-radius:15px;padding:13px;box-shadow:var(--shadow);display:grid;gap:11px;margin:17px 0 13px}
+    .command-row{display:flex;align-items:center;gap:9px;flex-wrap:wrap;min-width:0}
+    .date-tools{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+    .date-btn{height:38px;min-width:38px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--blue);font-size:20px;font-weight:800}
+    .today-btn{height:38px;border:0;border-radius:9px;background:#EAF2FF;color:var(--blue);padding:0 13px;font-size:12px;font-weight:900}
+    .date-input,.filter-select,.search-input{height:38px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--navy);padding:0 11px;min-width:0}
+    .date-caption{color:var(--muted);font-size:11px;font-weight:800;margin-left:4px;white-space:nowrap}
+    .search-input{flex:1;min-width:190px}
+    .filter-select{min-width:145px}
+    .ended-btn{height:38px;border:1px solid var(--line);border-radius:9px;background:#fff;color:#687D96;padding:0 12px;font-size:11px;font-weight:800}
+    .ended-btn.active{background:#FFF1DF;border-color:#F1D4A7;color:#98600E}
+    .display-row{border-top:1px solid #EDF1F6;padding-top:10px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+    .display-label{color:var(--muted);font-size:10px;font-weight:900;margin-right:3px}
+    .display-btn{height:34px;border:1px solid var(--line);border-radius:8px;background:#fff;color:#687D96;padding:0 12px;font-size:11px;font-weight:900}
+    .display-btn.active{background:#EAF3FF;border-color:#BBD4F5;color:var(--blue)}
+    .zoom{margin-left:auto;display:inline-flex;align-items:center;gap:7px;padding:3px 5px;background:#F7F9FC;border:1px solid var(--line);border-radius:9px}
+    .zoom strong{font-size:10px;color:var(--muted);min-width:40px;text-align:center}.zoom button{width:29px;height:27px;border:0;border-radius:6px;background:#EAF2FF;color:var(--blue);font-weight:900;font-size:17px}
+    .meta-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:10px 2px 13px}
+    .legend{display:flex;align-items:center;gap:13px;flex-wrap:wrap;color:var(--muted);font-size:10px}.legend span{display:inline-flex;align-items:center;gap:6px}.legend i{width:9px;height:9px;border-radius:3px;display:inline-block}.lg-upcoming{background:#4F86CD}.lg-playing{background:#179B69}.lg-soon{background:#EDA42B}.lg-cancel{background:#D95B68}.meta{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:11px}.meta strong{color:var(--blue)}
+    .panel{background:#fff;border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow);padding:12px;min-width:0}
+    .panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 1px 11px}.panel-head h2{font-size:18px;color:var(--blue);margin:0}.panel-head small{font-size:10px;color:var(--muted);text-align:right}
+    .timeline-scroll{overflow:auto;max-height:calc(100vh - 350px);min-height:280px;border:1px solid var(--line);border-radius:11px;background:#fff;scrollbar-width:thin;scrollbar-color:#B9CDE2 #F2F6FA;overscroll-behavior:contain}
+    .timeline-inner{width:calc(var(--room-col) + var(--timeline-width));min-width:calc(var(--room-col) + var(--timeline-width))}
+    .timeline-header{display:grid;grid-template-columns:var(--room-col) var(--timeline-width);height:66px;position:sticky;top:0;z-index:8;background:#F7FAFE;border-bottom:1px solid var(--line)}
+    .room-heading{position:sticky;left:0;z-index:10;background:#ECF3FB;border-right:1px solid var(--line);display:flex;align-items:center;padding:0 14px;color:#55708E;font-size:10px;font-weight:900;letter-spacing:.8px}
+    .ruler{position:relative;width:var(--timeline-width);height:66px;background:linear-gradient(to right,#E4EBF3 1px,transparent 1px) 0 34px/var(--hour-width) 32px repeat-x}
+    .date-band{position:absolute;inset:0 0 auto;height:25px;display:flex;border-bottom:1px solid #E5ECF4;color:#617894;font-size:10px;font-weight:900}
+    .date-band span{display:flex;align-items:center;justify-content:center;background:#EDF4FC}.date-band span+span{border-left:2px solid #C9D7E7;background:#F7F9FC}
+    .hour-label{position:absolute;top:31px;transform:translateX(-50%);font-size:10px;white-space:nowrap;color:#6A809C;font-weight:700}.hour-label.major{color:var(--blue);font-weight:900}
+    .timeline-row{display:grid;grid-template-columns:var(--room-col) var(--timeline-width);min-height:82px;border-bottom:1px solid #E9EFF6}.timeline-row:last-child{border-bottom:0}
+    .room-label{position:sticky;left:0;z-index:5;background:#fff;border-right:1px solid #E3EBF4;padding:11px 13px;display:flex;flex-direction:column;justify-content:center;gap:5px;box-shadow:5px 0 9px #214e7908}.room-label strong{font-size:12px;color:var(--blue)}.room-label small{font-size:10px;color:#8A9AAF}
+    .track{height:82px;position:relative;width:var(--timeline-width);background:linear-gradient(to right,#E6EDF5 1px,transparent 1px) 0 0/var(--hour-width) 100% repeat-x,linear-gradient(to right,#F2F5F9 1px,transparent 1px) 0 0/calc(var(--hour-width)/4) 100% repeat-x}
+    .track.has-now:after{content:"";position:absolute;z-index:4;left:var(--now-left);top:0;bottom:0;width:2px;background:#E84C5B;pointer-events:none}
+    .now-tag{position:absolute;z-index:7;top:1px;left:var(--now-left);transform:translateX(-50%);background:#E84C5B;color:#fff;border-radius:5px;padding:3px 6px;font-size:9px;font-weight:900;white-space:nowrap;pointer-events:none}
+    .show-block{position:absolute;top:9px;bottom:9px;min-width:42px;border:0;border-left:3px solid #2A69B2;border-radius:8px;background:linear-gradient(135deg,#D8E8FA,#BDD5F1);color:#173D6B;text-align:left;padding:7px 8px;display:flex;flex-direction:column;justify-content:center;gap:4px;overflow:hidden;box-shadow:0 2px 7px #154a8017;z-index:2}
+    .show-block:hover{filter:brightness(.97);z-index:3;box-shadow:0 5px 14px #154a8026}.show-block strong{font-size:10px;line-height:1.22;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.show-block small{font-size:9px;white-space:nowrap;opacity:.88;font-weight:700}.block-state{font-size:8px;letter-spacing:.35px;text-transform:uppercase;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .show-block.playing{background:linear-gradient(135deg,#12895F,#24A879);color:#fff;border-left-color:#086344;box-shadow:0 3px 12px #168B6230}.show-block.soon{background:linear-gradient(135deg,#FFE7BE,#FFD18A);color:#754500;border-left-color:#E69A27}.show-block.cancelled{background:linear-gradient(135deg,#FFE5E7,#F8C4CA);color:#8F2733;border-left-color:#C44C5B}.show-block.ended{background:#EEF1F5;color:#7D8998;border-left-color:#AAB3BF;opacity:.78}.show-block.short{padding:4px 5px}.show-block.short strong{-webkit-line-clamp:1}
+    .timeline-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 2px 1px;color:#8797AA;font-size:10px}.now-btn{border:0;background:#FFF0F1;color:#C44150;border-radius:8px;padding:8px 11px;font-size:10px;font-weight:900}
+    .mobile-schedule{display:grid;gap:12px;padding:10px;background:#F7FAFE}.mobile-room{border:1px solid #DFE8F3;background:#fff;border-radius:12px;overflow:hidden}.mobile-room-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 13px;background:#EDF4FC;color:var(--blue);font-size:13px;font-weight:900}.mobile-room-head small{color:var(--muted);font-size:10px;font-weight:700}.mobile-show-list{display:grid;padding:9px;gap:8px}
+    .mobile-show{display:grid;grid-template-columns:94px minmax(0,1fr) 20px;align-items:center;gap:9px;width:100%;text-align:left;border:1px solid #DCE7F3;border-left:4px solid #4F86CD;background:#F7FAFE;border-radius:10px;padding:11px 10px;color:var(--navy);min-height:78px}
+    .mobile-show.playing{border-left-color:#159B68;background:#EDF9F3}.mobile-show.soon{border-left-color:#EFA32A;background:#FFF8EC}.mobile-show.cancelled{border-left-color:#D95663;background:#FFF3F4}.mobile-show.ended{border-left-color:#AAB3BF;background:#F2F4F7;opacity:.8}
+    .mobile-time{display:grid;gap:5px;color:var(--blue);font-size:13px;font-weight:900;font-variant-numeric:tabular-nums}.mobile-time small{font-size:10px;color:var(--muted);font-weight:700}.mobile-main{display:grid;gap:4px;min-width:0}.mobile-main .block-state{font-size:9px;color:#4D759F}.mobile-show.playing .mobile-main .block-state{color:#118052}.mobile-show.soon .mobile-main .block-state{color:#9A610D}.mobile-main strong{font-size:14px;line-height:1.3;overflow-wrap:anywhere}.mobile-main small{color:var(--muted);font-size:10px;line-height:1.35}.mobile-arrow{font-size:23px;color:#96A8BC;text-align:center}
+    .empty{padding:40px 18px;text-align:center;color:var(--muted);font-size:13px}.empty strong{display:block;color:var(--navy);font-size:15px;margin-bottom:6px}
+    .detail-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:16px;z-index:50}.detail-modal.show{display:flex}.modal-bg{position:absolute;inset:0;background:#102B4F99}.modal-card{position:relative;width:min(520px,100%);max-height:88vh;overflow:auto;background:#fff;border-radius:18px;padding:22px;box-shadow:0 25px 80px #001c4433}.modal-close{position:absolute;right:12px;top:12px;width:34px;height:34px;border:0;border-radius:50%;background:#EDF3FA;color:var(--navy);font-size:22px}.detail-kicker{font-size:10px;letter-spacing:1.2px;color:var(--blue2);font-weight:900}.modal-card h2{margin:7px 36px 10px 0;color:var(--blue);font-size:23px;line-height:1.25}.detail-meta{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0 15px}.detail-meta span{background:#EFF5FC;border-radius:20px;padding:7px 10px;font-size:11px;color:#58708D}.detail-desc{border-top:1px solid var(--line);padding-top:13px;margin-top:12px;color:#667B94;font-size:13px;line-height:1.65;white-space:pre-wrap}
+    .toast-wrap{position:fixed;right:16px;bottom:16px;z-index:80;display:grid;gap:8px}.toast{background:#17365D;color:white;padding:12px 16px;border-radius:10px;box-shadow:0 8px 25px #0002;max-width:min(390px,92vw);font-size:12px}
+    @media(max-width:1100px){:root{--room-col:125px;--hour-width:50px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.timeline-scroll{max-height:calc(100vh - 370px)}}
+    @media(max-width:760px){.topbar{height:auto;min-height:68px;padding:10px 13px;gap:10px;flex-wrap:wrap}.brand-logo{font-size:28px}.brand-copy strong{font-size:14px}.brand-copy small{font-size:8px}.header-right{width:100%;justify-content:space-between;gap:8px}.api-pill{font-size:10px;padding:7px 9px}.clock{text-align:left;min-width:100px}.clock strong{font-size:19px}.header-right .btn{padding:9px 11px;font-size:11px}main{padding:17px 11px 30px}.page-head{align-items:flex-start;flex-direction:column;margin-bottom:14px}.head-actions{width:100%;justify-content:space-between}.stats{gap:8px;margin:13px 0}.stat{padding:10px;gap:8px}.stat-icon{width:34px;height:34px;font-size:17px;border-radius:10px}.stat-copy span{font-size:10px}.stat-copy strong{font-size:21px}.command{padding:10px;gap:9px}.command-row{align-items:stretch}.date-tools{width:100%;display:grid;grid-template-columns:38px 1fr minmax(120px,1.2fr) 38px;gap:6px}.date-btn{min-width:0;width:100%}.today-btn{width:100%;padding:0 7px}.date-input{width:100%;padding:0 7px;font-size:12px}.date-caption{grid-column:1/-1;margin:2px 0 0;text-align:center;font-size:10px}.search-input{min-width:100%;width:100%;flex:1}.filter-select{flex:1;min-width:calc(50% - 5px);width:calc(50% - 5px)}.ended-btn{flex:1;min-width:100%;font-size:11px}.display-row{gap:5px}.display-label{width:100%}.display-btn{flex:1;padding:0 7px;font-size:10px}.zoom{margin-left:0}.meta-row{align-items:flex-start}.legend{gap:9px;font-size:10px}.meta{width:100%;justify-content:space-between}.panel{padding:8px}.panel-head{padding:3px 3px 0}.panel-head h2{font-size:15px}.panel-head small{font-size:9px}.timeline-scroll{max-height:none;min-height:180px}.timeline-foot{font-size:10px}.now-btn{width:100%;padding:10px}.mobile-show{grid-template-columns:88px minmax(0,1fr) 16px;padding:11px 9px}.mobile-time{font-size:12px}.mobile-main strong{font-size:14px}.mobile-main small{font-size:10.5px}.mobile-show-list{padding:8px}.mobile-room-head{font-size:12px}}
+    @media(max-width:390px){.brand-copy small{letter-spacing:1px}.api-pill{max-width:145px;white-space:normal;line-height:1.2}.clock{min-width:86px}.clock strong{font-size:17px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stat{min-height:70px}.mobile-show{grid-template-columns:79px minmax(0,1fr) 13px;gap:7px;padding:10px 7px}.mobile-time{font-size:11px}.mobile-main strong{font-size:13px}.mobile-main small{font-size:9.5px}}
+    @media(orientation:landscape) and (max-height:560px) and (max-width:900px){.mobile-schedule{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.timeline-scroll{max-height:calc(100svh - 230px)}}
+    @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
   </style>
 </head>
 <body>
 <header class="topbar">
-  <a class="brand" href="#" data-action="dashboard">
+  <a class="brand" href="#lich-chieu" aria-label="Beta Cinemas Nowzone - Lịch chiếu">
     <span class="brand-logo">beta<i>●</i></span>
-    <span class="brand-text"><strong>cinemas · NOWZONE</strong><small>OPERATIONS CONTROL CENTER</small></span>
+    <span class="brand-copy"><strong>cinemas · NOWZONE</strong><small>SHOWTIME CONTROL</small></span>
   </a>
-  <button class="mobile-menu" data-action="toggle-menu" aria-label="Mở menu">☰</button>
-  <div class="top-actions">
-    <span class="api-pill" id="apiPill"><i class="api-dot"></i><span id="apiText">Đang kết nối Backend</span></span>
-    <div class="clock-box"><strong id="liveClock">--:--:--</strong><small id="liveDate">Đang tải ngày...</small></div>
-    <button class="icon-btn" data-action="refresh">↻ Đồng bộ</button>
+  <div class="header-right">
+    <span class="api-pill" id="apiPill"><i class="api-dot"></i><span id="apiText">Đang kết nối lịch chiếu</span></span>
+    <div class="clock"><strong id="liveClock">--:--:--</strong><small id="liveDate">Đang tải ngày...</small></div>
+    <button class="btn btn-light" id="refreshBtn" type="button">↻ Đồng bộ</button>
   </div>
 </header>
-<div class="shell">
-  <aside class="sidebar" id="sidebar">
-    <div class="side-label">VẬN HÀNH RẠP</div>
-    <button class="nav-btn active" data-page="dashboard"><span class="nav-ico">▦</span>Tổng quan</button>
-    <button class="nav-btn" data-page="schedule"><span class="nav-ico">📅</span>Lịch chiếu</button>
-    <button class="nav-btn" data-page="cleaning"><span class="nav-ico">🧹</span>Vệ sinh phòng<span class="nav-count" id="pendingCount">0</span></button>
-    <button class="nav-btn" data-page="history"><span class="nav-ico">▤</span>Nhật ký vệ sinh</button>
-    <div class="side-note"><strong>beta cinemas</strong>Hệ thống điều phối lịch chiếu và vệ sinh phòng.<br>Không phụ thuộc cổng khuyến mãi.</div>
-  </aside>
-  <button class="mobile-backdrop" id="mobileBackdrop" data-action="close-menu" aria-label="Đóng menu"></button>
 
-  <main class="main">
-    <section class="page" id="dashboardPage">
-      <div class="page-head">
-        <div><div class="eyebrow">BETA CINEMAS · NOWZONE</div><h1>Trung tâm vận hành</h1><p>Theo dõi lịch chiếu, tình trạng phòng và tiến độ vệ sinh trong một màn hình.</p></div>
-        <div class="head-actions"><span class="live-pill"><i></i> LIVE · ĐỒNG BỘ 30 GIÂY</span><button class="btn-secondary" data-action="refresh">↻ Cập nhật ngay</button></div>
-      </div>
-      <section class="hero"><div class="hero-copy"><span class="hero-tag">OPERATIONS · NOWZONE</span><h2>Lịch chiếu & vệ sinh phòng</h2><p>Kiểm soát suất chiếu theo phòng, theo dõi các việc cần dọn và xác nhận phòng đã sẵn sàng cho lượt khách tiếp theo.</p></div><div class="hero-shapes"><i class="shape-a"></i><i class="shape-b"></i><i class="shape-c"></i></div></section>
-      <div class="stats">
-        <article class="stat"><span>Suất chiếu hôm nay</span><strong id="statShows">0</strong><small>Tổng số suất hợp lệ</small></article>
-        <article class="stat"><span>Đang chiếu</span><strong id="statPlaying">0</strong><small>Đang diễn ra</small></article>
-        <article class="stat"><span>Sắp chiếu</span><strong id="statUpcoming">0</strong><small>Trong ngày hôm nay</small></article>
-        <article class="stat"><span>Chờ vệ sinh</span><strong id="statWaiting">0</strong><small>Cần nhân viên nhận việc</small></article>
-        <article class="stat"><span>Đang vệ sinh</span><strong id="statCleaning">0</strong><small>Đang được xử lý</small></article>
-      </div>
-      <div class="quick-grid">
-        <section class="panel"><div class="panel-head"><h2>Tình trạng phòng</h2><small id="roomSummary">Đang tổng hợp...</small></div><div id="roomGlance" class="room-glance"></div></section>
-        <section class="panel"><div class="panel-head"><h2>Suất chiếu tiếp theo</h2><small>Hôm nay</small></div><div class="mini-list" id="nextShows"></div></section>
-      </div>
-      <section class="panel" style="margin-top:15px"><div class="panel-head"><h2>Việc vệ sinh cần xử lý</h2><button class="btn-secondary" data-page="cleaning">Mở bảng vệ sinh →</button></div><div id="dashboardCleaning" class="cleaning-grid"></div></section>
-      <div class="footnote"><strong>Quy trình:</strong> Khi một suất chiếu kết thúc, Backend tự tạo việc vệ sinh cho phòng đó. Nhân viên nhập tên và PIN do quản lý cấp để bắt đầu và xác nhận hoàn tất. Trạng thái đồng bộ lại cho các thiết bị trong chu kỳ tối đa khoảng 30 giây.</div>
-    </section>
+<main id="lich-chieu">
+  <section class="page-head">
+    <div><div class="eyebrow">BETA CINEMAS · NOWZONE</div><h1>Lịch chiếu theo khung giờ</h1><p class="subhead">Theo dõi suất chiếu theo từng phòng, cập nhật trạng thái theo thời gian thực.</p></div>
+    <div class="head-actions"><span class="live-pill"><i></i> LIVE · ĐỒNG HỒ 1 GIÂY</span><span class="api-pill" style="background:#fff;color:var(--muted);border-color:var(--line)">Khung vận hành 06:00 – 06:00</span></div>
+  </section>
 
-    <section class="page hidden" id="schedulePage">
-      <div class="page-head">
-        <div><div class="eyebrow">LIVE SHOWTIME TIMELINE</div><h1>Lịch chiếu theo khung giờ</h1><p>Mỗi hàng là một phòng chiếu. Khối phim tự ẩn khi hết giờ chiếu; việc vệ sinh vẫn được lưu riêng.</p></div>
-        <div class="head-actions"><span class="live-pill"><i></i> LIVE · ĐỒNG HỒ 1 GIÂY</span><button class="btn-secondary" data-action="refresh">↻ Đồng bộ dữ liệu</button></div>
-      </div>
-      <div class="schedule-command">
-        <div class="schedule-date-tools">
-          <button class="date-nav-btn" data-action="date-prev" title="Ngày trước">‹</button>
-          <button class="date-today-btn" data-action="date-today">Hôm nay</button>
-          <input class="schedule-date-input" type="date" id="scheduleDay" aria-label="Chọn ngày lịch chiếu">
-          <button class="date-nav-btn" data-action="date-next" title="Ngày tiếp theo">›</button>
-          <span class="schedule-date-caption" id="scheduleDateCaption">06:00 – 06:00 hôm sau</span>
-        </div>
-        <div class="schedule-filter-tools">
-          <select id="scheduleRoom"><option value="">Tất cả phòng</option></select>
-          <input id="scheduleSearch" type="search" placeholder="Tìm phim, phòng, mã suất...">
-          <button class="ended-toggle" id="endedToggle" data-action="toggle-ended" aria-pressed="false">Hiện suất đã kết thúc</button>
-        </div>
-        <div class="schedule-display-tools" role="group" aria-label="Tùy chọn hiển thị lịch chiếu">
-          <span class="display-label">Hiển thị</span>
-          <button class="display-mode active" data-action="set-schedule-view" data-view="auto" aria-pressed="true">Tự động</button>
-          <button class="display-mode" data-action="set-schedule-view" data-view="timeline" aria-pressed="false">Timeline</button>
-          <button class="display-mode" data-action="set-schedule-view" data-view="list" aria-pressed="false">Danh sách</button>
-          <span class="zoom-controls" data-timeline-only>
-            <button class="zoom-btn" data-action="zoom-out" aria-label="Thu nhỏ timeline">−</button>
-            <strong id="zoomValue">100%</strong>
-            <button class="zoom-btn" data-action="zoom-in" aria-label="Phóng to timeline">+</button>
-          </span>
-        </div>
-      </div>
-      <div class="timeline-statusbar">
-        <div class="timeline-legend"><span><i class="lg-upcoming"></i>Sắp chiếu</span><span><i class="lg-playing"></i>Đang chiếu</span><span><i class="lg-soon"></i>Sắp bắt đầu</span><span><i class="lg-cancel"></i>Đã hủy / tạm hoãn</span></div>
-        <div class="timeline-meta"><strong id="scheduleCount">0 suất</strong><span id="timelineUpdated">Đang đồng bộ...</span></div>
-      </div>
-      <section class="panel" style="padding:12px">
-        <div class="panel-head"><h2>Timeline phòng chiếu</h2><small>06:00 hôm chọn đến 06:00 ngày kế tiếp</small></div>
-        <div id="scheduleBoard" class="timeline-scroll"><div class="timeline-empty">Đang tải lịch chiếu...</div></div>
-        <div class="timeline-foot"><span>Cuộn ngang để xem toàn bộ 24 giờ · Nhấn vào khối phim để xem chi tiết suất chiếu.</span><button class="timeline-now-button" data-action="scroll-now">◎ Đến thời gian hiện tại</button></div>
-      </section>
-    </section>
+  <section class="stats" aria-label="Thống kê lịch chiếu">
+    <article class="stat"><div class="stat-icon">▣</div><div class="stat-copy"><span>Tổng suất trong ca</span><strong id="statTotal">0</strong></div></article>
+    <article class="stat"><div class="stat-icon">▶</div><div class="stat-copy"><span>Đang chiếu</span><strong id="statPlaying">0</strong></div></article>
+    <article class="stat"><div class="stat-icon">◷</div><div class="stat-copy"><span>Sắp chiếu</span><strong id="statUpcoming">0</strong></div></article>
+    <article class="stat"><div class="stat-icon">▦</div><div class="stat-copy"><span>Số phòng có lịch</span><strong id="statRooms">0</strong></div></article>
+  </section>
 
-    <section class="page hidden" id="cleaningPage">
-      <div class="page-head"><div><div class="eyebrow">ROOM CLEANING CONTROL</div><h1>Điều phối vệ sinh phòng</h1><p>Nhận việc, bắt đầu dọn và xác nhận hoàn tất vệ sinh.</p></div><div class="head-actions"><span class="live-pill"><i></i> ĐỒNG BỘ 30 GIÂY</span><button class="btn-secondary" data-action="refresh">↻ Cập nhật</button></div></div>
-      <div class="toolbar"><div class="tabs"><button class="tab-btn active" data-clean-status="all">Tất cả</button><button class="tab-btn" data-clean-status="Chờ dọn">Chờ dọn</button><button class="tab-btn" data-clean-status="Đang dọn">Đang dọn</button><button class="tab-btn" data-clean-status="Đã hoàn tất">Đã hoàn tất</button></div><div class="filters"><select id="cleanRoom"><option value="">Tất cả phòng</option></select><select id="cleanDate"><option value="pending">Việc cần xử lý</option><option value="today">Hôm nay</option><option value="all">Tất cả ngày</option></select><input id="cleanSearch" type="search" placeholder="Tìm phòng, phim, nhân viên..."></div></div>
-      <div class="clean-tools"><label>Nhân viên thực hiện<input id="employeeName" maxlength="60" autocomplete="name" placeholder="Nhập họ tên nhân viên"></label><label>PIN xác nhận<input id="employeePin" type="password" maxlength="32" autocomplete="current-password" placeholder="PIN do quản lý cấp"></label><label>Ghi chú khi cập nhật (không bắt buộc)<input id="cleanNote" maxlength="250" placeholder="Ví dụ: đã kiểm tra ghế, sàn và thùng rác"></label></div>
-      <div class="cleaning-grid" id="cleaningBoard"><div class="empty">Đang tải công việc vệ sinh...</div></div>
-      <div class="footnote"><strong>Quy định thao tác:</strong> Nhân viên phải bắt đầu công việc trước khi xác nhận hoàn tất. Người xác nhận hoàn tất phải trùng với nhân viên đã nhận việc. Mọi thao tác được lưu trong nhật ký.</div>
-    </section>
+  <section class="command" aria-label="Bộ lọc lịch chiếu">
+    <div class="command-row">
+      <div class="date-tools">
+        <button class="date-btn" id="prevDay" type="button" aria-label="Ngày trước">‹</button>
+        <button class="today-btn" id="todayBtn" type="button">Hôm nay</button>
+        <input class="date-input" id="scheduleDay" type="date" aria-label="Chọn ngày chiếu">
+        <button class="date-btn" id="nextDay" type="button" aria-label="Ngày tiếp theo">›</button>
+        <span class="date-caption" id="dateCaption">06:00 hôm chọn đến 06:00 hôm sau</span>
+      </div>
+    </div>
+    <div class="command-row">
+      <select class="filter-select" id="roomFilter" aria-label="Lọc phòng"><option value="">Tất cả phòng</option></select>
+      <select class="filter-select" id="statusFilter" aria-label="Lọc trạng thái">
+        <option value="">Tất cả trạng thái</option><option value="Sắp chiếu">Sắp chiếu</option><option value="Đang chiếu">Đang chiếu</option><option value="Đã hủy">Đã hủy</option><option value="Tạm hoãn">Tạm hoãn</option>
+      </select>
+      <input class="search-input" id="searchInput" type="search" placeholder="Tìm tên phim, phòng, mã suất chiếu..." autocomplete="off">
+      <button class="ended-btn" id="endedToggle" type="button" aria-pressed="false">Hiện suất đã kết thúc</button>
+    </div>
+    <div class="display-row" role="group" aria-label="Chế độ hiển thị">
+      <span class="display-label">HIỂN THỊ</span>
+      <button class="display-btn active" data-view="auto" type="button" aria-pressed="true">Tự động</button>
+      <button class="display-btn" data-view="timeline" type="button" aria-pressed="false">Timeline</button>
+      <button class="display-btn" data-view="list" type="button" aria-pressed="false">Danh sách</button>
+      <span class="zoom" id="zoomControls"><button id="zoomOut" type="button" aria-label="Thu nhỏ">−</button><strong id="zoomValue">100%</strong><button id="zoomIn" type="button" aria-label="Phóng to">+</button></span>
+    </div>
+  </section>
 
-    <section class="page hidden" id="historyPage">
-      <div class="page-head"><div><div class="eyebrow">CLEANING ACTIVITY LOG</div><h1>Nhật ký vệ sinh</h1><p>Theo dõi ai thực hiện, thời điểm bắt đầu và hoàn tất công việc.</p></div><button class="btn-secondary" data-action="refresh">↻ Cập nhật nhật ký</button></div>
-      <section class="panel"><div class="panel-head"><h2>Lịch sử thao tác gần đây</h2><small id="historyCount">0 bản ghi</small></div><div id="historyBoard" class="history-wrap"><div class="empty">Đang tải nhật ký...</div></div></section>
-    </section>
-  </main>
+  <div class="meta-row">
+    <div class="legend"><span><i class="lg-upcoming"></i>Sắp chiếu</span><span><i class="lg-playing"></i>Đang chiếu</span><span><i class="lg-soon"></i>Sắp bắt đầu</span><span><i class="lg-cancel"></i>Đã hủy / tạm hoãn</span></div>
+    <div class="meta"><strong id="showCount">0 suất chiếu</strong><span id="updatedAt">Đang đồng bộ...</span></div>
+  </div>
+
+  <section class="panel">
+    <div class="panel-head"><h2 id="boardTitle">Timeline phòng chiếu</h2><small id="boardSubTitle">06:00 hôm chọn đến 06:00 ngày kế tiếp</small></div>
+    <div class="timeline-scroll" id="scheduleBoard" aria-live="polite"><div class="empty"><strong>Đang tải lịch chiếu...</strong>Vui lòng chờ trong giây lát.</div></div>
+    <div class="timeline-foot"><span id="boardHint">Cuộn ngang để xem đủ 24 giờ · Nhấn vào suất chiếu để xem chi tiết.</span><button class="now-btn" id="scrollNowBtn" type="button">◎ Đến thời gian hiện tại</button></div>
+  </section>
+</main>
+
+<div class="detail-modal" id="detailModal" aria-hidden="true">
+  <div class="modal-bg" id="modalBackdrop"></div>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+    <button class="modal-close" id="modalClose" type="button" aria-label="Đóng">×</button>
+    <div id="detailContent"></div>
+  </div>
 </div>
-
-<nav class="mobile-bottom-nav" aria-label="Điều hướng nhanh">
-  <button class="mobile-nav-btn active" data-page="dashboard"><span>▦</span><small>Tổng quan</small></button>
-  <button class="mobile-nav-btn" data-page="schedule"><span>▤</span><small>Lịch chiếu</small></button>
-  <button class="mobile-nav-btn" data-page="cleaning"><span>🧹</span><small>Vệ sinh</small></button>
-  <button class="mobile-nav-btn" data-page="history"><span>◷</span><small>Nhật ký</small></button>
-</nav>
-
-<div class="show-detail-box" id="showDetailModal" aria-hidden="true"><div class="modal-bg" data-action="close-show-detail"></div><div class="show-detail-content"><button class="show-detail-close" data-action="close-show-detail">×</button><div id="showDetailBody"></div></div></div>
-<div class="modal" id="confirmModal" aria-hidden="true"><div class="modal-bg" data-action="close-modal"></div><div class="modal-box"><button class="modal-close" data-action="close-modal">×</button><h2 id="confirmTitle">Xác nhận thao tác</h2><p id="confirmMessage"></p><div class="modal-actions"><button class="btn-light" data-action="close-modal">Hủy</button><button class="btn-primary" id="confirmButton">Xác nhận</button></div></div></div>
 <div class="toast-wrap" id="toastWrap" aria-live="polite"></div>
-<iframe id="postFrame" name="postFrame" title="Backend response" hidden></iframe>
 
 <script>
 'use strict';
 
-// Sau khi tạo deployment Apps Script RIÊNG cho vận hành, dán URL /exec vào đây.
+// Dán URL /exec của Backend LỊCH CHIẾU riêng vào đây.
 const API_BASE_URL = 'https://script.google.com/macros/s/AKfycbxXik5_tssmOcRHhRBodOmFPZNoNplDQSb3sysqw3PkGcx3qYrUWM22gDUOK5d-BNE/exec';
 const POLL_MS = 30000;
+const BUSINESS_START = 6 * 60;
+const BUSINESS_DURATION = 24 * 60;
+const WARNING_MINUTES = 30;
 const state = {
-  data: {shows:[], cleaning:[], logs:[], summary:{}},
-  lastLoaded: null,
-  loading: false,
-  currentPage: 'dashboard',
-  scheduleDate: businessDateKey(),
-  showEnded: false,
-  didAutoScrollNow: false,
-  cleaningStatus: 'all',
-  scheduleView: localRead('beta_ops_schedule_view', 'auto'),
-  timelineZoom: Number(localRead('beta_ops_timeline_zoom', 1)) || 1,
-  pendingNonce: null,
-  pendingTimer: null,
-  confirmAction: null
+  shows: [], loading: false, lastLoaded: null,
+  scheduleDate: businessDateKey(), showEnded: false,
+  view: localRead('beta_schedule_view', 'auto'),
+  zoom: Number(localRead('beta_schedule_zoom', 1)) || 1,
+  activeShowId: null, autoScrolledForDate: null
 };
 const $ = id => document.getElementById(id);
 
-function localRead(key, fallback) { try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; } catch (_) { return fallback; } }
-function localWrite(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch (_) {} }
-function esc(value) { return String(value == null ? '' : value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function dateObj(iso) { const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})$/); return m ? new Date(+m[1], +m[2]-1, +m[3]) : null; }
-function fmtDate(iso) { const d = dateObj(iso); return d ? new Intl.DateTimeFormat('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'}).format(d) : 'Chưa xác định'; }
-function dateKey(d) { return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
-function todayKey() { return dateKey(new Date()); }
-function businessDateKey() { const d=new Date(); if(d.getHours()<6) d.setDate(d.getDate()-1); return dateKey(d); }
-function plusDays(days) { const d = new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()+days); return dateKey(d); }
-function timeNowText() { return new Intl.DateTimeFormat('vi-VN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(new Date()); }
-function toast(message) { const el=document.createElement('div'); el.className='toast'; el.textContent=message; $('toastWrap').appendChild(el); setTimeout(()=>el.remove(),3800); }
-function setApiStatus(mode, text) { $('apiPill').className='api-pill '+mode; $('apiText').textContent=text; }
+function localRead(key, fallback){try{const x=localStorage.getItem(key);return x?JSON.parse(x):fallback;}catch(_){return fallback;}}
+function localWrite(key,value){try{localStorage.setItem(key,JSON.stringify(value));}catch(_){}}
+function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function dateObj(iso){const m=String(iso||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);return m?new Date(+m[1],+m[2]-1,+m[3]):null;}
+function dateKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function businessDateKey(){const d=new Date();if(d.getHours()<6)d.setDate(d.getDate()-1);return dateKey(d);}
+function fmtDate(iso){const d=dateObj(iso);return d?new Intl.DateTimeFormat('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'}).format(d):'Chưa xác định';}
+function timeText(){return new Intl.DateTimeFormat('vi-VN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(new Date());}
+function toast(message){const el=document.createElement('div');el.className='toast';el.textContent=message;$('toastWrap').appendChild(el);setTimeout(()=>el.remove(),3600);}
+function setApiStatus(mode,text){$('apiPill').className='api-pill '+mode;$('apiText').textContent=text;}
+function safeImageNotUsed(){}
 
-function jsonp(action, timeoutMs=15000) {
+function jsonp(action, timeoutMs=16000){
   return new Promise((resolve,reject)=>{
-    if (!API_BASE_URL || API_BASE_URL.indexOf('PASTE_NEW_') >= 0) { reject(new Error('Chưa cấu hình URL Backend vận hành trong HTML.')); return; }
-    const callbackName='cb_'+Date.now()+'_'+Math.random().toString(36).slice(2,9);
-    const script=document.createElement('script');
-    let finished=false;
-    const cleanup=()=>{ if(finished) return; finished=true; clearTimeout(timer); delete window.BetaOpsJSONP[callbackName]; script.remove(); };
-    window.BetaOpsJSONP=window.BetaOpsJSONP||{};
-    window.BetaOpsJSONP[callbackName]=(data)=>{ cleanup(); if(data && data.ok) resolve(data); else reject(new Error(data && data.message ? data.message : 'Backend trả về dữ liệu không hợp lệ.')); };
-    const timer=setTimeout(()=>{cleanup();reject(new Error('Hết thời gian chờ Backend.'));},timeoutMs);
-    script.onerror=()=>{cleanup();reject(new Error('Không tải được API Apps Script. Kiểm tra URL và quyền triển khai.'));};
-    const url=new URL(API_BASE_URL);
-    url.searchParams.set('action',action);
-    url.searchParams.set('callback','BetaOpsJSONP.'+callbackName);
-    url.searchParams.set('_',String(Date.now()));
-    script.src=url.toString();
-    document.head.appendChild(script);
+    if(!API_BASE_URL||API_BASE_URL.includes('PASTE_')){reject(new Error('Chưa cấu hình URL Backend lịch chiếu trong HTML.'));return;}
+    let base;try{base=new URL(API_BASE_URL);}catch(_){reject(new Error('URL Backend không hợp lệ.'));return;}
+    const callback='cb_'+Date.now()+'_'+Math.random().toString(36).slice(2,9);
+    const script=document.createElement('script');let finished=false;
+    window.BetaScheduleJSONP=window.BetaScheduleJSONP||{};
+    const timer=setTimeout(()=>{cleanup();reject(new Error('Backend không phản hồi sau 16 giây.'));},timeoutMs);
+    function cleanup(){if(finished)return;finished=true;clearTimeout(timer);delete window.BetaScheduleJSONP[callback];script.remove();}
+    window.BetaScheduleJSONP[callback]=data=>{cleanup();if(data&&data.ok)resolve(data);else reject(new Error(data&&data.message?data.message:'Backend trả về dữ liệu không hợp lệ.'));};
+    script.onerror=()=>{cleanup();reject(new Error('Không tải được Backend. Kiểm tra URL và quyền triển khai Web App.'));};
+    base.searchParams.set('action',action);base.searchParams.set('callback','BetaScheduleJSONP.'+callback);base.searchParams.set('_',String(Date.now()));
+    script.src=base.toString();document.head.appendChild(script);
   });
 }
 
-function normalizeData(data) {
-  return {
-    shows:Array.isArray(data.shows)?data.shows:[],
-    cleaning:Array.isArray(data.cleaning)?data.cleaning:[],
-    logs:Array.isArray(data.logs)?data.logs:[],
-    summary:data.summary||{},
-    generatedAt:data.generatedAt||''
-  };
+function normalizeShows(rows){
+  return (Array.isArray(rows)?rows:[]).map((s,i)=>({
+    id:String(s.id||'SHOW-'+(i+1)),date:String(s.date||''),start:String(s.start||''),end:String(s.end||''),
+    movie:String(s.movie||''),room:String(s.room||'Chưa xếp phòng'),format:String(s.format||''),
+    status:String(s.status||'Chưa xác định'),note:String(s.note||''),updatedAt:String(s.updatedAt||'')
+  })).filter(s=>s.movie&&s.date&&s.start&&s.end);
 }
 
-async function loadOperations(manual=false) {
-  if (state.loading) return;
-  state.loading=true;
-  try {
-    const response=await jsonp('operations');
-    state.data=normalizeData(response.data||{});
+async function loadShows(manual=false){
+  if(state.loading)return;state.loading=true;$('refreshBtn').disabled=true;$('refreshBtn').textContent='Đang tải...';
+  try{
+    const response=await jsonp('shows');
+    state.shows=normalizeShows(response.data);
     state.lastLoaded=new Date();
-    localWrite('beta_nowzone_ops_cache',{savedAt:Date.now(),data:state.data});
+    localWrite('beta_schedule_cache',{savedAt:Date.now(),shows:state.shows});
     setApiStatus('online','Backend trực tuyến');
-    renderAll();
-    if(manual) toast('Đã đồng bộ lịch chiếu và vệ sinh phòng.');
-  } catch(error) {
-    console.error(error);
-    const cached=localRead('beta_nowzone_ops_cache',null);
-    if(cached && cached.data) {
-      state.data=normalizeData(cached.data);
-      renderAll();
-      setApiStatus('offline','Đang dùng dữ liệu lưu gần nhất');
-      if(manual) toast('Không kết nối được Backend. Đang hiển thị dữ liệu cache.');
-    } else {
-      setApiStatus('offline','Backend chưa kết nối');
-      showInitialError(error.message);
-    }
-  } finally { state.loading=false; }
+    renderAll();if(manual)toast('Đã đồng bộ lịch chiếu mới nhất.');
+  }catch(err){
+    console.error(err);const cache=localRead('beta_schedule_cache',null);
+    if(cache&&Array.isArray(cache.shows)){state.shows=normalizeShows(cache.shows);setApiStatus('offline','Đang dùng dữ liệu đã lưu');renderAll();if(manual)toast('Backend lỗi. Đang hiển thị dữ liệu đã lưu gần nhất.');}
+    else{setApiStatus('offline','Backend chưa kết nối');$('scheduleBoard').innerHTML='<div class="empty"><strong>Không thể tải lịch chiếu</strong>'+esc(err.message)+'<br><br>Kiểm tra API_BASE_URL, quyền triển khai và sheet LichChieu.</div>';toast(err.message);}
+  }finally{state.loading=false;$('refreshBtn').disabled=false;$('refreshBtn').textContent='↻ Đồng bộ';}
 }
 
-function showInitialError(message) {
-  ['roomGlance','nextShows','scheduleBoard','cleaningBoard','historyBoard','dashboardCleaning'].forEach(id=>{
-    const el=$(id); if(el) el.innerHTML='<div class="empty"><strong>Chưa tải được dữ liệu</strong><br>'+esc(message)+'</div>';
-  });
-  toast(message);
+function clockMinutes(value){const m=String(value||'').match(/^(\d{1,2}):(\d{2})/);if(!m)return null;const h=+m[1],min=+m[2];return h<=23&&min<=59?h*60+min:null;}
+// Ngày vận hành tính từ 06:00 đến 05:59 ngày kế tiếp.
+function showRange(show){
+  const base=dateObj(show.date),sm=clockMinutes(show.start),em=clockMinutes(show.end);if(!base||sm==null||em==null)return null;
+  const startOffset=sm<BUSINESS_START?sm+1440:sm;
+  let endOffset=em<BUSINESS_START?em+1440:em;if(endOffset<=startOffset)endOffset+=1440;
+  const start=new Date(base.getFullYear(),base.getMonth(),base.getDate());start.setMinutes(startOffset);
+  const end=new Date(base.getFullYear(),base.getMonth(),base.getDate());end.setMinutes(endOffset);
+  return {start,end,startOffset,endOffset,duration:Math.round((end-start)/60000)};
 }
-
-function renderAll() {
-  renderStats(); renderRoomGlance(); renderNextShows(); renderSchedule(); renderCleaning(); renderHistory();
-  $('pendingCount').textContent=state.data.cleaning.filter(t=>t.status==='Chờ dọn').length;
-  const when=state.lastLoaded?state.lastLoaded.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit',second:'2-digit'}):'--:--:--';
-  $('apiText').setAttribute('title','Cập nhật gần nhất: '+when);
-}
-
-function renderStats() {
-  const s=state.data.summary||{};
-  $('statShows').textContent=s.todayShows||0;
-  $('statPlaying').textContent=s.playing||0;
-  $('statUpcoming').textContent=s.upcoming||0;
-  $('statWaiting').textContent=s.waitingCleaning||0;
-  $('statCleaning').textContent=s.cleaningNow||0;
-}
-
-function renderRoomGlance() {
-  const rooms=[...new Set(state.data.shows.map(s=>s.room).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'vi'));
-  const todayShows=state.data.shows.filter(s=>s.date===todayKey());
-  if(!rooms.length) { $('roomGlance').innerHTML='<div class="empty">Chưa có dữ liệu phòng chiếu.</div>'; $('roomSummary').textContent='Chưa có dữ liệu'; return; }
-  $('roomSummary').textContent=rooms.length+' phòng có lịch';
-  $('roomGlance').innerHTML=rooms.map(room=>{
-    const list=todayShows.filter(s=>s.room===room);
-    const playing=list.find(s=>s.status==='Đang chiếu');
-    const pending=list.filter(s=>s.cleaningStatus==='Chờ dọn').length;
-    const cleaning=list.filter(s=>s.cleaningStatus==='Đang dọn').length;
-    let text='Không có suất chiếu hôm nay';
-    if(playing) text='Đang chiếu: '+playing.movie;
-    else if(pending) text=pending+' việc chờ vệ sinh';
-    else if(cleaning) text='Đang vệ sinh';
-    else if(list.length) text=list.length+' suất chiếu hôm nay';
-    return '<div class="room-tile"><strong>'+esc(room)+'</strong><span>'+esc(text)+'</span></div>';
-  }).join('');
-}
-
-function renderNextShows() {
-  const now=businessDateKey();
-  const rows=state.data.shows.filter(s=>s.date===now&&liveShowStatus(s)==='Sắp chiếu').slice(0,6);
-  $('nextShows').innerHTML=rows.length?rows.map(s=>'<div class="mini-row"><div><strong>'+esc(s.movie)+'</strong><small>'+esc(s.room)+' · '+esc(s.id)+'</small></div><span class="mini-time">'+esc(s.start)+'</span></div>').join(''):'<div class="empty">Không còn suất chiếu sắp bắt đầu hôm nay.</div>';
-  const todo=state.data.cleaning.filter(t=>t.status==='Chờ dọn'||t.status==='Đang dọn').slice(0,2);
-  $('dashboardCleaning').innerHTML=todo.length?todo.map(cleanCard).join(''):'<div class="empty">Hiện không có công việc vệ sinh cần xử lý.</div>';
-}
-
-function selectedScheduleShows() {
-  const selected = state.scheduleDate || todayKey();
-  return state.data.shows.filter(s => s.date === selected);
-}
-
-const BUSINESS_START_MINUTES = 6 * 60;
-const BUSINESS_DURATION_MINUTES = 24 * 60;
-
-function clockMinutes(value) {
-  const match = String(value || '').match(/^(\d{1,2}):(\d{2})/);
-  if (!match) return null;
-  const hour = Number(match[1]), minute = Number(match[2]);
-  if (hour > 23 || minute > 59) return null;
-  return hour * 60 + minute;
-}
-
-// Ngày lịch là ngày vận hành: 06:00 đến 05:59 ngày kế tiếp.
-function showTimeRange(show) {
-  const base = dateObj(show.date);
-  const startMinuteRaw = clockMinutes(show.start);
-  const endMinuteRaw = clockMinutes(show.end);
-  if (!base || startMinuteRaw == null || endMinuteRaw == null) return null;
-
-  const startMinute = startMinuteRaw < BUSINESS_START_MINUTES
-    ? startMinuteRaw + 1440 : startMinuteRaw;
-  let endMinute = endMinuteRaw < BUSINESS_START_MINUTES
-    ? endMinuteRaw + 1440 : endMinuteRaw;
-  if (endMinute <= startMinute) endMinute += 1440;
-
-  const start = new Date(base.getFullYear(), base.getMonth(), base.getDate(), 0, 0, 0, 0);
-  const end = new Date(base.getFullYear(), base.getMonth(), base.getDate(), 0, 0, 0, 0);
-  start.setMinutes(startMinute);
-  end.setMinutes(endMinute);
-  return {start, end, startMinute, endMinute};
-}
-
-function liveShowStatus(show, nowMs = Date.now()) {
-  if (['Đã hủy','Tạm hoãn'].includes(show.status)) return show.status;
-  const range = showTimeRange(show);
-  if (!range) return show.status || 'Chưa xác định';
-  if (nowMs < range.start.getTime()) return 'Sắp chiếu';
-  if (nowMs < range.end.getTime()) return 'Đang chiếu';
+function liveStatus(show,now=Date.now()){
+  if(show.status==='Đã hủy'||show.status==='Tạm hoãn')return show.status;
+  const r=showRange(show);if(!r)return show.status||'Chưa xác định';
+  if(now<r.start.getTime())return 'Sắp chiếu';
+  if(now<r.end.getTime())return 'Đang chiếu';
   return 'Đã kết thúc';
 }
+function isCancelled(status){return status==='Đã hủy'||status==='Tạm hoãn';}
+function statusClass(status,near){if(status==='Đang chiếu')return 'playing';if(status==='Sắp chiếu'&&near)return 'soon';if(isCancelled(status))return 'cancelled';if(status==='Đã kết thúc')return 'ended';return '';}
+function selectedShows(){return state.shows.filter(s=>s.date===state.scheduleDate);}
+function effectiveView(){if(state.view==='timeline'||state.view==='list')return state.view;return matchMedia('(max-width:760px)').matches?'list':'timeline';}
 
-function updateScheduleDateCaption() {
-  const d = dateObj(state.scheduleDate);
-  if (!d) return;
-  const next = new Date(d); next.setDate(next.getDate() + 1);
-  $('scheduleDateCaption').textContent = fmtDate(state.scheduleDate) + ' · 06:00 → ' + fmtDate(dateKey(next)) + ' · 06:00';
-  if ($('scheduleDay').value !== state.scheduleDate) $('scheduleDay').value = state.scheduleDate;
+function updateDateUI(){const d=dateObj(state.scheduleDate);if(!d)return;const next=new Date(d);next.setDate(next.getDate()+1);$('scheduleDay').value=state.scheduleDate;$('dateCaption').textContent=fmtDate(state.scheduleDate)+' · 06:00 → '+fmtDate(dateKey(next))+' · 06:00';}
+function fillRoomFilter(){const old=$('roomFilter').value;const rooms=[...new Set(state.shows.map(s=>s.room).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'vi'));$('roomFilter').innerHTML='<option value="">Tất cả phòng</option>'+rooms.map(r=>'<option value="'+esc(r)+'">'+esc(r)+'</option>').join('');if(rooms.includes(old))$('roomFilter').value=old;}
+function filteredShows(){const room=$('roomFilter').value,status=$('statusFilter').value,q=$('searchInput').value.trim().toLocaleLowerCase('vi'),now=Date.now();return selectedShows().filter(s=>{const live=liveStatus(s,now);if(room&&s.room!==room)return false;if(status&&live!==status)return false;if(!state.showEnded&&live==='Đã kết thúc')return false;if(q&&![s.id,s.movie,s.room,s.format,s.note].join(' ').toLocaleLowerCase('vi').includes(q))return false;return true;});}
+
+function renderStats(){const list=selectedShows(),now=Date.now();$('statTotal').textContent=list.filter(s=>liveStatus(s,now)!=='Đã hủy').length;$('statPlaying').textContent=list.filter(s=>liveStatus(s,now)==='Đang chiếu').length;$('statUpcoming').textContent=list.filter(s=>liveStatus(s,now)==='Sắp chiếu').length;$('statRooms').textContent=new Set(list.map(s=>s.room)).size;}
+function updateViewButtons(){document.querySelectorAll('.display-btn').forEach(b=>{const active=b.dataset.view===state.view;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));});$('zoomControls').style.display=effectiveView()==='timeline'?'inline-flex':'none';$('boardTitle').textContent=effectiveView()==='list'?'Danh sách suất chiếu theo phòng':'Timeline phòng chiếu';$('boardHint').textContent=effectiveView()==='list'?'Nhấn vào suất chiếu để xem đầy đủ thông tin.':'Cuộn ngang để xem đủ 24 giờ · Nhấn vào khối phim để xem chi tiết.';}
+function renderAll(){fillRoomFilter();renderStats();renderSchedule();updateDateUI();$('updatedAt').textContent='Cập nhật '+(state.lastLoaded?state.lastLoaded.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit',second:'2-digit'}):'--:--:--');}
+function renderSchedule(){
+  updateDateUI();updateViewButtons();applySizing();
+  const list=filteredShows();const rooms=new Map();list.forEach(s=>{if(!rooms.has(s.room))rooms.set(s.room,[]);rooms.get(s.room).push(s);});
+  [...rooms.values()].forEach(a=>a.sort((x,y)=>{const rx=showRange(x),ry=showRange(y);return (rx?rx.start.getTime():0)-(ry?ry.start.getTime():0);}));
+  $('showCount').textContent=list.length+' suất chiếu'+(state.showEnded?'':' đang hiển thị');
+  if(!list.length){$('scheduleBoard').innerHTML='<div class="empty"><strong>Không có suất chiếu phù hợp</strong>Không có phim trong khung giờ, ngày hoặc bộ lọc đã chọn.</div>';return;}
+  $('scheduleBoard').classList.toggle('mobile-list-mode',effectiveView()==='list');
+  if(effectiveView()==='list')renderList(rooms);else renderTimeline(rooms);
+  updateLiveSchedule();
+  if(state.autoScrolledForDate!==state.scheduleDate){state.autoScrolledForDate=state.scheduleDate;requestAnimationFrame(scrollNowToCenter);}
 }
-
-function effectiveScheduleView() {
-  if (state.scheduleView === 'timeline' || state.scheduleView === 'list') return state.scheduleView;
-  return window.matchMedia('(max-width: 820px)').matches ? 'list' : 'timeline';
-}
-
-function applyResponsiveSizing() {
-  const w = window.innerWidth || document.documentElement.clientWidth;
-  let roomCol = 154, hourWidth = 52;
-  if (w <= 380) { roomCol = 78; hourWidth = 27; }
-  else if (w <= 520) { roomCol = 86; hourWidth = 31; }
-  else if (w <= 820) { roomCol = 96; hourWidth = 35; }
-  else if (w <= 1024) { roomCol = 112; hourWidth = 42; }
-  else if (w <= 1440) { roomCol = 132; hourWidth = 50; }
-  else if (w >= 1800) { roomCol = 170; hourWidth = 62; }
-  const zoom = Math.max(0.7, Math.min(1.6, Number(state.timelineZoom) || 1));
-  hourWidth = Math.round(hourWidth * zoom);
-  document.documentElement.style.setProperty('--room-col', roomCol + 'px');
-  document.documentElement.style.setProperty('--hour-width', hourWidth + 'px');
-  document.documentElement.style.setProperty('--timeline-width', (hourWidth * 24) + 'px');
-  const zoomValue = $('zoomValue');
-  if (zoomValue) zoomValue.textContent = Math.round(zoom * 100) + '%';
-}
-
-function updateScheduleDisplayControls() {
-  const selected = state.scheduleView;
-  document.querySelectorAll('[data-action="set-schedule-view"]').forEach(btn => {
-    const active = btn.dataset.view === selected;
-    btn.classList.toggle('active', active);
-    btn.setAttribute('aria-pressed', String(active));
-  });
-  document.querySelectorAll('[data-timeline-only]').forEach(el => {
-    el.style.display = effectiveScheduleView() === 'timeline' ? 'inline-flex' : 'none';
-  });
-}
-
-function setScheduleView(view) {
-  if (!['auto', 'timeline', 'list'].includes(view)) return;
-  state.scheduleView = view;
-  localWrite('beta_ops_schedule_view', view);
-  updateScheduleDisplayControls();
-  state.didAutoScrollNow = false;
-  renderSchedule();
-}
-
-function changeTimelineZoom(delta) {
-  state.timelineZoom = Math.max(0.7, Math.min(1.6, Math.round((state.timelineZoom + delta) * 100) / 100));
-  localWrite('beta_ops_timeline_zoom', state.timelineZoom);
-  applyResponsiveSizing();
-  updateScheduleDisplayControls();
-  if (state.currentPage === 'schedule' && effectiveScheduleView() === 'timeline') renderSchedule();
-}
-
-function renderResponsiveScheduleList(roomsMap, now) {
-  const roomRows = [...roomsMap.keys()].sort((a,b) => a.localeCompare(b, 'vi')).map(roomName => {
-    const shows = roomsMap.get(roomName).sort((a,b) => {
-      const ar = showTimeRange(a), br = showTimeRange(b);
-      return (ar ? ar.start.getTime() : 0) - (br ? br.start.getTime() : 0);
-    });
-    const cards = shows.map(show => {
-      const range = showTimeRange(show);
-      if (!range) return '';
-      const status = liveShowStatus(show, now);
-      const nearStart = status === 'Sắp chiếu' && range.start.getTime() - now <= 30 * 60000;
-      const cssClass = status === 'Đang chiếu' ? 'is-playing' :
-        (status === 'Đã hủy' || status === 'Tạm hoãn' ? 'is-cancelled' :
-        (nearStart ? 'is-soon' : (status === 'Đã kết thúc' ? 'is-ended' : '')));
-      const stateLabel = status === 'Đang chiếu' ? '● ĐANG CHIẾU' : nearStart ? 'SẮP BẮT ĐẦU' : status.toUpperCase();
-      const duration = Math.max(0, Math.round((range.end - range.start) / 60000));
-      return '<button class="mobile-show-card timeline-block ' + cssClass + '" data-show-id="' + esc(show.id) + '" data-start-epoch="' + range.start.getTime() + '" data-end-epoch="' + range.end.getTime() + '" data-manual-status="' + esc(show.status) + '">' +
-        '<span class="mobile-card-time"><strong>' + esc(show.start) + ' – ' + esc(show.end) + '</strong><small>' + duration + ' phút</small></span>' +
-        '<span class="mobile-card-main"><span class="block-state">' + esc(stateLabel) + '</span><strong>' + esc(show.movie) + '</strong><small>' + esc(show.format || 'Định dạng chưa cập nhật') + ' · ' + esc(show.id) + '</small></span>' +
-        '<span class="mobile-card-arrow" aria-hidden="true">›</span></button>';
+function renderList(rooms){
+  const now=Date.now();
+  const html=[...rooms.keys()].sort((a,b)=>a.localeCompare(b,'vi')).map(room=>{
+    const shows=rooms.get(room);const cards=shows.map(s=>{
+      const r=showRange(s);if(!r)return '';const status=liveStatus(s,now),near=status==='Sắp chiếu'&&r.start.getTime()-now<=WARNING_MINUTES*60000,cls=statusClass(status,near);
+      return '<button class="mobile-show '+cls+'" data-show-id="'+esc(s.id)+'" data-start="'+r.start.getTime()+'" data-end="'+r.end.getTime()+'" data-manual="'+esc(s.status)+'" type="button">'+
+        '<span class="mobile-time"><strong>'+esc(s.start)+' – '+esc(s.end)+'</strong><small>'+r.duration+' phút</small></span>'+
+        '<span class="mobile-main"><span class="block-state">'+esc(statusLabel(status,near))+'</span><strong>'+esc(s.movie)+'</strong><small>'+esc(s.format||'Chưa cập nhật định dạng')+' · '+esc(s.id)+'</small></span><span class="mobile-arrow">›</span></button>';
     }).join('');
-    return '<section class="mobile-room-group" data-room-row><header class="mobile-room-head"><strong>▣ ' + esc(roomName) + '</strong><span>' + shows.length + ' suất</span></header><div class="mobile-show-stack">' + cards + '</div></section>';
+    return '<section class="mobile-room" data-room-row><header class="mobile-room-head"><span>▣ '+esc(room)+'</span><small>'+shows.length+' suất chiếu</small></header><div class="mobile-show-list">'+cards+'</div></section>';
   }).join('');
-  $('scheduleBoard').innerHTML = '<div class="mobile-schedule-list">' + roomRows + '</div>';
+  $('scheduleBoard').innerHTML='<div class="mobile-schedule">'+html+'</div>';
 }
-
-function renderSchedule() {
-  applyResponsiveSizing();
-  updateScheduleDisplayControls();
-  const room = $('scheduleRoom').value;
-  const q = $('scheduleSearch').value.trim().toLocaleLowerCase('vi');
-  const now = Date.now();
-  const roomsMap = new Map();
-  const list = selectedScheduleShows().filter(s => {
-    if (room && s.room !== room) return false;
-    if (q && ![s.movie,s.room,s.id,s.format].join(' ').toLocaleLowerCase('vi').includes(q)) return false;
-    if (!state.showEnded && liveShowStatus(s, now) === 'Đã kết thúc') return false;
-    return true;
-  });
-
-  list.forEach(show => {
-    if (!roomsMap.has(show.room)) roomsMap.set(show.room, []);
-    roomsMap.get(show.room).push(show);
-  });
-  keepSelectOptions('scheduleRoom', [...new Set(state.data.shows.map(s => s.room).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'vi')), 'Tất cả phòng');
-  updateScheduleDateCaption();
-  $('endedToggle').classList.toggle('active', state.showEnded);
-  $('endedToggle').setAttribute('aria-pressed', String(state.showEnded));
-  $('endedToggle').textContent = state.showEnded ? 'Ẩn suất đã kết thúc' : 'Hiện suất đã kết thúc';
-
-  if (!list.length) {
-    $('scheduleBoard').innerHTML = '<div class="timeline-empty"><strong>Không có suất chiếu cần hiển thị</strong><br>Không có phim trong khung giờ đã chọn hoặc tất cả phim đã kết thúc. Các công việc vệ sinh vẫn được lưu trong bảng vệ sinh.</div>';
-    $('scheduleCount').textContent = '0 suất';
-    return;
-  }
-
-  if (effectiveScheduleView() === 'list') {
-    renderResponsiveScheduleList(roomsMap, now);
-    $('scheduleCount').textContent = list.length + ' suất chiếu';
-    $('timelineUpdated').textContent = 'Cập nhật ' + (state.lastLoaded ? state.lastLoaded.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit',second:'2-digit'}) : '--:--:--');
-    updateTimelineLive();
-    return;
-  }
-
-  const dateObjSelected = dateObj(state.scheduleDate);
-  const nextDate = new Date(dateObjSelected); nextDate.setDate(nextDate.getDate()+1);
-  const hours = [];
-  for (let i=0; i<=24; i++) {
-    const total = (BUSINESS_START_MINUTES + i*60) % 1440;
-    const hh = String(Math.floor(total/60)).padStart(2,'0');
-    const mm = String(total%60).padStart(2,'0');
-    hours.push('<span class="hour-tick '+(i%3===0?'major':'')+'" style="left:'+(i/24*100)+'%">'+hh+':'+mm+'</span>');
-  }
-  const dayBand = '<div class="timeline-date-band"><span style="width:75%">'+esc(fmtDate(state.scheduleDate))+' · CA NGÀY</span><span style="width:25%">'+esc(fmtDate(dateKey(nextDate)))+' · CA ĐÊM</span></div>';
-  const ruler = '<div class="timeline-ruler">'+dayBand+hours.join('')+'</div>';
-
-  const roomRows = [...roomsMap.keys()].sort((a,b)=>a.localeCompare(b,'vi')).map(roomName => {
-    const shows = roomsMap.get(roomName).sort((a,b)=>{
-      const ar=showTimeRange(a), br=showTimeRange(b);
-      return (ar?ar.start.getTime():0)-(br?br.start.getTime():0);
-    });
-    const blocks = shows.map(show => {
-      const range = showTimeRange(show);
-      if (!range) return '';
-      const clippedStart = Math.max(range.startMinute, BUSINESS_START_MINUTES);
-      const clippedEnd = Math.min(range.endMinute, BUSINESS_START_MINUTES + BUSINESS_DURATION_MINUTES);
-      if (clippedEnd <= clippedStart) return '';
-      const left = (clippedStart-BUSINESS_START_MINUTES)/BUSINESS_DURATION_MINUTES*100;
-      const width = (clippedEnd-clippedStart)/BUSINESS_DURATION_MINUTES*100;
-      const status = liveShowStatus(show, now);
-      const nearStart = status==='Sắp chiếu' && range.start.getTime()-now <= 30*60000;
-      const cssClass = status==='Đang chiếu' ? 'is-playing' : (status==='Đã hủy'||status==='Tạm hoãn' ? 'is-cancelled' : (nearStart ? 'is-soon' : (status==='Đã kết thúc' ? 'is-ended' : '')));
-      const compact = width < 7.2 ? 'is-short' : '';
-      return '<button class="timeline-block '+cssClass+' '+compact+'" data-show-id="'+esc(show.id)+'" data-start-epoch="'+range.start.getTime()+'" data-end-epoch="'+range.end.getTime()+'" data-manual-status="'+esc(show.status)+'" style="left:'+left+'%;width:'+width+'%" title="'+esc(show.movie+' · '+show.start+' – '+show.end+' · '+show.room)+'">'+
-        '<span class="block-state">'+esc(status==='Đang chiếu'?'● ĐANG CHIẾU':nearStart?'SẮP BẮT ĐẦU':status)+'</span>'+
-        '<strong>'+esc(show.movie)+'</strong><small>'+esc(show.start)+' – '+esc(show.end)+(show.format?' · '+esc(show.format):'')+'</small></button>';
+function statusLabel(status,near){if(isCancelled(status))return status.toUpperCase();if(status==='Đang chiếu')return '● ĐANG CHIẾU';if(near)return 'SẮP BẮT ĐẦU';return status.toUpperCase();}
+function applySizing(){const w=innerWidth;let room=150,hour=58;if(w<=390){room=110;hour=48;}else if(w<=760){room=120;hour=52;}else if(w<=1050){room=120;hour=46;}else if(w<=1440){room=135;hour=52;}else if(w>=1800){room=165;hour=64;}const z=Math.max(.65,Math.min(1.7,state.zoom));hour=Math.round(hour*z);document.documentElement.style.setProperty('--room-col',room+'px');document.documentElement.style.setProperty('--hour-width',hour+'px');document.documentElement.style.setProperty('--timeline-width',(hour*24)+'px');$('zoomValue').textContent=Math.round(z*100)+'%';}
+function renderTimeline(rooms){
+  const base=dateObj(state.scheduleDate),next=new Date(base);next.setDate(next.getDate()+1);
+  const ticks=[];for(let i=0;i<=24;i++){const m=(BUSINESS_START+i*60)%1440;const hh=String(Math.floor(m/60)).padStart(2,'0');ticks.push('<span class="hour-label '+(i%3===0?'major':'')+'" style="left:'+(i/24*100)+'%">'+hh+':00</span>');}
+  const band='<div class="date-band"><span style="width:75%">'+esc(fmtDate(state.scheduleDate))+' · CA NGÀY</span><span style="width:25%">'+esc(fmtDate(dateKey(next)))+' · CA ĐÊM</span></div>';
+  const ruler='<div class="ruler">'+band+ticks.join('')+'</div>';
+  const rows=[...rooms.keys()].sort((a,b)=>a.localeCompare(b,'vi')).map(room=>{
+    const shows=rooms.get(room);const blocks=shows.map(s=>{
+      const r=showRange(s);if(!r)return '';const start=Math.max(r.startOffset,BUSINESS_START),end=Math.min(r.endOffset,BUSINESS_START+BUSINESS_DURATION);if(end<=start)return '';
+      const left=(start-BUSINESS_START)/BUSINESS_DURATION*100,width=(end-start)/BUSINESS_DURATION*100,status=liveStatus(s),near=status==='Sắp chiếu'&&r.start.getTime()-Date.now()<=WARNING_MINUTES*60000,cls=statusClass(status,near),compact=width<7.3?'short':'';
+      return '<button class="show-block '+cls+' '+compact+'" data-show-id="'+esc(s.id)+'" data-start="'+r.start.getTime()+'" data-end="'+r.end.getTime()+'" data-manual="'+esc(s.status)+'" style="left:'+left+'%;width:'+width+'%" type="button" title="'+esc(s.movie+' · '+s.start+' – '+s.end+' · '+s.room)+'"><span class="block-state">'+esc(statusLabel(status,near))+'</span><strong>'+esc(s.movie)+'</strong><small>'+esc(s.start)+' – '+esc(s.end)+(s.format?' · '+esc(s.format):'')+'</small></button>';
     }).join('');
-    return '<div class="timeline-row" data-room-row><div class="timeline-room-label"><strong>▣ '+esc(roomName)+'</strong><small>'+shows.length+' suất trong khung giờ</small></div><div class="timeline-track" data-timeline-track>'+blocks+'</div></div>';
+    return '<div class="timeline-row" data-room-row><div class="room-label"><strong>▣ '+esc(room)+'</strong><small>'+shows.length+' suất trong ca</small></div><div class="track" data-track>'+blocks+'</div></div>';
   }).join('');
-
-  $('scheduleBoard').innerHTML = '<div class="timeline-inner"><div class="timeline-header"><div class="timeline-room-head">PHÒNG CHIẾU</div>'+ruler+'</div><div class="timeline-rows">'+roomRows+'</div></div>';
-  $('scheduleCount').textContent = list.length + ' suất chiếu';
-  $('timelineUpdated').textContent = 'Cập nhật ' + (state.lastLoaded ? state.lastLoaded.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit',second:'2-digit'}) : '--:--:--');
-  updateTimelineLive();
-  if(!state.didAutoScrollNow && state.scheduleDate===businessDateKey()) { state.didAutoScrollNow=true; requestAnimationFrame(scrollTimelineToNow); }
+  $('scheduleBoard').innerHTML='<div class="timeline-inner"><div class="timeline-header"><div class="room-heading">PHÒNG CHIẾU</div>'+ruler+'</div><div class="timeline-rows">'+rows+'</div></div>';
 }
-
-function setScheduleDate(value) {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(value || '')) return;
-  state.scheduleDate = value;
-  state.didAutoScrollNow = false;
-  renderSchedule();
-}
-
-function shiftScheduleDate(days) {
-  const d = dateObj(state.scheduleDate) || new Date();
-  d.setDate(d.getDate() + Number(days));
-  setScheduleDate(dateKey(d));
-}
-
-function updateTimelineLive() {
-  if (!$('scheduleBoard')) return;
-  const now = Date.now();
-  const selected = state.scheduleDate || todayKey();
-  const selectedDate = dateObj(selected);
-  if (!selectedDate) return;
-  const windowStart = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 6, 0, 0, 0).getTime();
-  const windowEnd = windowStart + BUSINESS_DURATION_MINUTES*60000;
-  const inWindow = now >= windowStart && now <= windowEnd;
-  document.querySelectorAll('[data-timeline-track]').forEach((track, index) => {
-    if (inWindow) {
-      const pct = (now-windowStart)/(windowEnd-windowStart)*100;
-      track.classList.add('has-now');
-      track.style.setProperty('--now-left', pct+'%');
-      let tag = track.querySelector('.timeline-now-tag');
-      if (index === 0) {
-        if (!tag) { tag=document.createElement('span'); tag.className='timeline-now-tag'; track.appendChild(tag); }
-        tag.style.left=pct+'%';
-        tag.textContent='NOW '+timeNowText();
-      } else if (tag) tag.remove();
-    } else {
-      track.classList.remove('has-now');
-      const tag=track.querySelector('.timeline-now-tag'); if(tag) tag.remove();
-    }
+function updateLiveSchedule(){
+  const now=Date.now(),base=dateObj(state.scheduleDate);if(!base)return;
+  const windowStart=new Date(base.getFullYear(),base.getMonth(),base.getDate(),6,0,0,0).getTime(),windowEnd=windowStart+BUSINESS_DURATION*60000,inWindow=now>=windowStart&&now<=windowEnd;
+  document.querySelectorAll('[data-track]').forEach((track,index)=>{
+    if(inWindow){const pct=(now-windowStart)/(windowEnd-windowStart)*100;track.classList.add('has-now');track.style.setProperty('--now-left',pct+'%');let tag=track.querySelector('.now-tag');if(index===0){if(!tag){tag=document.createElement('span');tag.className='now-tag';track.appendChild(tag);}tag.style.left=pct+'%';tag.textContent='NOW '+timeText();}else if(tag)tag.remove();}else{track.classList.remove('has-now');track.querySelector('.now-tag')?.remove();}
   });
-
-  let visibleCount = 0;
-  document.querySelectorAll('.timeline-block').forEach(block => {
-    const start = Number(block.dataset.startEpoch), end = Number(block.dataset.endEpoch);
-    const manualStatus = block.dataset.manualStatus || '';
-    const cancelled = ['Đã hủy','Tạm hoãn'].includes(manualStatus);
-    const status = cancelled ? manualStatus : (now < start ? 'Sắp chiếu' : now < end ? 'Đang chiếu' : 'Đã kết thúc');
-    if (status==='Đã kết thúc' && !state.showEnded) {
-      block.remove();
-      return;
-    }
-    visibleCount++;
-    block.classList.toggle('is-playing', !cancelled && status==='Đang chiếu');
-    block.classList.toggle('is-ended', status==='Đã kết thúc');
-    block.classList.toggle('is-cancelled', cancelled);
-    const nearStart = !cancelled && status==='Sắp chiếu' && start-now<=30*60000;
-    block.classList.toggle('is-soon', nearStart);
-    const label=block.querySelector('.block-state');
-    if (label) label.textContent = cancelled ? status.toUpperCase() : (status==='Đang chiếu' ? '● ĐANG CHIẾU' : (nearStart?'SẮP BẮT ĐẦU':status.toUpperCase()));
+  let visible=0;
+  document.querySelectorAll('[data-show-id]').forEach(el=>{
+    const start=Number(el.dataset.start),end=Number(el.dataset.end),manual=el.dataset.manual||'',cancel=isCancelled(manual),status=cancel?manual:(now<start?'Sắp chiếu':now<end?'Đang chiếu':'Đã kết thúc');
+    const statusFilter=$('statusFilter').value;
+    if((status==='Đã kết thúc'&&!state.showEnded)||(statusFilter&&status!==statusFilter)){el.remove();return;}
+    visible++;const near=!cancel&&status==='Sắp chiếu'&&start-now<=WARNING_MINUTES*60000;const classes=el.classList;['playing','soon','cancelled','ended'].forEach(c=>classes.remove(c));const cls=statusClass(status,near);if(cls)classes.add(cls);
+    const label=el.querySelector('.block-state');if(label)label.textContent=statusLabel(status,near);
   });
-  document.querySelectorAll('[data-room-row]').forEach(row => {
-    const remaining=[...row.querySelectorAll('.timeline-block')].some(el=>el.isConnected);
-    row.style.display=remaining?'':'none';
-  });
-  $('scheduleCount').textContent=visibleCount+' suất chiếu'+(state.showEnded?' (bao gồm đã kết thúc)':' đang hiển thị');
-  if (!visibleCount && $('timelineBoardEmpty')==null) {
-    const holder=document.createElement('div');holder.id='timelineBoardEmpty';holder.className='timeline-empty';
-    holder.textContent=state.showEnded?'Không có suất chiếu trong khung giờ này.':'Các suất chiếu trong khung giờ này đã kết thúc. Công việc vệ sinh vẫn được theo dõi riêng.';
-    $('scheduleBoard').appendChild(holder);
-  } else if (visibleCount && $('timelineBoardEmpty')) $('timelineBoardEmpty').remove();
+  document.querySelectorAll('[data-room-row]').forEach(row=>{const any=row.querySelector('[data-show-id]');row.style.display=any?'':'none';});
+  $('showCount').textContent=visible+' suất chiếu'+(state.showEnded?' (bao gồm đã kết thúc)':' đang hiển thị');
+  const currentEmpty=$('liveEmpty');const hasScheduleLayout=!!$('scheduleBoard').querySelector('.timeline-inner,.mobile-schedule');if(!visible&&hasScheduleLayout&&!currentEmpty){const el=document.createElement('div');el.id='liveEmpty';el.className='empty';el.innerHTML='<strong>Không còn suất chiếu đang hiển thị</strong>Các suất trong khung giờ này đã kết thúc.';$('scheduleBoard').appendChild(el);}else if(visible&&currentEmpty)currentEmpty.remove();
+  renderStats();
 }
+function scrollNowToCenter(){const box=$('scheduleBoard');if(!box||effectiveView()==='list'){const current=box?.querySelector('.mobile-show.playing')||box?.querySelector('.mobile-show.soon');if(current)current.scrollIntoView({block:'center',behavior:'smooth'});return;}
+  const d=dateObj(state.scheduleDate);if(!d)return;const start=new Date(d.getFullYear(),d.getMonth(),d.getDate(),6).getTime(),pct=(Date.now()-start)/(BUSINESS_DURATION*60000);if(pct<0||pct>1)return;const room=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--room-col'))||150,hour=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hour-width'))||58;const x=room+hour*24*pct;box.scrollTo({left:Math.max(0,x-box.clientWidth/2),behavior:'smooth'});}
 
-function scrollTimelineToNow() {
-  const container=$('scheduleBoard');
-  const selected=dateObj(state.scheduleDate);
-  if (!container || !selected) return;
-  if (effectiveScheduleView() === 'list') {
-    const target = container.querySelector('.mobile-show-card.is-playing') || container.querySelector('.mobile-show-card.is-soon') || container.querySelector('.mobile-show-card');
-    if (target) target.scrollIntoView({behavior:'smooth', block:'center'});
-    else toast('Không có suất chiếu đang diễn ra hoặc sắp bắt đầu.');
-    return;
-  }
-  const start=new Date(selected.getFullYear(),selected.getMonth(),selected.getDate(),6,0,0,0).getTime();
-  const pct=(Date.now()-start)/(BUSINESS_DURATION_MINUTES*60000);
-  if (pct<0 || pct>1) { toast('Thời gian hiện tại nằm ngoài khung 06:00–06:00 đã chọn.'); return; }
-  const roomWidth=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--room-col'))||154;
-  const hourWidth=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hour-width'))||62;
-  const nowX=roomWidth+(hourWidth*24)*pct;
-  container.scrollTo({left:Math.max(0,nowX-container.clientWidth/2),behavior:'smooth'});
-}
+function changeDate(date){if(!/^\d{4}-\d{2}-\d{2}$/.test(date||''))return;state.scheduleDate=date;renderAll();}
+function shiftDate(n){const d=dateObj(state.scheduleDate)||new Date();d.setDate(d.getDate()+n);changeDate(dateKey(d));}
+function openDetail(id){const s=state.shows.find(x=>String(x.id)===String(id));if(!s)return;const r=showRange(s),status=liveStatus(s);$('detailContent').innerHTML='<div class="detail-kicker">CHI TIẾT SUẤT CHIẾU</div><h2 id="detailTitle">'+esc(s.movie)+'</h2><div class="detail-meta"><span>▣ '+esc(s.room)+'</span><span>▤ '+esc(s.id)+'</span><span>'+esc(status)+'</span></div><div class="detail-desc"><strong>Ngày vận hành:</strong> '+esc(fmtDate(s.date))+'<br><strong>Giờ chiếu:</strong> '+esc(s.start)+' – '+esc(s.end)+'<br><strong>Thời lượng:</strong> '+(r?r.duration+' phút':'Chưa xác định')+'<br><strong>Định dạng:</strong> '+esc(s.format||'Chưa cập nhật')+(s.note?'<br><strong>Ghi chú:</strong> '+esc(s.note):'')+'</div>';$('detailModal').classList.add('show');$('detailModal').setAttribute('aria-hidden','false');document.body.style.overflow='hidden';state.activeShowId=s.id;}
+function closeDetail(){$('detailModal').classList.remove('show');$('detailModal').setAttribute('aria-hidden','true');document.body.style.overflow='';state.activeShowId=null;}
 
-function keepSelectOptions(id, values, firstLabel) {
-  const select=$(id), old=select.value;
-  const signature=values.join('|');
-  if(select.dataset.signature===signature) return;
-  select.innerHTML='<option value="">'+esc(firstLabel)+'</option>'+values.map(v=>'<option value="'+esc(v)+'">'+esc(v)+'</option>').join('');
-  select.dataset.signature=signature;
-  if(values.includes(old)) select.value=old;
-}
+// Event handlers
+$('refreshBtn').addEventListener('click',()=>loadShows(true));
+$('prevDay').addEventListener('click',()=>shiftDate(-1));$('nextDay').addEventListener('click',()=>shiftDate(1));$('todayBtn').addEventListener('click',()=>changeDate(businessDateKey()));$('scheduleDay').addEventListener('change',e=>changeDate(e.target.value));
+$('roomFilter').addEventListener('change',renderSchedule);$('statusFilter').addEventListener('change',renderSchedule);$('searchInput').addEventListener('input',()=>{clearTimeout(window.__searchTimer);window.__searchTimer=setTimeout(renderSchedule,130);});
+$('endedToggle').addEventListener('click',()=>{state.showEnded=!state.showEnded;$('endedToggle').classList.toggle('active',state.showEnded);$('endedToggle').setAttribute('aria-pressed',String(state.showEnded));$('endedToggle').textContent=state.showEnded?'Ẩn suất đã kết thúc':'Hiện suất đã kết thúc';renderSchedule();});
+document.querySelectorAll('.display-btn').forEach(btn=>btn.addEventListener('click',()=>{state.view=btn.dataset.view;localWrite('beta_schedule_view',state.view);renderSchedule();}));
+$('zoomIn').addEventListener('click',()=>{state.zoom=Math.min(1.7,Math.round((state.zoom+.1)*100)/100);localWrite('beta_schedule_zoom',state.zoom);renderSchedule();});$('zoomOut').addEventListener('click',()=>{state.zoom=Math.max(.65,Math.round((state.zoom-.1)*100)/100);localWrite('beta_schedule_zoom',state.zoom);renderSchedule();});
+$('scrollNowBtn').addEventListener('click',scrollNowToCenter);$('modalClose').addEventListener('click',closeDetail);$('modalBackdrop').addEventListener('click',closeDetail);
+$('scheduleBoard').addEventListener('click',e=>{const target=e.target.closest('[data-show-id]');if(target)openDetail(target.dataset.showId);});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDetail();});
+function updateClock(){const n=new Date();$('liveClock').textContent=timeText();$('liveDate').textContent=new Intl.DateTimeFormat('vi-VN',{weekday:'long',day:'2-digit',month:'2-digit',year:'numeric'}).format(n);updateLiveSchedule();}
+window.addEventListener('resize',()=>{clearTimeout(window.__resizeTimer);window.__resizeTimer=setTimeout(()=>{applySizing();if(state.view==='auto')renderSchedule();},140);});
+window.addEventListener('orientationchange',()=>setTimeout(()=>{applySizing();renderSchedule();},250));
 
-function visibleCleaning() {
-  const room=$('cleanRoom').value;
-  const dateMode=$('cleanDate').value;
-  const q=$('cleanSearch').value.trim().toLocaleLowerCase('vi');
-  return state.data.cleaning.filter(t=>{
-    const statusOk=state.cleaningStatus==='all'||t.status===state.cleaningStatus;
-    const roomOk=!room||t.room===room;
-    const dateOk=dateMode==='all'||(dateMode==='today'?t.date===businessDateKey():(t.status!=='Đã hoàn tất'));
-    const qOk=!q||[t.id,t.showId,t.room,t.movie,t.employee,t.note].join(' ').toLocaleLowerCase('vi').includes(q);
-    return statusOk&&roomOk&&dateOk&&qOk;
-  });
-}
-function renderCleaning() {
-  const rooms=[...new Set(state.data.cleaning.map(t=>t.room).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'vi'));
-  keepSelectOptions('cleanRoom',rooms,'Tất cả phòng');
-  const list=visibleCleaning();
-  $('cleaningBoard').innerHTML=list.length?list.map(cleanCard).join(''):'<div class="empty">Không có công việc vệ sinh phù hợp. Công việc mới được sinh sau khi suất chiếu kết thúc.</div>';
-  document.querySelectorAll('[data-clean-status]').forEach(b=>b.classList.toggle('active',b.dataset.cleanStatus===state.cleaningStatus));
-}
-function cleanCard(t) {
-  const done=t.status==='Đã hoàn tất', working=t.status==='Đang dọn';
-  return '<article class="clean-card"><div class="clean-top"><div><h3>'+esc(t.room)+' · '+esc(t.movie)+'</h3><div class="clean-meta"><span>📅 '+esc(fmtDate(t.date))+'</span><span>🕒 Kết thúc '+esc(t.end||'--:--')+'</span><span>🎟 '+esc(t.showId)+'</span></div></div><span class="pill '+cleanClass(t.status)+'">'+esc(t.status)+'</span></div><div class="clean-meta"><span>👤 '+esc(t.employee||'Chưa nhận việc')+'</span>'+(t.startedAt?'<span>Bắt đầu: '+esc(t.startedAt)+'</span>':'')+(t.completedAt?'<span>Hoàn tất: '+esc(t.completedAt)+'</span>':'')+'</div>'+(t.note?'<div class="clean-note">Ghi chú: '+esc(t.note)+'</div>':'')+'<div class="clean-actions"><button class="start-btn" data-action="start-clean" data-id="'+esc(t.id)+'" '+(done||working?'disabled':'')+'>Bắt đầu dọn</button><button class="finish-btn" data-action="complete-clean" data-id="'+esc(t.id)+'" '+(!working?'disabled':'')+'>'+(done?'Đã hoàn tất':'Xác nhận hoàn tất')+'</button></div></article>';
-}
-
-function renderHistory() {
-  const logs=state.data.logs||[];
-  $('historyCount').textContent=logs.length+' bản ghi';
-  if(!logs.length){$('historyBoard').innerHTML='<div class="empty">Chưa có nhật ký vệ sinh. Nhật ký sẽ được tạo khi nhân viên bắt đầu hoặc hoàn tất công việc.</div>';return;}
-  $('historyBoard').innerHTML='<table class="history-table"><thead><tr><th>THỜI ĐIỂM</th><th>MÃ CÔNG VIỆC</th><th>PHÒNG / SUẤT</th><th>NHÂN VIÊN</th><th>THAO TÁC</th><th>GHI CHÚ</th></tr></thead><tbody>'+logs.map(l=>'<tr><td>'+esc(l.at)+'</td><td>'+esc(l.taskId)+'</td><td>'+esc(l.showId)+'</td><td>'+esc(l.employee)+'</td><td>'+esc(l.action)+'</td><td>'+esc(l.note)+'</td></tr>').join('')+'</tbody></table>';
-}
-function showClass(s){return s==='Đang chiếu'?'playing':s==='Đã kết thúc'?'ended':(['Đã hủy','Tạm hoãn'].includes(s)?'cancelled':'');}
-function cleanClass(s){return s==='Chờ dọn'?'waiting':s==='Đang dọn'?'working':s==='Đã hoàn tất'?'done':'none';}
-
-function openShowDetail(showId) {
-  const show=state.data.shows.find(s=>String(s.id)===String(showId));
-  if(!show) return toast('Không tìm thấy suất chiếu.');
-  const range=showTimeRange(show);
-  const live=liveShowStatus(show);
-  const clean=show.cleaningStatus||'Chưa đến giờ dọn';
-  $('showDetailBody').innerHTML='<div class="eyebrow">CHI TIẾT SUẤT CHIẾU</div><h2>'+esc(show.movie)+'</h2>'+
-    '<p><strong>'+esc(show.room)+'</strong> · '+esc(show.format||'Định dạng chưa cập nhật')+'</p>'+
-    '<p>Ngày vận hành: '+esc(fmtDate(show.date))+'<br>Thời gian: '+esc(show.start)+' – '+esc(show.end)+(range?' · '+Math.round((range.end-range.start)/60000)+' phút':'')+'<br>Mã suất: '+esc(show.id)+'</p>'+
-    '<p>Trạng thái: <strong>'+esc(live)+'</strong><br>Vệ sinh: <strong>'+esc(clean)+'</strong></p>'+
-    (show.note?'<p>Ghi chú: '+esc(show.note)+'</p>':'')+
-    '<button class="btn-secondary" data-action="open-cleaning">Mở bảng vệ sinh →</button>';
-  $('showDetailModal').classList.add('show');$('showDetailModal').setAttribute('aria-hidden','false');
-}
-function closeShowDetail(){ $('showDetailModal').classList.remove('show');$('showDetailModal').setAttribute('aria-hidden','true'); }
-
-function closeMobileMenu() {
-  $('sidebar').classList.remove('open');
-  $('mobileBackdrop').classList.remove('show');
-  document.body.classList.remove('menu-open');
-}
-function toggleMobileMenu() {
-  const open = !$('sidebar').classList.contains('open');
-  $('sidebar').classList.toggle('open', open);
-  $('mobileBackdrop').classList.toggle('show', open);
-  document.body.classList.toggle('menu-open', open);
-}
-
-function navigate(page) {
-  state.currentPage=page;
-  const map={dashboard:'dashboardPage',schedule:'schedulePage',cleaning:'cleaningPage',history:'historyPage'};
-  Object.values(map).forEach(id=>$(id).classList.add('hidden'));
-  $(map[page]).classList.remove('hidden');
-  document.querySelectorAll('.nav-btn[data-page], .mobile-nav-btn[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===page));
-  closeMobileMenu();
-  if(page==='schedule') renderSchedule();
-  if(page==='cleaning') renderCleaning();
-  if(page==='history') renderHistory();
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-function openConfirm(taskId, change) {
-  const task=state.data.cleaning.find(t=>t.id===taskId);
-  if(!task) return toast('Không tìm thấy công việc. Hãy đồng bộ lại.');
-  if(change==='start' && task.status!=='Chờ dọn') return toast('Công việc không còn ở trạng thái Chờ dọn.');
-  if(change==='complete' && task.status!=='Đang dọn') return toast('Chỉ có thể hoàn tất công việc đang dọn.');
-  const employee=$('employeeName').value.trim();
-  const pin=$('employeePin').value.trim();
-  if(employee.length<2){toast('Vui lòng nhập tên nhân viên.');navigate('cleaning');$('employeeName').focus();return;}
-  if(pin.length<6){toast('Vui lòng nhập PIN do quản lý cấp.');navigate('cleaning');$('employeePin').focus();return;}
-  state.confirmAction={taskId:taskId,change:change};
-  $('confirmTitle').textContent=change==='start'?'Bắt đầu vệ sinh phòng':'Xác nhận hoàn tất vệ sinh';
-  $('confirmMessage').textContent=(change==='start'?'Xác nhận nhận việc dọn ':'Xác nhận hoàn tất vệ sinh ')+task.room+' · '+task.movie+'? Nhân viên: '+employee+'.';
-  $('confirmModal').classList.add('show');
-}
-function closeConfirm(){ $('confirmModal').classList.remove('show'); state.confirmAction=null; }
-function submitConfirmed() {
-  if(!state.confirmAction||state.pendingNonce) return;
-  const nonce='ops_'+Date.now()+'_'+Math.random().toString(36).slice(2,10);
-  state.pendingNonce=nonce;
-  $('confirmButton').disabled=true;
-  const payload={action:'updateCleaning',taskId:state.confirmAction.taskId,change:state.confirmAction.change,employee:$('employeeName').value.trim(),pin:$('employeePin').value.trim(),note:$('cleanNote').value.trim(),nonce:nonce};
-  const form=document.createElement('form');
-  form.method='POST';form.action=API_BASE_URL;form.target='postFrame';form.style.display='none';
-  const input=document.createElement('input');input.type='hidden';input.name='payload';input.value=JSON.stringify(payload);form.appendChild(input);
-  document.body.appendChild(form);form.submit();form.remove();
-  closeConfirm();
-  toast('Đã gửi yêu cầu. Đang chờ Backend xác nhận...');
-  state.pendingTimer=setTimeout(()=>{
-    if(state.pendingNonce===nonce){state.pendingNonce=null;$('confirmButton').disabled=false;toast('Chưa nhận được phản hồi. Hãy đồng bộ kiểm tra trước khi thao tác lại.');}
-  },20000);
-}
-window.addEventListener('message',event=>{
-  if(event.source!==$('postFrame').contentWindow) return;
-  if(!['https://script.google.com','https://script.googleusercontent.com'].includes(event.origin) && !event.origin.endsWith('.googleusercontent.com')) return;
-  const packet=event.data;
-  if(!packet||packet.type!=='BETA_NOWZONE_OPERATIONS_RESULT'||packet.nonce!==state.pendingNonce) return;
-  state.pendingNonce=null;clearTimeout(state.pendingTimer);$('confirmButton').disabled=false;
-  const result=packet.result||{};
-  if(result.ok){$('employeePin').value='';$('cleanNote').value='';toast(result.message||'Đã cập nhật trạng thái vệ sinh.');setTimeout(()=>loadOperations(false),500);}
-  else toast(result.message||'Backend không thể cập nhật công việc.');
-});
-
-function updateClock(){ $('liveClock').textContent=timeNowText(); $('liveDate').textContent=new Intl.DateTimeFormat('vi-VN',{weekday:'long',day:'2-digit',month:'2-digit',year:'numeric'}).format(new Date()); updateTimelineLive(); }
-
-// Event delegation
-document.addEventListener('click',event=>{
-  const btn=event.target.closest('[data-action],[data-page],[data-date],[data-clean-status],.timeline-block');if(!btn)return;
-  if(btn.dataset.page){navigate(btn.dataset.page);return;}
-  if(btn.dataset.date){state.scheduleDate=btn.dataset.date;document.querySelectorAll('[data-date]').forEach(x=>x.classList.toggle('active',x===btn));renderSchedule();return;}
-  if(btn.dataset.cleanStatus){state.cleaningStatus=btn.dataset.cleanStatus;renderCleaning();return;}
-  if(btn.classList.contains('timeline-block')){openShowDetail(btn.dataset.showId);return;}
-  switch(btn.dataset.action){
-    case 'dashboard':event.preventDefault();navigate('dashboard');break;
-    case 'toggle-menu':toggleMobileMenu();break;
-    case 'close-menu':closeMobileMenu();break;
-    case 'set-schedule-view':setScheduleView(btn.dataset.view);break;
-    case 'zoom-in':changeTimelineZoom(0.1);break;
-    case 'zoom-out':changeTimelineZoom(-0.1);break;
-    case 'refresh':loadOperations(true);break;
-    case 'date-prev':shiftScheduleDate(-1);break;
-    case 'date-next':shiftScheduleDate(1);break;
-    case 'date-today':setScheduleDate(businessDateKey());break;
-    case 'toggle-ended':state.showEnded=!state.showEnded;renderSchedule();break;
-    case 'scroll-now':scrollTimelineToNow();break;
-    case 'start-clean':openConfirm(btn.dataset.id,'start');break;
-    case 'complete-clean':openConfirm(btn.dataset.id,'complete');break;
-    case 'close-modal':closeConfirm();break;
-    case 'close-show-detail':closeShowDetail();break;
-    case 'open-cleaning':closeShowDetail();navigate('cleaning');break;
-  }
-});
-$('confirmButton').addEventListener('click',submitConfirmed);
-$('scheduleRoom').addEventListener('change',renderSchedule);
-$('scheduleDay').value=state.scheduleDate;
-$('scheduleDay').addEventListener('change',()=>setScheduleDate($('scheduleDay').value));
-$('scheduleSearch').addEventListener('input',()=>{clearTimeout(window.__scheduleSearch);window.__scheduleSearch=setTimeout(renderSchedule,150);});
-$('cleanRoom').addEventListener('change',renderCleaning);
-$('cleanDate').addEventListener('change',renderCleaning);
-$('cleanSearch').addEventListener('input',()=>{clearTimeout(window.__cleanSearch);window.__cleanSearch=setTimeout(renderCleaning,150);});
-$('employeeName').value=localRead('beta_ops_employee','');
-$('employeeName').addEventListener('change',()=>localWrite('beta_ops_employee',$('employeeName').value.trim()));
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeConfirm();});
-
-applyResponsiveSizing();
-window.addEventListener('resize',()=>{
-  clearTimeout(window.__responsiveResizeTimer);
-  window.__responsiveResizeTimer=setTimeout(()=>{
-    applyResponsiveSizing();
-    updateScheduleDisplayControls();
-    if(state.currentPage==='schedule') renderSchedule();
-  },140);
-});
-window.addEventListener('orientationchange',()=>setTimeout(()=>{
-  applyResponsiveSizing();
-  updateScheduleDisplayControls();
-  if(state.currentPage==='schedule') renderSchedule();
-},250));
-updateClock();setInterval(updateClock,1000);
-loadOperations();
-setInterval(()=>{if(!document.hidden)loadOperations(false);},POLL_MS);
+// Khởi tạo: mặc định Tự động, desktop = Timeline, điện thoại = Danh sách.
+$('scheduleDay').value=state.scheduleDate;$('endedToggle').textContent='Hiện suất đã kết thúc';
+applySizing();updateClock();setInterval(updateClock,1000);loadShows();setInterval(()=>{if(!document.hidden)loadShows(false);},POLL_MS);
 </script>
 </body>
 </html>
