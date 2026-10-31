@@ -17,6 +17,60 @@
     .room-list{display:grid;gap:12px}.room-card{background:#fff;border:1px solid var(--line);border-radius:13px;overflow:hidden}.room-title{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 15px;background:#f5f8fc}.room-title strong{color:var(--blue);font-size:14px}.room-title span{font-size:10px;color:var(--muted)}.show-row{display:grid;grid-template-columns:115px minmax(160px,1.5fr) minmax(90px,.7fr) 125px 145px;gap:11px;align-items:center;padding:13px 15px;border-top:1px solid #edf1f6}.show-time strong{display:block;font-size:15px;color:var(--blue)}.show-time small,.show-movie small,.show-format{font-size:10px;color:var(--muted)}.show-movie strong{display:block;font-size:13px;line-height:1.4}.pill{width:max-content;max-width:100%;padding:7px 10px;border-radius:20px;font-size:10px;font-weight:800;background:#e8f1ff;color:#2866af}.pill.playing{background:#e4f7e9;color:#16833e}.pill.ended{background:#eef0f3;color:#697789}.pill.cancelled{background:#fff0f0;color:#b83b48}.pill.waiting{background:#fff2d9;color:#a86a00}.pill.working{background:#f0eaff;color:#7544bd}.pill.done{background:#e4f7e9;color:#16833e}.pill.none{background:#eef2f7;color:#77869a}
     .clean-tools{display:grid;grid-template-columns:1fr 1fr 1.5fr;gap:10px;background:#f6f9fd;border:1px solid var(--line);padding:13px;border-radius:11px;margin-bottom:14px}.clean-tools label{display:grid;gap:6px;color:#657991;font-size:11px;font-weight:700}.clean-tools input{width:100%;min-width:0;padding:10px;border:1px solid var(--line);border-radius:8px;background:#fff}.clean-tools .wide{grid-column:auto}.cleaning-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.clean-card{border:1px solid var(--line);border-radius:13px;padding:15px;display:grid;gap:11px;background:#fff}.clean-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}.clean-top h3{font-size:14px;line-height:1.4;margin:0;color:var(--navy)}.clean-meta{display:flex;flex-wrap:wrap;gap:7px;color:var(--muted);font-size:10px}.clean-meta span{background:#f3f6fa;border-radius:7px;padding:6px 8px}.clean-note{color:#71839c;font-size:11px;line-height:1.5}.clean-actions{display:flex;gap:8px;flex-wrap:wrap}.clean-actions button{border:0;border-radius:8px;padding:10px 12px;font-size:11px;font-weight:800}.start-btn{background:#eaf2ff;color:var(--blue)}.finish-btn{background:#e5f7eb;color:#16834a}.clean-actions button:disabled{opacity:.45;cursor:not-allowed}.history-table{width:100%;border-collapse:collapse;font-size:12px}.history-table th,.history-table td{padding:11px 9px;text-align:left;border-bottom:1px solid #edf1f6;vertical-align:top}.history-table th{background:#f6f9fd;color:#657991;font-size:10px;letter-spacing:.4px}.history-wrap{overflow:auto}.empty{padding:40px 16px;background:#fff;border:1px dashed #d7e1ee;border-radius:12px;text-align:center;color:var(--muted);grid-column:1/-1}.footnote{margin-top:16px;padding:13px 15px;background:#fff8e9;border:1px solid #f6e7c3;border-radius:10px;color:#80652e;font-size:11px;line-height:1.6}.toast-wrap{position:fixed;right:18px;bottom:18px;z-index:50;display:grid;gap:8px}.toast{background:#17365d;color:#fff;padding:13px 17px;border-radius:10px;box-shadow:0 8px 25px #0002;max-width:min(390px,90vw)}.modal{position:fixed;inset:0;z-index:40;display:none;align-items:center;justify-content:center;padding:15px}.modal.show{display:flex}.modal-bg{position:absolute;inset:0;background:#102b4f99}.modal-box{position:relative;background:#fff;border-radius:16px;padding:24px;width:100%;max-width:470px;box-shadow:0 25px 80px #001c4433}.modal-box h2{margin:0 0 8px;color:var(--blue)}.modal-box p{color:var(--muted);font-size:12px;line-height:1.6}.modal-close{position:absolute;right:12px;top:10px;background:#edf3fa;border:0;width:32px;height:32px;border-radius:50%;font-size:20px}.modal-box label{display:grid;gap:6px;margin:12px 0;color:#657991;font-size:11px;font-weight:700}.modal-box input,.modal-box textarea{width:100%;border:1px solid var(--line);border-radius:8px;padding:10px}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
     @media(max-width:1150px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.show-row{grid-template-columns:100px minmax(140px,1fr) 110px 130px}.show-format{display:none}}
+
+    /* MODERN 24-HOUR CINEMA TIMELINE */
+    :root{--room-col:154px;--hour-width:52px;--timeline-hours:24;--timeline-width:1248px}
+    .schedule-command{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:15px;padding:13px;margin:15px 0 12px;box-shadow:var(--shadow)}
+    .schedule-date-tools,.schedule-filter-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .date-nav-btn{width:37px;height:37px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--blue);font-size:17px;font-weight:800}
+    .date-today-btn{height:37px;border:0;border-radius:9px;padding:0 14px;background:#eaf2ff;color:var(--blue);font-weight:800}
+    .schedule-date-input,.schedule-filter-tools select,.schedule-filter-tools input{height:37px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--navy);padding:0 11px;min-width:130px}
+    .schedule-filter-tools input{min-width:210px}
+    .ended-toggle{height:37px;border:1px solid var(--line);border-radius:9px;background:#fff;color:#71839a;padding:0 12px;font-size:11px;font-weight:800}
+    .ended-toggle.active{background:#fff1e0;border-color:#f4d3a4;color:#9c5c00}
+    .schedule-date-caption{font-size:11px;color:var(--muted);font-weight:700;white-space:nowrap}
+    .timeline-statusbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:12px 2px}
+    .timeline-legend{display:flex;align-items:center;gap:13px;flex-wrap:wrap;color:var(--muted);font-size:10px}
+    .timeline-legend span{display:inline-flex;align-items:center;gap:6px}
+    .timeline-legend i{width:9px;height:9px;border-radius:3px;display:inline-block}
+    .timeline-legend .lg-upcoming{background:#4e83ca}.timeline-legend .lg-playing{background:#1a9b69}.timeline-legend .lg-soon{background:#efa52b}.timeline-legend .lg-cancel{background:#d85c68}
+    .timeline-meta{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:11px}
+    .timeline-scroll{overflow:auto;max-height:calc(100vh - 330px);min-height:270px;border:1px solid var(--line);border-radius:14px;background:#fff;scrollbar-color:#b8cbe1 #f1f5fa;scrollbar-width:thin;overscroll-behavior:contain}
+    .timeline-inner{width:calc(var(--room-col) + var(--timeline-width));min-width:calc(var(--room-col) + var(--timeline-width))}
+    .timeline-header{display:grid;grid-template-columns:var(--room-col) var(--timeline-width);position:sticky;top:0;z-index:8;background:#f7faff;border-bottom:1px solid #dfe8f3;height:67px}
+    .timeline-room-head{position:sticky;left:0;z-index:10;display:flex;align-items:center;padding:0 15px;background:#edf4fc;border-right:1px solid #dfe8f3;color:#55708e;font-size:10px;font-weight:900;letter-spacing:.7px}
+    .timeline-ruler{position:relative;width:var(--timeline-width);height:67px;background:linear-gradient(to right,#e2eaf3 1px,transparent 1px) 0 35px/var(--hour-width) 32px repeat-x}
+    .timeline-date-band{position:absolute;left:0;right:0;top:0;height:25px;display:flex;border-bottom:1px solid #e6edf5;color:#617894;font-size:10px;font-weight:800}
+    .timeline-date-band span{display:flex;align-items:center;justify-content:center;background:#edf4fc}
+    .timeline-date-band span+span{border-left:2px solid #cbd8e7;background:#f7f9fc}
+    .hour-tick{position:absolute;top:31px;transform:translateX(-50%);font-size:10px;color:#667e9b;white-space:nowrap;font-weight:700}
+    .hour-tick.major{color:#0755a6}
+    .timeline-rows{display:grid}
+    .timeline-row{display:grid;grid-template-columns:var(--room-col) var(--timeline-width);min-height:82px;border-bottom:1px solid #e9eff6}
+    .timeline-row:last-child{border-bottom:0}
+    .timeline-room-label{position:sticky;left:0;z-index:5;background:#fff;border-right:1px solid #e3ebf4;padding:12px 13px;display:flex;flex-direction:column;justify-content:center;gap:5px;box-shadow:5px 0 9px #214e7908}
+    .timeline-room-label strong{font-size:12px;color:#0755a6;letter-spacing:.2px}
+    .timeline-room-label small{color:#8999ad;font-size:10px}
+    .timeline-track{height:82px;position:relative;width:var(--timeline-width);background:linear-gradient(to right,#e6edf5 1px,transparent 1px) 0 0/var(--hour-width) 100% repeat-x,linear-gradient(to right,#f1f4f8 1px,transparent 1px) 0 0/calc(var(--hour-width)/4) 100% repeat-x}
+    .timeline-track.has-now:after{content:"";position:absolute;z-index:4;left:var(--now-left);top:0;bottom:0;width:2px;background:#e84c5b;box-shadow:0 0 0 1px #e84c5b1b;pointer-events:none}
+    .timeline-now-tag{position:absolute;z-index:6;top:1px;left:var(--now-left);transform:translateX(-50%);background:#e84c5b;color:#fff;border-radius:5px;padding:3px 6px;font-size:9px;font-weight:900;white-space:nowrap;pointer-events:none}
+    .timeline-block{position:absolute;top:10px;bottom:10px;min-width:42px;border:0;border-left:3px solid #2b67ad;border-radius:7px;background:linear-gradient(135deg,#d9e8fb,#bdd5f1);color:#173c69;text-align:left;padding:7px 8px 6px;display:flex;flex-direction:column;justify-content:center;gap:4px;overflow:hidden;box-shadow:0 2px 7px #154a8017;transition:filter .15s,opacity .15s;z-index:2}
+    .timeline-block:hover{filter:brightness(.97);z-index:3;box-shadow:0 5px 14px #154a8026}
+    .timeline-block strong{font-size:10px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .timeline-block small{font-size:9px;white-space:nowrap;opacity:.86;font-weight:700}
+    .timeline-block .block-state{font-size:8px;letter-spacing:.3px;text-transform:uppercase;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .timeline-block.is-playing{background:linear-gradient(135deg,#168b62,#24aa78);color:#fff;border-left-color:#096544;box-shadow:0 3px 12px #168b6230}
+    .timeline-block.is-soon{background:linear-gradient(135deg,#ffe6b8,#ffd28b);color:#754500;border-left-color:#e69a27}
+    .timeline-block.is-cancelled{background:linear-gradient(135deg,#ffe5e7,#f8c4ca);color:#8f2733;border-left-color:#c44c5b}
+    .timeline-block.is-ended{background:#edf0f4;color:#7d8998;border-left-color:#aab3bf;opacity:.75}
+    .timeline-block.is-short{padding:4px 5px}.timeline-block.is-short strong{-webkit-line-clamp:1}
+    .timeline-empty{padding:38px 20px;text-align:center;color:var(--muted);font-size:12px;background:#fbfdff}
+    .timeline-foot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 2px;color:#8b9aab;font-size:10px}
+    .timeline-now-button{border:0;background:#fff0f0;color:#c44150;border-radius:8px;padding:8px 11px;font-size:10px;font-weight:900}
+    .show-detail-box{position:fixed;inset:0;z-index:45;display:none;align-items:center;justify-content:center;padding:18px}.show-detail-box.show{display:flex}.show-detail-box .modal-bg{position:absolute;inset:0;background:#102b4f99}.show-detail-content{position:relative;background:#fff;border-radius:16px;padding:23px;width:min(460px,100%);box-shadow:0 25px 80px #001c4433}.show-detail-content h2{color:var(--blue);margin:0 35px 10px 0}.show-detail-content p{color:#6e8096;line-height:1.6;font-size:12px}.show-detail-close{position:absolute;right:12px;top:12px;border:0;border-radius:50%;width:32px;height:32px;background:#edf3fa;font-size:20px}
+    @media(max-width:850px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.quick-grid{grid-template-columns:1fr}.show-row{grid-template-columns:100px 1fr}.show-row>*:nth-child(n+3){grid-column:2}.cleaning-grid{grid-template-columns:1fr}}
+    @media(max-width:650px){.schedule-command{align-items:stretch}.schedule-date-tools,.schedule-filter-tools{width:100%}.schedule-filter-tools select,.schedule-filter-tools input{flex:1;min-width:0}.schedule-date-caption{width:100%}.timeline-scroll{max-height:calc(100vh - 350px)}.timeline-now-button{flex:1}.timeline-statusbar{align-items:flex-start}.timeline-block{padding:5px}.timeline-block strong{font-size:9px}}
+
     @media(max-width:850px){.sidebar{width:205px}.quick-grid{grid-template-columns:1fr}.room-glance{grid-template-columns:repeat(3,minmax(0,1fr))}.stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
     @media(max-width:650px){.topbar{height:auto;min-height:68px;padding:11px 14px;flex-wrap:wrap}.brand-logo{font-size:27px}.brand-text strong{font-size:14px}.brand-text small{font-size:8px}.mobile-menu{display:block}.top-actions{width:100%;justify-content:space-between}.clock-box{text-align:left}.shell{display:block}.sidebar{display:none;position:fixed;top:0;left:0;bottom:0;z-index:30;width:260px;box-shadow:0 0 0 100vw #102b4f66}.sidebar.open{display:flex}.main{padding:19px 12px}.hero{min-height:155px;padding:22px}.hero-shapes{right:-120px;opacity:.2}.hero h2{font-size:30px}.stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.stat{padding:12px}.stat strong{font-size:23px}.toolbar{align-items:stretch}.filters{width:100%}.filters select,.filters input{flex:1;min-width:120px}.show-row{grid-template-columns:88px 1fr;gap:7px 10px}.show-row .show-time{grid-row:1/3}.show-row .show-status,.show-row .clean-status{grid-column:2}.cleaning-grid{grid-template-columns:1fr}.clean-tools{grid-template-columns:1fr}.room-glance{grid-template-columns:repeat(2,minmax(0,1fr))}.page-head{flex-direction:column}.head-actions{width:100%;justify-content:space-between}.history-table{min-width:640px}}
   </style>
@@ -67,10 +121,33 @@
     </section>
 
     <section class="page hidden" id="schedulePage">
-      <div class="page-head"><div><div class="eyebrow">SHOWTIME BOARD</div><h1>Lịch chiếu theo phòng</h1><p>Tra cứu suất chiếu theo ngày, phòng, phim và mã suất.</p></div><div class="head-actions"><span class="live-pill"><i></i> CẬP NHẬT 30 GIÂY</span><button class="btn-secondary" data-action="refresh">↻ Đồng bộ ngay</button></div></div>
-      <div class="toolbar"><div class="tabs"><button class="tab-btn active" data-date="today">Hôm nay</button><button class="tab-btn" data-date="tomorrow">Ngày mai</button><button class="tab-btn" data-date="week">7 ngày tới</button><button class="tab-btn" data-date="all">Tất cả</button></div><div class="filters"><select id="scheduleRoom"><option value="">Tất cả phòng</option></select><input id="scheduleSearch" type="search" placeholder="Tìm phim, phòng, mã suất..."></div></div>
-      <div class="legend"><span><i class="dot blue"></i>Sắp chiếu</span><span><i class="dot green"></i>Đang chiếu</span><span><i class="dot gray"></i>Đã kết thúc</span><span><i class="dot amber"></i>Chờ dọn</span><span><i class="dot purple"></i>Đang dọn</span></div>
-      <section class="panel"><div class="panel-head"><h2>Lịch chiếu</h2><small id="scheduleCount">0 suất</small></div><div id="scheduleBoard" class="room-list"><div class="empty">Đang tải lịch chiếu...</div></div></section>
+      <div class="page-head">
+        <div><div class="eyebrow">LIVE SHOWTIME TIMELINE</div><h1>Lịch chiếu theo khung giờ</h1><p>Mỗi hàng là một phòng chiếu. Khối phim tự ẩn khi hết giờ chiếu; việc vệ sinh vẫn được lưu riêng.</p></div>
+        <div class="head-actions"><span class="live-pill"><i></i> LIVE · ĐỒNG HỒ 1 GIÂY</span><button class="btn-secondary" data-action="refresh">↻ Đồng bộ dữ liệu</button></div>
+      </div>
+      <div class="schedule-command">
+        <div class="schedule-date-tools">
+          <button class="date-nav-btn" data-action="date-prev" title="Ngày trước">‹</button>
+          <button class="date-today-btn" data-action="date-today">Hôm nay</button>
+          <input class="schedule-date-input" type="date" id="scheduleDay" aria-label="Chọn ngày lịch chiếu">
+          <button class="date-nav-btn" data-action="date-next" title="Ngày tiếp theo">›</button>
+          <span class="schedule-date-caption" id="scheduleDateCaption">06:00 – 06:00 hôm sau</span>
+        </div>
+        <div class="schedule-filter-tools">
+          <select id="scheduleRoom"><option value="">Tất cả phòng</option></select>
+          <input id="scheduleSearch" type="search" placeholder="Tìm phim, phòng, mã suất...">
+          <button class="ended-toggle" id="endedToggle" data-action="toggle-ended" aria-pressed="false">Hiện suất đã kết thúc</button>
+        </div>
+      </div>
+      <div class="timeline-statusbar">
+        <div class="timeline-legend"><span><i class="lg-upcoming"></i>Sắp chiếu</span><span><i class="lg-playing"></i>Đang chiếu</span><span><i class="lg-soon"></i>Sắp bắt đầu</span><span><i class="lg-cancel"></i>Đã hủy / tạm hoãn</span></div>
+        <div class="timeline-meta"><strong id="scheduleCount">0 suất</strong><span id="timelineUpdated">Đang đồng bộ...</span></div>
+      </div>
+      <section class="panel" style="padding:12px">
+        <div class="panel-head"><h2>Timeline phòng chiếu</h2><small>06:00 hôm chọn đến 06:00 ngày kế tiếp</small></div>
+        <div id="scheduleBoard" class="timeline-scroll"><div class="timeline-empty">Đang tải lịch chiếu...</div></div>
+        <div class="timeline-foot"><span>Cuộn ngang để xem toàn bộ 24 giờ · Nhấn vào khối phim để xem chi tiết suất chiếu.</span><button class="timeline-now-button" data-action="scroll-now">◎ Đến thời gian hiện tại</button></div>
+      </section>
     </section>
 
     <section class="page hidden" id="cleaningPage">
@@ -88,6 +165,7 @@
   </main>
 </div>
 
+<div class="show-detail-box" id="showDetailModal" aria-hidden="true"><div class="modal-bg" data-action="close-show-detail"></div><div class="show-detail-content"><button class="show-detail-close" data-action="close-show-detail">×</button><div id="showDetailBody"></div></div></div>
 <div class="modal" id="confirmModal" aria-hidden="true"><div class="modal-bg" data-action="close-modal"></div><div class="modal-box"><button class="modal-close" data-action="close-modal">×</button><h2 id="confirmTitle">Xác nhận thao tác</h2><p id="confirmMessage"></p><div class="modal-actions"><button class="btn-light" data-action="close-modal">Hủy</button><button class="btn-primary" id="confirmButton">Xác nhận</button></div></div></div>
 <div class="toast-wrap" id="toastWrap" aria-live="polite"></div>
 <iframe id="postFrame" name="postFrame" title="Backend response" hidden></iframe>
@@ -103,7 +181,9 @@ const state = {
   lastLoaded: null,
   loading: false,
   currentPage: 'dashboard',
-  scheduleDate: 'today',
+  scheduleDate: businessDateKey(),
+  showEnded: false,
+  didAutoScrollNow: false,
   cleaningStatus: 'all',
   pendingNonce: null,
   pendingTimer: null,
@@ -118,6 +198,7 @@ function dateObj(iso) { const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{
 function fmtDate(iso) { const d = dateObj(iso); return d ? new Intl.DateTimeFormat('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'}).format(d) : 'Chưa xác định'; }
 function dateKey(d) { return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function todayKey() { return dateKey(new Date()); }
+function businessDateKey() { const d=new Date(); if(d.getHours()<6) d.setDate(d.getDate()-1); return dateKey(d); }
 function plusDays(days) { const d = new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()+days); return dateKey(d); }
 function timeNowText() { return new Intl.DateTimeFormat('vi-VN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(new Date()); }
 function toast(message) { const el=document.createElement('div'); el.className='toast'; el.textContent=message; $('toastWrap').appendChild(el); setTimeout(()=>el.remove(),3800); }
@@ -222,39 +303,218 @@ function renderRoomGlance() {
 }
 
 function renderNextShows() {
-  const now=todayKey();
-  const rows=state.data.shows.filter(s=>s.date===now&&s.status==='Sắp chiếu').slice(0,6);
+  const now=businessDateKey();
+  const rows=state.data.shows.filter(s=>s.date===now&&liveShowStatus(s)==='Sắp chiếu').slice(0,6);
   $('nextShows').innerHTML=rows.length?rows.map(s=>'<div class="mini-row"><div><strong>'+esc(s.movie)+'</strong><small>'+esc(s.room)+' · '+esc(s.id)+'</small></div><span class="mini-time">'+esc(s.start)+'</span></div>').join(''):'<div class="empty">Không còn suất chiếu sắp bắt đầu hôm nay.</div>';
   const todo=state.data.cleaning.filter(t=>t.status==='Chờ dọn'||t.status==='Đang dọn').slice(0,2);
   $('dashboardCleaning').innerHTML=todo.length?todo.map(cleanCard).join(''):'<div class="empty">Hiện không có công việc vệ sinh cần xử lý.</div>';
 }
 
-function filterDateShows() {
-  const mode=state.scheduleDate;
-  return state.data.shows.filter(s=>{
-    if(mode==='all') return true;
-    if(mode==='today') return s.date===todayKey();
-    if(mode==='tomorrow') return s.date===plusDays(1);
-    if(mode==='week') return s.date>=todayKey()&&s.date<=plusDays(6);
+function selectedScheduleShows() {
+  const selected = state.scheduleDate || todayKey();
+  return state.data.shows.filter(s => s.date === selected);
+}
+
+const BUSINESS_START_MINUTES = 6 * 60;
+const BUSINESS_DURATION_MINUTES = 24 * 60;
+
+function clockMinutes(value) {
+  const match = String(value || '').match(/^(\d{1,2}):(\d{2})/);
+  if (!match) return null;
+  const hour = Number(match[1]), minute = Number(match[2]);
+  if (hour > 23 || minute > 59) return null;
+  return hour * 60 + minute;
+}
+
+// Ngày lịch là ngày vận hành: 06:00 đến 05:59 ngày kế tiếp.
+function showTimeRange(show) {
+  const base = dateObj(show.date);
+  const startMinuteRaw = clockMinutes(show.start);
+  const endMinuteRaw = clockMinutes(show.end);
+  if (!base || startMinuteRaw == null || endMinuteRaw == null) return null;
+
+  const startMinute = startMinuteRaw < BUSINESS_START_MINUTES
+    ? startMinuteRaw + 1440 : startMinuteRaw;
+  let endMinute = endMinuteRaw < BUSINESS_START_MINUTES
+    ? endMinuteRaw + 1440 : endMinuteRaw;
+  if (endMinute <= startMinute) endMinute += 1440;
+
+  const start = new Date(base.getFullYear(), base.getMonth(), base.getDate(), 0, 0, 0, 0);
+  const end = new Date(base.getFullYear(), base.getMonth(), base.getDate(), 0, 0, 0, 0);
+  start.setMinutes(startMinute);
+  end.setMinutes(endMinute);
+  return {start, end, startMinute, endMinute};
+}
+
+function liveShowStatus(show, nowMs = Date.now()) {
+  if (['Đã hủy','Tạm hoãn'].includes(show.status)) return show.status;
+  const range = showTimeRange(show);
+  if (!range) return show.status || 'Chưa xác định';
+  if (nowMs < range.start.getTime()) return 'Sắp chiếu';
+  if (nowMs < range.end.getTime()) return 'Đang chiếu';
+  return 'Đã kết thúc';
+}
+
+function updateScheduleDateCaption() {
+  const d = dateObj(state.scheduleDate);
+  if (!d) return;
+  const next = new Date(d); next.setDate(next.getDate() + 1);
+  $('scheduleDateCaption').textContent = fmtDate(state.scheduleDate) + ' · 06:00 → ' + fmtDate(dateKey(next)) + ' · 06:00';
+  if ($('scheduleDay').value !== state.scheduleDate) $('scheduleDay').value = state.scheduleDate;
+}
+
+function renderSchedule() {
+  const room = $('scheduleRoom').value;
+  const q = $('scheduleSearch').value.trim().toLocaleLowerCase('vi');
+  const now = Date.now();
+  const roomsMap = new Map();
+  const list = selectedScheduleShows().filter(s => {
+    if (room && s.room !== room) return false;
+    if (q && ![s.movie,s.room,s.id,s.format].join(' ').toLocaleLowerCase('vi').includes(q)) return false;
+    if (!state.showEnded && liveShowStatus(s, now) === 'Đã kết thúc') return false;
     return true;
   });
-}
-function renderSchedule() {
-  const room=$('scheduleRoom').value;
-  const q=$('scheduleSearch').value.trim().toLocaleLowerCase('vi');
-  const list=filterDateShows().filter(s=>(!room||s.room===room)&&(!q||[s.movie,s.room,s.id,s.format].join(' ').toLocaleLowerCase('vi').includes(q)));
-  $('scheduleCount').textContent=list.length+' suất chiếu';
-  const rooms=[...new Set(state.data.shows.map(s=>s.room).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'vi'));
-  keepSelectOptions('scheduleRoom',rooms,'Tất cả phòng');
-  if(!list.length){$('scheduleBoard').innerHTML='<div class="empty">Không có suất chiếu phù hợp với bộ lọc hiện tại.</div>';return;}
-  const grouped={}; list.forEach(s=>(grouped[s.room] ||= []).push(s));
-  $('scheduleBoard').innerHTML=Object.keys(grouped).sort((a,b)=>a.localeCompare(b,'vi')).map(room=>{
-    const rows=grouped[room];
-    return '<section class="room-card"><div class="room-title"><strong>▣ '+esc(room)+'</strong><span>'+rows.length+' suất chiếu</span></div>'+rows.map(s=>{
-      const cleaning=s.cleaningStatus||'Chưa đến giờ dọn';
-      return '<article class="show-row"><div class="show-time"><strong>'+esc(s.start||'--:--')+' – '+esc(s.end||'--:--')+'</strong><small>'+esc(fmtDate(s.date))+'</small></div><div class="show-movie"><strong>'+esc(s.movie)+'</strong><small>'+esc(s.id)+'</small></div><div class="show-format">'+esc(s.format||'Phim chiếu rạp')+'</div><span class="pill '+showClass(s.status)+'">'+esc(s.status)+'</span><span class="pill '+cleanClass(cleaning)+'">'+esc(cleaning)+'</span></article>';
-    }).join('')+'</section>';
+
+  list.forEach(show => {
+    if (!roomsMap.has(show.room)) roomsMap.set(show.room, []);
+    roomsMap.get(show.room).push(show);
+  });
+  keepSelectOptions('scheduleRoom', [...new Set(state.data.shows.map(s => s.room).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'vi')), 'Tất cả phòng');
+  updateScheduleDateCaption();
+  $('endedToggle').classList.toggle('active', state.showEnded);
+  $('endedToggle').setAttribute('aria-pressed', String(state.showEnded));
+  $('endedToggle').textContent = state.showEnded ? 'Ẩn suất đã kết thúc' : 'Hiện suất đã kết thúc';
+
+  if (!list.length) {
+    $('scheduleBoard').innerHTML = '<div class="timeline-empty"><strong>Không có suất chiếu cần hiển thị</strong><br>Không có phim trong khung giờ đã chọn hoặc tất cả phim đã kết thúc. Các công việc vệ sinh vẫn được lưu trong bảng vệ sinh.</div>';
+    $('scheduleCount').textContent = '0 suất';
+    return;
+  }
+
+  const dateObjSelected = dateObj(state.scheduleDate);
+  const nextDate = new Date(dateObjSelected); nextDate.setDate(nextDate.getDate()+1);
+  const hours = [];
+  for (let i=0; i<=24; i++) {
+    const total = (BUSINESS_START_MINUTES + i*60) % 1440;
+    const hh = String(Math.floor(total/60)).padStart(2,'0');
+    const mm = String(total%60).padStart(2,'0');
+    hours.push('<span class="hour-tick '+(i%3===0?'major':'')+'" style="left:'+(i/24*100)+'%">'+hh+':'+mm+'</span>');
+  }
+  const dayBand = '<div class="timeline-date-band"><span style="width:75%">'+esc(fmtDate(state.scheduleDate))+' · CA NGÀY</span><span style="width:25%">'+esc(fmtDate(dateKey(nextDate)))+' · CA ĐÊM</span></div>';
+  const ruler = '<div class="timeline-ruler">'+dayBand+hours.join('')+'</div>';
+
+  const roomRows = [...roomsMap.keys()].sort((a,b)=>a.localeCompare(b,'vi')).map(roomName => {
+    const shows = roomsMap.get(roomName).sort((a,b)=>{
+      const ar=showTimeRange(a), br=showTimeRange(b);
+      return (ar?ar.start.getTime():0)-(br?br.start.getTime():0);
+    });
+    const blocks = shows.map(show => {
+      const range = showTimeRange(show);
+      if (!range) return '';
+      const clippedStart = Math.max(range.startMinute, BUSINESS_START_MINUTES);
+      const clippedEnd = Math.min(range.endMinute, BUSINESS_START_MINUTES + BUSINESS_DURATION_MINUTES);
+      if (clippedEnd <= clippedStart) return '';
+      const left = (clippedStart-BUSINESS_START_MINUTES)/BUSINESS_DURATION_MINUTES*100;
+      const width = (clippedEnd-clippedStart)/BUSINESS_DURATION_MINUTES*100;
+      const status = liveShowStatus(show, now);
+      const nearStart = status==='Sắp chiếu' && range.start.getTime()-now <= 30*60000;
+      const cssClass = status==='Đang chiếu' ? 'is-playing' : (status==='Đã hủy'||status==='Tạm hoãn' ? 'is-cancelled' : (nearStart ? 'is-soon' : (status==='Đã kết thúc' ? 'is-ended' : '')));
+      const compact = width < 7.2 ? 'is-short' : '';
+      return '<button class="timeline-block '+cssClass+' '+compact+'" data-show-id="'+esc(show.id)+'" data-start-epoch="'+range.start.getTime()+'" data-end-epoch="'+range.end.getTime()+'" data-manual-status="'+esc(show.status)+'" style="left:'+left+'%;width:'+width+'%" title="'+esc(show.movie+' · '+show.start+' – '+show.end+' · '+show.room)+'">'+
+        '<span class="block-state">'+esc(status==='Đang chiếu'?'● ĐANG CHIẾU':nearStart?'SẮP BẮT ĐẦU':status)+'</span>'+
+        '<strong>'+esc(show.movie)+'</strong><small>'+esc(show.start)+' – '+esc(show.end)+(show.format?' · '+esc(show.format):'')+'</small></button>';
+    }).join('');
+    return '<div class="timeline-row" data-room-row><div class="timeline-room-label"><strong>▣ '+esc(roomName)+'</strong><small>'+shows.length+' suất trong khung giờ</small></div><div class="timeline-track" data-timeline-track>'+blocks+'</div></div>';
   }).join('');
+
+  $('scheduleBoard').innerHTML = '<div class="timeline-inner"><div class="timeline-header"><div class="timeline-room-head">PHÒNG CHIẾU</div>'+ruler+'</div><div class="timeline-rows">'+roomRows+'</div></div>';
+  $('scheduleCount').textContent = list.length + ' suất chiếu';
+  $('timelineUpdated').textContent = 'Cập nhật ' + (state.lastLoaded ? state.lastLoaded.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit',second:'2-digit'}) : '--:--:--');
+  updateTimelineLive();
+  if(!state.didAutoScrollNow && state.scheduleDate===businessDateKey()) { state.didAutoScrollNow=true; requestAnimationFrame(scrollTimelineToNow); }
+}
+
+function setScheduleDate(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value || '')) return;
+  state.scheduleDate = value;
+  state.didAutoScrollNow = false;
+  renderSchedule();
+}
+
+function shiftScheduleDate(days) {
+  const d = dateObj(state.scheduleDate) || new Date();
+  d.setDate(d.getDate() + Number(days));
+  setScheduleDate(dateKey(d));
+}
+
+function updateTimelineLive() {
+  if (!$('scheduleBoard')) return;
+  const now = Date.now();
+  const selected = state.scheduleDate || todayKey();
+  const selectedDate = dateObj(selected);
+  if (!selectedDate) return;
+  const windowStart = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 6, 0, 0, 0).getTime();
+  const windowEnd = windowStart + BUSINESS_DURATION_MINUTES*60000;
+  const inWindow = now >= windowStart && now <= windowEnd;
+  document.querySelectorAll('[data-timeline-track]').forEach((track, index) => {
+    if (inWindow) {
+      const pct = (now-windowStart)/(windowEnd-windowStart)*100;
+      track.classList.add('has-now');
+      track.style.setProperty('--now-left', pct+'%');
+      let tag = track.querySelector('.timeline-now-tag');
+      if (index === 0) {
+        if (!tag) { tag=document.createElement('span'); tag.className='timeline-now-tag'; track.appendChild(tag); }
+        tag.style.left=pct+'%';
+        tag.textContent='NOW '+timeNowText();
+      } else if (tag) tag.remove();
+    } else {
+      track.classList.remove('has-now');
+      const tag=track.querySelector('.timeline-now-tag'); if(tag) tag.remove();
+    }
+  });
+
+  let visibleCount = 0;
+  document.querySelectorAll('.timeline-block').forEach(block => {
+    const start = Number(block.dataset.startEpoch), end = Number(block.dataset.endEpoch);
+    const manualStatus = block.dataset.manualStatus || '';
+    const cancelled = ['Đã hủy','Tạm hoãn'].includes(manualStatus);
+    const status = cancelled ? manualStatus : (now < start ? 'Sắp chiếu' : now < end ? 'Đang chiếu' : 'Đã kết thúc');
+    if (status==='Đã kết thúc' && !state.showEnded) {
+      block.remove();
+      return;
+    }
+    visibleCount++;
+    block.classList.toggle('is-playing', !cancelled && status==='Đang chiếu');
+    block.classList.toggle('is-ended', status==='Đã kết thúc');
+    block.classList.toggle('is-cancelled', cancelled);
+    const nearStart = !cancelled && status==='Sắp chiếu' && start-now<=30*60000;
+    block.classList.toggle('is-soon', nearStart);
+    const label=block.querySelector('.block-state');
+    if (label) label.textContent = cancelled ? status.toUpperCase() : (status==='Đang chiếu' ? '● ĐANG CHIẾU' : (nearStart?'SẮP BẮT ĐẦU':status.toUpperCase()));
+  });
+  document.querySelectorAll('[data-room-row]').forEach(row => {
+    const remaining=[...row.querySelectorAll('.timeline-block')].some(el=>el.isConnected);
+    row.style.display=remaining?'':'none';
+  });
+  $('scheduleCount').textContent=visibleCount+' suất chiếu'+(state.showEnded?' (bao gồm đã kết thúc)':' đang hiển thị');
+  if (!visibleCount && $('timelineBoardEmpty')==null) {
+    const holder=document.createElement('div');holder.id='timelineBoardEmpty';holder.className='timeline-empty';
+    holder.textContent=state.showEnded?'Không có suất chiếu trong khung giờ này.':'Các suất chiếu trong khung giờ này đã kết thúc. Công việc vệ sinh vẫn được theo dõi riêng.';
+    $('scheduleBoard').appendChild(holder);
+  } else if (visibleCount && $('timelineBoardEmpty')) $('timelineBoardEmpty').remove();
+}
+
+function scrollTimelineToNow() {
+  const container=$('scheduleBoard');
+  const selected=dateObj(state.scheduleDate);
+  if (!container || !selected) return;
+  const start=new Date(selected.getFullYear(),selected.getMonth(),selected.getDate(),6,0,0,0).getTime();
+  const pct=(Date.now()-start)/(BUSINESS_DURATION_MINUTES*60000);
+  if (pct<0 || pct>1) { toast('Thời gian hiện tại nằm ngoài khung 06:00–06:00 đã chọn.'); return; }
+  const roomWidth=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--room-col'))||154;
+  const hourWidth=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hour-width'))||62;
+  const nowX=roomWidth+(hourWidth*24)*pct;
+  container.scrollTo({left:Math.max(0,nowX-container.clientWidth/2),behavior:'smooth'});
 }
 
 function keepSelectOptions(id, values, firstLabel) {
@@ -273,7 +533,7 @@ function visibleCleaning() {
   return state.data.cleaning.filter(t=>{
     const statusOk=state.cleaningStatus==='all'||t.status===state.cleaningStatus;
     const roomOk=!room||t.room===room;
-    const dateOk=dateMode==='all'||(dateMode==='today'?t.date===todayKey():(t.status!=='Đã hoàn tất'));
+    const dateOk=dateMode==='all'||(dateMode==='today'?t.date===businessDateKey():(t.status!=='Đã hoàn tất'));
     const qOk=!q||[t.id,t.showId,t.room,t.movie,t.employee,t.note].join(' ').toLocaleLowerCase('vi').includes(q);
     return statusOk&&roomOk&&dateOk&&qOk;
   });
@@ -298,6 +558,22 @@ function renderHistory() {
 }
 function showClass(s){return s==='Đang chiếu'?'playing':s==='Đã kết thúc'?'ended':(['Đã hủy','Tạm hoãn'].includes(s)?'cancelled':'');}
 function cleanClass(s){return s==='Chờ dọn'?'waiting':s==='Đang dọn'?'working':s==='Đã hoàn tất'?'done':'none';}
+
+function openShowDetail(showId) {
+  const show=state.data.shows.find(s=>String(s.id)===String(showId));
+  if(!show) return toast('Không tìm thấy suất chiếu.');
+  const range=showTimeRange(show);
+  const live=liveShowStatus(show);
+  const clean=show.cleaningStatus||'Chưa đến giờ dọn';
+  $('showDetailBody').innerHTML='<div class="eyebrow">CHI TIẾT SUẤT CHIẾU</div><h2>'+esc(show.movie)+'</h2>'+
+    '<p><strong>'+esc(show.room)+'</strong> · '+esc(show.format||'Định dạng chưa cập nhật')+'</p>'+
+    '<p>Ngày vận hành: '+esc(fmtDate(show.date))+'<br>Thời gian: '+esc(show.start)+' – '+esc(show.end)+(range?' · '+Math.round((range.end-range.start)/60000)+' phút':'')+'<br>Mã suất: '+esc(show.id)+'</p>'+
+    '<p>Trạng thái: <strong>'+esc(live)+'</strong><br>Vệ sinh: <strong>'+esc(clean)+'</strong></p>'+
+    (show.note?'<p>Ghi chú: '+esc(show.note)+'</p>':'')+
+    '<button class="btn-secondary" data-action="open-cleaning">Mở bảng vệ sinh →</button>';
+  $('showDetailModal').classList.add('show');$('showDetailModal').setAttribute('aria-hidden','false');
+}
+function closeShowDetail(){ $('showDetailModal').classList.remove('show');$('showDetailModal').setAttribute('aria-hidden','true'); }
 
 function navigate(page) {
   state.currentPage=page;
@@ -354,25 +630,35 @@ window.addEventListener('message',event=>{
   else toast(result.message||'Backend không thể cập nhật công việc.');
 });
 
-function updateClock(){ $('liveClock').textContent=timeNowText(); $('liveDate').textContent=new Intl.DateTimeFormat('vi-VN',{weekday:'long',day:'2-digit',month:'2-digit',year:'numeric'}).format(new Date()); }
+function updateClock(){ $('liveClock').textContent=timeNowText(); $('liveDate').textContent=new Intl.DateTimeFormat('vi-VN',{weekday:'long',day:'2-digit',month:'2-digit',year:'numeric'}).format(new Date()); updateTimelineLive(); }
 
 // Event delegation
 document.addEventListener('click',event=>{
-  const btn=event.target.closest('[data-action],[data-page],[data-date],[data-clean-status]');if(!btn)return;
+  const btn=event.target.closest('[data-action],[data-page],[data-date],[data-clean-status],.timeline-block');if(!btn)return;
   if(btn.dataset.page){navigate(btn.dataset.page);return;}
   if(btn.dataset.date){state.scheduleDate=btn.dataset.date;document.querySelectorAll('[data-date]').forEach(x=>x.classList.toggle('active',x===btn));renderSchedule();return;}
   if(btn.dataset.cleanStatus){state.cleaningStatus=btn.dataset.cleanStatus;renderCleaning();return;}
+  if(btn.classList.contains('timeline-block')){openShowDetail(btn.dataset.showId);return;}
   switch(btn.dataset.action){
     case 'dashboard':event.preventDefault();navigate('dashboard');break;
     case 'toggle-menu':$('sidebar').classList.toggle('open');break;
     case 'refresh':loadOperations(true);break;
+    case 'date-prev':shiftScheduleDate(-1);break;
+    case 'date-next':shiftScheduleDate(1);break;
+    case 'date-today':setScheduleDate(businessDateKey());break;
+    case 'toggle-ended':state.showEnded=!state.showEnded;renderSchedule();break;
+    case 'scroll-now':scrollTimelineToNow();break;
     case 'start-clean':openConfirm(btn.dataset.id,'start');break;
     case 'complete-clean':openConfirm(btn.dataset.id,'complete');break;
     case 'close-modal':closeConfirm();break;
+    case 'close-show-detail':closeShowDetail();break;
+    case 'open-cleaning':closeShowDetail();navigate('cleaning');break;
   }
 });
 $('confirmButton').addEventListener('click',submitConfirmed);
 $('scheduleRoom').addEventListener('change',renderSchedule);
+$('scheduleDay').value=state.scheduleDate;
+$('scheduleDay').addEventListener('change',()=>setScheduleDate($('scheduleDay').value));
 $('scheduleSearch').addEventListener('input',()=>{clearTimeout(window.__scheduleSearch);window.__scheduleSearch=setTimeout(renderSchedule,150);});
 $('cleanRoom').addEventListener('change',renderCleaning);
 $('cleanDate').addEventListener('change',renderCleaning);
