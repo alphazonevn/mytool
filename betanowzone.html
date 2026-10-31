@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <style>
+:root{--blue:#0755a6;--blue2:#0874cf;--navy:#18385e;--orange:#ff951c;--pink:#f58ca7;--green:#b2d834;--bg:#f3f7fd;--muted:#8292a8;--line:#e2eaf4;--white:#fff;--shadow:0 8px 28px #164a800c}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--navy);font:14px Arial,Helvetica,sans-serif}button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #ff951c88;outline-offset:2px}.hidden{display:none!important}
+.topbar{min-height:76px;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:12px 28px;gap:24px;position:sticky;top:0;z-index:10;box-shadow:0 3px 12px #003a781c}.brand{color:#fff;text-decoration:none;display:grid;grid-template-columns:auto auto;align-items:center;line-height:1;min-width:225px}.brand-mark{font-size:34px;font-weight:800;letter-spacing:-2px}.brand-spark{color:var(--orange);font-size:18px;margin-left:5px}.brand-word{font-size:29px;font-weight:300;letter-spacing:-1px}.brand-caption{grid-column:1/3;font-size:9px;letter-spacing:1.5px;margin-top:7px;color:#d7e9ff}.header-tools{display:flex;align-items:center;gap:15px}.global-search{display:flex;align-items:center;gap:10px;background:#ffffff22;border:1px solid #ffffff24;border-radius:12px;padding:11px 14px;width:min(360px,32vw)}.global-search>span{font-size:22px}.global-search input{border:0;background:transparent;color:#fff;outline:0;width:100%;min-width:0}.global-search input::placeholder{color:#d9e8fa}.global-search kbd{font-size:10px;color:#c5dcf8;white-space:nowrap}.header-icon{font-size:22px;color:#fff;border:0;background:transparent;position:relative}.notification-badge{position:absolute;top:-4px;right:-8px;background:#ff536a;border-radius:20px;padding:2px 5px;font-size:10px}.user-chip{display:flex;align-items:center;gap:9px;font-weight:600}.deployment-link{display:inline-flex;align-items:center;gap:7px;padding:10px 13px;border:1px solid #ffffff55;border-radius:10px;color:#fff;text-decoration:none;font-weight:700;font-size:12px;white-space:nowrap;background:#ffffff12;transition:background .2s}.deployment-link:hover{background:#ffffff28}.avatar{width:35px;height:35px;border-radius:50%;background:#d9eaff;color:var(--blue);display:grid;place-items:center;font-weight:bold}.mobile-menu{display:none;background:transparent;color:#fff;border:0;font-size:24px}
+.app-shell{display:flex;min-height:calc(100vh - 76px)}.sidebar{width:238px;background:#fff;border-right:1px solid var(--line);padding:24px 15px;display:flex;flex-direction:column;flex-shrink:0}.sidebar-label{color:#98a7bb;font-size:10px;font-weight:bold;letter-spacing:1.3px;padding:8px 13px 13px}.support-label{margin-top:24px}.nav-item{width:100%;display:flex;align-items:center;gap:13px;padding:13px;border:0;border-radius:10px;background:transparent;color:#61758f;text-align:left;margin-bottom:5px;font-weight:600}.nav-item:hover,.nav-item.active{color:var(--blue);background:#eaf3ff}.nav-icon{font-size:19px;width:22px;text-align:center}.nav-count{margin-left:auto;background:#e7eff9;color:var(--blue);padding:3px 8px;border-radius:20px;font-size:11px}.sidebar-footer{margin-top:auto;padding:20px 12px 0;border-top:1px solid var(--line);color:var(--muted);display:grid;gap:7px;font-size:11px}.sidebar-logo{font-size:18px;color:var(--blue);font-weight:bold}.main-content{flex:1;min-width:0;padding:30px clamp(18px,3vw,42px)}.page{max-width:1500px;margin:auto}
+.eyebrow,.section-kicker{color:var(--blue2);font-size:10px;font-weight:bold;letter-spacing:1.4px;margin-bottom:10px}.welcome-row,.page-heading{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:25px}.welcome-row h1,.page-heading h1{font-size:clamp(27px,3vw,38px);line-height:1.2;margin:0 0 10px}.welcome-row h1 span{color:var(--blue)}.welcome-row p,.page-heading p{color:var(--muted);margin:0;line-height:1.6}.today-card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:17px 22px;min-width:220px;display:grid;gap:7px;box-shadow:var(--shadow)}.today-card span{font-size:10px;letter-spacing:1px;color:var(--muted)}.today-card strong{font-size:22px;color:var(--blue)}.today-card small{color:var(--muted);font-size:11px}
+.hero{min-height:280px;border-radius:24px;overflow:hidden;position:relative;padding:35px 42px;color:#fff;background:linear-gradient(110deg,#0755a6,#0874cf);display:flex;align-items:center;box-shadow:var(--shadow)}.hero-copy{position:relative;z-index:1;max-width:570px}.hero-tag{background:var(--orange);color:#fff;padding:9px 17px;border-radius:30px;font-weight:bold;font-size:11px;display:inline-block;margin-bottom:20px}.hero h2{font-size:clamp(32px,4vw,55px);line-height:1.02;text-transform:uppercase;margin:0 0 15px;max-width:560px}.hero p{line-height:1.6;color:#e0edff;max-width:460px}.primary-button,.secondary-button{border:0;border-radius:10px;padding:13px 18px;font-weight:bold;display:inline-flex;gap:16px;align-items:center}.primary-button{background:#fff;color:var(--blue);margin-top:10px}.primary-button:disabled{opacity:.55;cursor:not-allowed}.secondary-button{background:#eaf3ff;color:var(--blue)}.hero-art{position:absolute;right:7%;top:0;width:390px;height:100%;pointer-events:none}.hero-circle{position:absolute;width:130px;height:130px;border-radius:50%;background:var(--orange);top:25px;left:20px}.hero-triangle{position:absolute;right:5px;top:55px;width:0;height:0;border-left:75px solid transparent;border-right:75px solid transparent;border-bottom:130px solid var(--green);transform:rotate(35deg)}.hero-square{position:absolute;width:110px;height:110px;background:var(--pink);border-radius:20px;left:110px;bottom:20px;transform:rotate(-15deg)}.hero-ticket{position:absolute;right:30px;bottom:35px;background:#fff;color:var(--blue);padding:22px 28px;border-radius:14px;font-size:13px;transform:rotate(-8deg);box-shadow:0 12px 30px #003e7733}.hero-ticket b{font-size:32px}.hero-popcorn{position:absolute;left:90px;top:85px;font-size:70px}
+.stats-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin:22px 0 34px}.stat-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;display:grid;grid-template-columns:auto 1fr;gap:10px 13px;box-shadow:var(--shadow)}.stat-icon{grid-row:1/3;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:22px}.stat-icon.blue{background:#e7f1ff}.stat-icon.pink{background:#fff0f4}.stat-icon.green{background:#f1f8dc}.stat-icon.orange{background:#fff3e2}.stat-card span{display:block;color:var(--muted);font-size:12px}.stat-card strong{display:block;font-size:27px;color:var(--blue);margin-top:5px}.stat-card small{grid-column:2;color:#a0adbf;font-size:10px}.content-section{margin:35px 0}.section-heading{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:18px}.section-heading h2{font-size:23px;margin:0;color:var(--blue)}.section-kicker{display:block;margin-bottom:6px}.text-button{border:0;background:transparent;color:var(--blue);font-weight:bold}
+.filter-panel{display:grid;grid-template-columns:2fr 1.1fr 1.1fr 1.1fr 1.4fr;gap:10px;background:#fff;border:1px solid var(--line);padding:15px;border-radius:15px;margin-bottom:18px}.filter-search{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:9px;padding:0 12px;min-width:0}.filter-search span{font-size:22px;color:var(--muted)}.filter-search input{border:0;outline:0;width:100%;min-width:0;padding:12px 0}.filter-panel select{width:100%;min-width:0;border:1px solid var(--line);background:#fff;color:var(--navy);border-radius:9px;padding:12px 8px}.date-filter{grid-column:1/4;display:flex;gap:10px}.date-filter label{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:11px;flex:1}.date-filter input{border:1px solid var(--line);border-radius:8px;padding:9px;min-width:0;width:100%;color:var(--navy)}.clear-filter{grid-column:4/6;border:0;background:#fff0f2;color:#c43e59;border-radius:9px;font-weight:bold}.result-toolbar{display:flex;justify-content:space-between;align-items:center;color:var(--muted);margin:18px 0}.view-toggle{display:flex;gap:5px}.view-button{border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:8px;padding:8px 12px}.view-button.active{background:var(--blue);color:#fff}
+.promotion-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:17px}.promotion-card{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow);min-width:0;transition:transform .2s,box-shadow .2s}.promotion-card:hover{transform:translateY(-3px);box-shadow:0 12px 30px #164a8017}.poster{height:175px;position:relative;overflow:hidden;background:linear-gradient(135deg,#ffbd58,#f58ca7)}.poster img{width:100%;height:100%;object-fit:cover;display:block}.poster-placeholder{height:100%;display:grid;place-items:center;color:#fff;font-size:30px;font-weight:bold;text-align:center;padding:15px;background:linear-gradient(135deg,#0755a6,#0874cf)}.poster-label{position:absolute;top:12px;left:12px;background:#fff;color:var(--blue);padding:6px 10px;border-radius:20px;font-size:10px;font-weight:bold;max-width:75%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.favorite-button{position:absolute;right:10px;top:10px;border:0;background:#ffffffed;color:#64748b;border-radius:50%;width:34px;height:34px;font-size:19px}.favorite-button.saved{color:#ef4670}.promotion-body{padding:15px;display:flex;flex-direction:column;flex:1}.promotion-body h3{font-size:16px;line-height:1.4;margin:0 0 8px}.promotion-description{color:var(--muted);font-size:12px;line-height:1.6;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;min-height:58px}.promotion-date{font-size:11px;color:#71839c;margin:13px 0}.status-pill{display:inline-flex;align-items:center;gap:6px;width:fit-content;border-radius:20px;padding:7px 10px;font-size:10px;font-weight:bold;background:#e4f7e9;color:#16833e}.status-pill.soon{background:#fff0d8;color:#b66a00}.status-pill.upcoming{background:#e8efff;color:#285db5}.status-pill.expired,.status-pill.paused{background:#f0f0f0;color:#777}.card-actions{display:flex;gap:8px;margin-top:auto;padding-top:14px}.details-button{flex:1;background:var(--blue);color:#fff;border:0;border-radius:9px;padding:11px 8px;font-weight:bold;font-size:12px}.copy-button{border:1px solid var(--line);background:#fff;color:var(--blue);border-radius:9px;padding:10px 12px}.empty-state{grid-column:1/-1;background:#fff;border:1px dashed #d5e0ed;padding:50px 20px;text-align:center;border-radius:15px;color:var(--muted)}.empty-state h3{color:var(--navy)}.promotion-grid.list-view{grid-template-columns:1fr}.list-view .promotion-card{display:grid;grid-template-columns:180px 1fr}.list-view .poster{height:100%;min-height:165px}.list-view .promotion-body{display:grid;grid-template-columns:1fr auto;gap:5px 20px}.list-view .promotion-body h3,.list-view .promotion-description{grid-column:1}.list-view .promotion-date,.list-view .status-pill,.list-view .card-actions{grid-column:2}.list-view .card-actions{grid-row:1/4;align-self:center}.pagination{display:flex;justify-content:center;gap:7px;margin:25px 0}.page-button{border:1px solid var(--line);background:#fff;color:var(--blue);padding:9px 13px;border-radius:8px}.page-button.active{background:var(--blue);color:#fff}
+.notification-list{display:grid;gap:12px}.notice-card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:18px;display:flex;gap:14px;align-items:flex-start}.notice-card.unread{border-left:4px solid var(--orange)}.notice-icon{width:42px;height:42px;border-radius:12px;background:#fff0d8;display:grid;place-items:center;font-size:21px;flex-shrink:0}.notice-text{min-width:0;flex:1}.notice-card h3{margin:0 0 7px;font-size:15px}.notice-card p{margin:0;color:var(--muted);line-height:1.5;font-size:12px}.notice-actions{display:flex;gap:8px;align-items:center}.notice-actions button{border:0;background:transparent;color:var(--blue)}
+.modal{position:fixed;inset:0;z-index:30;display:none;align-items:center;justify-content:center;padding:20px}.modal.show{display:flex}.modal-backdrop{position:absolute;inset:0;background:#102b4f99}.modal-dialog{position:relative;z-index:1;width:100%;max-width:760px;max-height:90vh;overflow:auto;background:#fff;border-radius:20px;box-shadow:0 25px 80px #001c4433}.modal-close{position:sticky;float:right;right:15px;top:12px;z-index:3;margin:12px 12px -48px 0;width:36px;height:36px;border:0;border-radius:50%;background:#edf3fa;color:var(--navy);font-size:23px}.detail-poster{width:100%;height:235px;object-fit:cover;background:#e8f1fc}.detail-body{padding:28px}.detail-body h2{font-size:27px;color:var(--blue);margin:12px 0}.detail-meta{display:flex;flex-wrap:wrap;gap:9px;margin:16px 0}.detail-meta span{background:#eff5fc;border-radius:20px;padding:8px 12px;font-size:11px}.detail-block{border-top:1px solid var(--line);padding:16px 0}.detail-block h3{font-size:14px;margin:0 0 8px}.detail-block p{white-space:pre-wrap;line-height:1.7;color:#667991;margin:0}.detail-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.toast-container{position:fixed;right:20px;bottom:20px;z-index:50;display:grid;gap:10px}.toast{background:#17365d;color:#fff;padding:14px 20px;border-radius:10px;box-shadow:0 8px 25px #0002;animation:toastIn .2s ease;max-width:min(400px,90vw)}@keyframes toastIn{from{transform:translateY(10px);opacity:0}to{transform:translateY(0);opacity:1}}
+@media(max-width:1250px){.promotion-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.filter-panel{grid-template-columns:repeat(3,minmax(0,1fr))}.hero-art{right:0;opacity:.7}.date-filter{grid-column:1/3}.clear-filter{grid-column:3}}
+@media(max-width:900px){.sidebar{width:205px}.stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.promotion-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hero-art{opacity:.25}.global-search{width:240px}.filter-panel{grid-template-columns:repeat(2,minmax(0,1fr))}.date-filter{grid-column:1/3}.clear-filter{grid-column:1/3;padding:12px}}
+@media(max-width:900px){.deployment-link{padding:9px 10px;font-size:11px}}@media(max-width:650px){.deployment-link{order:4;width:100%;justify-content:center}.topbar{padding:12px 15px;flex-wrap:wrap;gap:12px}.brand{min-width:0}.brand-mark{font-size:28px}.brand-word{font-size:24px}.mobile-menu{display:block}.header-tools{width:100%;justify-content:space-between}.global-search{flex:1;width:auto}.user-chip>span:last-child{display:none}.app-shell{display:block}.sidebar{display:none;position:fixed;top:0;left:0;bottom:0;z-index:25;width:260px;box-shadow:0 0 0 100vw #102b4f66}.sidebar.open{display:flex}.main-content{padding:22px 14px}.welcome-row,.page-heading{align-items:flex-start;flex-direction:column}.today-card{width:100%}.hero{padding:25px 22px;min-height:250px}.hero-art{right:-140px;opacity:.18}.hero h2{font-size:35px}.stats-grid{gap:10px}.stat-card{padding:12px;gap:8px}.stat-icon{width:35px;height:35px;font-size:17px}.stat-card strong{font-size:23px}.filter-panel{grid-template-columns:1fr}.date-filter{grid-column:1;flex-direction:column}.clear-filter{grid-column:1}.promotion-grid{grid-template-columns:1fr}.poster{height:190px}.list-view .promotion-card{display:flex}.list-view .poster{height:180px}.list-view .promotion-body{display:flex}.list-view .card-actions{align-self:stretch}.section-heading h2{font-size:20px}.modal{padding:10px}.detail-body{padding:20px}.detail-poster{height:180px}.notice-card{padding:13px;gap:9px}.notice-actions{flex-direction:column}}
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" data-action="home" aria-label="Beta Cinemas trang chủ">
+      <span class="brand-mark">beta<span class="brand-spark">●</span></span>
+      <span class="brand-word">cinemas</span>
+      <span class="brand-caption">NOWZONE · CỔNG THÔNG TIN NỘI BỘ</span>
+    </a>
+
+    <button class="mobile-menu" data-action="toggle-sidebar" aria-label="Mở menu">☰</button>
+
+    <div class="header-tools">
+      <label class="global-search">
+        <span aria-hidden="true">⌕</span>
+        <input id="globalSearch" type="search" placeholder="Tìm khuyến mãi, mã chương trình..." autocomplete="off">
+        <kbd>Enter</kbd>
+      </label>
+      <button class="header-icon" data-action="notifications" aria-label="Thông báo">
+        ♧ <span id="notificationBadge" class="notification-badge">0</span>
+      </button>
+      <a class="deployment-link" href="https://https://script.google.com/macros/s/AKfycbyia5g8uwOSB_pZ6fzVc6dFxaDEHX77FXJT0rAiexrewt5cgKkxVB8bswhnSvdjh4qjNQ/exec" target="_top" rel="noopener">Mở cổng trực tuyến ↗</a>
+      <div class="user-chip"><span class="avatar">NV</span><span>Nhân viên</span></div>
+    </div>
+  </header>
+
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-label">MENU CHÍNH</div>
+      <button class="nav-item active" data-page="home"><span class="nav-icon">⌂</span>Trang chủ</button>
+      <button class="nav-item" data-page="promotions"><span class="nav-icon">▣</span>Khuyến mãi</button>
+      <button class="nav-item" data-page="favorites"><span class="nav-icon">☆</span>Đã lưu<span class="nav-count" id="favoriteCount">0</span></button>
+      <button class="nav-item" data-page="notifications"><span class="nav-icon">♧</span>Thông báo<span class="nav-count" id="sidebarNoticeCount">0</span></button>
+
+      <div class="sidebar-label support-label">HỖ TRỢ NHÂN VIÊN</div>
+      <button class="nav-item" data-action="guidelines"><span class="nav-icon">▤</span>Hướng dẫn sử dụng</button>
+      <button class="nav-item" data-action="contact"><span class="nav-icon">☎</span>Liên hệ hỗ trợ</button>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-logo">beta cinemas</div>
+        <small>Internal Marketing Portal</small>
+        <small>Beta Cinemas Nowzone</small>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <section id="homePage" class="page">
+        <div class="welcome-row">
+          <div>
+            <div class="eyebrow">BETA CINEMAS · NOWZONE</div>
+            <h1>Chào mừng bạn đến với<br><span>thế giới ưu đãi!</span></h1>
+            <p>Tra cứu nhanh chương trình khuyến mãi để tư vấn khách hàng chính xác.</p>
+          </div>
+          <div class="today-card">
+            <span>HÔM NAY</span>
+            <strong id="todayDate">--/--/----</strong>
+            <small id="lastUpdated">Đang kết nối dữ liệu...</small>
+          </div>
+        </div>
+
+        <section class="hero">
+          <div class="hero-copy">
+            <span class="hero-tag">CHƯƠNG TRÌNH NỔI BẬT</span>
+            <h2 id="heroTitle">Ưu đãi đang chiếu</h2>
+            <p id="heroDescription">Đang cập nhật các chương trình tại Beta Cinemas Nowzone.</p>
+            <button class="primary-button" data-action="featured">Xem chương trình <span>→</span></button>
+          </div>
+          <div class="hero-art" aria-hidden="true">
+            <span class="hero-circle"></span><span class="hero-triangle"></span>
+            <span class="hero-square"></span><span class="hero-ticket">BETA<br><b>DEAL</b></span>
+            <span class="hero-popcorn">🍿</span>
+          </div>
+        </section>
+
+        <div class="stats-grid">
+          <article class="stat-card"><div class="stat-icon blue">▣</div><div><span>Đang áp dụng</span><strong id="statActive">0</strong></div><small>Ưu đãi hiện hành</small></article>
+          <article class="stat-card"><div class="stat-icon pink">◷</div><div><span>Sắp hết hạn</span><strong id="statEnding">0</strong></div><small>Cần lưu ý thời hạn</small></article>
+          <article class="stat-card"><div class="stat-icon green">✦</div><div><span>Sắp diễn ra</span><strong id="statUpcoming">0</strong></div><small>Chuẩn bị tư vấn</small></article>
+          <article class="stat-card"><div class="stat-icon orange">▤</div><div><span>Tổng chương trình</span><strong id="statTotal">0</strong></div><small>Dữ liệu Google Sheets</small></article>
+        </div>
+
+        <section class="content-section">
+          <div class="section-heading"><div><span class="section-kicker">ĐỪNG BỎ LỠ</span><h2>Khuyến mãi đang áp dụng</h2></div><button class="text-button" data-action="open-promotions">Xem tất cả →</button></div>
+          <div class="promotion-grid" id="homeActive"></div>
+        </section>
+        <section class="content-section">
+          <div class="section-heading"><div><span class="section-kicker">CẦN LƯU Ý</span><h2>Chương trình sắp hết hạn</h2></div><button class="text-button" data-action="quick-ending">Xem tất cả →</button></div>
+          <div class="promotion-grid" id="homeEnding"></div>
+        </section>
+        <section class="content-section">
+          <div class="section-heading"><div><span class="section-kicker">SẮP RA MẮT</span><h2>Chương trình sắp diễn ra</h2></div></div>
+          <div class="promotion-grid" id="homeUpcoming"></div>
+        </section>
+      </section>
+
+      <section id="promotionsPage" class="page hidden">
+        <div class="page-heading">
+          <div><div class="eyebrow">TRA CỨU CHƯƠNG TRÌNH</div><h1>Danh sách khuyến mãi</h1><p>Tìm kiếm theo tên, mã chương trình, loại ưu đãi hoặc đối tượng áp dụng.</p></div>
+          <button class="secondary-button" data-action="refresh">↻ Làm mới dữ liệu</button>
+        </div>
+
+        <div class="filter-panel">
+          <label class="filter-search"><span>⌕</span><input id="searchInput" type="search" placeholder="Tên, mã, nội dung ưu đãi..."></label>
+          <select id="categoryFilter"><option value="">Tất cả loại chương trình</option></select>
+          <select id="audienceFilter"><option value="">Tất cả đối tượng</option></select>
+          <select id="statusFilter">
+            <option value="">Tất cả trạng thái</option><option>Đang áp dụng</option>
+            <option>Sắp hết hạn</option><option>Sắp diễn ra</option><option>Tạm dừng</option><option>Đã kết thúc</option>
+          </select>
+          <select id="sortFilter"><option value="priority">Ưu tiên chương trình hiện hành</option><option value="ending">Ngày kết thúc gần nhất</option><option value="newest">Tên A–Z</option></select>
+          <div class="date-filter"><label>Từ ngày <input type="date" id="dateFrom"></label><label>Đến ngày <input type="date" id="dateTo"></label></div>
+          <button class="clear-filter" data-action="clear-filters">Xóa bộ lọc</button>
+        </div>
+
+        <div class="result-toolbar"><span id="resultCount">0 chương trình</span><div class="view-toggle"><button class="view-button active" id="gridViewButton" data-view="grid" aria-label="Dạng lưới">▦</button><button class="view-button" id="listViewButton" data-view="list" aria-label="Dạng danh sách">☷</button></div></div>
+        <div class="promotion-grid" id="promotionResults"></div>
+        <div class="pagination" id="pagination"></div>
+      </section>
+
+      <section id="favoritesPage" class="page hidden">
+        <div class="page-heading"><div><div class="eyebrow">DANH SÁCH CÁ NHÂN</div><h1>Khuyến mãi đã lưu</h1><p>Lưu các chương trình thường xuyên cần tra cứu.</p></div></div>
+        <div class="promotion-grid" id="favoriteResults"></div>
+      </section>
+
+      <section id="notificationsPage" class="page hidden">
+        <div class="page-heading"><div><div class="eyebrow">NHẮC NHỞ THÔNG MINH</div><h1>Thông báo</h1><p>Thông tin chương trình sắp hết hạn và sắp bắt đầu.</p></div><button class="secondary-button" data-action="mark-all-read">Đánh dấu đã đọc</button></div>
+        <div class="notification-list" id="notificationList"></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal" id="detailModal" aria-hidden="true">
+    <div class="modal-backdrop" data-action="close-modal"></div>
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+      <button class="modal-close" data-action="close-modal" aria-label="Đóng">×</button>
+      <div id="detailContent"></div>
+    </div>
+  </div>
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <script>
+'use strict';
+
+const PAGE_SIZE = 12;
+const WARNING_DAYS = 3;
+const state = {
+  promotions: [],
+  favorites: new Set(readLocal('beta_nowzone_favorites', [])),
+  readNotices: new Set(readLocal('beta_nowzone_read_notices', [])),
+  page: 1,
+  view: 'grid',
+  currentPage: 'home',
+  featuredId: null,
+  loading: false,
+  lastLoaded: null
+};
+
+const $ = id => document.getElementById(id);
+const STATUS_PRIORITY = {
+  'Đang áp dụng': 0, 'Sắp hết hạn': 1, 'Sắp diễn ra': 2,
+  'Tạm dừng': 3, 'Đã kết thúc': 4, 'Chưa xác định': 5
+};
+
+function readLocal(key, fallback) {
+  try {
+    const value = localStorage.getItem(key);
+    return value ? JSON.parse(value) : fallback;
+  } catch (err) { return fallback; }
+}
+function saveLocal(key, value) {
+  try { localStorage.setItem(key, JSON.stringify(value)); }
+  catch (err) { console.warn('Không thể lưu cài đặt trình duyệt.', err); }
+}
+function escapeHTML(value) {
+  return String(value == null ? '' : value).replace(/[&<>"']/g, c => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+  })[c]);
+}
+function safeImageUrl(value) {
+  const text = String(value || '').trim();
+  try {
+    const url = new URL(text);
+    return url.protocol === 'https:' ? url.href : '';
+  } catch (err) { return ''; }
+}
+function parseISODate(iso) {
+  const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!m) return null;
+  const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+  return isNaN(d.getTime()) ? null : d;
+}
+function dateISO(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+function formatISO(iso) {
+  const date = parseISODate(iso);
+  return date ? new Intl.DateTimeFormat('vi-VN').format(date) : 'Chưa xác định';
+}
+function daysUntil(iso) {
+  const date = parseISODate(iso);
+  if (!date) return null;
+  const today = new Date(); today.setHours(0,0,0,0);
+  return Math.round((date.getTime() - today.getTime()) / 86400000);
+}
+function statusClass(status) {
+  return ({'Sắp hết hạn':'soon','Sắp diễn ra':'upcoming','Đã kết thúc':'expired','Tạm dừng':'paused'})[status] || '';
+}
+function promotionById(id) {
+  return state.promotions.find(p => String(p.id) === String(id));
+}
+
+/* KẾT NỐI GOOGLE SHEETS */
+function loadPromotions(showMessage = false) {
+  if (state.loading) return;
+  state.loading = true;
+  setLoading(true);
+
+  google.script.run
+    .withSuccessHandler(data => {
+      state.loading = false;
+      state.promotions = (Array.isArray(data) ? data : []).map((p, index) => ({
+        id: String(p.id || `ROW-${index + 1}`),
+        name: String(p.name || ''),
+        description: String(p.description || ''),
+        rules: String(p.rules || ''),
+        start: String(p.start || ''),
+        end: String(p.end || ''),
+        poster: safeImageUrl(p.poster),
+        status: String(p.status || 'Chưa xác định'),
+        audience: String(p.audience || 'Tất cả khách hàng'),
+        category: String(p.category || 'Khuyến mãi'),
+        advice: String(p.advice || ''),
+        featured: Boolean(p.featured),
+        updatedAt: String(p.updatedAt || '')
+      }));
+      state.lastLoaded = new Date();
+      renderAll();
+      setLoading(false);
+      if (showMessage) toast('Đã cập nhật dữ liệu mới nhất.');
+    })
+    .withFailureHandler(error => {
+      state.loading = false;
+      setLoading(false);
+      console.error(error);
+      toast(error && error.message ? error.message : 'Không thể tải dữ liệu Google Sheets.');
+      showLoadError();
+    })
+    .getPromotions();
+}
+function setLoading(isLoading) {
+  const button = document.querySelector('[data-action="refresh"]');
+  if (button) {
+    button.disabled = isLoading;
+    button.textContent = isLoading ? 'Đang tải...' : '↻ Làm mới dữ liệu';
+  }
+}
+function showLoadError() {
+  ['homeActive','homeEnding','homeUpcoming','promotionResults'].forEach(id => {
+    const el = $(id);
+    if (el && !state.promotions.length) {
+      el.innerHTML = '<div class="empty-state"><h3>Chưa tải được dữ liệu</h3><p>Kiểm tra ID Google Sheets, tên sheet và quyền truy cập Apps Script.</p></div>';
+    }
+  });
+}
+function renderAll() {
+  updateHero();
+  updateStats();
+  updateFilterOptions();
+  updateCounters();
+  renderHome();
+  renderPromotions();
+  if (state.currentPage === 'favorites') renderFavorites();
+  if (state.currentPage === 'notifications') renderNotifications();
+  $('lastUpdated').textContent = state.lastLoaded
+    ? 'Cập nhật lúc ' + state.lastLoaded.toLocaleTimeString('vi-VN', {hour:'2-digit',minute:'2-digit'})
+    : 'Đang kết nối dữ liệu...';
+}
+
+/* TRANG CHỦ, THỐNG KÊ, CHƯƠNG TRÌNH NỔI BẬT */
+function updateHero() {
+  const candidates = state.promotions.filter(p => p.featured && ['Đang áp dụng','Sắp hết hạn'].includes(p.status));
+  const chosen = candidates[0] || state.promotions.find(p => p.status === 'Đang áp dụng') || state.promotions[0];
+  state.featuredId = chosen ? chosen.id : null;
+  $('heroTitle').textContent = chosen ? chosen.name : 'Ưu đãi đang chiếu';
+  $('heroDescription').textContent = chosen
+    ? (chosen.description || 'Xem chi tiết chương trình khuyến mãi tại Beta Cinemas Nowzone.')
+    : 'Hiện chưa có chương trình khuyến mãi. Vui lòng quay lại sau.';
+  const button = document.querySelector('[data-action="featured"]');
+  if (button) button.disabled = !chosen;
+}
+function updateStats() {
+  const count = status => state.promotions.filter(p => p.status === status).length;
+  $('statActive').textContent = count('Đang áp dụng');
+  $('statEnding').textContent = count('Sắp hết hạn');
+  $('statUpcoming').textContent = count('Sắp diễn ra');
+  $('statTotal').textContent = state.promotions.length;
+}
+function renderHome() {
+  renderCardGroup('homeActive', state.promotions.filter(p => p.status === 'Đang áp dụng').slice(0,4));
+  renderCardGroup('homeEnding', state.promotions.filter(p => p.status === 'Sắp hết hạn').slice(0,4));
+  renderCardGroup('homeUpcoming', state.promotions.filter(p => p.status === 'Sắp diễn ra').slice(0,4));
+}
+function renderCardGroup(id, items) {
+  const el = $(id);
+  if (!el) return;
+  el.innerHTML = items.length ? items.map(p => cardHTML(p)).join('') : emptyHTML('Chưa có chương trình trong mục này.');
+}
+
+/* TÌM KIẾM, LỌC, SẮP XẾP */
+function updateFilterOptions() {
+  fillSelect('categoryFilter', [...new Set(state.promotions.map(p => p.category).filter(Boolean))], 'Tất cả loại chương trình');
+  fillSelect('audienceFilter', [...new Set(state.promotions.map(p => p.audience).filter(Boolean))], 'Tất cả đối tượng');
+}
+function fillSelect(id, values, placeholder) {
+  const select = $(id);
+  if (!select) return;
+  const previous = select.value;
+  select.innerHTML = '';
+  const first = document.createElement('option'); first.value = ''; first.textContent = placeholder; select.appendChild(first);
+  values.sort((a,b) => a.localeCompare(b,'vi')).forEach(value => {
+    const option = document.createElement('option'); option.value = value; option.textContent = value; select.appendChild(option);
+  });
+  if (values.includes(previous)) select.value = previous;
+}
+function getFilteredPromotions() {
+  const query = $('searchInput').value.trim().toLocaleLowerCase('vi');
+  const category = $('categoryFilter').value;
+  const audience = $('audienceFilter').value;
+  const status = $('statusFilter').value;
+  const from = $('dateFrom').value;
+  const to = $('dateTo').value;
+  const sort = $('sortFilter').value;
+
+  let list = state.promotions.filter(p => {
+    const haystack = [p.id,p.name,p.description,p.rules,p.audience,p.category,p.advice].join(' ').toLocaleLowerCase('vi');
+    const searchMatch = !query || haystack.includes(query);
+    const categoryMatch = !category || p.category === category;
+    const audienceMatch = !audience || p.audience === audience;
+    const statusMatch = !status || p.status === status;
+    const fromMatch = !from || !p.end || p.end >= from;
+    const toMatch = !to || !p.start || p.start <= to;
+    return searchMatch && categoryMatch && audienceMatch && statusMatch && fromMatch && toMatch;
+  });
+
+  if (sort === 'ending') {
+    list.sort((a,b) => (a.end || '9999-12-31').localeCompare(b.end || '9999-12-31'));
+  } else if (sort === 'name') {
+    list.sort((a,b) => a.name.localeCompare(b.name,'vi'));
+  } else {
+    list.sort((a,b) => (STATUS_PRIORITY[a.status] ?? 9) - (STATUS_PRIORITY[b.status] ?? 9) || a.name.localeCompare(b.name,'vi'));
+  }
+  return list;
+}
+function renderPromotions() {
+  const list = getFilteredPromotions();
+  const totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+  state.page = Math.min(state.page, totalPages);
+  $('resultCount').textContent = `${list.length} chương trình`;
+  const start = (state.page - 1) * PAGE_SIZE;
+  const visible = list.slice(start, start + PAGE_SIZE);
+  const container = $('promotionResults');
+  container.classList.toggle('list-view', state.view === 'list');
+  container.innerHTML = visible.length ? visible.map(p => cardHTML(p)).join('') : emptyHTML('Không tìm thấy chương trình phù hợp với bộ lọc hiện tại.');
+  $('gridViewButton').classList.toggle('active', state.view === 'grid');
+  $('listViewButton').classList.toggle('active', state.view === 'list');
+  renderPagination(totalPages);
+}
+function renderPagination(totalPages) {
+  const el = $('pagination'); el.innerHTML = '';
+  if (totalPages <= 1) return;
+  const add = (label, page, active) => {
+    const button = document.createElement('button');
+    button.className = 'page-button' + (active ? ' active' : '');
+    button.textContent = label;
+    button.disabled = page === state.page && (label === '←' || label === '→');
+    button.addEventListener('click', () => { state.page = page; renderPromotions(); window.scrollTo({top:0,behavior:'smooth'}); });
+    el.appendChild(button);
+  };
+  add('←', Math.max(1,state.page-1), false);
+  for (let p=1;p<=totalPages;p++) add(String(p),p,p===state.page);
+  add('→',Math.min(totalPages,state.page+1),false);
+}
+function setView(view) { state.view = view; renderPromotions(); }
+function clearFilters() {
+  ['searchInput','categoryFilter','audienceFilter','statusFilter','dateFrom','dateTo'].forEach(id => $(id).value = '');
+  $('sortFilter').value = 'priority'; state.page = 1; renderPromotions();
+}
+
+/* THẺ KHUYẾN MÃI */
+function cardHTML(p) {
+  const saved = state.favorites.has(p.id);
+  const image = p.poster
+    ? `<img src="${escapeHTML(p.poster)}" alt="Poster ${escapeHTML(p.name)}" loading="lazy" onerror="this.style.display='none'">`
+    : `<div class="poster-placeholder">BETA<br>CINEMAS</div>`;
+  const days = daysUntil(p.end);
+  const timeHint = p.status === 'Sắp hết hạn' && days !== null
+    ? ` · Còn ${Math.max(0,days)} ngày` : '';
+  return `<article class="promotion-card">
+    <div class="poster">${image}
+      <span class="poster-label">${escapeHTML(p.category)}</span>
+      <button class="favorite-button ${saved?'saved':''}" data-action="favorite" data-id="${escapeHTML(p.id)}" aria-label="${saved?'Bỏ lưu':'Lưu'} chương trình">${saved?'★':'☆'}</button>
+    </div>
+    <div class="promotion-body">
+      <h3>${escapeHTML(p.name)}</h3>
+      <div class="promotion-description">${escapeHTML(p.description || 'Chưa có mô tả chương trình.')}</div>
+      <div class="promotion-date">📅 ${escapeHTML(formatISO(p.start))} – ${escapeHTML(formatISO(p.end))}${escapeHTML(timeHint)}</div>
+      <span class="status-pill ${statusClass(p.status)}">${escapeHTML(p.status)}</span>
+      <div class="card-actions">
+        <button class="details-button" data-action="details" data-id="${escapeHTML(p.id)}">Xem chi tiết →</button>
+        <button class="copy-button" data-action="copy" data-id="${escapeHTML(p.id)}" title="Sao chép nội dung tư vấn">▣</button>
+      </div>
+    </div>
+  </article>`;
+}
+function emptyHTML(message) { return `<div class="empty-state"><h3>Chưa có dữ liệu phù hợp</h3><p>${escapeHTML(message)}</p></div>`; }
+
+/* CHI TIẾT, SAO CHÉP, IN */
+function showDetails(id) {
+  const p = promotionById(id); if (!p) return;
+  const image = p.poster ? `<img class="detail-poster" src="${escapeHTML(p.poster)}" alt="Poster ${escapeHTML(p.name)}">` : '';
+  const days = daysUntil(p.end);
+  const countdown = p.status === 'Sắp hết hạn' && days !== null ? `<span>⏳ Còn ${Math.max(0,days)} ngày</span>` : '';
+  $('detailContent').innerHTML = `${image}<div class="detail-body">
+    <span class="status-pill ${statusClass(p.status)}">${escapeHTML(p.status)}</span>
+    <h2 id="detailTitle">${escapeHTML(p.name)}</h2>
+    <div class="detail-meta"><span>🏷 ${escapeHTML(p.id)}</span><span>📅 ${escapeHTML(formatISO(p.start))} – ${escapeHTML(formatISO(p.end))}</span><span>👥 ${escapeHTML(p.audience)}</span>${countdown}</div>
+    <div class="detail-block"><h3>Nội dung ưu đãi</h3><p>${escapeHTML(p.description || 'Chưa cập nhật.')}</p></div>
+    <div class="detail-block"><h3>Thể lệ áp dụng</h3><p>${escapeHTML(p.rules || 'Chưa cập nhật.')}</p></div>
+    <div class="detail-block"><h3>Gợi ý tư vấn khách hàng</h3><p>${escapeHTML(p.advice || 'Vui lòng đọc kỹ thể lệ và xác nhận điều kiện áp dụng trước khi tư vấn khách hàng.')}</p></div>
+    <div class="detail-actions"><button class="details-button" data-action="copy" data-id="${escapeHTML(p.id)}">Sao chép nội dung tư vấn</button><button class="secondary-button" data-action="favorite" data-id="${escapeHTML(p.id)}">${state.favorites.has(p.id)?'★ Đã lưu':'☆ Lưu chương trình'}</button><button class="secondary-button" data-action="print">In chi tiết</button></div>
+  </div>`;
+  $('detailModal').classList.add('show'); $('detailModal').setAttribute('aria-hidden','false'); document.body.style.overflow='hidden';
+}
+function closeDetails() { $('detailModal').classList.remove('show'); $('detailModal').setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
+async function copyPromotion(id) {
+  const p = promotionById(id); if (!p) return;
+  const text = [p.name,p.description,`Thời gian: ${formatISO(p.start)} – ${formatISO(p.end)}`,`Đối tượng: ${p.audience}`,`Thể lệ: ${p.rules}`,`Nội dung tư vấn: ${p.advice}`].filter(Boolean).join('\n');
+  try {
+    if (navigator.clipboard && window.isSecureContext) await navigator.clipboard.writeText(text);
+    else {
+      const area = document.createElement('textarea'); area.value=text; area.style.position='fixed'; area.style.opacity='0'; document.body.appendChild(area); area.select();
+      const ok=document.execCommand('copy'); area.remove(); if(!ok) throw new Error('copy failed');
+    }
+    toast('Đã sao chép thông tin chương trình.');
+  } catch(err) { toast('Trình duyệt không cho phép sao chép.'); }
+}
+function printDetails() { window.print(); }
+
+/* YÊU THÍCH */
+function toggleFavorite(id) {
+  if (state.favorites.has(id)) { state.favorites.delete(id); toast('Đã bỏ khỏi danh sách đã lưu.'); }
+  else { state.favorites.add(id); toast('Đã lưu chương trình.'); }
+  saveLocal('beta_nowzone_favorites', [...state.favorites]);
+  updateCounters(); renderHome(); renderPromotions();
+  if (state.currentPage === 'favorites') renderFavorites();
+  if ($('detailModal').classList.contains('show')) showDetails(id);
+}
+function updateCounters() {
+  $('favoriteCount').textContent = state.favorites.size;
+  const unread = getNotifications().filter(n => !state.readNotices.has(n.id)).length;
+  $('notificationBadge').textContent = unread;
+  $('sidebarNoticeCount').textContent = unread;
+}
+function renderFavorites() {
+  const list = state.promotions.filter(p => state.favorites.has(p.id));
+  $('favoriteResults').innerHTML = list.length ? list.map(p => cardHTML(p)).join('') : emptyHTML('Bạn chưa lưu chương trình nào. Hãy nhấn biểu tượng ngôi sao trên poster để lưu.');
+}
+
+/* THÔNG BÁO TỰ ĐỘNG TỪ NGÀY ÁP DỤNG */
+function getNotifications() {
+  const notices = [];
+  state.promotions.forEach(p => {
+    if (p.status === 'Sắp hết hạn') {
+      const days = daysUntil(p.end);
+      notices.push({id:`end-${p.id}`,type:'ending',title:'Chương trình sắp hết hạn',message:`${p.name} kết thúc ngày ${formatISO(p.end)}${days===0?' (hết hạn hôm nay)':` (còn ${days} ngày)`}.`,promotionId:p.id});
+    } else if (p.status === 'Sắp diễn ra') {
+      const days = daysUntil(p.start);
+      notices.push({id:`start-${p.id}`,type:'upcoming',title:'Chương trình sắp bắt đầu',message:`${p.name} bắt đầu ngày ${formatISO(p.start)}${days===0?' (bắt đầu hôm nay)':` (còn ${days} ngày)`}.`,promotionId:p.id});
+    }
+  });
+  return notices;
+}
+function renderNotifications() {
+  const list = getNotifications();
+  $('notificationList').innerHTML = list.length ? list.map(n => `<article class="notice-card ${state.readNotices.has(n.id)?'':'unread'}">
+    <div class="notice-icon">${n.type==='ending'?'◷':'✦'}</div>
+    <div class="notice-text"><h3>${escapeHTML(n.title)}</h3><p>${escapeHTML(n.message)}</p></div>
+    <div class="notice-actions"><button data-action="details" data-id="${escapeHTML(n.promotionId)}">Xem</button><button data-action="read-notice" data-id="${escapeHTML(n.id)}" aria-label="Đánh dấu đã đọc">✓</button></div>
+  </article>`).join('') : emptyHTML('Hiện chưa có thông báo về chương trình sắp hết hạn hoặc sắp diễn ra.');
+}
+function markNoticeRead(id) { state.readNotices.add(id); saveLocal('beta_nowzone_read_notices',[...state.readNotices]); updateCounters(); renderNotifications(); }
+function markAllRead() { getNotifications().forEach(n => state.readNotices.add(n.id)); saveLocal('beta_nowzone_read_notices',[...state.readNotices]); updateCounters(); renderNotifications(); toast('Đã đánh dấu tất cả thông báo là đã đọc.'); }
+
+/* ĐIỀU HƯỚNG */
+function navigate(page, status = '') {
+  state.currentPage = page;
+  const map = {home:'homePage',promotions:'promotionsPage',favorites:'favoritesPage',notifications:'notificationsPage'};
+  document.querySelectorAll('.page').forEach(el => el.classList.add('hidden'));
+  if ($(map[page])) $(map[page]).classList.remove('hidden');
+  document.querySelectorAll('.nav-item[data-page]').forEach(btn => btn.classList.toggle('active',btn.dataset.page===page));
+  if (page==='promotions') { $('statusFilter').value=status; state.page=1; renderPromotions(); }
+  if (page==='favorites') renderFavorites();
+  if (page==='notifications') renderNotifications();
+  $('sidebar').classList.remove('open'); window.scrollTo({top:0,behavior:'smooth'});
+}
+function showGuidelines() { toast('Hãy kiểm tra thời gian, đối tượng và thể lệ trước khi tư vấn.'); }
+function showContact() { toast('Vui lòng liên hệ Quản lý rạp Beta Cinemas Nowzone để xác nhận thông tin.'); }
+function toast(message) {
+  const el=document.createElement('div'); el.className='toast'; el.textContent=message; $('toastContainer').appendChild(el);
+  window.setTimeout(()=>el.remove(),3600);
+}
+
+/* BẮT SỰ KIỆN TẬP TRUNG - KHÔNG CHÈN HANDLER ĐỘNG VÀO HTML */
+document.addEventListener('click', event => {
+  const button = event.target.closest('[data-action], [data-page], [data-view]');
+  if (!button) return;
+  if (button.dataset.page) { navigate(button.dataset.page); return; }
+  if (button.dataset.view) { state.view=button.dataset.view; renderPromotions(); return; }
+
+  const action=button.dataset.action, id=button.dataset.id;
+  switch(action) {
+    case 'home': event.preventDefault(); navigate('home'); break;
+    case 'toggle-sidebar': $('sidebar').classList.toggle('open'); break;
+    case 'notifications': navigate('notifications'); break;
+    case 'refresh': loadPromotions(true); break;
+    case 'featured': if(state.featuredId) showDetails(state.featuredId); break;
+    case 'open-promotions': navigate('promotions'); break;
+    case 'quick-ending': navigate('promotions','Sắp hết hạn'); break;
+    case 'details': showDetails(id); break;
+    case 'favorite': toggleFavorite(id); break;
+    case 'copy': copyPromotion(id); break;
+    case 'close-modal': closeDetails(); break;
+    case 'mark-all-read': markAllRead(); break;
+    case 'read-notice': markNoticeRead(id); break;
+    case 'clear-filters': clearFilters(); break;
+    case 'print': printDetails(); break;
+    case 'guidelines': showGuidelines(); break;
+    case 'contact': showContact(); break;
+  }
+});
+
+/* BỘ LỌC TỨC THỜI, PHÍM TẮT, KHỞI TẠO */
+let searchTimer;
+['searchInput','categoryFilter','audienceFilter','statusFilter','sortFilter','dateFrom','dateTo'].forEach(id => {
+  $(id).addEventListener(id==='searchInput'?'input':'change', () => {
+    state.page=1;
+    if(id==='searchInput') { clearTimeout(searchTimer); searchTimer=setTimeout(renderPromotions,160); }
+    else renderPromotions();
+  });
+});
+$('globalSearch').addEventListener('keydown', event => {
+  if(event.key==='Enter') { $('searchInput').value=$('globalSearch').value; navigate('promotions'); renderPromotions(); }
+});
+document.addEventListener('keydown', event => {
+  if(event.key==='Escape') closeDetails();
+  if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='k') { event.preventDefault(); $('globalSearch').focus(); }
+});
+$('todayDate').textContent = new Intl.DateTimeFormat('vi-VN',{weekday:'long',day:'2-digit',month:'2-digit',year:'numeric'}).format(new Date());
+loadPromotions();
+</script>
+</body>
+</html>
