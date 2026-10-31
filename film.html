@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0755A6">
+  <title>Beta Cinemas Nowzone | Lịch chiếu & vệ sinh phòng</title>
+  <link rel="icon" href="https://play-lh.googleusercontent.com/so_2mIzE8qaobdSafVStIV7olRZL8Q1SkclYErPgbFDPn1SzAUO33stPfshdztJZCVA0eqfWsO_iia59aHLKZL8">
+  <style>
+    :root{--blue:#0755a6;--blue2:#0874cf;--navy:#18385e;--orange:#ff951c;--pink:#f58ca7;--green:#b2d834;--bg:#f3f7fd;--muted:#8292a8;--line:#e2eaf4;--white:#fff;--shadow:0 8px 28px #164a800c}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--navy);font:14px Arial,Helvetica,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}.hidden{display:none!important}
+    .topbar{height:74px;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:10px 26px;gap:18px;position:sticky;top:0;z-index:20;box-shadow:0 3px 12px #003a781c}.brand{display:flex;align-items:center;gap:12px;color:#fff;text-decoration:none}.brand-logo{font-size:31px;font-weight:900;letter-spacing:-2px}.brand-logo i{font-style:normal;color:var(--orange)}.brand-text{display:grid;gap:4px}.brand-text strong{font-size:17px;letter-spacing:.2px}.brand-text small{font-size:9px;letter-spacing:1.5px;color:#d7e9ff}.top-actions{display:flex;align-items:center;gap:12px}.clock-box{text-align:right;display:grid;gap:3px}.clock-box strong{font-size:17px}.clock-box small{font-size:10px;color:#d8e8fa}.api-pill{display:flex;align-items:center;gap:7px;padding:8px 12px;border-radius:30px;background:#ffffff1e;font-size:11px;white-space:nowrap}.api-dot{width:8px;height:8px;background:#f3b33d;border-radius:50%}.api-pill.online .api-dot{background:#31d17c;box-shadow:0 0 0 4px #31d17c22}.api-pill.offline .api-dot{background:#ff6576}.icon-btn,.mobile-menu{border:1px solid #ffffff4a;background:#ffffff12;color:#fff;border-radius:9px;padding:9px 12px}.mobile-menu{display:none;font-size:20px}
+    .shell{display:flex;min-height:calc(100vh - 74px)}.sidebar{width:238px;background:#fff;border-right:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column;flex-shrink:0}.side-label{font-size:10px;letter-spacing:1.3px;color:#9aa9bc;font-weight:bold;padding:8px 12px 12px}.nav-btn{display:flex;align-items:center;gap:12px;width:100%;border:0;background:transparent;color:#647991;text-align:left;padding:13px 12px;border-radius:10px;margin-bottom:5px;font-weight:700}.nav-btn:hover,.nav-btn.active{background:#eaf3ff;color:var(--blue)}.nav-ico{width:23px;text-align:center;font-size:18px}.nav-count{margin-left:auto;border-radius:20px;background:#fff0d8;color:#a86a00;padding:3px 8px;font-size:10px}.side-note{margin-top:auto;border-top:1px solid var(--line);padding:18px 10px 0;color:var(--muted);font-size:10px;line-height:1.7}.side-note strong{display:block;color:var(--blue);font-size:16px;margin-bottom:4px}.main{flex:1;min-width:0;padding:27px clamp(15px,3vw,38px)}.page{max-width:1500px;margin:auto}.page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap}.eyebrow{color:var(--blue2);font-size:10px;font-weight:bold;letter-spacing:1.4px;margin-bottom:8px}.page-head h1{font-size:clamp(25px,3vw,36px);margin:0 0 8px}.page-head p{color:var(--muted);margin:0;line-height:1.6}.head-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.live-pill{display:inline-flex;align-items:center;gap:7px;background:#e7f8ed;color:#18834a;padding:9px 12px;border-radius:20px;font-size:10px;font-weight:800}.live-pill i{width:7px;height:7px;border-radius:50%;background:#20ad62;box-shadow:0 0 0 4px #20ad6224;animation:pulse 1.8s infinite}@keyframes pulse{50%{opacity:.4}}.btn-primary,.btn-secondary,.btn-light{border:0;border-radius:9px;padding:11px 15px;font-weight:700}.btn-primary{background:var(--blue);color:#fff}.btn-secondary{background:#eaf2ff;color:var(--blue)}.btn-light{background:#fff;border:1px solid var(--line);color:var(--navy)}
+    .hero{background:linear-gradient(110deg,#0755a6,#0874cf);color:#fff;border-radius:21px;padding:26px 30px;min-height:170px;position:relative;overflow:hidden;display:flex;align-items:center;box-shadow:var(--shadow)}.hero-copy{position:relative;z-index:1;max-width:690px}.hero-tag{display:inline-block;background:var(--orange);padding:7px 12px;border-radius:20px;font-size:10px;font-weight:800;margin-bottom:12px}.hero h2{font-size:clamp(26px,3.5vw,43px);text-transform:uppercase;margin:0 0 9px;line-height:1.05}.hero p{margin:0;color:#dcecff;line-height:1.6}.hero-shapes{position:absolute;right:8%;top:0;width:260px;height:100%;opacity:.9}.shape-a{position:absolute;width:85px;height:85px;border-radius:50%;background:var(--orange);top:13px;left:5px}.shape-b{position:absolute;width:0;height:0;border-left:60px solid transparent;border-right:60px solid transparent;border-bottom:105px solid var(--green);right:0;top:23px;transform:rotate(28deg)}.shape-c{position:absolute;width:75px;height:75px;background:var(--pink);border-radius:15px;left:95px;bottom:8px;transform:rotate(-14deg)}
+    .stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin:18px 0 24px}.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px;box-shadow:var(--shadow)}.stat span{display:block;color:var(--muted);font-size:11px}.stat strong{display:block;font-size:27px;color:var(--blue);margin:7px 0 4px}.stat small{color:#9aa8b9;font-size:10px}.quick-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:15px}.panel{background:#fff;border:1px solid var(--line);border-radius:15px;padding:17px;box-shadow:var(--shadow);min-width:0}.panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}.panel-head h2{font-size:18px;color:var(--blue);margin:0}.panel-head small{color:var(--muted);font-size:10px}.room-glance{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.room-tile{padding:12px;border:1px solid var(--line);border-radius:11px;background:#f9fbfe}.room-tile strong{display:block;color:var(--blue);font-size:13px}.room-tile span{display:block;color:var(--muted);font-size:10px;margin-top:7px;line-height:1.4}.mini-list{display:grid;gap:9px}.mini-row{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #eef2f7;padding:8px 0}.mini-row:last-child{border-bottom:0}.mini-row strong{font-size:12px}.mini-row small{display:block;color:var(--muted);margin-top:4px;font-size:10px}.mini-time{font-weight:800;color:var(--blue);white-space:nowrap}
+    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:13px;padding:12px;margin:16px 0}.tabs{display:flex;gap:6px;flex-wrap:wrap}.tab-btn{border:0;border-radius:8px;background:#f0f4fa;color:#62748b;padding:10px 13px;font-weight:800}.tab-btn.active{background:var(--blue);color:#fff}.filters{display:flex;gap:8px;flex-wrap:wrap}.filters select,.filters input{border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--navy);padding:10px 11px;min-width:135px}.filters input{min-width:210px}.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:10px;margin:12px 3px}.legend span{display:flex;align-items:center;gap:6px}.dot{width:8px;height:8px;border-radius:50%;display:inline-block}.dot.blue{background:#3685dc}.dot.green{background:#1ca76a}.dot.gray{background:#9aa6b5}.dot.amber{background:#e9a52d}.dot.purple{background:#9666d6}
+    .room-list{display:grid;gap:12px}.room-card{background:#fff;border:1px solid var(--line);border-radius:13px;overflow:hidden}.room-title{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 15px;background:#f5f8fc}.room-title strong{color:var(--blue);font-size:14px}.room-title span{font-size:10px;color:var(--muted)}.show-row{display:grid;grid-template-columns:115px minmax(160px,1.5fr) minmax(90px,.7fr) 125px 145px;gap:11px;align-items:center;padding:13px 15px;border-top:1px solid #edf1f6}.show-time strong{display:block;font-size:15px;color:var(--blue)}.show-time small,.show-movie small,.show-format{font-size:10px;color:var(--muted)}.show-movie strong{display:block;font-size:13px;line-height:1.4}.pill{width:max-content;max-width:100%;padding:7px 10px;border-radius:20px;font-size:10px;font-weight:800;background:#e8f1ff;color:#2866af}.pill.playing{background:#e4f7e9;color:#16833e}.pill.ended{background:#eef0f3;color:#697789}.pill.cancelled{background:#fff0f0;color:#b83b48}.pill.waiting{background:#fff2d9;color:#a86a00}.pill.working{background:#f0eaff;color:#7544bd}.pill.done{background:#e4f7e9;color:#16833e}.pill.none{background:#eef2f7;color:#77869a}
+    .clean-tools{display:grid;grid-template-columns:1fr 1fr 1.5fr;gap:10px;background:#f6f9fd;border:1px solid var(--line);padding:13px;border-radius:11px;margin-bottom:14px}.clean-tools label{display:grid;gap:6px;color:#657991;font-size:11px;font-weight:700}.clean-tools input{width:100%;min-width:0;padding:10px;border:1px solid var(--line);border-radius:8px;background:#fff}.clean-tools .wide{grid-column:auto}.cleaning-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.clean-card{border:1px solid var(--line);border-radius:13px;padding:15px;display:grid;gap:11px;background:#fff}.clean-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}.clean-top h3{font-size:14px;line-height:1.4;margin:0;color:var(--navy)}.clean-meta{display:flex;flex-wrap:wrap;gap:7px;color:var(--muted);font-size:10px}.clean-meta span{background:#f3f6fa;border-radius:7px;padding:6px 8px}.clean-note{color:#71839c;font-size:11px;line-height:1.5}.clean-actions{display:flex;gap:8px;flex-wrap:wrap}.clean-actions button{border:0;border-radius:8px;padding:10px 12px;font-size:11px;font-weight:800}.start-btn{background:#eaf2ff;color:var(--blue)}.finish-btn{background:#e5f7eb;color:#16834a}.clean-actions button:disabled{opacity:.45;cursor:not-allowed}.history-table{width:100%;border-collapse:collapse;font-size:12px}.history-table th,.history-table td{padding:11px 9px;text-align:left;border-bottom:1px solid #edf1f6;vertical-align:top}.history-table th{background:#f6f9fd;color:#657991;font-size:10px;letter-spacing:.4px}.history-wrap{overflow:auto}.empty{padding:40px 16px;background:#fff;border:1px dashed #d7e1ee;border-radius:12px;text-align:center;color:var(--muted);grid-column:1/-1}.footnote{margin-top:16px;padding:13px 15px;background:#fff8e9;border:1px solid #f6e7c3;border-radius:10px;color:#80652e;font-size:11px;line-height:1.6}.toast-wrap{position:fixed;right:18px;bottom:18px;z-index:50;display:grid;gap:8px}.toast{background:#17365d;color:#fff;padding:13px 17px;border-radius:10px;box-shadow:0 8px 25px #0002;max-width:min(390px,90vw)}.modal{position:fixed;inset:0;z-index:40;display:none;align-items:center;justify-content:center;padding:15px}.modal.show{display:flex}.modal-bg{position:absolute;inset:0;background:#102b4f99}.modal-box{position:relative;background:#fff;border-radius:16px;padding:24px;width:100%;max-width:470px;box-shadow:0 25px 80px #001c4433}.modal-box h2{margin:0 0 8px;color:var(--blue)}.modal-box p{color:var(--muted);font-size:12px;line-height:1.6}.modal-close{position:absolute;right:12px;top:10px;background:#edf3fa;border:0;width:32px;height:32px;border-radius:50%;font-size:20px}.modal-box label{display:grid;gap:6px;margin:12px 0;color:#657991;font-size:11px;font-weight:700}.modal-box input,.modal-box textarea{width:100%;border:1px solid var(--line);border-radius:8px;padding:10px}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+    @media(max-width:1150px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.show-row{grid-template-columns:100px minmax(140px,1fr) 110px 130px}.show-format{display:none}}
+    @media(max-width:850px){.sidebar{width:205px}.quick-grid{grid-template-columns:1fr}.room-glance{grid-template-columns:repeat(3,minmax(0,1fr))}.stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
+    @media(max-width:650px){.topbar{height:auto;min-height:68px;padding:11px 14px;flex-wrap:wrap}.brand-logo{font-size:27px}.brand-text strong{font-size:14px}.brand-text small{font-size:8px}.mobile-menu{display:block}.top-actions{width:100%;justify-content:space-between}.clock-box{text-align:left}.shell{display:block}.sidebar{display:none;position:fixed;top:0;left:0;bottom:0;z-index:30;width:260px;box-shadow:0 0 0 100vw #102b4f66}.sidebar.open{display:flex}.main{padding:19px 12px}.hero{min-height:155px;padding:22px}.hero-shapes{right:-120px;opacity:.2}.hero h2{font-size:30px}.stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.stat{padding:12px}.stat strong{font-size:23px}.toolbar{align-items:stretch}.filters{width:100%}.filters select,.filters input{flex:1;min-width:120px}.show-row{grid-template-columns:88px 1fr;gap:7px 10px}.show-row .show-time{grid-row:1/3}.show-row .show-status,.show-row .clean-status{grid-column:2}.cleaning-grid{grid-template-columns:1fr}.clean-tools{grid-template-columns:1fr}.room-glance{grid-template-columns:repeat(2,minmax(0,1fr))}.page-head{flex-direction:column}.head-actions{width:100%;justify-content:space-between}.history-table{min-width:640px}}
+  </style>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="#" data-action="dashboard">
+    <span class="brand-logo">beta<i>●</i></span>
+    <span class="brand-text"><strong>cinemas · NOWZONE</strong><small>OPERATIONS CONTROL CENTER</small></span>
+  </a>
+  <button class="mobile-menu" data-action="toggle-menu" aria-label="Mở menu">☰</button>
+  <div class="top-actions">
+    <span class="api-pill" id="apiPill"><i class="api-dot"></i><span id="apiText">Đang kết nối Backend</span></span>
+    <div class="clock-box"><strong id="liveClock">--:--:--</strong><small id="liveDate">Đang tải ngày...</small></div>
+    <button class="icon-btn" data-action="refresh">↻ Đồng bộ</button>
+  </div>
+</header>
+<div class="shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="side-label">VẬN HÀNH RẠP</div>
+    <button class="nav-btn active" data-page="dashboard"><span class="nav-ico">▦</span>Tổng quan</button>
+    <button class="nav-btn" data-page="schedule"><span class="nav-ico">📅</span>Lịch chiếu</button>
+    <button class="nav-btn" data-page="cleaning"><span class="nav-ico">🧹</span>Vệ sinh phòng<span class="nav-count" id="pendingCount">0</span></button>
+    <button class="nav-btn" data-page="history"><span class="nav-ico">▤</span>Nhật ký vệ sinh</button>
+    <div class="side-note"><strong>beta cinemas</strong>Hệ thống điều phối lịch chiếu và vệ sinh phòng.<br>Không phụ thuộc cổng khuyến mãi.</div>
+  </aside>
+
+  <main class="main">
+    <section class="page" id="dashboardPage">
+      <div class="page-head">
+        <div><div class="eyebrow">BETA CINEMAS · NOWZONE</div><h1>Trung tâm vận hành</h1><p>Theo dõi lịch chiếu, tình trạng phòng và tiến độ vệ sinh trong một màn hình.</p></div>
+        <div class="head-actions"><span class="live-pill"><i></i> LIVE · ĐỒNG BỘ 30 GIÂY</span><button class="btn-secondary" data-action="refresh">↻ Cập nhật ngay</button></div>
+      </div>
+      <section class="hero"><div class="hero-copy"><span class="hero-tag">OPERATIONS · NOWZONE</span><h2>Lịch chiếu & vệ sinh phòng</h2><p>Kiểm soát suất chiếu theo phòng, theo dõi các việc cần dọn và xác nhận phòng đã sẵn sàng cho lượt khách tiếp theo.</p></div><div class="hero-shapes"><i class="shape-a"></i><i class="shape-b"></i><i class="shape-c"></i></div></section>
+      <div class="stats">
+        <article class="stat"><span>Suất chiếu hôm nay</span><strong id="statShows">0</strong><small>Tổng số suất hợp lệ</small></article>
+        <article class="stat"><span>Đang chiếu</span><strong id="statPlaying">0</strong><small>Đang diễn ra</small></article>
+        <article class="stat"><span>Sắp chiếu</span><strong id="statUpcoming">0</strong><small>Trong ngày hôm nay</small></article>
+        <article class="stat"><span>Chờ vệ sinh</span><strong id="statWaiting">0</strong><small>Cần nhân viên nhận việc</small></article>
+        <article class="stat"><span>Đang vệ sinh</span><strong id="statCleaning">0</strong><small>Đang được xử lý</small></article>
+      </div>
+      <div class="quick-grid">
+        <section class="panel"><div class="panel-head"><h2>Tình trạng phòng</h2><small id="roomSummary">Đang tổng hợp...</small></div><div id="roomGlance" class="room-glance"></div></section>
+        <section class="panel"><div class="panel-head"><h2>Suất chiếu tiếp theo</h2><small>Hôm nay</small></div><div class="mini-list" id="nextShows"></div></section>
+      </div>
+      <section class="panel" style="margin-top:15px"><div class="panel-head"><h2>Việc vệ sinh cần xử lý</h2><button class="btn-secondary" data-page="cleaning">Mở bảng vệ sinh →</button></div><div id="dashboardCleaning" class="cleaning-grid"></div></section>
+      <div class="footnote"><strong>Quy trình:</strong> Khi một suất chiếu kết thúc, Backend tự tạo việc vệ sinh cho phòng đó. Nhân viên nhập tên và PIN do quản lý cấp để bắt đầu và xác nhận hoàn tất. Trạng thái đồng bộ lại cho các thiết bị trong chu kỳ tối đa khoảng 30 giây.</div>
+    </section>
+
+    <section class="page hidden" id="schedulePage">
+      <div class="page-head"><div><div class="eyebrow">SHOWTIME BOARD</div><h1>Lịch chiếu theo phòng</h1><p>Tra cứu suất chiếu theo ngày, phòng, phim và mã suất.</p></div><div class="head-actions"><span class="live-pill"><i></i> CẬP NHẬT 30 GIÂY</span><button class="btn-secondary" data-action="refresh">↻ Đồng bộ ngay</button></div></div>
+      <div class="toolbar"><div class="tabs"><button class="tab-btn active" data-date="today">Hôm nay</button><button class="tab-btn" data-date="tomorrow">Ngày mai</button><button class="tab-btn" data-date="week">7 ngày tới</button><button class="tab-btn" data-date="all">Tất cả</button></div><div class="filters"><select id="scheduleRoom"><option value="">Tất cả phòng</option></select><input id="scheduleSearch" type="search" placeholder="Tìm phim, phòng, mã suất..."></div></div>
+      <div class="legend"><span><i class="dot blue"></i>Sắp chiếu</span><span><i class="dot green"></i>Đang chiếu</span><span><i class="dot gray"></i>Đã kết thúc</span><span><i class="dot amber"></i>Chờ dọn</span><span><i class="dot purple"></i>Đang dọn</span></div>
+      <section class="panel"><div class="panel-head"><h2>Lịch chiếu</h2><small id="scheduleCount">0 suất</small></div><div id="scheduleBoard" class="room-list"><div class="empty">Đang tải lịch chiếu...</div></div></section>
+    </section>
+
+    <section class="page hidden" id="cleaningPage">
+      <div class="page-head"><div><div class="eyebrow">ROOM CLEANING CONTROL</div><h1>Điều phối vệ sinh phòng</h1><p>Nhận việc, bắt đầu dọn và xác nhận hoàn tất vệ sinh.</p></div><div class="head-actions"><span class="live-pill"><i></i> ĐỒNG BỘ 30 GIÂY</span><button class="btn-secondary" data-action="refresh">↻ Cập nhật</button></div></div>
+      <div class="toolbar"><div class="tabs"><button class="tab-btn active" data-clean-status="all">Tất cả</button><button class="tab-btn" data-clean-status="Chờ dọn">Chờ dọn</button><button class="tab-btn" data-clean-status="Đang dọn">Đang dọn</button><button class="tab-btn" data-clean-status="Đã hoàn tất">Đã hoàn tất</button></div><div class="filters"><select id="cleanRoom"><option value="">Tất cả phòng</option></select><select id="cleanDate"><option value="pending">Việc cần xử lý</option><option value="today">Hôm nay</option><option value="all">Tất cả ngày</option></select><input id="cleanSearch" type="search" placeholder="Tìm phòng, phim, nhân viên..."></div></div>
+      <div class="clean-tools"><label>Nhân viên thực hiện<input id="employeeName" maxlength="60" autocomplete="name" placeholder="Nhập họ tên nhân viên"></label><label>PIN xác nhận<input id="employeePin" type="password" maxlength="32" autocomplete="current-password" placeholder="PIN do quản lý cấp"></label><label>Ghi chú khi cập nhật (không bắt buộc)<input id="cleanNote" maxlength="250" placeholder="Ví dụ: đã kiểm tra ghế, sàn và thùng rác"></label></div>
+      <div class="cleaning-grid" id="cleaningBoard"><div class="empty">Đang tải công việc vệ sinh...</div></div>
+      <div class="footnote"><strong>Quy định thao tác:</strong> Nhân viên phải bắt đầu công việc trước khi xác nhận hoàn tất. Người xác nhận hoàn tất phải trùng với nhân viên đã nhận việc. Mọi thao tác được lưu trong nhật ký.</div>
+    </section>
+
+    <section class="page hidden" id="historyPage">
+      <div class="page-head"><div><div class="eyebrow">CLEANING ACTIVITY LOG</div><h1>Nhật ký vệ sinh</h1><p>Theo dõi ai thực hiện, thời điểm bắt đầu và hoàn tất công việc.</p></div><button class="btn-secondary" data-action="refresh">↻ Cập nhật nhật ký</button></div>
+      <section class="panel"><div class="panel-head"><h2>Lịch sử thao tác gần đây</h2><small id="historyCount">0 bản ghi</small></div><div id="historyBoard" class="history-wrap"><div class="empty">Đang tải nhật ký...</div></div></section>
+    </section>
+  </main>
+</div>
+
+<div class="modal" id="confirmModal" aria-hidden="true"><div class="modal-bg" data-action="close-modal"></div><div class="modal-box"><button class="modal-close" data-action="close-modal">×</button><h2 id="confirmTitle">Xác nhận thao tác</h2><p id="confirmMessage"></p><div class="modal-actions"><button class="btn-light" data-action="close-modal">Hủy</button><button class="btn-primary" id="confirmButton">Xác nhận</button></div></div></div>
+<div class="toast-wrap" id="toastWrap" aria-live="polite"></div>
+<iframe id="postFrame" name="postFrame" title="Backend response" hidden></iframe>
+
+<script>
+'use strict';
+
+// Sau khi tạo deployment Apps Script RIÊNG cho vận hành, dán URL /exec vào đây.
+const API_BASE_URL = 'https://script.google.com/macros/s/AKfycbxXik5_tssmOcRHhRBodOmFPZNoNplDQSb3sysqw3PkGcx3qYrUWM22gDUOK5d-BNE/exec';
+const POLL_MS = 30000;
+const state = {
+  data: {shows:[], cleaning:[], logs:[], summary:{}},
+  lastLoaded: null,
+  loading: false,
+  currentPage: 'dashboard',
+  scheduleDate: 'today',
+  cleaningStatus: 'all',
+  pendingNonce: null,
+  pendingTimer: null,
+  confirmAction: null
+};
+const $ = id => document.getElementById(id);
+
+function localRead(key, fallback) { try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; } catch (_) { return fallback; } }
+function localWrite(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch (_) {} }
+function esc(value) { return String(value == null ? '' : value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function dateObj(iso) { const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})$/); return m ? new Date(+m[1], +m[2]-1, +m[3]) : null; }
+function fmtDate(iso) { const d = dateObj(iso); return d ? new Intl.DateTimeFormat('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'}).format(d) : 'Chưa xác định'; }
+function dateKey(d) { return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function todayKey() { return dateKey(new Date()); }
+function plusDays(days) { const d = new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()+days); return dateKey(d); }
+function timeNowText() { return new Intl.DateTimeFormat('vi-VN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(new Date()); }
+function toast(message) { const el=document.createElement('div'); el.className='toast'; el.textContent=message; $('toastWrap').appendChild(el); setTimeout(()=>el.remove(),3800); }
+function setApiStatus(mode, text) { $('apiPill').className='api-pill '+mode; $('apiText').textContent=text; }
+
+function jsonp(action, timeoutMs=15000) {
+  return new Promise((resolve,reject)=>{
+    if (!API_BASE_URL || API_BASE_URL.indexOf('PASTE_NEW_') >= 0) { reject(new Error('Chưa cấu hình URL Backend vận hành trong HTML.')); return; }
+    const callbackName='cb_'+Date.now()+'_'+Math.random().toString(36).slice(2,9);
+    const script=document.createElement('script');
+    let finished=false;
+    const cleanup=()=>{ if(finished) return; finished=true; clearTimeout(timer); delete window.BetaOpsJSONP[callbackName]; script.remove(); };
+    window.BetaOpsJSONP=window.BetaOpsJSONP||{};
+    window.BetaOpsJSONP[callbackName]=(data)=>{ cleanup(); if(data && data.ok) resolve(data); else reject(new Error(data && data.message ? data.message : 'Backend trả về dữ liệu không hợp lệ.')); };
+    const timer=setTimeout(()=>{cleanup();reject(new Error('Hết thời gian chờ Backend.'));},timeoutMs);
+    script.onerror=()=>{cleanup();reject(new Error('Không tải được API Apps Script. Kiểm tra URL và quyền triển khai.'));};
+    const url=new URL(API_BASE_URL);
+    url.searchParams.set('action',action);
+    url.searchParams.set('callback','BetaOpsJSONP.'+callbackName);
+    url.searchParams.set('_',String(Date.now()));
+    script.src=url.toString();
+    document.head.appendChild(script);
+  });
+}
+
+function normalizeData(data) {
+  return {
+    shows:Array.isArray(data.shows)?data.shows:[],
+    cleaning:Array.isArray(data.cleaning)?data.cleaning:[],
+    logs:Array.isArray(data.logs)?data.logs:[],
+    summary:data.summary||{},
+    generatedAt:data.generatedAt||''
+  };
+}
+
+async function loadOperations(manual=false) {
+  if (state.loading) return;
+  state.loading=true;
+  try {
+    const response=await jsonp('operations');
+    state.data=normalizeData(response.data||{});
+    state.lastLoaded=new Date();
+    localWrite('beta_nowzone_ops_cache',{savedAt:Date.now(),data:state.data});
+    setApiStatus('online','Backend trực tuyến');
+    renderAll();
+    if(manual) toast('Đã đồng bộ lịch chiếu và vệ sinh phòng.');
+  } catch(error) {
+    console.error(error);
+    const cached=localRead('beta_nowzone_ops_cache',null);
+    if(cached && cached.data) {
+      state.data=normalizeData(cached.data);
+      renderAll();
+      setApiStatus('offline','Đang dùng dữ liệu lưu gần nhất');
+      if(manual) toast('Không kết nối được Backend. Đang hiển thị dữ liệu cache.');
+    } else {
+      setApiStatus('offline','Backend chưa kết nối');
+      showInitialError(error.message);
+    }
+  } finally { state.loading=false; }
+}
+
+function showInitialError(message) {
+  ['roomGlance','nextShows','scheduleBoard','cleaningBoard','historyBoard','dashboardCleaning'].forEach(id=>{
+    const el=$(id); if(el) el.innerHTML='<div class="empty"><strong>Chưa tải được dữ liệu</strong><br>'+esc(message)+'</div>';
+  });
+  toast(message);
+}
+
+function renderAll() {
+  renderStats(); renderRoomGlance(); renderNextShows(); renderSchedule(); renderCleaning(); renderHistory();
+  $('pendingCount').textContent=state.data.cleaning.filter(t=>t.status==='Chờ dọn').length;
+  const when=state.lastLoaded?state.lastLoaded.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit',second:'2-digit'}):'--:--:--';
+  $('apiText').setAttribute('title','Cập nhật gần nhất: '+when);
+}
+
+function renderStats() {
+  const s=state.data.summary||{};
+  $('statShows').textContent=s.todayShows||0;
+  $('statPlaying').textContent=s.playing||0;
+  $('statUpcoming').textContent=s.upcoming||0;
+  $('statWaiting').textContent=s.waitingCleaning||0;
+  $('statCleaning').textContent=s.cleaningNow||0;
+}
+
+function renderRoomGlance() {
+  const rooms=[...new Set(state.data.shows.map(s=>s.room).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'vi'));
+  const todayShows=state.data.shows.filter(s=>s.date===todayKey());
+  if(!rooms.length) { $('roomGlance').innerHTML='<div class="empty">Chưa có dữ liệu phòng chiếu.</div>'; $('roomSummary').textContent='Chưa có dữ liệu'; return; }
+  $('roomSummary').textContent=rooms.length+' phòng có lịch';
+  $('roomGlance').innerHTML=rooms.map(room=>{
+    const list=todayShows.filter(s=>s.room===room);
+    const playing=list.find(s=>s.status==='Đang chiếu');
+    const pending=list.filter(s=>s.cleaningStatus==='Chờ dọn').length;
+    const cleaning=list.filter(s=>s.cleaningStatus==='Đang dọn').length;
+    let text='Không có suất chiếu hôm nay';
+    if(playing) text='Đang chiếu: '+playing.movie;
+    else if(pending) text=pending+' việc chờ vệ sinh';
+    else if(cleaning) text='Đang vệ sinh';
+    else if(list.length) text=list.length+' suất chiếu hôm nay';
+    return '<div class="room-tile"><strong>'+esc(room)+'</strong><span>'+esc(text)+'</span></div>';
+  }).join('');
+}
+
+function renderNextShows() {
+  const now=todayKey();
+  const rows=state.data.shows.filter(s=>s.date===now&&s.status==='Sắp chiếu').slice(0,6);
+  $('nextShows').innerHTML=rows.length?rows.map(s=>'<div class="mini-row"><div><strong>'+esc(s.movie)+'</strong><small>'+esc(s.room)+' · '+esc(s.id)+'</small></div><span class="mini-time">'+esc(s.start)+'</span></div>').join(''):'<div class="empty">Không còn suất chiếu sắp bắt đầu hôm nay.</div>';
+  const todo=state.data.cleaning.filter(t=>t.status==='Chờ dọn'||t.status==='Đang dọn').slice(0,2);
+  $('dashboardCleaning').innerHTML=todo.length?todo.map(cleanCard).join(''):'<div class="empty">Hiện không có công việc vệ sinh cần xử lý.</div>';
+}
+
+function filterDateShows() {
+  const mode=state.scheduleDate;
+  return state.data.shows.filter(s=>{
+    if(mode==='all') return true;
+    if(mode==='today') return s.date===todayKey();
+    if(mode==='tomorrow') return s.date===plusDays(1);
+    if(mode==='week') return s.date>=todayKey()&&s.date<=plusDays(6);
+    return true;
+  });
+}
+function renderSchedule() {
+  const room=$('scheduleRoom').value;
+  const q=$('scheduleSearch').value.trim().toLocaleLowerCase('vi');
+  const list=filterDateShows().filter(s=>(!room||s.room===room)&&(!q||[s.movie,s.room,s.id,s.format].join(' ').toLocaleLowerCase('vi').includes(q)));
+  $('scheduleCount').textContent=list.length+' suất chiếu';
+  const rooms=[...new Set(state.data.shows.map(s=>s.room).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'vi'));
+  keepSelectOptions('scheduleRoom',rooms,'Tất cả phòng');
+  if(!list.length){$('scheduleBoard').innerHTML='<div class="empty">Không có suất chiếu phù hợp với bộ lọc hiện tại.</div>';return;}
+  const grouped={}; list.forEach(s=>(grouped[s.room] ||= []).push(s));
+  $('scheduleBoard').innerHTML=Object.keys(grouped).sort((a,b)=>a.localeCompare(b,'vi')).map(room=>{
+    const rows=grouped[room];
+    return '<section class="room-card"><div class="room-title"><strong>▣ '+esc(room)+'</strong><span>'+rows.length+' suất chiếu</span></div>'+rows.map(s=>{
+      const cleaning=s.cleaningStatus||'Chưa đến giờ dọn';
+      return '<article class="show-row"><div class="show-time"><strong>'+esc(s.start||'--:--')+' – '+esc(s.end||'--:--')+'</strong><small>'+esc(fmtDate(s.date))+'</small></div><div class="show-movie"><strong>'+esc(s.movie)+'</strong><small>'+esc(s.id)+'</small></div><div class="show-format">'+esc(s.format||'Phim chiếu rạp')+'</div><span class="pill '+showClass(s.status)+'">'+esc(s.status)+'</span><span class="pill '+cleanClass(cleaning)+'">'+esc(cleaning)+'</span></article>';
+    }).join('')+'</section>';
+  }).join('');
+}
+
+function keepSelectOptions(id, values, firstLabel) {
+  const select=$(id), old=select.value;
+  const signature=values.join('|');
+  if(select.dataset.signature===signature) return;
+  select.innerHTML='<option value="">'+esc(firstLabel)+'</option>'+values.map(v=>'<option value="'+esc(v)+'">'+esc(v)+'</option>').join('');
+  select.dataset.signature=signature;
+  if(values.includes(old)) select.value=old;
+}
+
+function visibleCleaning() {
+  const room=$('cleanRoom').value;
+  const dateMode=$('cleanDate').value;
+  const q=$('cleanSearch').value.trim().toLocaleLowerCase('vi');
+  return state.data.cleaning.filter(t=>{
+    const statusOk=state.cleaningStatus==='all'||t.status===state.cleaningStatus;
+    const roomOk=!room||t.room===room;
+    const dateOk=dateMode==='all'||(dateMode==='today'?t.date===todayKey():(t.status!=='Đã hoàn tất'));
+    const qOk=!q||[t.id,t.showId,t.room,t.movie,t.employee,t.note].join(' ').toLocaleLowerCase('vi').includes(q);
+    return statusOk&&roomOk&&dateOk&&qOk;
+  });
+}
+function renderCleaning() {
+  const rooms=[...new Set(state.data.cleaning.map(t=>t.room).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'vi'));
+  keepSelectOptions('cleanRoom',rooms,'Tất cả phòng');
+  const list=visibleCleaning();
+  $('cleaningBoard').innerHTML=list.length?list.map(cleanCard).join(''):'<div class="empty">Không có công việc vệ sinh phù hợp. Công việc mới được sinh sau khi suất chiếu kết thúc.</div>';
+  document.querySelectorAll('[data-clean-status]').forEach(b=>b.classList.toggle('active',b.dataset.cleanStatus===state.cleaningStatus));
+}
+function cleanCard(t) {
+  const done=t.status==='Đã hoàn tất', working=t.status==='Đang dọn';
+  return '<article class="clean-card"><div class="clean-top"><div><h3>'+esc(t.room)+' · '+esc(t.movie)+'</h3><div class="clean-meta"><span>📅 '+esc(fmtDate(t.date))+'</span><span>🕒 Kết thúc '+esc(t.end||'--:--')+'</span><span>🎟 '+esc(t.showId)+'</span></div></div><span class="pill '+cleanClass(t.status)+'">'+esc(t.status)+'</span></div><div class="clean-meta"><span>👤 '+esc(t.employee||'Chưa nhận việc')+'</span>'+(t.startedAt?'<span>Bắt đầu: '+esc(t.startedAt)+'</span>':'')+(t.completedAt?'<span>Hoàn tất: '+esc(t.completedAt)+'</span>':'')+'</div>'+(t.note?'<div class="clean-note">Ghi chú: '+esc(t.note)+'</div>':'')+'<div class="clean-actions"><button class="start-btn" data-action="start-clean" data-id="'+esc(t.id)+'" '+(done||working?'disabled':'')+'>Bắt đầu dọn</button><button class="finish-btn" data-action="complete-clean" data-id="'+esc(t.id)+'" '+(!working?'disabled':'')+'>'+(done?'Đã hoàn tất':'Xác nhận hoàn tất')+'</button></div></article>';
+}
+
+function renderHistory() {
+  const logs=state.data.logs||[];
+  $('historyCount').textContent=logs.length+' bản ghi';
+  if(!logs.length){$('historyBoard').innerHTML='<div class="empty">Chưa có nhật ký vệ sinh. Nhật ký sẽ được tạo khi nhân viên bắt đầu hoặc hoàn tất công việc.</div>';return;}
+  $('historyBoard').innerHTML='<table class="history-table"><thead><tr><th>THỜI ĐIỂM</th><th>MÃ CÔNG VIỆC</th><th>PHÒNG / SUẤT</th><th>NHÂN VIÊN</th><th>THAO TÁC</th><th>GHI CHÚ</th></tr></thead><tbody>'+logs.map(l=>'<tr><td>'+esc(l.at)+'</td><td>'+esc(l.taskId)+'</td><td>'+esc(l.showId)+'</td><td>'+esc(l.employee)+'</td><td>'+esc(l.action)+'</td><td>'+esc(l.note)+'</td></tr>').join('')+'</tbody></table>';
+}
+function showClass(s){return s==='Đang chiếu'?'playing':s==='Đã kết thúc'?'ended':(['Đã hủy','Tạm hoãn'].includes(s)?'cancelled':'');}
+function cleanClass(s){return s==='Chờ dọn'?'waiting':s==='Đang dọn'?'working':s==='Đã hoàn tất'?'done':'none';}
+
+function navigate(page) {
+  state.currentPage=page;
+  const map={dashboard:'dashboardPage',schedule:'schedulePage',cleaning:'cleaningPage',history:'historyPage'};
+  Object.values(map).forEach(id=>$(id).classList.add('hidden'));
+  $(map[page]).classList.remove('hidden');
+  document.querySelectorAll('.nav-btn[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===page));
+  $('sidebar').classList.remove('open');
+  if(page==='schedule') renderSchedule();
+  if(page==='cleaning') renderCleaning();
+  if(page==='history') renderHistory();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function openConfirm(taskId, change) {
+  const task=state.data.cleaning.find(t=>t.id===taskId);
+  if(!task) return toast('Không tìm thấy công việc. Hãy đồng bộ lại.');
+  if(change==='start' && task.status!=='Chờ dọn') return toast('Công việc không còn ở trạng thái Chờ dọn.');
+  if(change==='complete' && task.status!=='Đang dọn') return toast('Chỉ có thể hoàn tất công việc đang dọn.');
+  const employee=$('employeeName').value.trim();
+  const pin=$('employeePin').value.trim();
+  if(employee.length<2){toast('Vui lòng nhập tên nhân viên.');navigate('cleaning');$('employeeName').focus();return;}
+  if(pin.length<6){toast('Vui lòng nhập PIN do quản lý cấp.');navigate('cleaning');$('employeePin').focus();return;}
+  state.confirmAction={taskId:taskId,change:change};
+  $('confirmTitle').textContent=change==='start'?'Bắt đầu vệ sinh phòng':'Xác nhận hoàn tất vệ sinh';
+  $('confirmMessage').textContent=(change==='start'?'Xác nhận nhận việc dọn ':'Xác nhận hoàn tất vệ sinh ')+task.room+' · '+task.movie+'? Nhân viên: '+employee+'.';
+  $('confirmModal').classList.add('show');
+}
+function closeConfirm(){ $('confirmModal').classList.remove('show'); state.confirmAction=null; }
+function submitConfirmed() {
+  if(!state.confirmAction||state.pendingNonce) return;
+  const nonce='ops_'+Date.now()+'_'+Math.random().toString(36).slice(2,10);
+  state.pendingNonce=nonce;
+  $('confirmButton').disabled=true;
+  const payload={action:'updateCleaning',taskId:state.confirmAction.taskId,change:state.confirmAction.change,employee:$('employeeName').value.trim(),pin:$('employeePin').value.trim(),note:$('cleanNote').value.trim(),nonce:nonce};
+  const form=document.createElement('form');
+  form.method='POST';form.action=API_BASE_URL;form.target='postFrame';form.style.display='none';
+  const input=document.createElement('input');input.type='hidden';input.name='payload';input.value=JSON.stringify(payload);form.appendChild(input);
+  document.body.appendChild(form);form.submit();form.remove();
+  closeConfirm();
+  toast('Đã gửi yêu cầu. Đang chờ Backend xác nhận...');
+  state.pendingTimer=setTimeout(()=>{
+    if(state.pendingNonce===nonce){state.pendingNonce=null;$('confirmButton').disabled=false;toast('Chưa nhận được phản hồi. Hãy đồng bộ kiểm tra trước khi thao tác lại.');}
+  },20000);
+}
+window.addEventListener('message',event=>{
+  if(event.source!==$('postFrame').contentWindow) return;
+  if(!['https://script.google.com','https://script.googleusercontent.com'].includes(event.origin) && !event.origin.endsWith('.googleusercontent.com')) return;
+  const packet=event.data;
+  if(!packet||packet.type!=='BETA_NOWZONE_OPERATIONS_RESULT'||packet.nonce!==state.pendingNonce) return;
+  state.pendingNonce=null;clearTimeout(state.pendingTimer);$('confirmButton').disabled=false;
+  const result=packet.result||{};
+  if(result.ok){$('employeePin').value='';$('cleanNote').value='';toast(result.message||'Đã cập nhật trạng thái vệ sinh.');setTimeout(()=>loadOperations(false),500);}
+  else toast(result.message||'Backend không thể cập nhật công việc.');
+});
+
+function updateClock(){ $('liveClock').textContent=timeNowText(); $('liveDate').textContent=new Intl.DateTimeFormat('vi-VN',{weekday:'long',day:'2-digit',month:'2-digit',year:'numeric'}).format(new Date()); }
+
+// Event delegation
+document.addEventListener('click',event=>{
+  const btn=event.target.closest('[data-action],[data-page],[data-date],[data-clean-status]');if(!btn)return;
+  if(btn.dataset.page){navigate(btn.dataset.page);return;}
+  if(btn.dataset.date){state.scheduleDate=btn.dataset.date;document.querySelectorAll('[data-date]').forEach(x=>x.classList.toggle('active',x===btn));renderSchedule();return;}
+  if(btn.dataset.cleanStatus){state.cleaningStatus=btn.dataset.cleanStatus;renderCleaning();return;}
+  switch(btn.dataset.action){
+    case 'dashboard':event.preventDefault();navigate('dashboard');break;
+    case 'toggle-menu':$('sidebar').classList.toggle('open');break;
+    case 'refresh':loadOperations(true);break;
+    case 'start-clean':openConfirm(btn.dataset.id,'start');break;
+    case 'complete-clean':openConfirm(btn.dataset.id,'complete');break;
+    case 'close-modal':closeConfirm();break;
+  }
+});
+$('confirmButton').addEventListener('click',submitConfirmed);
+$('scheduleRoom').addEventListener('change',renderSchedule);
+$('scheduleSearch').addEventListener('input',()=>{clearTimeout(window.__scheduleSearch);window.__scheduleSearch=setTimeout(renderSchedule,150);});
+$('cleanRoom').addEventListener('change',renderCleaning);
+$('cleanDate').addEventListener('change',renderCleaning);
+$('cleanSearch').addEventListener('input',()=>{clearTimeout(window.__cleanSearch);window.__cleanSearch=setTimeout(renderCleaning,150);});
+$('employeeName').value=localRead('beta_ops_employee','');
+$('employeeName').addEventListener('change',()=>localWrite('beta_ops_employee',$('employeeName').value.trim()));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeConfirm();});
+
+updateClock();setInterval(updateClock,1000);
+loadOperations();
+setInterval(()=>{if(!document.hidden)loadOperations(false);},POLL_MS);
+</script>
+</body>
+</html>
