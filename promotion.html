@@ -26,7 +26,6 @@
     button, input, select { font: inherit; }
     button { cursor: pointer; }
     .hidden { display: none !important; }
-    .modal.hidden { display: none !important; }
 
     .hero {
       position: relative;
@@ -68,7 +67,7 @@
       top: 8px;
       z-index: 20;
       display: grid;
-      grid-template-columns: minmax(220px, 1fr) 180px 180px auto;
+      grid-template-columns: minmax(220px, 1fr) 165px 185px auto auto auto;
       gap: 10px;
       padding: 12px;
       margin-bottom: 18px;
@@ -92,6 +91,64 @@
     .btn-primary { color: white; background: var(--blue); border-color: var(--blue); }
     .btn-primary:hover { background: var(--blue-dark); }
     .btn:disabled { opacity: .6; cursor: wait; }
+    .connection-status {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin: -5px 0 16px;
+      padding: 11px 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .connection-status::before {
+      content: "";
+      flex: 0 0 8px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #9aa8b6;
+    }
+    .connection-status[data-state="checking"]::before { background: #e5a11a; }
+    .connection-status[data-state="success"] { color: #176b43; border-color: #c9e8d7; background: #f2fbf6; }
+    .connection-status[data-state="success"]::before { background: #1b9b5d; }
+    .connection-status[data-state="error"] { color: #a51c2b; border-color: #f0b8bf; background: #fff7f7; }
+    .connection-status[data-state="error"]::before { background: #d93648; }
+    .toolbar .btn { white-space: nowrap; }
+
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      margin: 0 0 18px;
+    }
+    .stat-card {
+      min-width: 0;
+      padding: 15px 16px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: #fff;
+      box-shadow: 0 5px 18px rgba(1,53,101,.045);
+    }
+    .stat-label { color: var(--muted); font-size: 12px; font-weight: 700; }
+    .stat-value { margin-top: 6px; color: var(--blue-dark); font-size: 27px; font-weight: 900; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+    .stat-foot { margin-top: 3px; color: #8290a0; font-size: 11px; }
+    .last-updated { color: var(--muted); font-size: 12px; }
+    .toolbar .btn-export { color: var(--blue); border-color: #cbdceb; }
+    .toolbar .btn-export:hover { background: var(--blue-soft); }
+    @media (max-width: 900px) {
+      .stats-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    }
+    @media (max-width: 580px) {
+      .stats-grid { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 9px; }
+      .stat-card { padding: 12px; }
+      .stat-value { font-size: 23px; }
+      .last-updated { width: 100%; }
+    }
 
     .summary {
       display: flex;
@@ -305,7 +362,21 @@
         <option value="name-asc">Tên chương trình: A–Z</option>
       </select>
 
+      <button id="testConnectionBtn" class="btn" type="button">Kiểm tra kết nối</button>
+      <button id="exportBtn" class="btn btn-export" type="button">⇩ Xuất CSV</button>
       <button id="refreshBtn" class="btn btn-primary" type="button">↻ Làm mới</button>
+    </section>
+
+    <div id="connectionStatus" class="connection-status" data-state="idle" role="status" aria-live="polite">
+      Chưa kiểm tra kết nối Apps Script.
+    </div>
+
+    <section class="stats-grid" aria-label="Tổng quan chương trình">
+      <article class="stat-card"><div class="stat-label">Tổng chương trình</div><div id="statTotal" class="stat-value">—</div><div class="stat-foot">Đang có trên hệ thống</div></article>
+      <article class="stat-card"><div class="stat-label">Đang áp dụng</div><div id="statActive" class="stat-value">—</div><div class="stat-foot">Có thể tư vấn / áp dụng</div></article>
+      <article class="stat-card"><div class="stat-label">Sắp diễn ra</div><div id="statUpcoming" class="stat-value">—</div><div class="stat-foot">Chưa đến ngày bắt đầu</div></article>
+      <article class="stat-card"><div class="stat-label">Sắp hết hạn</div><div id="statEnding" class="stat-value">—</div><div class="stat-foot">Còn tối đa 3 ngày</div></article>
+      <article class="stat-card"><div class="stat-label">Đã kết thúc</div><div id="statEnded" class="stat-value">—</div><div class="stat-foot">Không còn hiệu lực</div></article>
     </section>
 
     <div class="summary">
@@ -317,6 +388,7 @@
         <button class="chip" data-filter="favorites" type="button">★ Yêu thích</button>
       </div>
       <span id="resultCount">Đang tải dữ liệu…</span>
+      <span id="lastUpdated" class="last-updated">Chưa đồng bộ</span>
     </div>
 
     <section id="promotionGrid" class="grid" aria-live="polite">
@@ -337,8 +409,10 @@
   <div id="toast" class="toast hidden" role="status"></div>
 
   <script>
-    // Dán URL Web App Apps Script đã triển khai vào đây.
-    const API_URL = "https://script.google.com/macros/s/AKfycbxyv4EuzImYuGQwk88MPB8Y4R4WCbdzhelSepZoBKgIsDVIdFdqzx3GPMcg2VgGTgczMA/exec";
+    // URL Web App Apps Script. Khi tạo deployment mới, cập nhật URL /exec tại đây.
+    const API_URL = "https://script.google.com/macros/s/AKfycbxIGiQqKfleHjuL6Z5LbWe1k8vDw6xG2a4ZyoJOwAR0XxnKkltpG7pM8CDhkvkSIohwvQ/exec";
+    const REQUEST_TIMEOUT = 20000;
+    const FAVORITES_KEY = "betaNowzoneFavorites";
 
     const state = {
       promotions: [],
@@ -346,21 +420,25 @@
       filter: "all",
       sort: "date-asc",
       favorites: new Set(),
-      activePromotion: null
+      activePromotion: null,
+      loading: false,
+      lastUpdated: null
     };
 
     const $ = id => document.getElementById(id);
     const grid = $("promotionGrid");
 
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", init);
+
+    function init() {
       loadFavorites();
       bindEvents();
       loadPromotions();
-    });
+    }
 
     function bindEvents() {
       $("searchInput").addEventListener("input", event => {
-        state.query = event.target.value.trim().toLocaleLowerCase("vi");
+        state.query = normalizeSearch(event.target.value);
         render();
       });
 
@@ -375,6 +453,8 @@
       });
 
       $("refreshBtn").addEventListener("click", loadPromotions);
+      $("testConnectionBtn").addEventListener("click", testConnection);
+      $("exportBtn").addEventListener("click", exportCsv);
       $("closeModalBtn").addEventListener("click", closeModal);
 
       $("modal").addEventListener("click", event => {
@@ -396,65 +476,99 @@
       $("modalContent").addEventListener("click", handleModalAction);
     }
 
+    function validateApiUrl() {
+      if (!API_URL || !/^https:\/\/script\.google\.com\/macros\/s\//i.test(API_URL)) {
+        throw new Error("API_URL chưa phải URL Web App Apps Script hợp lệ.");
+      }
+      if (!/\/exec(?:\?|$)/.test(API_URL)) {
+        throw new Error("Hãy sử dụng URL triển khai Web App có đuôi /exec.");
+      }
+    }
+
+    async function testConnection() {
+      const button = $("testConnectionBtn");
+      button.disabled = true;
+      button.textContent = "Đang kiểm tra…";
+      setConnectionStatus("checking", "Đang kiểm tra kết nối tới Google Apps Script…");
+
+      try {
+        validateApiUrl();
+        const result = await requestApi("ping");
+        assertApiSuccess(result);
+        const count = Number(result.count ?? result.total ?? 0);
+        const updated = result.updatedAt ? ` • Máy chủ: ${formatDateTime(result.updatedAt)}` : "";
+        setConnectionStatus("success", `Kết nối thành công • ${count} chương trình trên Google Sheets${updated}`);
+      } catch (error) {
+        setConnectionStatus("error", `Kết nối thất bại: ${error.message || "Lỗi không xác định."}`);
+      } finally {
+        button.disabled = false;
+        button.textContent = "Kiểm tra kết nối";
+      }
+    }
+
     async function loadPromotions() {
       const button = $("refreshBtn");
+      if (state.loading) return;
 
-      if (!API_URL || API_URL.includes("YOUR_GOOGLE_APPS_SCRIPT_URL")) {
-        showMessage("Hãy thay API_URL bằng URL Web App Apps Script của bạn.", true);
+      try {
+        validateApiUrl();
+      } catch (error) {
+        setConnectionStatus("error", error.message);
+        renderError(error.message);
         return;
       }
 
+      state.loading = true;
       button.disabled = true;
       button.textContent = "Đang tải…";
-      showMessage("Đang tải chương trình khuyến mãi…");
+      if (!state.promotions.length) showGridMessage("Đang tải chương trình khuyến mãi…");
 
       try {
-        const result = await fetchJsonp(API_URL);
-
-        if (!result || result.success === false) {
-          throw new Error(result?.error || "Apps Script trả về dữ liệu không hợp lệ.");
-        }
-
-        const list = Array.isArray(result)
-          ? result
-          : result.data || result.promotions || result.items || [];
-
-        if (!Array.isArray(list)) {
-          throw new Error("Dữ liệu trả về không phải danh sách chương trình.");
-        }
-
-        state.promotions = list.map(normalizePromotion);
+        const result = await requestApi("list");
+        assertApiSuccess(result);
+        const list = extractPromotionList(result);
+        state.promotions = list.map(normalizePromotion).filter(p => p.code || p.name);
+        state.lastUpdated = result.updatedAt || new Date().toISOString();
         render();
+        setConnectionStatus("success", `Đã đồng bộ thành công • ${state.promotions.length} chương trình • ${result.sheet || "Google Sheets"}`);
       } catch (error) {
-        showMessage(
-          "Không tải được dữ liệu: " + (error.message || "Lỗi không xác định."),
-          true
-        );
+        setConnectionStatus("error", `Không tải được dữ liệu: ${error.message || "Lỗi không xác định."}`);
+        if (!state.promotions.length) renderError(`Không tải được dữ liệu. ${error.message || "Vui lòng kiểm tra Apps Script."}`);
+        else showToast("Không thể cập nhật dữ liệu mới. Đang giữ dữ liệu đã tải trước đó.");
       } finally {
+        state.loading = false;
         button.disabled = false;
         button.textContent = "↻ Làm mới";
       }
     }
 
-    function fetchJsonp(url) {
+    function requestApi(action) {
       return new Promise((resolve, reject) => {
-        const callbackName =
-          "betaCallback_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+        let endpoint;
+        try {
+          endpoint = new URL(API_URL);
+        } catch (error) {
+          reject(new Error("URL Apps Script không hợp lệ."));
+          return;
+        }
 
+        const callbackName = "betaCallback_" + Date.now() + "_" + Math.random().toString(36).slice(2);
         const script = document.createElement("script");
-        const separator = url.includes("?") ? "&" : "?";
         let finished = false;
+        endpoint.searchParams.set("action", action);
+        endpoint.searchParams.set("callback", callbackName);
+        endpoint.searchParams.set("_", String(Date.now()));
 
         const timer = setTimeout(() => {
           finish();
-          reject(new Error("Hết thời gian chờ Apps Script phản hồi."));
-        }, 15000);
+          reject(new Error("Hết thời gian chờ phản hồi. Kiểm tra quyền triển khai Web App và thử lại."));
+        }, REQUEST_TIMEOUT);
 
         function finish() {
           if (finished) return;
           finished = true;
           clearTimeout(timer);
-          delete window[callbackName];
+          try { delete window[callbackName]; } catch (_) { window[callbackName] = undefined; }
           script.remove();
         }
 
@@ -465,77 +579,130 @@
 
         script.onerror = () => {
           finish();
-          reject(new Error("Không kết nối được Apps Script. Kiểm tra URL và quyền triển khai."));
+          reject(new Error("Trình duyệt không tải được phản hồi từ Apps Script. Kiểm tra URL /exec và quyền truy cập."));
         };
 
-        script.src =
-          url + separator +
-          "callback=" + encodeURIComponent(callbackName) +
-          "&_=" + Date.now();
-
-        document.body.appendChild(script);
+        script.src = endpoint.toString();
+        document.head.appendChild(script);
       });
     }
 
+    function assertApiSuccess(result) {
+      if (!result || typeof result !== "object") {
+        throw new Error("Phản hồi Apps Script rỗng hoặc không đúng định dạng.");
+      }
+      if (result.success === false || result.ok === false) {
+        throw new Error(result.error || result.message || "Apps Script trả về trạng thái thất bại.");
+      }
+    }
+
+    function extractPromotionList(result) {
+      if (Array.isArray(result)) return result;
+      const candidates = [result.data, result.promotions, result.items, result.records];
+      const list = candidates.find(Array.isArray);
+      if (!list) throw new Error("Không tìm thấy danh sách dữ liệu trong phản hồi API.");
+      return list;
+    }
+
+    function setConnectionStatus(status, message) {
+      const element = $("connectionStatus");
+      element.dataset.state = status;
+      element.textContent = message;
+    }
+
+    // Đọc được cả tên khóa chuẩn từ Apps Script và tiêu đề cột tiếng Việt.
     function normalizePromotion(item, index) {
-      const p = { ...item };
+      const p = item && typeof item === "object" ? item : {};
+      const field = (...names) => {
+        for (const name of names) {
+          if (p[name] !== undefined && p[name] !== null && String(p[name]).trim() !== "") return p[name];
+        }
+        const wanted = new Set(names.map(normalizeKey));
+        for (const [key, value] of Object.entries(p)) {
+          if (wanted.has(normalizeKey(key)) && value !== undefined && value !== null && String(value).trim() !== "") return value;
+        }
+        return "";
+      };
 
-      p.code = text(p.code || p.Code || p.ctkm || p.CTKM || p["Code CTKM"] || `KM-${index + 1}`);
-      p.name = text(p.name || p.title || p["Tên chương trình"] || "Chương trình khuyến mãi");
-      p.startDate = p.startDate || p.start_date || p.start || p["Ngày bắt đầu"] || "";
-      p.endDate = p.endDate || p.end_date || p.end || p["Ngày kết thúc"] || "";
-      p.location = text(p.location || p.place || p["Địa điểm"] || "Beta Nowzone");
-      p.kpi = text(p.kpi || p["KPI"] || "");
-      p.product = text(p.product || p.products || p["Sản phẩm"] || "");
-      p.content = text(p.content || p.description || p["Nội dung"] || "");
-      p.terms = text(p.terms || p["Điều khoản"] || "");
-      p.process = text(p.process || p.procedure || p["Quy trình"] || "");
-      p.control = text(p.control || p["Kiểm soát"] || "");
-      p.lcdLink = text(p.lcdLink || p["Link LCD"] || "");
-      p.image = text(p.image || p.imageUrl || p.poster || p["Ảnh"] || p["Hình ảnh"] || "");
-      p.status = getStatus(p);
-
-      return p;
+      const promotion = {
+        code: text(field("code", "Code", "CTKM", "Code CTKM", "Mã chương trình")) || `KM-${index + 1}`,
+        name: text(field("name", "title", "Tên chương trình")) || "Chương trình khuyến mãi",
+        startDate: field("startDate", "start_date", "Ngày bắt đầu", "Từ ngày"),
+        endDate: field("endDate", "end_date", "Ngày kết thúc", "Đến ngày"),
+        location: text(field("location", "place", "Địa điểm", "Địa điểm áp dụng")) || "Beta Nowzone",
+        kpi: text(field("kpi", "KPI")),
+        product: text(field("product", "products", "Sản phẩm")),
+        content: text(field("content", "description", "Nội dung")),
+        terms: text(field("terms", "Điều khoản")),
+        process: text(field("process", "procedure", "Quy trình")),
+        control: text(field("control", "Kiểm soát")),
+        lcdLink: text(field("lcdLink", "Link LCD")),
+        image: text(field("image", "imageUrl", "poster", "Ảnh", "Hình ảnh")),
+        sourceStatus: text(field("status", "Trạng thái"))
+      };
+      promotion.status = getStatus(promotion);
+      return promotion;
     }
 
     function text(value) {
-      return value == null ? "" : String(value).trim();
+      if (value == null) return "";
+      if (value instanceof Date && !Number.isNaN(value.getTime())) return formatDate(value);
+      return String(value).trim();
+    }
+
+    function normalizeKey(value) {
+      return String(value ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase().replace(/đ/g, "d").replace(/[^a-z0-9]/g, "");
+    }
+
+    function normalizeSearch(value) {
+      return normalizeKey(value);
     }
 
     function parseDate(value) {
       if (value === "" || value == null) return null;
-      if (value instanceof Date) return value;
+      if (value instanceof Date) return Number.isNaN(value.getTime()) ? null : new Date(value.getFullYear(), value.getMonth(), value.getDate());
+      if (typeof value === "number" && Number.isFinite(value)) {
+        const date = new Date(value);
+        return Number.isNaN(date.getTime()) ? null : new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      }
 
-      // Hỗ trợ ngày dạng dd/MM/yyyy, dd-MM-yyyy, yyyy-MM-dd.
       const s = String(value).trim();
       let match = s.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);
+      if (match) return validLocalDate(Number(match[3]), Number(match[2]) - 1, Number(match[1]));
 
-      if (match) {
-        return new Date(Number(match[3]), Number(match[2]) - 1, Number(match[1]));
-      }
+      match = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})(?:$|T|\s)/);
+      if (match) return validLocalDate(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
 
-      match = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
-      if (match) {
-        return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
-      }
+      const parsed = new Date(s);
+      return Number.isNaN(parsed.getTime()) ? null : new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
+    }
 
-      const date = new Date(s);
-      return Number.isNaN(date.getTime()) ? null : date;
+    function validLocalDate(year, month, day) {
+      const date = new Date(year, month, day);
+      if (date.getFullYear() !== year || date.getMonth() !== month || date.getDate() !== day) return null;
+      return date;
     }
 
     function getStatus(p) {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-
       const start = parseDate(p.startDate);
       const end = parseDate(p.endDate);
-
-      if (start) start.setHours(0, 0, 0, 0);
-      if (end) end.setHours(23, 59, 59, 999);
-
       if (start && today < start) return "upcoming";
-      if (end && today > end) return "ended";
-      if (end && Math.ceil((end - today) / 86400000) <= 3) return "ending";
+      if (end) {
+        const endOfDay = new Date(end);
+        endOfDay.setHours(23, 59, 59, 999);
+        if (today > endOfDay) return "ended";
+        const daysLeft = Math.ceil((endOfDay - today) / 86400000);
+        if (daysLeft <= 3) return "ending";
+      }
+      if (!start && !end) {
+        const raw = normalizeKey(p.sourceStatus);
+        if (raw.includes("sapdienra") || raw === "upcoming") return "upcoming";
+        if (raw.includes("saphethan") || raw === "ending") return "ending";
+        if (raw.includes("ketthuc") || raw === "ended") return "ended";
+      }
       return "active";
     }
 
@@ -548,47 +715,92 @@
       })[status] || "Chưa xác định";
     }
 
+
+    function updateStats() {
+      const count = status => state.promotions.filter(p => p.status === status).length;
+      $("statTotal").textContent = state.promotions.length;
+      $("statActive").textContent = count("active");
+      $("statUpcoming").textContent = count("upcoming");
+      $("statEnding").textContent = count("ending");
+      $("statEnded").textContent = count("ended");
+    }
+
+    function formatDateTime(value) {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return String(value || "");
+      return new Intl.DateTimeFormat("vi-VN", {
+        day: "2-digit", month: "2-digit", year: "numeric",
+        hour: "2-digit", minute: "2-digit", hour12: false
+      }).format(date);
+    }
+
+    function exportCsv() {
+      const list = filteredPromotions();
+      if (!list.length) {
+        showToast("Không có dữ liệu để xuất.");
+        return;
+      }
+      const columns = [
+        ["Code", "code"], ["Tên chương trình", "name"],
+        ["Ngày bắt đầu", "startDate"], ["Ngày kết thúc", "endDate"],
+        ["Địa điểm", "location"], ["KPI", "kpi"], ["Sản phẩm", "product"],
+        ["Trạng thái", "status"], ["Nội dung", "content"],
+        ["Điều khoản", "terms"], ["Quy trình", "process"],
+        ["Kiểm soát", "control"], ["Link LCD", "lcdLink"], ["Hình ảnh", "image"]
+      ];
+      const quote = value => `"${String(value ?? "").replace(/"/g, '""')}"`;
+      const rows = [columns.map(([label]) => quote(label)).join(",")];
+      list.forEach(p => rows.push(columns.map(([, key]) => quote(key === "status" ? statusLabel(p[key]) : p[key])).join(",")));
+      const blob = new Blob(["\uFEFF" + rows.join("\r\n")], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `Beta_Nowzone_Khuyen_Mai_${new Date().toISOString().slice(0,10)}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      showToast(`Đã xuất ${list.length} chương trình ra CSV.`);
+    }
+
     function filteredPromotions() {
       let list = [...state.promotions];
-
-      if (state.filter === "favorites") {
-        list = list.filter(p => state.favorites.has(p.code));
-      } else if (state.filter !== "all") {
-        list = list.filter(p => p.status === state.filter);
-      }
+      if (state.filter === "favorites") list = list.filter(p => state.favorites.has(p.code));
+      else if (state.filter !== "all") list = list.filter(p => p.status === state.filter);
 
       if (state.query) {
         list = list.filter(p => {
-          const haystack = [
-            p.code, p.name, p.product, p.location, p.content, p.kpi
-          ].join(" ").toLocaleLowerCase("vi");
+          const haystack = normalizeSearch([
+            p.code, p.name, p.product, p.location, p.content, p.kpi,
+            p.terms, p.process, p.control
+          ].join(" "));
           return haystack.includes(state.query);
         });
       }
 
       list.sort((a, b) => {
         if (state.sort === "name-asc") return a.name.localeCompare(b.name, "vi");
-
-        const aDate = parseDate(a.startDate)?.getTime() || 0;
-        const bDate = parseDate(b.startDate)?.getTime() || 0;
-
+        const aDate = parseDate(a.startDate)?.getTime() ?? 0;
+        const bDate = parseDate(b.startDate)?.getTime() ?? 0;
         return state.sort === "date-desc" ? bDate - aDate : aDate - bDate;
       });
-
       return list;
     }
 
     function render() {
       const list = filteredPromotions();
-
       $("resultCount").textContent = `${list.length} / ${state.promotions.length} chương trình`;
-
+      updateStats();
+      $("lastUpdated").textContent = state.lastUpdated ? `Đồng bộ lúc ${formatDateTime(state.lastUpdated)}` : "Chưa đồng bộ";
       document.querySelectorAll("[data-filter]").forEach(button => {
         button.classList.toggle("active", button.dataset.filter === state.filter);
       });
+      $("statusFilter").value = ["active", "upcoming", "ending", "ended"].includes(state.filter) ? state.filter : "all";
 
       if (!list.length) {
-        showMessage("Không tìm thấy chương trình phù hợp. Hãy đổi từ khóa hoặc bộ lọc.");
+        showGridMessage(state.promotions.length
+          ? "Không tìm thấy chương trình phù hợp. Hãy đổi từ khóa hoặc bộ lọc."
+          : "Chưa có chương trình khuyến mãi trong Google Sheets.");
         return;
       }
 
@@ -596,9 +808,8 @@
         const favorite = state.favorites.has(p.code);
         const image = safeImageUrl(p.image);
         const imageHtml = image
-          ? `<img src="${escapeAttr(image)}" alt="" loading="lazy" onerror="this.remove()">`
+          ? `<img src="${escapeAttr(image)}" alt="Ảnh ${escapeAttr(p.code)}" loading="lazy" onerror="this.remove()">`
           : "";
-
         return `
           <article class="card">
             <div class="poster">
@@ -615,10 +826,8 @@
               <div class="dates">Thời gian: ${escapeHtml(formatDate(p.startDate))} – ${escapeHtml(formatDate(p.endDate))}</div>
               <p class="excerpt">${escapeHtml(p.content || p.product || "Nhấn xem chi tiết để đọc thông tin chương trình.")}</p>
               <div class="card-actions">
-                <button class="btn btn-primary" type="button"
-                        data-action="detail" data-code="${escapeAttr(p.code)}">Xem chi tiết</button>
-                <button class="btn" type="button"
-                        data-action="favorite" data-code="${escapeAttr(p.code)}">${favorite ? "★ Đã lưu" : "☆ Yêu thích"}</button>
+                <button class="btn btn-primary" type="button" data-action="detail" data-code="${escapeAttr(p.code)}">Xem chi tiết</button>
+                <button class="btn" type="button" data-action="favorite" data-code="${escapeAttr(p.code)}">${favorite ? "★ Đã lưu" : "☆ Yêu thích"}</button>
               </div>
             </div>
           </article>`;
@@ -628,10 +837,8 @@
     function handleCardAction(event) {
       const button = event.target.closest("button[data-action]");
       if (!button) return;
-
       const promotion = state.promotions.find(p => p.code === button.dataset.code);
       if (!promotion) return;
-
       if (button.dataset.action === "detail") openModal(promotion);
       if (button.dataset.action === "favorite") toggleFavorite(promotion.code);
     }
@@ -639,7 +846,6 @@
     function openModal(promotion) {
       state.activePromotion = promotion;
       $("modalTitle").textContent = promotion.name;
-
       $("modalContent").innerHTML = `
         <div class="badges">
           <span class="badge ${promotion.status}">${statusLabel(promotion.status)}</span>
@@ -659,45 +865,29 @@
         <div class="modal-actions">
           <button class="btn btn-primary" type="button" data-modal-action="copy">Sao chép nội dung</button>
           <button class="btn" type="button" data-modal-action="print">In chi tiết</button>
-          <button class="btn" type="button" data-modal-action="favorite">
-            ${state.favorites.has(promotion.code) ? "★ Bỏ yêu thích" : "☆ Thêm yêu thích"}
-          </button>
+          <button class="btn" type="button" data-modal-action="favorite">${state.favorites.has(promotion.code) ? "★ Bỏ yêu thích" : "☆ Thêm yêu thích"}</button>
+          ${safeHttpUrl(promotion.lcdLink) ? `<a class="btn" href="${escapeAttr(safeHttpUrl(promotion.lcdLink))}" target="_blank" rel="noopener noreferrer">Mở Link LCD</a>` : ""}
         </div>`;
-
       $("modal").classList.remove("hidden");
       document.body.style.overflow = "hidden";
       $("closeModalBtn").focus();
     }
 
     function detailBox(label, value) {
-      return `<div class="detail-box">
-        <div class="detail-label">${escapeHtml(label)}</div>
-        <div class="detail-value">${escapeHtml(value || "—")}</div>
-      </div>`;
+      return `<div class="detail-box"><div class="detail-label">${escapeHtml(label)}</div><div class="detail-value">${escapeHtml(value || "—")}</div></div>`;
     }
 
     function detailSection(title, content) {
       if (!content) return "";
-      return `<section class="detail-section">
-        <h3>${escapeHtml(title)}</h3>
-        <p>${escapeHtml(content)}</p>
-      </section>`;
+      return `<section class="detail-section"><h3>${escapeHtml(title)}</h3><p>${escapeHtml(content)}</p></section>`;
     }
 
     function handleModalAction(event) {
-      const button = event.target.closest("[data-modal-action]");
+      const button = event.target.closest("button[data-modal-action]");
       if (!button || !state.activePromotion) return;
-
       const promotion = state.activePromotion;
-
-      if (button.dataset.modalAction === "copy") {
-        copyText(promotionText(promotion));
-      }
-
-      if (button.dataset.modalAction === "print") {
-        window.print();
-      }
-
+      if (button.dataset.modalAction === "copy") copyText(promotionText(promotion));
+      if (button.dataset.modalAction === "print") window.print();
       if (button.dataset.modalAction === "favorite") {
         toggleFavorite(promotion.code);
         openModal(promotion);
@@ -722,7 +912,9 @@
 
     async function copyText(value) {
       try {
-        await navigator.clipboard.writeText(value);
+        if (navigator.clipboard && window.isSecureContext) await navigator.clipboard.writeText(value);
+        else throw new Error("Clipboard API unavailable");
+        showToast("Đã sao chép nội dung chương trình.");
       } catch (error) {
         const textarea = document.createElement("textarea");
         textarea.value = value;
@@ -730,38 +922,25 @@
         textarea.style.opacity = "0";
         document.body.appendChild(textarea);
         textarea.select();
-        document.execCommand("copy");
+        const copied = document.execCommand("copy");
         textarea.remove();
+        showToast(copied ? "Đã sao chép nội dung chương trình." : "Không thể sao chép tự động trên trình duyệt này.");
       }
-
-      showToast("Đã sao chép nội dung chương trình.");
     }
 
     function toggleFavorite(code) {
-      if (state.favorites.has(code)) {
-        state.favorites.delete(code);
-      } else {
-        state.favorites.add(code);
-      }
-
-      try {
-        localStorage.setItem("betaNowzoneFavorites", JSON.stringify([...state.favorites]));
-      } catch (error) {
-        // Trang vẫn hoạt động nếu trình duyệt chặn localStorage.
-      }
-
+      if (state.favorites.has(code)) state.favorites.delete(code);
+      else state.favorites.add(code);
+      try { localStorage.setItem(FAVORITES_KEY, JSON.stringify([...state.favorites])); } catch (_) {}
       render();
       showToast(state.favorites.has(code) ? "Đã thêm vào yêu thích." : "Đã bỏ khỏi yêu thích.");
     }
 
     function loadFavorites() {
       try {
-        state.favorites = new Set(
-          JSON.parse(localStorage.getItem("betaNowzoneFavorites") || "[]")
-        );
-      } catch (error) {
-        state.favorites = new Set();
-      }
+        const saved = JSON.parse(localStorage.getItem(FAVORITES_KEY) || "[]");
+        state.favorites = new Set(Array.isArray(saved) ? saved.map(String) : []);
+      } catch (_) { state.favorites = new Set(); }
     }
 
     function closeModal() {
@@ -770,43 +949,39 @@
       state.activePromotion = null;
     }
 
-    function showMessage(message, isError = false) {
+    function showGridMessage(message, isError = false) {
       grid.innerHTML = `<div class="message ${isError ? "error" : ""}">${escapeHtml(message)}</div>`;
-      $("resultCount").textContent = isError ? "Lỗi tải dữ liệu" : "0 chương trình";
+    }
+
+    function renderError(message) {
+      $("resultCount").textContent = "Lỗi tải dữ liệu";
+      showGridMessage(message, true);
     }
 
     function showToast(message) {
       const toast = $("toast");
       toast.textContent = message;
       toast.classList.remove("hidden");
-
       clearTimeout(showToast.timer);
-      showToast.timer = setTimeout(() => toast.classList.add("hidden"), 2400);
+      showToast.timer = setTimeout(() => toast.classList.add("hidden"), 2600);
     }
 
     function formatDate(value) {
       const date = parseDate(value);
       if (!date) return value ? String(value) : "Chưa cập nhật";
-
-      return new Intl.DateTimeFormat("vi-VN", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric"
-      }).format(date);
+      return new Intl.DateTimeFormat("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" }).format(date);
     }
 
-    function safeImageUrl(value) {
+    function safeHttpUrl(value) {
       const url = String(value || "").trim();
       return /^https?:\/\//i.test(url) ? url : "";
     }
 
+    function safeImageUrl(value) { return safeHttpUrl(value); }
+
     function escapeHtml(value) {
       return String(value ?? "").replace(/[&<>"']/g, char => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;"
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
       })[char]);
     }
 
