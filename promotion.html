@@ -3,22 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Beta Nowzone | Promotion Timeline</title>
+<title>Beta Nowzone | Timeline khuyến mãi</title>
 
 <style>
 :root {
   --navy: #17395f;
   --blue: #2868ad;
-  --blue-light: #eaf2fb;
-  --bg: #f3f6fa;
-  --white: #fff;
-  --text: #243449;
-  --muted: #77869a;
-  --border: #e1e8f0;
+  --blue-light: #eaf3fc;
   --green: #239b67;
   --orange: #d99226;
   --red: #cf5050;
-  --shadow: 0 5px 18px rgba(26,54,93,.05);
+  --bg: #f3f6fa;
+  --white: #fff;
+  --text: #25364b;
+  --muted: #7c8a9c;
+  --border: #e2e8f0;
+  --shadow: 0 4px 18px rgba(23,57,95,.06);
 }
 
 * { box-sizing: border-box; }
@@ -40,13 +40,15 @@ select:focus-visible {
   outline-offset: 2px;
 }
 
+button:disabled { opacity: .5; cursor: not-allowed; }
+
 .topbar {
-  background: var(--white);
+  background: white;
   border-bottom: 1px solid var(--border);
   padding: 15px 26px;
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
   gap: 16px;
 }
 
@@ -59,26 +61,26 @@ select:focus-visible {
 .brand-mark {
   width: 42px;
   height: 42px;
-  border-radius: 10px;
   background: var(--navy);
   color: white;
+  border-radius: 10px;
   display: grid;
   place-items: center;
-  font-size: 20px;
+  font-size: 21px;
   font-weight: bold;
 }
 
 .brand h1 {
   margin: 0;
-  font-size: 18px;
   color: var(--navy);
+  font-size: 18px;
 }
 
 .brand p {
   margin: 3px 0 0;
+  color: var(--muted);
   font-size: 11px;
   letter-spacing: 1px;
-  color: var(--muted);
 }
 
 .top-actions {
@@ -90,12 +92,12 @@ select:focus-visible {
 .btn {
   border: 1px solid var(--border);
   background: white;
-  border-radius: 8px;
-  padding: 9px 13px;
   color: var(--text);
+  padding: 9px 13px;
+  border-radius: 8px;
 }
 
-.btn:hover { background: #f4f7fb; }
+.btn:hover { background: #f2f6fb; }
 
 .btn-primary {
   background: var(--blue);
@@ -105,33 +107,13 @@ select:focus-visible {
 
 .btn-primary:hover { background: var(--navy); }
 
-.pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  border-radius: 30px;
-  padding: 6px 11px;
-  background: #e8f6ee;
-  color: #238451;
-  font-size: 12px;
-  font-weight: bold;
-}
-
-.pill::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  background: currentColor;
-  border-radius: 50%;
-}
-
 main {
-  max-width: 1600px;
+  max-width: 1700px;
   margin: auto;
   padding: 24px;
 }
 
-.heading {
+.page-heading {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -140,15 +122,35 @@ main {
   margin-bottom: 20px;
 }
 
-.heading h2 {
+.page-heading h2 {
   margin: 0;
-  font-size: 23px;
   color: var(--navy);
+  font-size: 24px;
 }
 
-.heading p {
+.page-heading p {
   margin: 6px 0 0;
   color: var(--muted);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: #e8f6ee;
+  color: #238451;
+  border-radius: 30px;
+  padding: 6px 11px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.badge::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
 }
 
 .stats {
@@ -179,8 +181,8 @@ main {
 }
 
 .stat-note {
-  font-size: 12px;
   color: var(--muted);
+  font-size: 12px;
   margin-top: 4px;
 }
 
@@ -219,187 +221,397 @@ main {
 
 .toolbar input,
 .toolbar select {
-  padding: 10px 12px;
   border: 1px solid var(--border);
-  border-radius: 8px;
   background: white;
   color: var(--text);
+  padding: 10px 12px;
+  border-radius: 8px;
 }
 
-.toolbar input { min-width: 210px; }
+.toolbar input { min-width: 220px; }
 
-.month-control {
+.view-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: #f0f4f8;
+  border-radius: 9px;
+}
+
+.view-tabs button {
+  border: 0;
+  background: transparent;
+  padding: 8px 13px;
+  border-radius: 7px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.view-tabs button.active {
+  background: white;
+  color: var(--blue);
+  box-shadow: 0 1px 4px #17395f15;
+}
+
+.timeline-toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 17px;
 }
 
-.month-control strong {
-  font-size: 15px;
-  color: var(--navy);
+.date-navigation {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
+
+.date-navigation strong {
+  min-width: 160px;
+  text-align: center;
+  color: var(--navy);
+  font-size: 15px;
+}
+
+.date-navigation button {
+  border: 1px solid var(--border);
+  background: white;
+  border-radius: 7px;
+  padding: 8px 11px;
+  color: var(--text);
+}
+
+.legend {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.legend .active { background: var(--green); }
+.legend .future { background: var(--blue); }
+.legend .ended { background: #8c98a8; }
 
 .timeline-scroll {
   overflow-x: auto;
   border: 1px solid var(--border);
   border-radius: 9px;
+  background: white;
 }
 
 .timeline {
-  min-width: 920px;
+  min-width: 780px;
+}
+
+.timeline-axis {
+  display: grid;
+  grid-template-columns: 220px minmax(0,1fr);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: #f6f9fc;
+  border-bottom: 1px solid var(--border);
+}
+
+.axis-label {
+  padding: 13px 16px;
+  color: var(--navy);
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: .5px;
+  border-right: 1px solid var(--border);
+}
+
+.axis-track {
   display: grid;
   position: relative;
-  grid-template-columns: 160px repeat(30, minmax(25px,1fr));
 }
 
-.month-title {
-  grid-column: 1 / -1;
-  padding: 12px 16px;
-  background: #edf3fa;
-  color: var(--navy);
-  font-size: 12px;
-  font-weight: bold;
-  letter-spacing: .4px;
-}
-
-.day-label {
+.axis-day {
   text-align: center;
-  padding: 11px 0;
-  font-size: 11px;
+  padding: 10px 0;
+  border-right: 1px solid #e9eef4;
   color: var(--muted);
-  border-bottom: 1px solid var(--border);
-  border-right: 1px solid #edf1f6;
+  font-size: 11px;
+  min-width: 0;
 }
 
-.day-label.today {
+.axis-day.today {
+  background: #e4f0fc;
   color: var(--blue);
-  background: var(--blue-light);
   font-weight: bold;
 }
+
+.axis-day.weekend { background: #f0f4f8; }
 
 .timeline-row {
-  grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: subgrid;
-  min-height: 115px;
+  grid-template-columns: 220px minmax(0,1fr);
+  min-height: 100px;
   border-bottom: 1px solid var(--border);
 }
 
-.row-label {
-  grid-row: 1;
-  padding: 15px;
-  background: #f7f9fc;
+.timeline-row:last-child { border-bottom: 0; }
+
+.row-info {
+  padding: 14px 16px;
   border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  min-width: 0;
+}
+
+.row-code {
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.row-name {
+  color: var(--navy);
   font-size: 12px;
   font-weight: bold;
-  color: var(--navy);
-  display: flex;
-  align-items: center;
+  line-height: 1.45;
+}
+
+.row-date {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.track {
+  position: relative;
+  background-image: linear-gradient(
+    to right,
+    #e8edf3 1px,
+    transparent 1px
+  );
+  background-size: calc(100% / var(--day-count)) 100%;
+  background-position: left top;
+  min-width: 0;
+}
+
+.track.weekend {
+  background-color: #fbfcfe;
+}
+
+.today-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #df5656;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.today-line::before {
+  content: "HÔM NAY";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #df5656;
+  color: white;
+  border-radius: 0 0 4px 4px;
+  font-size: 8px;
+  padding: 3px 5px;
+  white-space: nowrap;
 }
 
 .event {
-  grid-row: 1;
-  margin: 10px 4px;
-  padding: 12px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 64px;
   border-radius: 7px;
   background: var(--blue);
   color: white;
-  cursor: pointer;
+  padding: 8px 11px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 6px;
-  box-shadow: 0 3px 9px #2868ad22;
-  position: relative;
-  z-index: 1;
+  gap: 3px;
+  cursor: pointer;
+  box-shadow: 0 3px 9px #2868ad20;
+  transition: box-shadow .15s, transform .15s;
+  z-index: 3;
 }
 
-.event:hover { background: var(--navy); }
+.event:hover {
+  box-shadow: 0 5px 14px #17395f35;
+  transform: translateY(-50%) scale(1.01);
+  z-index: 4;
+}
 
 .event.selected {
-  outline: 3px solid #a6d1ff;
+  outline: 3px solid #a7d3ff;
   outline-offset: -3px;
 }
 
-.event.future { background: #7387a1; }
-.event.ended { background: #8f9aab; }
+.event.active { background: var(--green); }
+.event.future { background: var(--blue); }
+.event.ended { background: #8996a7; }
 
 .event-name {
-  font-weight: bold;
   font-size: 12px;
-  line-height: 1.4;
+  font-weight: bold;
+  line-height: 1.35;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.event-date,
-.event-status,
-.event-kpi {
-  font-size: 11px;
+.event-meta {
+  font-size: 10px;
+  opacity: .9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.event-status { opacity: .85; }
+.event-progress {
+  height: 4px;
+  background: #ffffff50;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 2px;
+}
 
-.empty {
-  grid-column: 1 / -1;
+.event-progress div {
+  height: 100%;
+  background: white;
+}
+
+.timeline-empty {
   padding: 40px 20px;
   text-align: center;
   color: var(--muted);
 }
 
+.list-view {
+  display: grid;
+  gap: 12px;
+}
+
+.list-item {
+  display: grid;
+  grid-template-columns: 5px minmax(0,1fr) auto;
+  gap: 15px;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 15px;
+  cursor: pointer;
+  transition: background .15s;
+}
+
+.list-item:hover { background: #f6f9fc; }
+
+.list-color {
+  height: 100%;
+  min-height: 55px;
+  background: var(--blue);
+  border-radius: 5px;
+}
+
+.list-color.active { background: var(--green); }
+.list-color.ended { background: #8996a7; }
+
+.list-item h4 {
+  margin: 0 0 5px;
+  color: var(--navy);
+  font-size: 13px;
+}
+
+.list-item p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.list-status {
+  text-align: right;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.list-status strong {
+  display: block;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+
 .detail-head {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
   gap: 15px;
   flex-wrap: wrap;
   margin-bottom: 20px;
 }
 
 .detail-head h3 {
+  margin: 10px 0;
   color: var(--navy);
   font-size: 20px;
-  line-height: 1.45;
-  margin: 10px 0;
+  line-height: 1.4;
 }
 
 .detail-meta {
   color: var(--muted);
   font-size: 13px;
-  line-height: 1.8;
+  line-height: 1.9;
 }
 
 .detail-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0,1fr));
+  grid-template-columns: repeat(2,minmax(0,1fr));
   gap: 15px;
 }
 
 .detail-card {
+  min-width: 0;
   background: #f8fafc;
   border: 1px solid var(--border);
   border-radius: 9px;
   padding: 18px;
-  min-width: 0;
 }
 
 .detail-card h4 {
   margin: 0 0 13px;
-  font-size: 14px;
   color: var(--navy);
-  display: flex;
-  align-items: center;
-  gap: 9px;
+  font-size: 14px;
 }
 
 .detail-card h4::before {
   content: "";
-  display: block;
+  display: inline-block;
   width: 4px;
-  height: 17px;
-  border-radius: 3px;
+  height: 16px;
   background: var(--blue);
+  border-radius: 3px;
+  margin-right: 9px;
+  vertical-align: -3px;
 }
 
 .detail-text {
@@ -415,22 +627,11 @@ main {
   text-decoration: underline;
 }
 
-.detail-text .section {
-  font-weight: bold;
-  color: var(--navy);
-}
-
 .kpi-layout {
   display: grid;
   grid-template-columns: minmax(0,1fr) 210px;
   gap: 25px;
   align-items: center;
-}
-
-.kpi-title {
-  font-weight: bold;
-  color: var(--navy);
-  margin-bottom: 12px;
 }
 
 .kpi-bar {
@@ -442,15 +643,15 @@ main {
 
 .kpi-bar div {
   height: 100%;
+  width: 0%;
   background: var(--green);
   border-radius: 20px;
-  width: 0%;
 }
 
 .kpi-number {
   text-align: right;
-  font-size: 13px;
   color: var(--muted);
+  font-size: 13px;
 }
 
 .kpi-number strong {
@@ -459,7 +660,7 @@ main {
   font-size: 28px;
 }
 
-.loading {
+.loading, .empty {
   padding: 35px;
   text-align: center;
   color: var(--muted);
@@ -492,7 +693,7 @@ main {
   .brand h1 { font-size: 16px; }
   .brand-mark { width: 36px; height: 36px; }
   main { padding: 12px; }
-  .heading h2 { font-size: 19px; }
+  .page-heading h2 { font-size: 20px; }
   .stats { gap: 9px; }
   .stat { padding: 13px; }
   .stat-value { font-size: 21px; }
@@ -500,7 +701,10 @@ main {
   .panel-body { padding: 13px; }
   .toolbar { width: 100%; }
   .toolbar input { width: 100%; }
-  .month-control { flex-wrap: wrap; }
+  .date-navigation { width: 100%; justify-content: space-between; }
+  .date-navigation strong { min-width: 0; }
+  .list-item { grid-template-columns: 4px minmax(0,1fr); }
+  .list-status { grid-column: 2; text-align: left; }
 }
 </style>
 </head>
@@ -518,17 +722,17 @@ main {
 
   <div class="top-actions">
     <button class="btn" id="refreshBtn">↻ Tải lại</button>
-    <span class="pill">Nowzone</span>
+    <span class="badge">Nowzone</span>
   </div>
 </header>
 
 <main>
-  <section class="heading">
+  <section class="page-heading">
     <div>
       <h2>Timeline chương trình khuyến mãi</h2>
-      <p>Quản lý lịch áp dụng, KPI và quy trình vận hành tại rạp.</p>
+      <p>Theo dõi thời gian áp dụng, trạng thái và KPI chương trình.</p>
     </div>
-    <span class="pill">Dữ liệu nội bộ Nowzone</span>
+    <span class="badge">Dữ liệu Google Sheets</span>
   </section>
 
   <div id="errorBox"></div>
@@ -539,29 +743,26 @@ main {
       <div class="stat-value" id="totalCount">—</div>
       <div class="stat-note">Từ Google Sheets</div>
     </div>
-
+    <div class="stat">
+      <div class="stat-label">Đang áp dụng</div>
+      <div class="stat-value" id="activeCount">—</div>
+      <div class="stat-note">Theo ngày hiện tại</div>
+    </div>
     <div class="stat">
       <div class="stat-label">KPI BC766</div>
       <div class="stat-value">100 ly</div>
       <div class="stat-note">Mục tiêu Beta Nowzone</div>
     </div>
-
     <div class="stat">
       <div class="stat-label">Giá trị đền bù</div>
       <div class="stat-value">48.000đ</div>
       <div class="stat-note">Mỗi ly Free Lipton 22oz</div>
     </div>
-
-    <div class="stat">
-      <div class="stat-label">Thời gian BC766</div>
-      <div class="stat-value" style="font-size:21px">01–15/11</div>
-      <div class="stat-note">Năm 2026</div>
-    </div>
   </section>
 
   <section class="panel">
     <div class="panel-head">
-      <h3>Danh sách chương trình</h3>
+      <h3>Lịch khuyến mãi</h3>
 
       <div class="toolbar">
         <input id="searchInput"
@@ -578,24 +779,40 @@ main {
     </div>
 
     <div class="panel-body">
-      <div class="month-control">
-        <button class="btn" id="prevMonth">‹ Tháng trước</button>
-        <strong id="monthLabel">Tháng 11 / 2026</strong>
-        <button class="btn" id="nextMonth">Tháng sau ›</button>
+      <div class="timeline-toolbar">
+        <div class="view-tabs">
+          <button class="active" data-view="month">Tháng</button>
+          <button data-view="week">Tuần</button>
+          <button data-view="list">Danh sách</button>
+        </div>
+
+        <div class="date-navigation">
+          <button id="prevBtn">‹ Trước</button>
+          <strong id="periodLabel">Tháng 11 / 2026</strong>
+          <button id="nextBtn">Sau ›</button>
+          <button class="btn-primary" id="todayBtn">Hôm nay</button>
+        </div>
       </div>
 
-      <div class="timeline-scroll">
+      <div class="legend">
+        <span><i class="active"></i> Đang áp dụng</span>
+        <span><i class="future"></i> Sắp áp dụng</span>
+        <span><i class="ended"></i> Đã kết thúc</span>
+      </div>
+
+      <div class="timeline-scroll" style="margin-top:15px">
         <div class="timeline" id="timeline"></div>
       </div>
+
+      <div class="list-view" id="listView" hidden></div>
     </div>
   </section>
 
   <section class="panel">
     <div class="panel-head">
-      <h3>Thông tin chi tiết chương trình</h3>
-      <span class="pill" id="detailCode">BC766</span>
+      <h3>Chi tiết chương trình</h3>
+      <span class="badge" id="detailCode">BC766</span>
     </div>
-
     <div class="panel-body" id="detailContent">
       <div class="loading">Đang tải dữ liệu...</div>
     </div>
@@ -604,19 +821,21 @@ main {
   <section class="panel">
     <div class="panel-head">
       <h3>KPI chương trình — Beta Nowzone</h3>
-      <span class="pill">Mục tiêu 100 ly</span>
+      <span class="badge">Mục tiêu 100 ly</span>
     </div>
-
     <div class="panel-body">
       <div class="kpi-layout">
         <div>
-          <div class="kpi-title">BC766 — Free Lipton 22oz</div>
-          <div class="kpi-bar"><div id="kpiBar"></div></div>
+          <strong style="color:var(--navy)">
+            BC766 — Free Lipton 22oz
+          </strong>
+          <div class="kpi-bar" style="margin-top:12px">
+            <div id="kpiBar"></div>
+          </div>
           <div class="detail-meta" style="margin-top:10px">
             KPI mục tiêu. Chưa có dữ liệu bán thực tế.
           </div>
         </div>
-
         <div class="kpi-number">
           <strong id="kpiPercent">0%</strong>
           <span id="kpiText">0 / 100 ly</span>
@@ -632,51 +851,96 @@ main {
 
 <script>
 /* =========================
-   CẤU HÌNH API
+   CẤU HÌNH
 ========================= */
 
 const API_URL = 'https://script.google.com/macros/s/AKfycbx4BwoRhu-sshi1ZZMjLRuY5mKoYZno3CV1ozcPv38H51AQlfBNiEJUkmN0SFtCl4iQ7A/exec';
 
 let promotions = [];
 let selectedCode = '';
-let selectedMonth = new Date(2026, 10, 1);
+let viewMode = 'month';
+let anchorDate = new Date(2026, 10, 1);
 
 const $ = id => document.getElementById(id);
 
 const MONTHS = [
-  'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4',
-  'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8',
-  'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'
+  'Tháng 1','Tháng 2','Tháng 3','Tháng 4',
+  'Tháng 5','Tháng 6','Tháng 7','Tháng 8',
+  'Tháng 9','Tháng 10','Tháng 11','Tháng 12'
 ];
 
 /* =========================
-   HÀM TIỆN ÍCH
+   HÀM NGÀY
 ========================= */
 
-function escapeHTML(value) {
-  return String(value ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+function dateOnly(value) {
+  const [y,m,d] = value.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
+function dateKey(date) {
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, '0'),
+    String(date.getDate()).padStart(2, '0')
+  ].join('-');
 }
 
 function formatDate(value) {
   if (!value) return '';
+  const [y,m,d] = value.split('-');
+  return `${d}/${m}/${y}`;
+}
 
-  const parts = value.split('-');
-  if (parts.length !== 3) return value;
+function addDays(date, amount) {
+  const result = new Date(date);
+  result.setDate(result.getDate() + amount);
+  return result;
+}
 
-  return `${parts[2]}/${parts[1]}/${parts[0]}`;
+function startOfWeek(date) {
+  const result = new Date(date);
+  const day = (result.getDay() + 6) % 7;
+  result.setDate(result.getDate() - day);
+  result.setHours(0,0,0,0);
+  return result;
+}
+
+function getPeriod() {
+  if (viewMode === 'week') {
+    const start = startOfWeek(anchorDate);
+    return {
+      start,
+      end: addDays(start, 6),
+      days: 7
+    };
+  }
+
+  const start = new Date(
+    anchorDate.getFullYear(),
+    anchorDate.getMonth(),
+    1
+  );
+
+  const end = new Date(
+    anchorDate.getFullYear(),
+    anchorDate.getMonth() + 1,
+    0
+  );
+
+  return {
+    start,
+    end,
+    days: end.getDate()
+  };
 }
 
 function getStatus(item) {
   const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  today.setHours(0,0,0,0);
 
-  const start = new Date(item.start + 'T00:00:00');
-  const end = new Date(item.end + 'T00:00:00');
+  const start = dateOnly(item.start);
+  const end = dateOnly(item.end);
 
   if (today < start) return 'future';
   if (today > end) return 'ended';
@@ -690,18 +954,31 @@ function statusText(status) {
   return 'Đã kết thúc';
 }
 
-function showError(message) {
-  $('errorBox').innerHTML =
-    `<div class="error">${escapeHTML(message)}</div>`;
+function remainingText(item) {
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  const start = dateOnly(item.start);
+  const end = dateOnly(item.end);
+
+  if (today < start) {
+    const days = Math.ceil((start - today) / 86400000);
+    return `Còn ${days} ngày bắt đầu`;
+  }
+
+  if (today > end) return 'Đã kết thúc';
+
+  const days = Math.ceil((end - today) / 86400000);
+  return days === 0 ? 'Kết thúc hôm nay' : `Còn ${days} ngày`;
 }
 
 /* =========================
-   GỌI BACKEND
+   DỮ LIỆU
 ========================= */
 
 function loadPromotions() {
   if (API_URL.includes('YOUR_GOOGLE_APPS_SCRIPT_URL')) {
-    showError('Hãy cấu hình URL Apps Script trong biến API_URL.');
+    showError('Hãy cấu hình URL Apps Script trong API_URL.');
     return;
   }
 
@@ -709,11 +986,9 @@ function loadPromotions() {
   $('refreshBtn').disabled = true;
   $('refreshBtn').textContent = 'Đang tải...';
 
-  const callback = 'beta_' + Date.now() + '_' +
-    Math.random().toString(36).slice(2);
+  const callback = 'beta_' + Date.now();
 
   const script = document.createElement('script');
-
   let completed = false;
 
   function finish() {
@@ -732,7 +1007,7 @@ function loadPromotions() {
     showError('Backend không phản hồi. Kiểm tra URL và quyền truy cập.');
   }, 20000);
 
-  window[callback] = function(result) {
+  window[callback] = result => {
     clearTimeout(timeout);
     finish();
 
@@ -741,22 +1016,16 @@ function loadPromotions() {
       return;
     }
 
-    promotions = Array.isArray(result.data)
-      ? result.data
-      : [];
+    promotions = Array.isArray(result.data) ? result.data : [];
 
-    renderTimeline();
+    renderAll();
 
-    if (promotions.length) {
-      const chosen =
-        promotions.find(p => p.code === selectedCode) ||
-        promotions[0];
+    const chosen =
+      promotions.find(p => p.code === selectedCode) ||
+      promotions[0];
 
-      showDetail(chosen.code);
-    } else {
-      $('detailContent').textContent =
-        'Chưa có chương trình khuyến mãi.';
-    }
+    if (chosen) showDetail(chosen.code);
+    else $('detailContent').textContent = 'Chưa có chương trình.';
   };
 
   const query = new URLSearchParams({
@@ -766,7 +1035,7 @@ function loadPromotions() {
 
   script.src = API_URL + '?' + query.toString();
 
-  script.onerror = function() {
+  script.onerror = () => {
     clearTimeout(timeout);
     finish();
     showError('Không thể kết nối Google Apps Script.');
@@ -775,91 +1044,103 @@ function loadPromotions() {
   document.body.appendChild(script);
 }
 
-/* =========================
-   LỌC DỮ LIỆU
-========================= */
+function showError(message) {
+  $('errorBox').innerHTML =
+    `<div class="error">${escapeHTML(message)}</div>`;
+}
+
+function escapeHTML(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
 
 function getFilteredPromotions() {
   const keyword = $('searchInput').value.trim().toLowerCase();
   const status = $('statusFilter').value;
 
-  const year = selectedMonth.getFullYear();
-  const month = selectedMonth.getMonth();
-
-  const monthStart = new Date(year, month, 1);
-  const monthEnd = new Date(year, month + 1, 0);
+  const period = getPeriod();
 
   return promotions.filter(item => {
-    const matchesText =
-      `${item.code} ${item.name}`.toLowerCase().includes(keyword);
+    const text = `${item.code} ${item.name}`.toLowerCase();
 
+    const matchesText = text.includes(keyword);
     const matchesStatus =
       status === 'all' || getStatus(item) === status;
 
-    const start = new Date(item.start + 'T00:00:00');
-    const end = new Date(item.end + 'T00:00:00');
+    const start = dateOnly(item.start);
+    const end = dateOnly(item.end);
 
-    const matchesMonth =
-      start <= monthEnd && end >= monthStart;
+    const matchesPeriod =
+      start <= period.end && end >= period.start;
 
-    return matchesText && matchesStatus && matchesMonth;
+    return matchesText && matchesStatus && matchesPeriod;
   });
 }
 
 /* =========================
-   VẼ TIMELINE
+   TIMELINE
 ========================= */
 
 function renderTimeline() {
   const root = $('timeline');
   const items = getFilteredPromotions();
-
-  const year = selectedMonth.getFullYear();
-  const month = selectedMonth.getMonth();
-  const days = new Date(year, month + 1, 0).getDate();
-
-  root.style.gridTemplateColumns =
-    `160px repeat(${days}, minmax(25px,1fr))`;
-
-  $('monthLabel').textContent =
-    `${MONTHS[month]} / ${year}`;
+  const period = getPeriod();
 
   root.innerHTML = '';
 
-  const title = document.createElement('div');
-  title.className = 'month-title';
-  title.style.gridColumn = '1 / -1';
-  title.textContent =
-    `LỊCH KHUYẾN MÃI — ${MONTHS[month].toUpperCase()} ${year}`;
-  root.appendChild(title);
+  root.style.minWidth =
+    viewMode === 'week' ? '780px' : '1100px';
 
-  const label = document.createElement('div');
-  label.className = 'row-label';
-  label.textContent = 'CHƯƠNG TRÌNH';
-  root.appendChild(label);
+  $('periodLabel').textContent =
+    viewMode === 'week'
+      ? `${formatDate(dateKey(period.start))} – ${formatDate(dateKey(period.end))}`
+      : `${MONTHS[anchorDate.getMonth()]} / ${anchorDate.getFullYear()}`;
 
-  for (let day = 1; day <= days; day++) {
+  const axis = document.createElement('div');
+  axis.className = 'timeline-axis';
+
+  const axisLabel = document.createElement('div');
+  axisLabel.className = 'axis-label';
+  axisLabel.textContent = 'CHƯƠNG TRÌNH';
+
+  const axisTrack = document.createElement('div');
+  axisTrack.className = 'axis-track';
+  axisTrack.style.gridTemplateColumns =
+    `repeat(${period.days}, minmax(0,1fr))`;
+
+  for (let i = 0; i < period.days; i++) {
+    const day = addDays(period.start, i);
     const cell = document.createElement('div');
-    cell.className = 'day-label';
 
-    const now = new Date();
+    cell.className = 'axis-day';
 
-    if (
-      now.getFullYear() === year &&
-      now.getMonth() === month &&
-      now.getDate() === day
-    ) {
+    if (dateKey(day) === dateKey(new Date())) {
       cell.classList.add('today');
     }
 
-    cell.textContent = day;
-    root.appendChild(cell);
+    if (day.getDay() === 0 || day.getDay() === 6) {
+      cell.classList.add('weekend');
+    }
+
+    cell.textContent = viewMode === 'week'
+      ? ['CN','T2','T3','T4','T5','T6','T7'][day.getDay()] +
+        ' ' + day.getDate()
+      : day.getDate();
+
+    axisTrack.appendChild(cell);
   }
+
+  axis.append(axisLabel, axisTrack);
+  root.appendChild(axis);
 
   if (!items.length) {
     const empty = document.createElement('div');
-    empty.className = 'empty';
-    empty.textContent = 'Không có chương trình trong thời gian đã chọn.';
+    empty.className = 'timeline-empty';
+    empty.textContent = 'Không có chương trình trong khoảng thời gian này.';
     root.appendChild(empty);
     return;
   }
@@ -867,67 +1148,152 @@ function renderTimeline() {
   items.forEach(item => {
     const row = document.createElement('div');
     row.className = 'timeline-row';
-    row.style.gridTemplateColumns =
-      `160px repeat(${days}, minmax(25px,1fr))`;
 
-    const rowLabel = document.createElement('div');
-    rowLabel.className = 'row-label';
-    rowLabel.textContent = item.code;
-    row.appendChild(rowLabel);
+    const info = document.createElement('div');
+    info.className = 'row-info';
 
-    const start = new Date(item.start + 'T00:00:00');
-    const end = new Date(item.end + 'T00:00:00');
-
-    const startDay =
-      start.getFullYear() === year &&
-      start.getMonth() === month
-        ? start.getDate() : 1;
-
-    const endDay =
-      end.getFullYear() === year &&
-      end.getMonth() === month
-        ? end.getDate() : days;
-
-    const event = document.createElement('div');
-
-    event.className = 'event ' + getStatus(item);
-
-    if (item.code === selectedCode) {
-      event.classList.add('selected');
-    }
-
-    event.style.gridColumn =
-      `${startDay + 1} / ${endDay + 2}`;
+    const code = document.createElement('div');
+    code.className = 'row-code';
+    code.textContent = item.code;
 
     const name = document.createElement('div');
-    name.className = 'event-name';
+    name.className = 'row-name';
     name.textContent = item.name;
 
     const date = document.createElement('div');
-    date.className = 'event-date';
+    date.className = 'row-date';
     date.textContent =
       `${formatDate(item.start)} – ${formatDate(item.end)}`;
 
-    const status = document.createElement('div');
-    status.className = 'event-status';
-    status.textContent = statusText(getStatus(item));
+    info.append(code, name, date);
 
-    const kpi = document.createElement('div');
-    kpi.className = 'event-kpi';
-    kpi.textContent = `KPI: ${item.kpi} ly`;
+    const track = document.createElement('div');
+    track.className = 'track';
+    track.style.setProperty('--day-count', period.days);
 
-    event.append(name, date, status, kpi);
+    const today = new Date();
+    today.setHours(0,0,0,0);
+
+    if (today >= period.start && today <= period.end) {
+      const marker = document.createElement('div');
+      marker.className = 'today-line';
+
+      const dayIndex = Math.floor(
+        (today - period.start) / 86400000
+      );
+
+      marker.style.left =
+        `${((dayIndex + .5) / period.days) * 100}%`;
+
+      track.appendChild(marker);
+    }
+
+    const start = dateOnly(item.start);
+    const end = dateOnly(item.end);
+
+    const visibleStart = start < period.start
+      ? period.start : start;
+
+    const visibleEnd = end > period.end
+      ? period.end : end;
+
+    const startIndex = Math.floor(
+      (visibleStart - period.start) / 86400000
+    );
+
+    const endIndex = Math.floor(
+      (visibleEnd - period.start) / 86400000
+    );
+
+    const left = (startIndex / period.days) * 100;
+    const width = ((endIndex - startIndex + 1) / period.days) * 100;
+
+    const event = document.createElement('div');
+
+    event.className = `event ${getStatus(item)}`;
+    if (item.code === selectedCode) event.classList.add('selected');
+
+    event.style.left = `${left}%`;
+    event.style.width = `${width}%`;
+
+    const eventName = document.createElement('div');
+    eventName.className = 'event-name';
+    eventName.textContent = item.name;
+
+    const meta = document.createElement('div');
+    meta.className = 'event-meta';
+    meta.textContent = `${item.code} · ${remainingText(item)}`;
+
+    event.append(eventName, meta);
+
+    event.title =
+      `${item.name}\n${formatDate(item.start)} – ${formatDate(item.end)}\n${statusText(getStatus(item))}`;
 
     event.addEventListener('click', () => {
       showDetail(item.code);
       renderTimeline();
     });
 
-    row.appendChild(event);
+    track.appendChild(event);
+    row.append(info, track);
     root.appendChild(row);
   });
+}
 
-  $('totalCount').textContent = promotions.length;
+/* =========================
+   DANH SÁCH
+========================= */
+
+function renderList() {
+  const root = $('listView');
+  root.innerHTML = '';
+
+  getFilteredPromotions().forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'list-item';
+
+    const color = document.createElement('div');
+    color.className = `list-color ${getStatus(item)}`;
+
+    const info = document.createElement('div');
+
+    const name = document.createElement('h4');
+    name.textContent = `${item.code} — ${item.name}`;
+
+    const date = document.createElement('p');
+    date.textContent =
+      `${formatDate(item.start)} – ${formatDate(item.end)} · KPI ${item.kpi} ly`;
+
+    info.append(name, date);
+
+    const status = document.createElement('div');
+    status.className = 'list-status';
+
+    const strong = document.createElement('strong');
+    strong.textContent = statusText(getStatus(item));
+
+    const remaining = document.createElement('span');
+    remaining.textContent = remainingText(item);
+
+    status.append(strong, remaining);
+
+    card.append(color, info, status);
+
+    card.addEventListener('click', () => {
+      showDetail(item.code);
+      document.querySelector('.panel:last-of-type')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    root.appendChild(card);
+  });
+
+  if (!root.children.length) {
+    root.textContent = 'Không có chương trình phù hợp.';
+    root.className = 'list-view empty';
+  } else {
+    root.className = 'list-view';
+  }
 }
 
 /* =========================
@@ -943,8 +1309,6 @@ function detailCard(title, value) {
 
   const text = document.createElement('div');
   text.className = 'detail-text';
-
-  // Giữ nguyên xuống dòng trong Google Sheets.
   text.textContent = value || 'Chưa có thông tin.';
 
   card.append(heading, text);
@@ -956,7 +1320,6 @@ function showDetail(code) {
   if (!item) return;
 
   selectedCode = code;
-
   $('detailCode').textContent = item.code;
 
   const root = $('detailContent');
@@ -967,10 +1330,6 @@ function showDetail(code) {
 
   const info = document.createElement('div');
 
-  const badge = document.createElement('span');
-  badge.className = 'pill';
-  badge.textContent = item.code;
-
   const title = document.createElement('h3');
   title.textContent = item.name;
 
@@ -980,10 +1339,17 @@ function showDetail(code) {
     `Thời gian: ${formatDate(item.start)} – ${formatDate(item.end)}\n` +
     `Địa điểm: ${item.location}\n` +
     `Trạng thái: ${statusText(getStatus(item))}\n` +
+    `Thời gian: ${remainingText(item)}\n` +
     `Sản phẩm: ${item.product}`;
 
-  info.append(badge, title, meta);
+  info.append(title, meta);
   head.appendChild(info);
+
+  const status = document.createElement('span');
+  status.className = 'badge';
+  status.textContent = statusText(getStatus(item));
+  head.appendChild(status);
+
   root.appendChild(head);
 
   const grid = document.createElement('div');
@@ -1017,28 +1383,55 @@ function showDetail(code) {
 }
 
 /* =========================
-   SỰ KIỆN
+   TỔNG HỢP VÀ ĐIỀU HƯỚNG
 ========================= */
+
+function renderAll() {
+  $('totalCount').textContent = promotions.length;
+  $('activeCount').textContent =
+    promotions.filter(p => getStatus(p) === 'active').length;
+
+  $('timeline').hidden = viewMode === 'list';
+  $('listView').hidden = viewMode !== 'list';
+
+  if (viewMode === 'list') renderList();
+  else renderTimeline();
+}
+
+function changePeriod(amount) {
+  if (viewMode === 'week') {
+    anchorDate.setDate(anchorDate.getDate() + amount * 7);
+  } else {
+    anchorDate.setMonth(anchorDate.getMonth() + amount);
+  }
+
+  renderAll();
+}
+
+document.querySelectorAll('[data-view]').forEach(button => {
+  button.addEventListener('click', () => {
+    viewMode = button.dataset.view;
+
+    document.querySelectorAll('[data-view]').forEach(btn => {
+      btn.classList.toggle('active', btn === button);
+    });
+
+    renderAll();
+  });
+});
+
+$('prevBtn').addEventListener('click', () => changePeriod(-1));
+$('nextBtn').addEventListener('click', () => changePeriod(1));
+
+$('todayBtn').addEventListener('click', () => {
+  anchorDate = new Date();
+  renderAll();
+});
 
 $('refreshBtn').addEventListener('click', loadPromotions);
 
-$('searchInput').addEventListener('input', renderTimeline);
-
-$('statusFilter').addEventListener('change', renderTimeline);
-
-$('prevMonth').addEventListener('click', () => {
-  selectedMonth.setMonth(selectedMonth.getMonth() - 1);
-  renderTimeline();
-});
-
-$('nextMonth').addEventListener('click', () => {
-  selectedMonth.setMonth(selectedMonth.getMonth() + 1);
-  renderTimeline();
-});
-
-/* =========================
-   KHỞI ĐỘNG
-========================= */
+$('searchInput').addEventListener('input', renderAll);
+$('statusFilter').addEventListener('change', renderAll);
 
 loadPromotions();
 </script>
