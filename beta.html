@@ -1,610 +1,438 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Beta Media Manager</title>
-  <style>
-    :root {
-      --bg: #f3f5f9;
-      --panel: #fff;
-      --text: #172033;
-      --muted: #687386;
-      --line: #e4e8f0;
-      --primary: #5b5ce2;
-      --primary-dark: #4546c8;
-      --danger: #d84343;
-      --success: #16845b;
-      --radius: 16px;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      color: var(--text);
-      background: var(--bg);
-    }
-    button, input, select, textarea { font: inherit; }
-    button { cursor: pointer; }
-    .app { min-height: 100vh; }
-    .topbar {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 16px; padding: 18px 24px; background: #151a2d; color: white;
-    }
-    .brand { font-weight: 800; letter-spacing: .2px; }
-    .topbar small { display: block; color: #b9bfd0; margin-top: 4px; }
-    .layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); min-height: calc(100vh - 70px); }
-    .sidebar { background: #20263b; padding: 18px 12px; }
-    .nav-btn {
-      display: block; width: 100%; border: 0; border-radius: 10px;
-      text-align: left; padding: 13px 14px; margin: 4px 0;
-      color: #dce1ef; background: transparent;
-    }
-    .nav-btn:hover, .nav-btn.active { background: #343b58; color: white; }
-    main { min-width: 0; padding: 24px; }
-    .page { display: none; }
-    .page.active { display: block; }
-    .page-head {
-      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
-      gap: 12px; margin-bottom: 20px;
-    }
-    h1 { font-size: 25px; margin: 0; }
-    h2 { font-size: 18px; margin: 0 0 14px; }
-    .muted { color: var(--muted); }
-    .panel {
-      background: var(--panel); border: 1px solid var(--line);
-      border-radius: var(--radius); padding: 18px; margin-bottom: 18px;
-      box-shadow: 0 4px 18px rgba(22, 31, 55, .035);
-    }
-    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-    .field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 12px; }
-    label { font-size: 13px; font-weight: 700; color: #4d586d; }
-    input, select, textarea {
-      width: 100%; min-width: 0; border: 1px solid #d8deea; border-radius: 9px;
-      padding: 11px 12px; color: var(--text); background: white;
-    }
-    textarea { min-height: 90px; resize: vertical; }
-    .btn {
-      border: 0; border-radius: 9px; padding: 10px 14px;
-      background: var(--primary); color: white; font-weight: 700;
-    }
-    .btn:hover { background: var(--primary-dark); }
-    .btn.secondary { background: #edf0f7; color: #26314a; }
-    .btn.secondary:hover { background: #e0e5f0; }
-    .btn.danger { background: var(--danger); }
-    .btn.small { padding: 7px 10px; font-size: 12px; }
-    .actions { display: flex; flex-wrap: wrap; gap: 8px; }
-    .status { margin: 12px 0; color: var(--muted); font-size: 13px; }
-    .status.error { color: var(--danger); }
-    .status.ok { color: var(--success); }
-    .table-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; min-width: 650px; }
-    th, td { padding: 12px 10px; border-bottom: 1px solid var(--line); text-align: left; font-size: 13px; }
-    th { color: #657087; background: #f8f9fc; }
-    .tag { display: inline-block; padding: 4px 8px; border-radius: 99px; background: #eef0ff; color: #4e50b9; font-size: 11px; }
-    .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; }
-    .media-card { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: white; }
-    .media-thumb { height: 125px; display: grid; place-items: center; background: #e9edf5; color: #64708a; }
-    .media-thumb img { width: 100%; height: 100%; object-fit: cover; }
-    .media-info { padding: 12px; }
-    .media-name { font-weight: 700; font-size: 14px; overflow-wrap: anywhere; }
-    .media-meta { font-size: 12px; color: var(--muted); margin: 7px 0 10px; }
-    .player-layout { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; }
-    .stage {
-      min-height: 420px; position: relative; display: grid; place-items: center;
-      overflow: hidden; background: #080a10; border-radius: 14px; color: white;
-    }
-    .stage img, .stage video { width: 100%; height: 100%; max-height: 72vh; object-fit: contain; }
-    .stage .placeholder { text-align: center; padding: 30px; color: #c2c7d4; }
-    .player-overlay {
-      position: absolute; bottom: 12px; left: 12px; right: 12px;
-      display: flex; align-items: center; justify-content: space-between; gap: 10px;
-      padding: 10px 12px; border-radius: 10px; background: rgba(0,0,0,.58);
-      color: white; font-size: 12px;
-    }
-    .player-overlay button { border: 0; border-radius: 7px; padding: 7px 10px; }
-    .playlist-items { display: flex; flex-direction: column; gap: 8px; }
-    .playlist-item { border: 1px solid var(--line); border-radius: 9px; padding: 10px; font-size: 13px; }
-    .playlist-item.current { border-color: var(--primary); background: #f2f2ff; }
-    .empty { color: var(--muted); padding: 18px; text-align: center; }
-    @media (max-width: 900px) {
-      .layout { grid-template-columns: 1fr; }
-      .sidebar { display: flex; overflow-x: auto; gap: 6px; padding: 10px; }
-      .nav-btn { width: auto; white-space: nowrap; margin: 0; }
-      main { padding: 16px; }
-      .player-layout { grid-template-columns: 1fr; }
-      .stage { min-height: 300px; }
-    }
-    @media (max-width: 600px) {
-      .topbar { padding: 15px; }
-      .grid, .grid-3 { grid-template-columns: 1fr; }
-      h1 { font-size: 21px; }
-      .panel { padding: 14px; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Trình Chiếu TV</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Hiệu ứng chuyển cảnh cho chế độ TV */
+        .fade-transition {
+            transition: opacity 1.5s ease-in-out;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Có thể đổi thành 'cover' nếu muốn full kín viền */
+        }
+        .opacity-0 { opacity: 0; z-index: 1; }
+        .opacity-100 { opacity: 1; z-index: 10; }
+
+        /* Ẩn thanh cuộn và chuột ở chế độ TV */
+        .tv-mode-active {
+            overflow: hidden;
+            background-color: black;
+            cursor: none; /* Ẩn chuột trên màn hình TV */
+        }
+
+        /* Nút ẩn để thoát TV Mode (góc trên bên phải) */
+        .exit-tv-btn {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            z-index: 9999;
+            cursor: pointer;
+            opacity: 0; /* Hoàn toàn trong suốt */
+        }
+
+        /* Loader */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
 </head>
-<body>
-<div class="app">
-  <header class="topbar">
-    <div>
-      <div class="brand">BETA MEDIA MANAGER</div>
-      <small>Quản lý nội dung và phát trên màn hình TV</small>
-    </div>
-    <button class="btn secondary" id="refreshBtn">Làm mới dữ liệu</button>
-  </header>
+<body class="bg-gray-50 text-gray-800">
 
-  <div class="layout">
-    <nav class="sidebar">
-      <button class="nav-btn active" data-page="media">Thư viện media</button>
-      <button class="nav-btn" data-page="playlists">Playlist</button>
-      <button class="nav-btn" data-page="schedules">Lịch phát</button>
-      <button class="nav-btn" data-page="player">Trang phát TV</button>
-    </nav>
-
-    <main>
-      <section class="page active" id="page-media">
-        <div class="page-head">
-          <div><h1>Thư viện media</h1><div class="muted">Quản lý hình ảnh và video dùng để phát.</div></div>
-        </div>
-        <div class="panel">
-          <h2>Tải media lên</h2>
-          <div class="grid">
-            <div class="field"><label for="uploadName">Tên hiển thị</label><input id="uploadName" placeholder="Ví dụ: Khuyến mãi tháng 11"></div>
-            <div class="field"><label for="uploadDuration">Thời lượng ảnh (giây)</label><input id="uploadDuration" type="number" min="1" value="10"></div>
-          </div>
-          <div class="field"><label for="uploadFile">Chọn ảnh hoặc video</label><input id="uploadFile" type="file" accept="image/*,video/*"></div>
-          <div class="actions"><button class="btn" id="uploadBtn">Tải lên</button></div>
-          <div class="status" id="uploadStatus"></div>
-          <p class="muted">Nên dùng ảnh JPG/PNG và video MP4 có dung lượng vừa phải. Giới hạn thực tế phụ thuộc Apps Script và Google Drive.</p>
-        </div>
-        <div class="panel">
-          <div class="page-head"><h2>Media đã tải</h2><span class="muted" id="mediaCount">0 mục</span></div>
-          <div class="media-grid" id="mediaGrid"><div class="empty">Đang tải dữ liệu…</div></div>
-        </div>
-      </section>
-
-      <section class="page" id="page-playlists">
-        <div class="page-head"><div><h1>Playlist</h1><div class="muted">Tạo danh sách media theo thứ tự phát.</div></div></div>
-        <div class="panel">
-          <h2>Tạo hoặc cập nhật playlist</h2>
-          <div class="grid">
-            <div class="field"><label for="playlistId">Mã playlist (để trống khi tạo mới)</label><input id="playlistId" placeholder="Tự tạo nếu để trống"></div>
-            <div class="field"><label for="playlistName">Tên playlist</label><input id="playlistName" placeholder="Ví dụ: Sảnh chính"></div>
-          </div>
-          <div class="field"><label for="playlistMedia">Chọn media (giữ Ctrl hoặc Cmd để chọn nhiều)</label><select id="playlistMedia" multiple size="7"></select></div>
-          <div class="actions"><button class="btn" id="savePlaylistBtn">Lưu playlist</button><button class="btn secondary" id="clearPlaylistBtn">Xóa form</button></div>
-          <div class="status" id="playlistStatus"></div>
-        </div>
-        <div class="panel">
-          <h2>Danh sách playlist</h2>
-          <div class="table-wrap"><table><thead><tr><th>Tên</th><th>Mã</th><th>Số media</th><th>Thao tác</th></tr></thead><tbody id="playlistRows"></tbody></table></div>
-        </div>
-      </section>
-
-      <section class="page" id="page-schedules">
-        <div class="page-head"><div><h1>Lịch phát</h1><div class="muted">Gán playlist cho TV theo khoảng thời gian.</div></div></div>
-        <div class="panel">
-          <h2>Tạo hoặc cập nhật lịch</h2>
-          <div class="grid">
-            <div class="field"><label for="scheduleId">Mã lịch (để trống khi tạo mới)</label><input id="scheduleId" placeholder="Tự tạo nếu để trống"></div>
-            <div class="field"><label for="scheduleTv">Mã TV</label><input id="scheduleTv" placeholder="Ví dụ: TV-01"></div>
-            <div class="field"><label for="schedulePlaylist">Playlist</label><select id="schedulePlaylist"></select></div>
-            <div class="field"><label for="scheduleDays">Ngày áp dụng</label><input id="scheduleDays" placeholder="Ví dụ: ALL hoặc MON,TUE,WED"></div>
-            <div class="field"><label for="scheduleStart">Giờ bắt đầu</label><input id="scheduleStart" type="time" value="08:00"></div>
-            <div class="field"><label for="scheduleEnd">Giờ kết thúc</label><input id="scheduleEnd" type="time" value="22:00"></div>
-            <div class="field"><label for="scheduleDateStart">Ngày bắt đầu (nếu có)</label><input id="scheduleDateStart" type="date"></div>
-            <div class="field"><label for="scheduleDateEnd">Ngày kết thúc (nếu có)</label><input id="scheduleDateEnd" type="date"></div>
-          </div>
-          <div class="actions"><button class="btn" id="saveScheduleBtn">Lưu lịch phát</button><button class="btn secondary" id="clearScheduleBtn">Xóa form</button></div>
-          <div class="status" id="scheduleStatus"></div>
-        </div>
-        <div class="panel">
-          <h2>Danh sách lịch phát</h2>
-          <div class="table-wrap"><table><thead><tr><th>TV</th><th>Playlist</th><th>Khung giờ</th><th>Ngày áp dụng</th><th>Thao tác</th></tr></thead><tbody id="scheduleRows"></tbody></table></div>
-        </div>
-      </section>
-
-      <section class="page" id="page-player">
-        <div class="page-head">
-          <div><h1>Trang phát TV</h1><div class="muted">Chọn TV để phát playlist đang được lên lịch.</div></div>
-          <div class="actions"><button class="btn secondary" id="playerRefreshBtn">Tải lại lịch</button><button class="btn" id="fullscreenBtn">Toàn màn hình</button></div>
-        </div>
-        <div class="panel">
-          <div class="grid">
-            <div class="field"><label for="playerTvId">Mã TV</label><input id="playerTvId" value="TV-01" placeholder="Ví dụ: TV-01"></div>
-            <div class="field"><label>&nbsp;</label><button class="btn" id="startPlayerBtn">Tải và phát</button></div>
-          </div>
-          <div class="status" id="playerStatus">Chọn mã TV rồi bấm Tải và phát.</div>
-        </div>
-        <div class="player-layout">
-          <div class="stage" id="playerStage">
-            <div class="placeholder">Nội dung phát sẽ hiển thị tại đây</div>
-          </div>
-          <aside class="panel">
-            <h2>Danh sách đang phát</h2>
-            <div class="muted" id="playerMeta">Chưa tải playlist.</div>
-            <div class="playlist-items" id="playerItems" style="margin-top:12px"></div>
-            <div class="actions" style="margin-top:14px">
-              <button class="btn secondary" id="prevBtn">Trước</button>
-              <button class="btn secondary" id="pauseBtn">Tạm dừng</button>
-              <button class="btn secondary" id="nextBtn">Tiếp</button>
+    <!-- ==================== GIAO DIỆN ADMIN ==================== -->
+    <div id="adminView" class="container mx-auto p-4 max-w-4xl min-h-screen flex flex-col">
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+            <div class="flex justify-between items-center mb-6 border-b pb-4">
+                <h1 class="text-2xl font-bold text-blue-700">📺 Quản Lý Nội Dung Trình Chiếu</h1>
+                <button onclick="startTVMode()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg shadow transition transform hover:scale-105 flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Phát Lên TV
+                </button>
             </div>
-          </aside>
+
+            <!-- Form Thêm Mới -->
+            <form id="addMediaForm" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 bg-blue-50 p-4 rounded-lg border border-blue-100">
+                <div class="col-span-1 md:col-span-2">
+                    <label class="block text-sm font-semibold mb-1">Link (URL) Ảnh / Video <span class="text-red-500">*</span></label>
+                    <input type="url" id="mediaUrl" required placeholder="https://..." class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none">
+                    <p class="text-xs text-gray-500 mt-1">Hỗ trợ link .jpg, .png, .mp4. (Link Google Drive cần được chia sẻ công khai)</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-1">Loại</label>
+                    <select id="mediaType" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none">
+                        <option value="image">Hình Ảnh</option>
+                        <option value="video">Video</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-1">Thời gian (giây)</label>
+                    <input type="number" id="mediaDuration" value="10" min="3" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none" title="Chỉ áp dụng cho hình ảnh">
+                </div>
+                <div class="col-span-1 md:col-span-4 flex justify-end mt-2">
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded shadow transition">Thêm Vào Danh Sách</button>
+                </div>
+            </form>
+
+            <!-- Trạng thái lưu -->
+            <div id="statusMsg" class="hidden text-center p-2 rounded mb-4 font-semibold"></div>
+
+            <!-- Bảng Danh Sách -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="p-3 border-b w-16 text-center">STT</th>
+                            <th class="p-3 border-b">Bản Xem Trước</th>
+                            <th class="p-3 border-b">Loại & Thời Gian</th>
+                            <th class="p-3 border-b text-center w-24">Hành Động</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mediaTableBody">
+                        <!-- Render qua JS -->
+                    </tbody>
+                </table>
+                <div id="emptyState" class="text-center py-10 text-gray-500 hidden">
+                    Chưa có nội dung nào. Hãy thêm ảnh/video ở form phía trên.
+                </div>
+            </div>
+            
+            <div class="mt-6 flex justify-end">
+                <button onclick="saveData()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-8 rounded-lg shadow-lg flex items-center">
+                    <span id="saveSpinner" class="loader mr-2 hidden" style="width: 20px; height: 20px; border-width: 3px;"></span>
+                    Lưu Lên Hệ Thống
+                </button>
+            </div>
         </div>
-      </section>
-    </main>
-  </div>
-</div>
+        <p class="text-center text-gray-400 text-sm mt-auto">Mẹo: Để TV chạy mượt mà, hãy sử dụng kết nối Wifi ổn định và link hình/video chất lượng cao.</p>
+    </div>
 
-<script>
-(() => {
-  const API_URL = "https://script.google.com/macros/s/AKfycbx4Np-LsG-P6IvH8EtcwH3dzfkP1WxmNdG0koKvGH7Xc236CmYD1NPbj0Suz4iV8m3F/exec";
+    <!-- ==================== GIAO DIỆN TV (SLIDESHOW) ==================== -->
+    <div id="tvView" class="hidden fixed inset-0 bg-black z-50">
+        <!-- Khu vực bí mật góc phải trên cùng để bấm thoát về Admin -->
+        <div class="exit-tv-btn" onclick="exitTVMode()" title="Bấm vào góc này để thoát trình chiếu"></div>
+        
+        <!-- Element để hiển thị nội dung, dùng 2 thẻ để tạo hiệu ứng mờ dần (cross-fade) -->
+        <img id="displayImg1" class="fade-transition opacity-0" src="" alt="TV Display 1">
+        <img id="displayImg2" class="fade-transition opacity-0" src="" alt="TV Display 2">
+        <video id="displayVid1" class="fade-transition opacity-0" muted playsinline></video>
+        <video id="displayVid2" class="fade-transition opacity-0" muted playsinline></video>
 
-  const state = {
-    media: [],
-    playlists: [],
-    schedules: [],
-    player: { items: [], index: 0, timer: null, paused: false, video: false }
-  };
+        <!-- Thông báo lỗi khi không có dữ liệu -->
+        <div id="tvNoData" class="hidden absolute inset-0 flex items-center justify-center text-white text-3xl font-light">
+            Không có dữ liệu trình chiếu. Vui lòng quay lại cài đặt.
+        </div>
+    </div>
 
-  const $ = id => document.getElementById(id);
-  const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({
-    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
-  }[c]));
-  const setStatus = (id, message, type = "") => {
-    const el = $(id);
-    el.textContent = message;
-    el.className = "status" + (type ? " " + type : "");
-  };
-  const makeId = prefix => prefix + "-" + Date.now().toString(36).toUpperCase();
+    <!-- ==================== JAVASCRIPT ==================== -->
+    <script>
+        // State
+        let mediaList = [];
+        
+        // TV Slide State
+        let currentSlideIndex = 0;
+        let activeLayer = 1; // Luân phiên giữa lớp 1 và 2 để tạo cross-fade
+        let slideTimeout;
 
-  function apiGet(action, params = {}) {
-    return new Promise((resolve, reject) => {
-      const callback = "cb_" + Math.random().toString(36).slice(2);
-      const query = new URLSearchParams({ action, ...params, callback });
-      const script = document.createElement("script");
-      const timeout = setTimeout(() => {
-        cleanup();
-        reject(new Error("Hết thời gian chờ phản hồi từ Apps Script."));
-      }, 20000);
-      function cleanup() {
-        clearTimeout(timeout);
-        delete window[callback];
-        script.remove();
-      }
-      window[callback] = data => { cleanup(); resolve(data); };
-      script.onerror = () => { cleanup(); reject(new Error("Không thể kết nối Apps Script.")); };
-      script.src = API_URL + "?" + query.toString();
-      document.body.appendChild(script);
-    });
-  }
+        // Khởi tạo
+        document.addEventListener("DOMContentLoaded", () => {
+            loadData();
+            setupForm();
+        });
 
-  async function apiPost(payload) {
-    // no-cors không cho đọc phản hồi; chỉ báo đã gửi yêu cầu, không khẳng định ghi thành công.
-    await fetch(API_URL, {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(payload)
-    });
-    return { sent: true };
-  }
+        // --- ADMIN LOGIC ---
 
-  function switchPage(page) {
-    document.querySelectorAll(".nav-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.page === page));
-    document.querySelectorAll(".page").forEach(section => section.classList.toggle("active", section.id === "page-" + page));
-  }
-  document.querySelectorAll(".nav-btn").forEach(btn => btn.addEventListener("click", () => switchPage(btn.dataset.page)));
+        function setupForm() {
+            const form = document.getElementById('addMediaForm');
+            const typeSelect = document.getElementById('mediaType');
+            const durationInput = document.getElementById('mediaDuration');
 
-  function mediaId(item) { return String(item.id ?? item.fileId ?? ""); }
-  function mediaName(item) { return String(item.name ?? item.title ?? item.id ?? "Media"); }
-  function isVideo(item) { return String(item.mimeType || "").startsWith("video/"); }
-  function mediaUrl(item) { return item.url || (item.fileId ? "https://drive.google.com/uc?export=view&id=" + encodeURIComponent(item.fileId) : ""); }
+            // Ẩn/Hiện ô nhập thời gian tùy vào loại
+            typeSelect.addEventListener('change', (e) => {
+                if (e.target.value === 'video') {
+                    durationInput.parentElement.style.opacity = '0.5';
+                    durationInput.disabled = true;
+                    durationInput.title = 'Video sẽ chạy theo thời lượng thực tế của video';
+                } else {
+                    durationInput.parentElement.style.opacity = '1';
+                    durationInput.disabled = false;
+                }
+            });
 
-  function renderMedia() {
-    $("mediaCount").textContent = state.media.length + " mục";
-    $("mediaGrid").innerHTML = state.media.length ? state.media.map(item => {
-      const url = mediaUrl(item);
-      const thumb = item.thumbnail || url;
-      const preview = isVideo(item)
-        ? '<div class="media-thumb">VIDEO</div>'
-        : `<div class="media-thumb">${thumb ? `<img src="${esc(thumb)}" alt="" loading="lazy">` : "ẢNH"}</div>`;
-      return `<article class="media-card">
-        ${preview}<div class="media-info">
-          <div class="media-name">${esc(mediaName(item))}</div>
-          <div class="media-meta">${isVideo(item) ? "Video" : "Hình ảnh"} · ${esc(item.duration || 10)} giây</div>
-          <div class="actions"><button class="btn secondary small" data-action="rename-media" data-id="${esc(mediaId(item))}">Đổi tên</button>
-          <button class="btn danger small" data-action="delete-media" data-id="${esc(mediaId(item))}">Xóa</button></div>
-        </div></article>`;
-    }).join("") : '<div class="empty">Chưa có media nào.</div>';
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const url = document.getElementById('mediaUrl').value;
+                const type = document.getElementById('mediaType').value;
+                const duration = parseInt(document.getElementById('mediaDuration').value) || 10;
 
-    $("playlistMedia").innerHTML = state.media.map(item =>
-      `<option value="${esc(mediaId(item))}">${esc(mediaName(item))}</option>`
-    ).join("");
-  }
+                mediaList.push({
+                    id: Date.now().toString(),
+                    url: url,
+                    type: type,
+                    duration: duration
+                });
 
-  function playlistItems(playlist) {
-    const raw = playlist.mediaIds ?? playlist.media ?? playlist.items ?? [];
-    if (Array.isArray(raw)) return raw.map(value => typeof value === "object" ? String(value.id ?? value.fileId ?? "") : String(value));
-    if (typeof raw === "string") return raw.split(",").map(s => s.trim()).filter(Boolean);
-    return [];
-  }
+                form.reset();
+                if(typeSelect.value === 'video') typeSelect.dispatchEvent(new Event('change')); // reset disable state
+                renderTable();
+                showStatus('Đã thêm vào danh sách tạm. Nhớ bấm "Lưu Lên Hệ Thống"!', 'text-blue-700 bg-blue-100');
+            });
+        }
 
-  function renderPlaylists() {
-    $("playlistRows").innerHTML = state.playlists.length ? state.playlists.map(p => `
-      <tr><td>${esc(p.name || p.title || "Playlist")}</td><td>${esc(p.id || "")}</td>
-      <td>${playlistItems(p).length}</td><td><div class="actions">
-      <button class="btn secondary small" data-action="edit-playlist" data-id="${esc(p.id)}">Sửa</button>
-      <button class="btn danger small" data-action="delete-playlist" data-id="${esc(p.id)}">Xóa</button>
-      </div></td></tr>`).join("") : '<tr><td colspan="4" class="empty">Chưa có playlist.</td></tr>';
+        function renderTable() {
+            const tbody = document.getElementById('mediaTableBody');
+            const emptyState = document.getElementById('emptyState');
+            tbody.innerHTML = '';
 
-    $("schedulePlaylist").innerHTML = state.playlists.map(p =>
-      `<option value="${esc(p.id)}">${esc(p.name || p.id)}</option>`
-    ).join("");
-  }
+            if (mediaList.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
 
-  function renderSchedules() {
-    $("scheduleRows").innerHTML = state.schedules.length ? state.schedules.map(s => `
-      <tr><td>${esc(s.tvId || s.tv_id || "")}</td><td>${esc(s.playlistName || s.playlistId || s.playlist_id || "")}</td>
-      <td>${esc(s.startTime || s.start || "")} – ${esc(s.endTime || s.end || "")}</td>
-      <td>${esc(s.days || s.day || "ALL")} ${s.startDate || s.endDate ? `(${esc(s.startDate || "")} – ${esc(s.endDate || "")})` : ""}</td>
-      <td><div class="actions"><button class="btn secondary small" data-action="edit-schedule" data-id="${esc(s.id)}">Sửa</button>
-      <button class="btn danger small" data-action="delete-schedule" data-id="${esc(s.id)}">Xóa</button></div></td></tr>`).join("") : '<tr><td colspan="5" class="empty">Chưa có lịch phát.</td></tr>';
-  }
+            mediaList.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-50 border-b';
+                
+                let previewHtml = '';
+                if (item.type === 'image') {
+                    previewHtml = `<img src="${item.url}" class="w-24 h-16 object-cover rounded shadow" onerror="this.src='https://placehold.co/100x60/fee2e2/ef4444?text=L%E1%BB%97i+Link'">`;
+                } else {
+                    previewHtml = `<div class="relative w-24 h-16 bg-black rounded shadow flex items-center justify-center text-white"><svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4l12 6-12 6z"></path></svg></div>`;
+                }
 
-  async function refreshAll() {
-    $("refreshBtn").disabled = true;
-    try {
-      const [media, playlists, schedules] = await Promise.all([
-        apiGet("getMedia"), apiGet("getPlaylists"), apiGet("getSchedules")
-      ]);
-      state.media = Array.isArray(media) ? media : (media.media || []);
-      state.playlists = Array.isArray(playlists) ? playlists : (playlists.playlists || []);
-      state.schedules = Array.isArray(schedules) ? schedules : (schedules.schedules || []);
-      renderMedia(); renderPlaylists(); renderSchedules();
-      setStatus("uploadStatus", "Đã tải dữ liệu.", "ok");
-    } catch (error) {
-      setStatus("uploadStatus", error.message, "error");
-    } finally {
-      $("refreshBtn").disabled = false;
-    }
-  }
+                tr.innerHTML = `
+                    <td class="p-3 text-center font-semibold text-gray-500">${index + 1}</td>
+                    <td class="p-3">
+                        <div class="flex items-center gap-3">
+                            ${previewHtml}
+                            <div class="text-xs text-gray-400 w-48 truncate" title="${item.url}">${item.url}</div>
+                        </div>
+                    </td>
+                    <td class="p-3">
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full ${item.type === 'image' ? 'bg-green-100 text-green-700' : 'bg-purple-100 text-purple-700'} uppercase">
+                            ${item.type === 'image' ? 'Ảnh' : 'Video'}
+                        </span>
+                        <div class="text-sm mt-1 text-gray-600">${item.type === 'image' ? item.duration + ' giây' : 'Tự động theo video'}</div>
+                    </td>
+                    <td class="p-3 text-center">
+                        <button onclick="removeMedia('${item.id}')" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
 
-  $("refreshBtn").addEventListener("click", refreshAll);
+        function removeMedia(id) {
+            mediaList = mediaList.filter(item => item.id !== id);
+            renderTable();
+        }
 
-  $("uploadBtn").addEventListener("click", async () => {
-    const file = $("uploadFile").files[0];
-    if (!file) return setStatus("uploadStatus", "Vui lòng chọn ảnh hoặc video.", "error");
-    const name = $("uploadName").value.trim() || file.name;
-    const duration = Math.max(1, Number($("uploadDuration").value) || 10);
-    setStatus("uploadStatus", "Đang chuẩn bị tệp…");
-    try {
-      const base64 = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(String(reader.result).split(",")[1]);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-      await apiPost({ action: "uploadMedia", name, mimeType: file.type, duration, base64 });
-      setStatus("uploadStatus", "Đã gửi yêu cầu tải lên. Hãy làm mới dữ liệu để kiểm tra kết quả; trang HTML độc lập không đọc được phản hồi ghi dữ liệu.", "ok");
-    } catch (error) {
-      setStatus("uploadStatus", error.message, "error");
-    }
-  });
+        function showStatus(msg, classes) {
+            const statusDiv = document.getElementById('statusMsg');
+            statusDiv.textContent = msg;
+            statusDiv.className = `p-3 rounded mb-4 font-semibold ${classes}`;
+            statusDiv.classList.remove('hidden');
+            setTimeout(() => { statusDiv.classList.add('hidden'); }, 3000);
+        }
 
-  $("mediaGrid").addEventListener("click", async event => {
-    const button = event.target.closest("button[data-action]");
-    if (!button) return;
-    const item = state.media.find(m => mediaId(m) === button.dataset.id);
-    if (!item) return;
-    if (button.dataset.action === "rename-media") {
-      const name = prompt("Nhập tên mới:", mediaName(item));
-      if (!name || !name.trim()) return;
-      try {
-        await apiPost({ action: "updateMedia", id: mediaId(item), name: name.trim() });
-        alert("Đã gửi yêu cầu đổi tên. Làm mới dữ liệu để kiểm tra.");
-      } catch (error) { alert(error.message); }
-    } else if (button.dataset.action === "delete-media") {
-      if (!confirm("Xóa media này?")) return;
-      try {
-        await apiPost({ action: "deleteMedia", id: mediaId(item) });
-        alert("Đã gửi yêu cầu xóa. Làm mới dữ liệu để kiểm tra.");
-      } catch (error) { alert(error.message); }
-    }
-  });
+        // --- GIAO TIẾP DỮ LIỆU (Google Apps Script / LocalStorage) ---
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbypSwA-O9jWMLdoIB-7XWUPaDU8mEZaNzttVkabvqyTfSge3EdZp5rO0P0ijM9Bs5qr/exec';
 
-  $("savePlaylistBtn").addEventListener("click", async () => {
-    const name = $("playlistName").value.trim();
-    const selected = [...$("playlistMedia").selectedOptions].map(o => o.value);
-    if (!name) return setStatus("playlistStatus", "Vui lòng nhập tên playlist.", "error");
-    const id = $("playlistId").value.trim() || makeId("PL");
-    try {
-      await apiPost({ action: "savePlaylist", id, name, mediaIds: selected });
-      setStatus("playlistStatus", "Đã gửi yêu cầu lưu playlist. Làm mới dữ liệu để kiểm tra.", "ok");
-    } catch (error) { setStatus("playlistStatus", error.message, "error"); }
-  });
-  $("clearPlaylistBtn").addEventListener("click", () => {
-    $("playlistId").value = ""; $("playlistName").value = "";
-    [...$("playlistMedia").options].forEach(o => o.selected = false);
-  });
+        async function loadData() {
+            try {
+                // Gọi API GET để lấy dữ liệu
+                const response = await fetch(`${SCRIPT_URL}?action=load`);
+                const result = await response.json();
+                mediaList = result || [];
+                renderTable();
+            } catch (error) {
+                console.error("Lỗi khi tải dữ liệu từ máy chủ:", error);
+                // Fallback: Chạy giả lập (Preview) dùng localStorage nếu API lỗi
+                const localData = localStorage.getItem('TV_MEDIA_DATA');
+                mediaList = localData ? JSON.parse(localData) : [];
+                renderTable();
+            }
+        }
 
-  $("playlistRows").addEventListener("click", async event => {
-    const button = event.target.closest("button[data-action]");
-    if (!button) return;
-    const p = state.playlists.find(x => String(x.id) === button.dataset.id);
-    if (!p) return;
-    if (button.dataset.action === "edit-playlist") {
-      $("playlistId").value = p.id || "";
-      $("playlistName").value = p.name || p.title || "";
-      const ids = new Set(playlistItems(p));
-      [...$("playlistMedia").options].forEach(o => o.selected = ids.has(o.value));
-      switchPage("playlists");
-    } else if (button.dataset.action === "delete-playlist" && confirm("Xóa playlist này?")) {
-      await apiPost({ action: "deletePlaylist", id: p.id });
-      setStatus("playlistStatus", "Đã gửi yêu cầu xóa playlist. Làm mới dữ liệu để kiểm tra.", "ok");
-    }
-  });
+        async function saveData() {
+            const spinner = document.getElementById('saveSpinner');
+            spinner.classList.remove('hidden');
 
-  $("saveScheduleBtn").addEventListener("click", async () => {
-    const tvId = $("scheduleTv").value.trim();
-    const playlistId = $("schedulePlaylist").value;
-    if (!tvId || !playlistId) return setStatus("scheduleStatus", "Vui lòng nhập mã TV và chọn playlist.", "error");
-    const payload = {
-      action: "saveSchedule",
-      id: $("scheduleId").value.trim() || makeId("SCH"),
-      tvId, playlistId,
-      days: $("scheduleDays").value.trim() || "ALL",
-      startTime: $("scheduleStart").value,
-      endTime: $("scheduleEnd").value,
-      startDate: $("scheduleDateStart").value,
-      endDate: $("scheduleDateEnd").value
-    };
-    try {
-      await apiPost(payload);
-      setStatus("scheduleStatus", "Đã gửi yêu cầu lưu lịch. Làm mới dữ liệu để kiểm tra.", "ok");
-    } catch (error) { setStatus("scheduleStatus", error.message, "error"); }
-  });
-  $("clearScheduleBtn").addEventListener("click", () => {
-    ["scheduleId","scheduleTv","scheduleDays","scheduleDateStart","scheduleDateEnd"].forEach(id => $(id).value = "");
-    $("scheduleStart").value = "08:00"; $("scheduleEnd").value = "22:00";
-  });
+            const dataStr = JSON.stringify(mediaList);
 
-  $("scheduleRows").addEventListener("click", async event => {
-    const button = event.target.closest("button[data-action]");
-    if (!button) return;
-    const s = state.schedules.find(x => String(x.id) === button.dataset.id);
-    if (!s) return;
-    if (button.dataset.action === "edit-schedule") {
-      $("scheduleId").value = s.id || "";
-      $("scheduleTv").value = s.tvId || s.tv_id || "";
-      $("schedulePlaylist").value = s.playlistId || s.playlist_id || "";
-      $("scheduleDays").value = s.days || s.day || "ALL";
-      $("scheduleStart").value = s.startTime || s.start || "08:00";
-      $("scheduleEnd").value = s.endTime || s.end || "22:00";
-      $("scheduleDateStart").value = s.startDate || "";
-      $("scheduleDateEnd").value = s.endDate || "";
-      switchPage("schedules");
-    } else if (button.dataset.action === "delete-schedule" && confirm("Xóa lịch phát này?")) {
-      await apiPost({ action: "deleteSchedule", id: s.id });
-      setStatus("scheduleStatus", "Đã gửi yêu cầu xóa lịch. Làm mới dữ liệu để kiểm tra.", "ok");
-    }
-  });
+            try {
+                // Sử dụng URLSearchParams để tránh lỗi CORS Preflight (OPTIONS)
+                const formData = new URLSearchParams();
+                formData.append('action', 'save');
+                formData.append('data', dataStr);
 
-  function stopPlayerTimer() {
-    if (state.player.timer) clearTimeout(state.player.timer);
-    state.player.timer = null;
-  }
-  function currentPlayerItem() { return state.player.items[state.player.index]; }
-  function renderPlayerList() {
-    $("playerItems").innerHTML = state.player.items.length ? state.player.items.map((item, index) => `
-      <div class="playlist-item ${index === state.player.index ? "current" : ""}">
-        <strong>${index + 1}. ${esc(mediaName(item))}</strong>
-        <div class="muted">${isVideo(item) ? "Video" : "Ảnh"} · ${esc(item.duration || 10)} giây</div>
-      </div>`).join("") : '<div class="empty">Playlist chưa có media.</div>';
-  }
-  function showPlayerPlaceholder(message) {
-    $("playerStage").innerHTML = `<div class="placeholder">${esc(message)}</div>`;
-  }
-  function playCurrentItem() {
-    stopPlayerTimer();
-    const item = currentPlayerItem();
-    renderPlayerList();
-    if (!item) {
-      showPlayerPlaceholder("Không có nội dung để phát.");
-      return;
-    }
-    const url = mediaUrl(item);
-    if (!url) {
-      showPlayerPlaceholder("Media chưa có đường dẫn phát.");
-      return;
-    }
-    state.player.video = isVideo(item);
-    state.player.paused = false;
-    if (isVideo(item)) {
-      $("playerStage").innerHTML = `<video id="tvVideo" autoplay muted playsinline></video>
-        <div class="player-overlay"><span>${esc(mediaName(item))}</span><button id="soundBtn">Bật tiếng</button></div>`;
-      const video = $("tvVideo");
-      video.src = url;
-      video.onended = nextPlayer;
-      video.onerror = () => setStatus("playerStatus", "Không phát được video. Kiểm tra quyền truy cập và đường dẫn Google Drive.", "error");
-      $("soundBtn").addEventListener("click", () => {
-        video.muted = !video.muted;
-        $("soundBtn").textContent = video.muted ? "Bật tiếng" : "Tắt tiếng";
-      });
-      video.play().catch(() => setStatus("playerStatus", "Trình duyệt chặn tự phát video. Bấm Tải và phát hoặc nút phát trên video.", "error"));
-    } else {
-      $("playerStage").innerHTML = `<img src="${esc(url)}" alt="${esc(mediaName(item))}">
-        <div class="player-overlay"><span>${esc(mediaName(item))}</span><span>${Number(item.duration) || 10}s</span></div>`;
-      state.player.timer = setTimeout(nextPlayer, Math.max(1, Number(item.duration) || 10) * 1000);
-    }
-    setStatus("playerStatus", `Đang phát ${state.player.index + 1}/${state.player.items.length}: ${mediaName(item)}`, "ok");
-  }
-  function nextPlayer() {
-    if (!state.player.items.length) return;
-    state.player.index = (state.player.index + 1) % state.player.items.length;
-    playCurrentItem();
-  }
-  function prevPlayer() {
-    if (!state.player.items.length) return;
-    state.player.index = (state.player.index - 1 + state.player.items.length) % state.player.items.length;
-    playCurrentItem();
-  }
+                // Gọi API POST để lưu dữ liệu
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                spinner.classList.add('hidden');
+                
+                if(result.success) {
+                    showStatus('Đã đồng bộ dữ liệu lên máy chủ thành công!', 'text-green-700 bg-green-100');
+                } else {
+                    showStatus('Lỗi Server: ' + result.message, 'text-red-700 bg-red-100');
+                }
+            } catch (error) {
+                spinner.classList.add('hidden');
+                console.error("Lỗi kết nối:", error);
+                // Lưu tạm vào trình duyệt nếu mất mạng/lỗi link
+                localStorage.setItem('TV_MEDIA_DATA', dataStr);
+                showStatus('Lỗi mạng. Đã lưu tạm vào trình duyệt cục bộ.', 'text-yellow-700 bg-yellow-100');
+            }
+        }
 
-  async function loadPlayer() {
-    const tvId = $("playerTvId").value.trim();
-    if (!tvId) return setStatus("playerStatus", "Nhập mã TV trước khi tải.", "error");
-    stopPlayerTimer();
-    setStatus("playerStatus", "Đang tải lịch phát…");
-    try {
-      const data = await apiGet("getPlayerData", { tvId });
-      const media = Array.isArray(data.media) ? data.media : [];
-      const playlist = data.playlist || {};
-      const ids = playlistItems(playlist);
-      const byId = new Map(media.map(item => [mediaId(item), item]));
-      state.player.items = ids.map(id => byId.get(id)).filter(Boolean);
-      state.player.index = 0;
-      $("playerMeta").textContent = `${tvId} · ${playlist.name || playlist.title || playlist.id || "Playlist hiện hành"}`;
-      renderPlayerList();
-      if (!state.player.items.length) {
-        showPlayerPlaceholder("Không tìm thấy playlist đang hoạt động cho TV này.");
-        setStatus("playerStatus", "Không có nội dung theo lịch hiện tại.", "error");
-        return;
-      }
-      playCurrentItem();
-    } catch (error) {
-      showPlayerPlaceholder("Không tải được nội dung.");
-      setStatus("playerStatus", error.message, "error");
-    }
-  }
 
-  $("startPlayerBtn").addEventListener("click", loadPlayer);
-  $("playerRefreshBtn").addEventListener("click", loadPlayer);
-  $("nextBtn").addEventListener("click", nextPlayer);
-  $("prevBtn").addEventListener("click", prevPlayer);
-  $("pauseBtn").addEventListener("click", () => {
-    const video = $("tvVideo");
-    if (video) {
-      if (video.paused) { video.play(); $("pauseBtn").textContent = "Tạm dừng"; }
-      else { video.pause(); $("pauseBtn").textContent = "Tiếp tục"; }
-    } else if (state.player.timer) {
-      stopPlayerTimer(); state.player.paused = true; $("pauseBtn").textContent = "Tiếp tục";
-    } else if (state.player.paused) {
-      state.player.paused = false; $("pauseBtn").textContent = "Tạm dừng"; playCurrentItem();
-    }
-  });
-  $("fullscreenBtn").addEventListener("click", async () => {
-    const stage = $("playerStage");
-    try {
-      if (!document.fullscreenElement) await stage.requestFullscreen();
-      else await document.exitFullscreen();
-    } catch (error) {
-      setStatus("playerStatus", "Trình duyệt không cho phép bật toàn màn hình.", "error");
-    }
-  });
+        // --- TV SLIDESHOW LOGIC ---
 
-  refreshAll();
-})();
-</script>
+        function startTVMode() {
+            if (mediaList.length === 0) {
+                alert("Vui lòng thêm ít nhất 1 ảnh hoặc video trước khi trình chiếu.");
+                return;
+            }
+            
+            document.body.classList.add('tv-mode-active');
+            document.getElementById('adminView').classList.add('hidden');
+            document.getElementById('tvView').classList.remove('hidden');
+            
+            // Vào chế độ toàn màn hình (nếu trình duyệt hỗ trợ)
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(err => console.log("Không thể Fullscreen:", err));
+            }
+
+            currentSlideIndex = 0;
+            activeLayer = 1;
+            
+            // Xóa rác layer cũ
+            resetLayers();
+            playNextSlide();
+        }
+
+        function exitTVMode() {
+            clearTimeout(slideTimeout);
+            stopAllVideos();
+            
+            document.body.classList.remove('tv-mode-active');
+            document.getElementById('tvView').classList.add('hidden');
+            document.getElementById('adminView').classList.remove('hidden');
+
+            if (document.fullscreenElement) {
+                document.exitFullscreen().catch(() => {});
+            }
+        }
+
+        function resetLayers() {
+            document.getElementById('displayImg1').className = 'fade-transition opacity-0';
+            document.getElementById('displayImg2').className = 'fade-transition opacity-0';
+            document.getElementById('displayVid1').className = 'fade-transition opacity-0';
+            document.getElementById('displayVid2').className = 'fade-transition opacity-0';
+        }
+
+        function stopAllVideos() {
+            const v1 = document.getElementById('displayVid1');
+            const v2 = document.getElementById('displayVid2');
+            v1.pause(); v1.src = "";
+            v2.pause(); v2.src = "";
+        }
+
+        function playNextSlide() {
+            if (mediaList.length === 0) {
+                document.getElementById('tvNoData').classList.remove('hidden');
+                return;
+            }
+            document.getElementById('tvNoData').classList.add('hidden');
+
+            const currentMedia = mediaList[currentSlideIndex];
+            
+            // Xác định layer đang hoạt động và layer sẽ hiển thị
+            const nextLayer = activeLayer === 1 ? 2 : 1;
+            
+            // Lấy các element DOM của layer tiếp theo
+            const nextImg = document.getElementById(`displayImg${nextLayer}`);
+            const nextVid = document.getElementById(`displayVid${nextLayer}`);
+            
+            // Lấy các element DOM của layer hiện tại (để làm mờ đi)
+            const currImg = document.getElementById(`displayImg${activeLayer}`);
+            const currVid = document.getElementById(`displayVid${activeLayer}`);
+
+            // 1. CHUẨN BỊ LAYER TIẾP THEO
+            if (currentMedia.type === 'image') {
+                nextImg.src = currentMedia.url;
+                nextImg.classList.replace('opacity-0', 'opacity-100');
+                
+                // Set thời gian để nhảy slide tiếp theo
+                slideTimeout = setTimeout(() => {
+                    playNextSlide();
+                }, currentMedia.duration * 1000);
+
+            } else if (currentMedia.type === 'video') {
+                nextVid.src = currentMedia.url;
+                // Phát video
+                nextVid.play().then(() => {
+                    nextVid.classList.replace('opacity-0', 'opacity-100');
+                }).catch(err => {
+                    console.error("Lỗi phát video (Có thể do trình duyệt chặn autoplay):", err);
+                    // Bỏ qua nếu lỗi, nhảy slide sau 5s
+                    slideTimeout = setTimeout(() => playNextSlide(), 5000);
+                });
+                
+                // Lắng nghe sự kiện video kết thúc
+                nextVid.onended = () => {
+                    playNextSlide();
+                };
+                
+                // Lỗi load video
+                nextVid.onerror = () => {
+                    slideTimeout = setTimeout(() => playNextSlide(), 2000);
+                };
+            }
+
+            // 2. LÀM MỜ LAYER HIỆN TẠI (Hiệu ứng Cross-fade)
+            currImg.classList.replace('opacity-100', 'opacity-0');
+            currVid.classList.replace('opacity-100', 'opacity-0');
+            
+            // Dừng video cũ sau khi đã mờ hẳn (khoảng 1.5s theo CSS transition)
+            setTimeout(() => {
+                if(currVid.src) {
+                    currVid.pause();
+                    currVid.src = ""; 
+                }
+                if(currImg.src && currImg.classList.contains('opacity-0')) {
+                    currImg.src = ""; // giải phóng bộ nhớ
+                }
+            }, 1500);
+
+            // Cập nhật state
+            activeLayer = nextLayer;
+            currentSlideIndex = (currentSlideIndex + 1) % mediaList.length;
+        }
+
+    </script>
 </body>
 </html>
