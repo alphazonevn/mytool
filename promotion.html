@@ -1,1440 +1,748 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Beta Nowzone | Timeline khuyến mãi</title>
-
-<style>
-:root {
-  --navy: #17395f;
-  --blue: #2868ad;
-  --blue-light: #eaf3fc;
-  --green: #239b67;
-  --orange: #d99226;
-  --red: #cf5050;
-  --bg: #f3f6fa;
-  --white: #fff;
-  --text: #25364b;
-  --muted: #7c8a9c;
-  --border: #e2e8f0;
-  --shadow: 0 4px 18px rgba(23,57,95,.06);
-}
-
-* { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font: 14px/1.5 Arial, sans-serif;
-}
-
-button, input, select { font: inherit; }
-button { cursor: pointer; }
-
-button:focus-visible,
-input:focus-visible,
-select:focus-visible {
-  outline: 2px solid var(--blue);
-  outline-offset: 2px;
-}
-
-button:disabled { opacity: .5; cursor: not-allowed; }
-
-.topbar {
-  background: white;
-  border-bottom: 1px solid var(--border);
-  padding: 15px 26px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.brand-mark {
-  width: 42px;
-  height: 42px;
-  background: var(--navy);
-  color: white;
-  border-radius: 10px;
-  display: grid;
-  place-items: center;
-  font-size: 21px;
-  font-weight: bold;
-}
-
-.brand h1 {
-  margin: 0;
-  color: var(--navy);
-  font-size: 18px;
-}
-
-.brand p {
-  margin: 3px 0 0;
-  color: var(--muted);
-  font-size: 11px;
-  letter-spacing: 1px;
-}
-
-.top-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.btn {
-  border: 1px solid var(--border);
-  background: white;
-  color: var(--text);
-  padding: 9px 13px;
-  border-radius: 8px;
-}
-
-.btn:hover { background: #f2f6fb; }
-
-.btn-primary {
-  background: var(--blue);
-  color: white;
-  border-color: var(--blue);
-}
-
-.btn-primary:hover { background: var(--navy); }
-
-main {
-  max-width: 1700px;
-  margin: auto;
-  padding: 24px;
-}
-
-.page-heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 15px;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
-}
-
-.page-heading h2 {
-  margin: 0;
-  color: var(--navy);
-  font-size: 24px;
-}
-
-.page-heading p {
-  margin: 6px 0 0;
-  color: var(--muted);
-}
-
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  background: #e8f6ee;
-  color: #238451;
-  border-radius: 30px;
-  padding: 6px 11px;
-  font-size: 12px;
-  font-weight: bold;
-}
-
-.badge::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: currentColor;
-}
-
-.stats {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0,1fr));
-  gap: 14px;
-  margin-bottom: 20px;
-}
-
-.stat {
-  background: white;
-  border: 1px solid var(--border);
-  border-radius: 11px;
-  padding: 17px 19px;
-  box-shadow: var(--shadow);
-}
-
-.stat-label {
-  color: var(--muted);
-  font-size: 12px;
-}
-
-.stat-value {
-  color: var(--navy);
-  font-size: 25px;
-  font-weight: bold;
-  margin-top: 7px;
-}
-
-.stat-note {
-  color: var(--muted);
-  font-size: 12px;
-  margin-top: 4px;
-}
-
-.panel {
-  background: white;
-  border: 1px solid var(--border);
-  border-radius: 11px;
-  box-shadow: var(--shadow);
-  margin-bottom: 20px;
-  overflow: hidden;
-}
-
-.panel-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
-  padding: 17px 20px;
-  border-bottom: 1px solid var(--border);
-}
-
-.panel-head h3 {
-  margin: 0;
-  color: var(--navy);
-  font-size: 16px;
-}
-
-.panel-body { padding: 20px; }
-
-.toolbar {
-  display: flex;
-  gap: 9px;
-  flex-wrap: wrap;
-}
-
-.toolbar input,
-.toolbar select {
-  border: 1px solid var(--border);
-  background: white;
-  color: var(--text);
-  padding: 10px 12px;
-  border-radius: 8px;
-}
-
-.toolbar input { min-width: 220px; }
-
-.view-tabs {
-  display: flex;
-  gap: 4px;
-  padding: 4px;
-  background: #f0f4f8;
-  border-radius: 9px;
-}
-
-.view-tabs button {
-  border: 0;
-  background: transparent;
-  padding: 8px 13px;
-  border-radius: 7px;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: bold;
-}
-
-.view-tabs button.active {
-  background: white;
-  color: var(--blue);
-  box-shadow: 0 1px 4px #17395f15;
-}
-
-.timeline-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 17px;
-}
-
-.date-navigation {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.date-navigation strong {
-  min-width: 160px;
-  text-align: center;
-  color: var(--navy);
-  font-size: 15px;
-}
-
-.date-navigation button {
-  border: 1px solid var(--border);
-  background: white;
-  border-radius: 7px;
-  padding: 8px 11px;
-  color: var(--text);
-}
-
-.legend {
-  display: flex;
-  gap: 15px;
-  flex-wrap: wrap;
-  color: var(--muted);
-  font-size: 12px;
-}
-
-.legend span {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.legend i {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  display: inline-block;
-}
-
-.legend .active { background: var(--green); }
-.legend .future { background: var(--blue); }
-.legend .ended { background: #8c98a8; }
-
-.timeline-scroll {
-  overflow-x: auto;
-  border: 1px solid var(--border);
-  border-radius: 9px;
-  background: white;
-}
-
-.timeline {
-  min-width: 780px;
-}
-
-.timeline-axis {
-  display: grid;
-  grid-template-columns: 220px minmax(0,1fr);
-  position: sticky;
-  top: 0;
-  z-index: 5;
-  background: #f6f9fc;
-  border-bottom: 1px solid var(--border);
-}
-
-.axis-label {
-  padding: 13px 16px;
-  color: var(--navy);
-  font-size: 11px;
-  font-weight: bold;
-  letter-spacing: .5px;
-  border-right: 1px solid var(--border);
-}
-
-.axis-track {
-  display: grid;
-  position: relative;
-}
-
-.axis-day {
-  text-align: center;
-  padding: 10px 0;
-  border-right: 1px solid #e9eef4;
-  color: var(--muted);
-  font-size: 11px;
-  min-width: 0;
-}
-
-.axis-day.today {
-  background: #e4f0fc;
-  color: var(--blue);
-  font-weight: bold;
-}
-
-.axis-day.weekend { background: #f0f4f8; }
-
-.timeline-row {
-  display: grid;
-  grid-template-columns: 220px minmax(0,1fr);
-  min-height: 100px;
-  border-bottom: 1px solid var(--border);
-}
-
-.timeline-row:last-child { border-bottom: 0; }
-
-.row-info {
-  padding: 14px 16px;
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 5px;
-  min-width: 0;
-}
-
-.row-code {
-  color: var(--blue);
-  font-size: 11px;
-  font-weight: bold;
-}
-
-.row-name {
-  color: var(--navy);
-  font-size: 12px;
-  font-weight: bold;
-  line-height: 1.45;
-}
-
-.row-date {
-  color: var(--muted);
-  font-size: 11px;
-}
-
-.track {
-  position: relative;
-  background-image: linear-gradient(
-    to right,
-    #e8edf3 1px,
-    transparent 1px
-  );
-  background-size: calc(100% / var(--day-count)) 100%;
-  background-position: left top;
-  min-width: 0;
-}
-
-.track.weekend {
-  background-color: #fbfcfe;
-}
-
-.today-line {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: #df5656;
-  z-index: 2;
-  pointer-events: none;
-}
-
-.today-line::before {
-  content: "HÔM NAY";
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #df5656;
-  color: white;
-  border-radius: 0 0 4px 4px;
-  font-size: 8px;
-  padding: 3px 5px;
-  white-space: nowrap;
-}
-
-.event {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 64px;
-  border-radius: 7px;
-  background: var(--blue);
-  color: white;
-  padding: 8px 11px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 3px;
-  cursor: pointer;
-  box-shadow: 0 3px 9px #2868ad20;
-  transition: box-shadow .15s, transform .15s;
-  z-index: 3;
-}
-
-.event:hover {
-  box-shadow: 0 5px 14px #17395f35;
-  transform: translateY(-50%) scale(1.01);
-  z-index: 4;
-}
-
-.event.selected {
-  outline: 3px solid #a7d3ff;
-  outline-offset: -3px;
-}
-
-.event.active { background: var(--green); }
-.event.future { background: var(--blue); }
-.event.ended { background: #8996a7; }
-
-.event-name {
-  font-size: 12px;
-  font-weight: bold;
-  line-height: 1.35;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.event-meta {
-  font-size: 10px;
-  opacity: .9;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.event-progress {
-  height: 4px;
-  background: #ffffff50;
-  border-radius: 4px;
-  overflow: hidden;
-  margin-top: 2px;
-}
-
-.event-progress div {
-  height: 100%;
-  background: white;
-}
-
-.timeline-empty {
-  padding: 40px 20px;
-  text-align: center;
-  color: var(--muted);
-}
-
-.list-view {
-  display: grid;
-  gap: 12px;
-}
-
-.list-item {
-  display: grid;
-  grid-template-columns: 5px minmax(0,1fr) auto;
-  gap: 15px;
-  align-items: center;
-  border: 1px solid var(--border);
-  border-radius: 9px;
-  padding: 15px;
-  cursor: pointer;
-  transition: background .15s;
-}
-
-.list-item:hover { background: #f6f9fc; }
-
-.list-color {
-  height: 100%;
-  min-height: 55px;
-  background: var(--blue);
-  border-radius: 5px;
-}
-
-.list-color.active { background: var(--green); }
-.list-color.ended { background: #8996a7; }
-
-.list-item h4 {
-  margin: 0 0 5px;
-  color: var(--navy);
-  font-size: 13px;
-}
-
-.list-item p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 12px;
-}
-
-.list-status {
-  text-align: right;
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.list-status strong {
-  display: block;
-  color: var(--navy);
-  margin-bottom: 4px;
-}
-
-.detail-head {
-  display: flex;
-  justify-content: space-between;
-  gap: 15px;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
-}
-
-.detail-head h3 {
-  margin: 10px 0;
-  color: var(--navy);
-  font-size: 20px;
-  line-height: 1.4;
-}
-
-.detail-meta {
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.9;
-}
-
-.detail-grid {
-  display: grid;
-  grid-template-columns: repeat(2,minmax(0,1fr));
-  gap: 15px;
-}
-
-.detail-card {
-  min-width: 0;
-  background: #f8fafc;
-  border: 1px solid var(--border);
-  border-radius: 9px;
-  padding: 18px;
-}
-
-.detail-card h4 {
-  margin: 0 0 13px;
-  color: var(--navy);
-  font-size: 14px;
-}
-
-.detail-card h4::before {
-  content: "";
-  display: inline-block;
-  width: 4px;
-  height: 16px;
-  background: var(--blue);
-  border-radius: 3px;
-  margin-right: 9px;
-  vertical-align: -3px;
-}
-
-.detail-text {
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  line-height: 1.85;
-  font-size: 13px;
-  color: #425168;
-}
-
-.detail-text a {
-  color: var(--blue);
-  text-decoration: underline;
-}
-
-.kpi-layout {
-  display: grid;
-  grid-template-columns: minmax(0,1fr) 210px;
-  gap: 25px;
-  align-items: center;
-}
-
-.kpi-bar {
-  height: 12px;
-  background: #e9eef4;
-  border-radius: 20px;
-  overflow: hidden;
-}
-
-.kpi-bar div {
-  height: 100%;
-  width: 0%;
-  background: var(--green);
-  border-radius: 20px;
-}
-
-.kpi-number {
-  text-align: right;
-  color: var(--muted);
-  font-size: 13px;
-}
-
-.kpi-number strong {
-  display: block;
-  color: var(--navy);
-  font-size: 28px;
-}
-
-.loading, .empty {
-  padding: 35px;
-  text-align: center;
-  color: var(--muted);
-}
-
-.error {
-  background: #fff2f2;
-  color: #a63232;
-  border: 1px solid #efcaca;
-  padding: 14px;
-  border-radius: 8px;
-  margin-bottom: 15px;
-  white-space: pre-wrap;
-}
-
-.footer {
-  text-align: center;
-  color: var(--muted);
-  font-size: 12px;
-  padding: 18px;
-}
-
-@media(max-width:950px) {
-  .stats { grid-template-columns: repeat(2,minmax(0,1fr)); }
-  .kpi-layout { grid-template-columns: 1fr; }
-}
-
-@media(max-width:650px) {
-  .topbar { padding: 13px; }
-  .brand h1 { font-size: 16px; }
-  .brand-mark { width: 36px; height: 36px; }
-  main { padding: 12px; }
-  .page-heading h2 { font-size: 20px; }
-  .stats { gap: 9px; }
-  .stat { padding: 13px; }
-  .stat-value { font-size: 21px; }
-  .detail-grid { grid-template-columns: 1fr; }
-  .panel-body { padding: 13px; }
-  .toolbar { width: 100%; }
-  .toolbar input { width: 100%; }
-  .date-navigation { width: 100%; justify-content: space-between; }
-  .date-navigation strong { min-width: 0; }
-  .list-item { grid-template-columns: 4px minmax(0,1fr); }
-  .list-status { grid-column: 2; text-align: left; }
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Beta Cinemas Nowzone | Khuyến mãi</title>
+
+  <style>
+    :root {
+      --beta-blue: #07539a;
+      --beta-blue-dark: #003e78;
+      --beta-blue-light: #eaf3fb;
+      --beta-yellow: #ffb323;
+      --beta-green: #b4d52b;
+      --beta-pink: #f18aa7;
+      --ink: #172536;
+      --muted: #657487;
+      --line: #e2eaf2;
+      --page: #f3f7fb;
+      --white: #fff;
+      --shadow: 0 12px 32px rgba(1, 53, 101, .10);
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--page); color: var(--ink); }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    .hidden { display: none !important; }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      color: white;
+      padding: 32px 20px;
+      background: linear-gradient(120deg, var(--beta-blue-dark), var(--beta-blue) 65%, #0872b9);
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 230px;
+      height: 230px;
+      right: -65px;
+      top: -115px;
+      border: 32px solid rgba(255,255,255,.08);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .hero-inner, .main { max-width: 1180px; margin: auto; }
+    .hero-inner { position: relative; z-index: 1; }
+    .eyebrow { font-size: 12px; font-weight: 800; letter-spacing: .13em; }
+    .eyebrow::before {
+      content: "";
+      display: inline-block;
+      width: 9px;
+      height: 9px;
+      margin-right: 35px;
+      border-radius: 50%;
+      background: var(--beta-yellow);
+      box-shadow: 13px 0 var(--beta-green), 26px 0 var(--beta-pink);
+    }
+    h1 { margin: 10px 0; font-size: clamp(25px, 4vw, 38px); letter-spacing: -.03em; }
+    .hero p { margin: 0; max-width: 650px; line-height: 1.6; opacity: .92; }
+
+    .main { padding: 22px 18px 42px; }
+    .toolbar {
+      position: sticky;
+      top: 8px;
+      z-index: 20;
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) 180px 180px auto;
+      gap: 10px;
+      padding: 12px;
+      margin-bottom: 18px;
+      background: rgba(255,255,255,.94);
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      box-shadow: 0 8px 24px rgba(1,53,101,.08);
+      backdrop-filter: blur(12px);
+    }
+    .field, .btn {
+      min-height: 43px;
+      padding: 10px 13px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: white;
+    }
+    .field { width: 100%; outline: none; }
+    .field:focus { border-color: var(--beta-blue); box-shadow: 0 0 0 3px rgba(7,83,154,.10); }
+    .btn { font-weight: 700; color: var(--ink); }
+    .btn:hover { border-color: #a9c4dc; }
+    .btn-primary { color: white; background: var(--beta-blue); border-color: var(--beta-blue); }
+    .btn-primary:hover { background: var(--beta-blue-dark); }
+    .btn:disabled { opacity: .6; cursor: wait; }
+
+    .summary {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 12px 0 18px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      padding: 8px 13px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: white;
+      color: #4d5a68;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .chip.active { background: var(--beta-blue); color: white; border-color: var(--beta-blue); }
+
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 17px; }
+    .card {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      overflow: hidden;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      box-shadow: 0 5px 18px rgba(1,53,101,.04);
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: #b9d0e5; }
+    .poster {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 145px;
+      overflow: hidden;
+      padding: 18px;
+      color: white;
+      text-align: center;
+      background:
+        radial-gradient(circle at 85% 18%, rgba(255,179,35,.8), transparent 36px),
+        linear-gradient(135deg, var(--beta-blue-dark), #0872b9);
+    }
+    .poster img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .poster-title {
+      position: relative;
+      z-index: 1;
+      max-width: 90%;
+      overflow-wrap: anywhere;
+      font-size: 22px;
+      font-weight: 900;
+      text-shadow: 0 2px 8px rgba(0,0,0,.25);
+    }
+    .card-body { display: flex; flex: 1; flex-direction: column; padding: 17px; }
+    .badges { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 10px; }
+    .badge { padding: 5px 9px; border-radius: 999px; background: #eef1f4; color: #596575; font-size: 11px; font-weight: 800; }
+    .badge.active { background: #e7f5ed; color: #177344; }
+    .badge.upcoming { background: #eaf3fb; color: var(--beta-blue); }
+    .badge.ending { background: #fff3df; color: #9a5b00; }
+    .badge.ended { background: #eef1f4; color: #687789; }
+    .code { color: var(--beta-blue); font-size: 12px; font-weight: 800; }
+    .card h2 { margin: 6px 0 9px; font-size: 17px; line-height: 1.4; }
+    .dates { margin: 8px 0 11px; padding: 9px 11px; border-radius: 9px; background: #f3f7fb; color: #42566b; font-size: 13px; line-height: 1.45; }
+    .excerpt {
+      display: -webkit-box;
+      overflow: hidden;
+      margin: 0 0 15px;
+      color: #4d5967;
+      font-size: 14px;
+      line-height: 1.55;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+    .card-actions { display: flex; gap: 8px; margin-top: auto; }
+    .card-actions .btn { flex: 1; padding-inline: 9px; font-size: 13px; }
+    .card-actions .btn:not(.btn-primary) { color: var(--beta-blue); border-color: #cbdceb; }
+
+    .message {
+      grid-column: 1 / -1;
+      padding: 30px 18px;
+      border: 1px dashed #cbd7e3;
+      border-radius: 15px;
+      background: white;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.6;
+    }
+    .message.error { color: #a51c2b; border-color: #f0b8bf; }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: grid;
+      place-items: center;
+      padding: 16px;
+      background: rgba(0,28,55,.66);
+      backdrop-filter: blur(5px);
+    }
+    .modal-panel {
+      width: min(760px, 100%);
+      max-height: 90vh;
+      overflow: auto;
+      background: white;
+      border-radius: 19px;
+      box-shadow: 0 24px 80px rgba(0,0,0,.28);
+    }
+    .modal-head {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 17px 20px;
+      border-bottom: 1px solid var(--line);
+      background: white;
+    }
+    .modal-head h2 { margin: 0; color: var(--beta-blue-dark); font-size: 20px; line-height: 1.4; }
+    .close {
+      flex: 0 0 auto;
+      width: 36px;
+      height: 36px;
+      border: 0;
+      border-radius: 9px;
+      background: #edf3f8;
+      color: var(--beta-blue);
+      font-size: 23px;
+    }
+    .modal-content { padding: 20px; }
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .detail-box { padding: 13px; border: 1px solid #e7eef5; border-radius: 12px; background: #f7faff; }
+    .detail-label { margin-bottom: 5px; color: var(--beta-blue); font-size: 11px; font-weight: 800; text-transform: uppercase; }
+    .detail-value { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.55; }
+    .detail-section { margin-top: 18px; }
+    .detail-section h3 { margin: 0 0 8px; color: var(--beta-blue-dark); font-size: 15px; }
+    .detail-section p { margin: 0; color: #414d5a; white-space: pre-wrap; line-height: 1.65; }
+    .modal-actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 20px; }
+
+    .toast {
+      position: fixed;
+      z-index: 1200;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 11px 16px;
+      border-radius: 999px;
+      background: #172536;
+      color: white;
+      box-shadow: var(--shadow);
+      font-size: 14px;
+    }
+
+    @media (max-width: 900px) {
+      .toolbar { position: static; grid-template-columns: 1fr 1fr; }
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 580px) {
+      .hero { padding: 25px 16px; }
+      .main { padding: 15px 12px 28px; }
+      .toolbar, .grid, .detail-grid { grid-template-columns: 1fr; }
+      .toolbar { padding: 10px; }
+      .poster { min-height: 125px; }
+      .card-body { padding: 15px; }
+      .modal { padding: 8px; }
+      .modal-content { padding: 15px; }
+    }
+    @media print {
+      body * { visibility: hidden; }
+      .modal, .modal * { visibility: visible; }
+      .modal { position: absolute; inset: 0; display: block; padding: 0; background: white; }
+      .modal-panel { max-height: none; overflow: visible; width: 100%; box-shadow: none; }
+      .modal-head { position: static; }
+      .close, .modal-actions { display: none !important; }
+    }
+  </style>
 </head>
 
 <body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">BETA CINEMAS · NOWZONE</div>
+      <h1>Thông tin chương trình khuyến mãi</h1>
+      <p>Tra cứu nhanh chương trình, thời gian áp dụng và hướng dẫn dành cho nhân viên.</p>
+    </div>
+  </header>
 
-<header class="topbar">
-  <div class="brand">
-    <div class="brand-mark">B</div>
-    <div>
-      <h1>Beta Nowzone</h1>
-      <p>HỆ THỐNG THEO DÕI KHUYẾN MÃI</p>
+  <main class="main">
+    <section class="toolbar" aria-label="Tìm kiếm và lọc chương trình">
+      <input id="searchInput" class="field" type="search"
+             placeholder="Tìm tên chương trình, code, sản phẩm…" autocomplete="off">
+      <select id="statusFilter" class="field" aria-label="Lọc trạng thái">
+        <option value="all">Tất cả trạng thái</option>
+        <option value="active">Đang áp dụng</option>
+        <option value="upcoming">Sắp diễn ra</option>
+        <option value="ending">Sắp hết hạn</option>
+        <option value="ended">Đã kết thúc</option>
+      </select>
+      <select id="sortSelect" class="field" aria-label="Sắp xếp">
+        <option value="date-asc">Ngày bắt đầu: gần nhất</option>
+        <option value="date-desc">Ngày bắt đầu: xa nhất</option>
+        <option value="name-asc">Tên chương trình: A–Z</option>
+      </select>
+      <button id="refreshBtn" class="btn btn-primary" type="button">↻ Làm mới</button>
+    </section>
+
+    <div class="summary">
+      <div class="chips">
+        <button class="chip active" data-filter="all" type="button">Tất cả</button>
+        <button class="chip" data-filter="active" type="button">Đang áp dụng</button>
+        <button class="chip" data-filter="upcoming" type="button">Sắp diễn ra</button>
+        <button class="chip" data-filter="ending" type="button">Sắp hết hạn</button>
+        <button class="chip" data-filter="favorites" type="button">★ Yêu thích</button>
+      </div>
+      <span id="resultCount">Đang tải dữ liệu…</span>
+    </div>
+
+    <section id="promotionGrid" class="grid" aria-live="polite">
+      <div class="message">Đang tải chương trình khuyến mãi…</div>
+    </section>
+  </main>
+
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-panel">
+      <div class="modal-head">
+        <h2 id="modalTitle">Chi tiết chương trình</h2>
+        <button id="closeModalBtn" class="close" type="button" aria-label="Đóng">×</button>
+      </div>
+      <div id="modalContent" class="modal-content"></div>
     </div>
   </div>
 
-  <div class="top-actions">
-    <button class="btn" id="refreshBtn">↻ Tải lại</button>
-    <span class="badge">Nowzone</span>
-  </div>
-</header>
+  <div id="toast" class="toast hidden" role="status"></div>
 
-<main>
-  <section class="page-heading">
-    <div>
-      <h2>Timeline chương trình khuyến mãi</h2>
-      <p>Theo dõi thời gian áp dụng, trạng thái và KPI chương trình.</p>
-    </div>
-    <span class="badge">Dữ liệu Google Sheets</span>
-  </section>
+  <script>
+    // 1) Thay bằng URL Web App Apps Script của bạn.
+    const API_URL = "https://script.google.com/macros/s/AKfycbx4BwoRhu-sshi1ZZMjLRuY5mKoYZno3CV1ozcPv38H51AQlfBNiEJUkmN0SFtCl4iQ7A/exec";
 
-  <div id="errorBox"></div>
-
-  <section class="stats">
-    <div class="stat">
-      <div class="stat-label">Tổng chương trình</div>
-      <div class="stat-value" id="totalCount">—</div>
-      <div class="stat-note">Từ Google Sheets</div>
-    </div>
-    <div class="stat">
-      <div class="stat-label">Đang áp dụng</div>
-      <div class="stat-value" id="activeCount">—</div>
-      <div class="stat-note">Theo ngày hiện tại</div>
-    </div>
-    <div class="stat">
-      <div class="stat-label">KPI BC766</div>
-      <div class="stat-value">100 ly</div>
-      <div class="stat-note">Mục tiêu Beta Nowzone</div>
-    </div>
-    <div class="stat">
-      <div class="stat-label">Giá trị đền bù</div>
-      <div class="stat-value">48.000đ</div>
-      <div class="stat-note">Mỗi ly Free Lipton 22oz</div>
-    </div>
-  </section>
-
-  <section class="panel">
-    <div class="panel-head">
-      <h3>Lịch khuyến mãi</h3>
-
-      <div class="toolbar">
-        <input id="searchInput"
-          type="search"
-          placeholder="Tìm mã hoặc tên chương trình">
-
-        <select id="statusFilter">
-          <option value="all">Tất cả trạng thái</option>
-          <option value="active">Đang áp dụng</option>
-          <option value="future">Sắp áp dụng</option>
-          <option value="ended">Đã kết thúc</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="panel-body">
-      <div class="timeline-toolbar">
-        <div class="view-tabs">
-          <button class="active" data-view="month">Tháng</button>
-          <button data-view="week">Tuần</button>
-          <button data-view="list">Danh sách</button>
-        </div>
-
-        <div class="date-navigation">
-          <button id="prevBtn">‹ Trước</button>
-          <strong id="periodLabel">Tháng 11 / 2026</strong>
-          <button id="nextBtn">Sau ›</button>
-          <button class="btn-primary" id="todayBtn">Hôm nay</button>
-        </div>
-      </div>
-
-      <div class="legend">
-        <span><i class="active"></i> Đang áp dụng</span>
-        <span><i class="future"></i> Sắp áp dụng</span>
-        <span><i class="ended"></i> Đã kết thúc</span>
-      </div>
-
-      <div class="timeline-scroll" style="margin-top:15px">
-        <div class="timeline" id="timeline"></div>
-      </div>
-
-      <div class="list-view" id="listView" hidden></div>
-    </div>
-  </section>
-
-  <section class="panel">
-    <div class="panel-head">
-      <h3>Chi tiết chương trình</h3>
-      <span class="badge" id="detailCode">BC766</span>
-    </div>
-    <div class="panel-body" id="detailContent">
-      <div class="loading">Đang tải dữ liệu...</div>
-    </div>
-  </section>
-
-  <section class="panel">
-    <div class="panel-head">
-      <h3>KPI chương trình — Beta Nowzone</h3>
-      <span class="badge">Mục tiêu 100 ly</span>
-    </div>
-    <div class="panel-body">
-      <div class="kpi-layout">
-        <div>
-          <strong style="color:var(--navy)">
-            BC766 — Free Lipton 22oz
-          </strong>
-          <div class="kpi-bar" style="margin-top:12px">
-            <div id="kpiBar"></div>
-          </div>
-          <div class="detail-meta" style="margin-top:10px">
-            KPI mục tiêu. Chưa có dữ liệu bán thực tế.
-          </div>
-        </div>
-        <div class="kpi-number">
-          <strong id="kpiPercent">0%</strong>
-          <span id="kpiText">0 / 100 ly</span>
-        </div>
-      </div>
-    </div>
-  </section>
-</main>
-
-<footer class="footer">
-  Beta Nowzone · Promotion Timeline
-</footer>
-
-<script>
-/* =========================
-   CẤU HÌNH
-========================= */
-
-const API_URL = 'https://script.google.com/macros/s/AKfycbx4BwoRhu-sshi1ZZMjLRuY5mKoYZno3CV1ozcPv38H51AQlfBNiEJUkmN0SFtCl4iQ7A/exec';
-
-let promotions = [];
-let selectedCode = '';
-let viewMode = 'month';
-let anchorDate = new Date(2026, 10, 1);
-
-const $ = id => document.getElementById(id);
-
-const MONTHS = [
-  'Tháng 1','Tháng 2','Tháng 3','Tháng 4',
-  'Tháng 5','Tháng 6','Tháng 7','Tháng 8',
-  'Tháng 9','Tháng 10','Tháng 11','Tháng 12'
-];
-
-/* =========================
-   HÀM NGÀY
-========================= */
-
-function dateOnly(value) {
-  const [y,m,d] = value.split('-').map(Number);
-  return new Date(y, m - 1, d);
-}
-
-function dateKey(date) {
-  return [
-    date.getFullYear(),
-    String(date.getMonth() + 1).padStart(2, '0'),
-    String(date.getDate()).padStart(2, '0')
-  ].join('-');
-}
-
-function formatDate(value) {
-  if (!value) return '';
-  const [y,m,d] = value.split('-');
-  return `${d}/${m}/${y}`;
-}
-
-function addDays(date, amount) {
-  const result = new Date(date);
-  result.setDate(result.getDate() + amount);
-  return result;
-}
-
-function startOfWeek(date) {
-  const result = new Date(date);
-  const day = (result.getDay() + 6) % 7;
-  result.setDate(result.getDate() - day);
-  result.setHours(0,0,0,0);
-  return result;
-}
-
-function getPeriod() {
-  if (viewMode === 'week') {
-    const start = startOfWeek(anchorDate);
-    return {
-      start,
-      end: addDays(start, 6),
-      days: 7
+    const state = {
+      promotions: [],
+      query: "",
+      filter: "all",
+      sort: "date-asc",
+      favorites: new Set(),
+      activePromotion: null
     };
-  }
 
-  const start = new Date(
-    anchorDate.getFullYear(),
-    anchorDate.getMonth(),
-    1
-  );
+    const $ = (id) => document.getElementById(id);
+    const grid = $("promotionGrid");
 
-  const end = new Date(
-    anchorDate.getFullYear(),
-    anchorDate.getMonth() + 1,
-    0
-  );
-
-  return {
-    start,
-    end,
-    days: end.getDate()
-  };
-}
-
-function getStatus(item) {
-  const today = new Date();
-  today.setHours(0,0,0,0);
-
-  const start = dateOnly(item.start);
-  const end = dateOnly(item.end);
-
-  if (today < start) return 'future';
-  if (today > end) return 'ended';
-
-  return 'active';
-}
-
-function statusText(status) {
-  if (status === 'active') return 'Đang áp dụng';
-  if (status === 'future') return 'Sắp áp dụng';
-  return 'Đã kết thúc';
-}
-
-function remainingText(item) {
-  const today = new Date();
-  today.setHours(0,0,0,0);
-
-  const start = dateOnly(item.start);
-  const end = dateOnly(item.end);
-
-  if (today < start) {
-    const days = Math.ceil((start - today) / 86400000);
-    return `Còn ${days} ngày bắt đầu`;
-  }
-
-  if (today > end) return 'Đã kết thúc';
-
-  const days = Math.ceil((end - today) / 86400000);
-  return days === 0 ? 'Kết thúc hôm nay' : `Còn ${days} ngày`;
-}
-
-/* =========================
-   DỮ LIỆU
-========================= */
-
-function loadPromotions() {
-  if (API_URL.includes('YOUR_GOOGLE_APPS_SCRIPT_URL')) {
-    showError('Hãy cấu hình URL Apps Script trong API_URL.');
-    return;
-  }
-
-  $('errorBox').innerHTML = '';
-  $('refreshBtn').disabled = true;
-  $('refreshBtn').textContent = 'Đang tải...';
-
-  const callback = 'beta_' + Date.now();
-
-  const script = document.createElement('script');
-  let completed = false;
-
-  function finish() {
-    if (completed) return;
-    completed = true;
-
-    script.remove();
-    delete window[callback];
-
-    $('refreshBtn').disabled = false;
-    $('refreshBtn').textContent = '↻ Tải lại';
-  }
-
-  const timeout = setTimeout(() => {
-    finish();
-    showError('Backend không phản hồi. Kiểm tra URL và quyền truy cập.');
-  }, 20000);
-
-  window[callback] = result => {
-    clearTimeout(timeout);
-    finish();
-
-    if (!result || !result.success) {
-      showError(result?.message || 'Không tải được dữ liệu.');
-      return;
-    }
-
-    promotions = Array.isArray(result.data) ? result.data : [];
-
-    renderAll();
-
-    const chosen =
-      promotions.find(p => p.code === selectedCode) ||
-      promotions[0];
-
-    if (chosen) showDetail(chosen.code);
-    else $('detailContent').textContent = 'Chưa có chương trình.';
-  };
-
-  const query = new URLSearchParams({
-    action: 'getPromotions',
-    callback
-  });
-
-  script.src = API_URL + '?' + query.toString();
-
-  script.onerror = () => {
-    clearTimeout(timeout);
-    finish();
-    showError('Không thể kết nối Google Apps Script.');
-  };
-
-  document.body.appendChild(script);
-}
-
-function showError(message) {
-  $('errorBox').innerHTML =
-    `<div class="error">${escapeHTML(message)}</div>`;
-}
-
-function escapeHTML(value) {
-  return String(value ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
-function getFilteredPromotions() {
-  const keyword = $('searchInput').value.trim().toLowerCase();
-  const status = $('statusFilter').value;
-
-  const period = getPeriod();
-
-  return promotions.filter(item => {
-    const text = `${item.code} ${item.name}`.toLowerCase();
-
-    const matchesText = text.includes(keyword);
-    const matchesStatus =
-      status === 'all' || getStatus(item) === status;
-
-    const start = dateOnly(item.start);
-    const end = dateOnly(item.end);
-
-    const matchesPeriod =
-      start <= period.end && end >= period.start;
-
-    return matchesText && matchesStatus && matchesPeriod;
-  });
-}
-
-/* =========================
-   TIMELINE
-========================= */
-
-function renderTimeline() {
-  const root = $('timeline');
-  const items = getFilteredPromotions();
-  const period = getPeriod();
-
-  root.innerHTML = '';
-
-  root.style.minWidth =
-    viewMode === 'week' ? '780px' : '1100px';
-
-  $('periodLabel').textContent =
-    viewMode === 'week'
-      ? `${formatDate(dateKey(period.start))} – ${formatDate(dateKey(period.end))}`
-      : `${MONTHS[anchorDate.getMonth()]} / ${anchorDate.getFullYear()}`;
-
-  const axis = document.createElement('div');
-  axis.className = 'timeline-axis';
-
-  const axisLabel = document.createElement('div');
-  axisLabel.className = 'axis-label';
-  axisLabel.textContent = 'CHƯƠNG TRÌNH';
-
-  const axisTrack = document.createElement('div');
-  axisTrack.className = 'axis-track';
-  axisTrack.style.gridTemplateColumns =
-    `repeat(${period.days}, minmax(0,1fr))`;
-
-  for (let i = 0; i < period.days; i++) {
-    const day = addDays(period.start, i);
-    const cell = document.createElement('div');
-
-    cell.className = 'axis-day';
-
-    if (dateKey(day) === dateKey(new Date())) {
-      cell.classList.add('today');
-    }
-
-    if (day.getDay() === 0 || day.getDay() === 6) {
-      cell.classList.add('weekend');
-    }
-
-    cell.textContent = viewMode === 'week'
-      ? ['CN','T2','T3','T4','T5','T6','T7'][day.getDay()] +
-        ' ' + day.getDate()
-      : day.getDate();
-
-    axisTrack.appendChild(cell);
-  }
-
-  axis.append(axisLabel, axisTrack);
-  root.appendChild(axis);
-
-  if (!items.length) {
-    const empty = document.createElement('div');
-    empty.className = 'timeline-empty';
-    empty.textContent = 'Không có chương trình trong khoảng thời gian này.';
-    root.appendChild(empty);
-    return;
-  }
-
-  items.forEach(item => {
-    const row = document.createElement('div');
-    row.className = 'timeline-row';
-
-    const info = document.createElement('div');
-    info.className = 'row-info';
-
-    const code = document.createElement('div');
-    code.className = 'row-code';
-    code.textContent = item.code;
-
-    const name = document.createElement('div');
-    name.className = 'row-name';
-    name.textContent = item.name;
-
-    const date = document.createElement('div');
-    date.className = 'row-date';
-    date.textContent =
-      `${formatDate(item.start)} – ${formatDate(item.end)}`;
-
-    info.append(code, name, date);
-
-    const track = document.createElement('div');
-    track.className = 'track';
-    track.style.setProperty('--day-count', period.days);
-
-    const today = new Date();
-    today.setHours(0,0,0,0);
-
-    if (today >= period.start && today <= period.end) {
-      const marker = document.createElement('div');
-      marker.className = 'today-line';
-
-      const dayIndex = Math.floor(
-        (today - period.start) / 86400000
-      );
-
-      marker.style.left =
-        `${((dayIndex + .5) / period.days) * 100}%`;
-
-      track.appendChild(marker);
-    }
-
-    const start = dateOnly(item.start);
-    const end = dateOnly(item.end);
-
-    const visibleStart = start < period.start
-      ? period.start : start;
-
-    const visibleEnd = end > period.end
-      ? period.end : end;
-
-    const startIndex = Math.floor(
-      (visibleStart - period.start) / 86400000
-    );
-
-    const endIndex = Math.floor(
-      (visibleEnd - period.start) / 86400000
-    );
-
-    const left = (startIndex / period.days) * 100;
-    const width = ((endIndex - startIndex + 1) / period.days) * 100;
-
-    const event = document.createElement('div');
-
-    event.className = `event ${getStatus(item)}`;
-    if (item.code === selectedCode) event.classList.add('selected');
-
-    event.style.left = `${left}%`;
-    event.style.width = `${width}%`;
-
-    const eventName = document.createElement('div');
-    eventName.className = 'event-name';
-    eventName.textContent = item.name;
-
-    const meta = document.createElement('div');
-    meta.className = 'event-meta';
-    meta.textContent = `${item.code} · ${remainingText(item)}`;
-
-    event.append(eventName, meta);
-
-    event.title =
-      `${item.name}\n${formatDate(item.start)} – ${formatDate(item.end)}\n${statusText(getStatus(item))}`;
-
-    event.addEventListener('click', () => {
-      showDetail(item.code);
-      renderTimeline();
+    document.addEventListener("DOMContentLoaded", () => {
+      loadFavorites();
+      bindEvents();
+      loadPromotions();
     });
 
-    track.appendChild(event);
-    row.append(info, track);
-    root.appendChild(row);
-  });
-}
+    function bindEvents() {
+      $("searchInput").addEventListener("input", (event) => {
+        state.query = event.target.value.trim().toLowerCase();
+        render();
+      });
 
-/* =========================
-   DANH SÁCH
-========================= */
+      $("statusFilter").addEventListener("change", (event) => {
+        state.filter = event.target.value;
+        syncControls();
+        render();
+      });
 
-function renderList() {
-  const root = $('listView');
-  root.innerHTML = '';
+      $("sortSelect").addEventListener("change", (event) => {
+        state.sort = event.target.value;
+        render();
+      });
 
-  getFilteredPromotions().forEach(item => {
-    const card = document.createElement('div');
-    card.className = 'list-item';
+      $("refreshBtn").addEventListener("click", loadPromotions);
+      $("closeModalBtn").addEventListener("click", closeModal);
 
-    const color = document.createElement('div');
-    color.className = `list-color ${getStatus(item)}`;
+      $("modal").addEventListener("click", (event) => {
+        if (event.target === $("modal")) closeModal();
+      });
 
-    const info = document.createElement('div');
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") closeModal();
+      });
 
-    const name = document.createElement('h4');
-    name.textContent = `${item.code} — ${item.name}`;
+      document.querySelectorAll("[data-filter]").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.filter = button.dataset.filter;
+          $("statusFilter").value = state.filter === "favorites" ? "all" : state.filter;
+          syncControls();
+          render();
+        });
+      });
 
-    const date = document.createElement('p');
-    date.textContent =
-      `${formatDate(item.start)} – ${formatDate(item.end)} · KPI ${item.kpi} ly`;
+      grid.addEventListener("click", handleCardAction);
+      $("modalContent").addEventListener("click", handleModalAction);
+    }
 
-    info.append(name, date);
+    async function loadPromotions() {
+      if (!API_URL || API_URL.includes("YOUR_GOOGLE_APPS_SCRIPT_URL")) {
+        showMessage("Hãy thay API_URL bằng URL Web App Apps Script của bạn.", true);
+        return;
+      }
 
-    const status = document.createElement('div');
-    status.className = 'list-status';
+      $("refreshBtn").disabled = true;
+      $("refreshBtn").textContent = "Đang tải…";
+      grid.innerHTML = '<div class="message">Đang tải chương trình khuyến mãi…</div>';
 
-    const strong = document.createElement('strong');
-    strong.textContent = statusText(getStatus(item));
+      try {
+        const result = await fetchJsonp(API_URL);
+        const list = Array.isArray(result)
+          ? result
+          : result.data || result.promotions || result.items || [];
 
-    const remaining = document.createElement('span');
-    remaining.textContent = remainingText(item);
+        if (!Array.isArray(list)) throw new Error("API không trả về danh sách chương trình.");
 
-    status.append(strong, remaining);
+        state.promotions = list.map(normalizePromotion);
+        render();
+      } catch (error) {
+        showMessage("Không tải được dữ liệu. Kiểm tra URL, quyền truy cập Web App và định dạng phản hồi. " + error.message, true);
+      } finally {
+        $("refreshBtn").disabled = false;
+        $("refreshBtn").textContent = "↻ Làm mới";
+      }
+    }
 
-    card.append(color, info, status);
+    // API Apps Script cần nhận tham số callback và trả về callback({...});
+    function fetchJsonp(url) {
+      return new Promise((resolve, reject) => {
+        const callbackName = "betaCallback_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+        const script = document.createElement("script");
+        const separator = url.includes("?") ? "&" : "?";
+        const timer = setTimeout(() => {
+          cleanup();
+          reject(new Error("Quá thời gian chờ phản hồi."));
+        }, 15000);
 
-    card.addEventListener('click', () => {
-      showDetail(item.code);
-      document.querySelector('.panel:last-of-type')
-        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
+        function cleanup() {
+          clearTimeout(timer);
+          delete window[callbackName];
+          script.remove();
+        }
 
-    root.appendChild(card);
-  });
+        window[callbackName] = (data) => {
+          cleanup();
+          resolve(data);
+        };
 
-  if (!root.children.length) {
-    root.textContent = 'Không có chương trình phù hợp.';
-    root.className = 'list-view empty';
-  } else {
-    root.className = 'list-view';
-  }
-}
+        script.onerror = () => {
+          cleanup();
+          reject(new Error("Không thể kết nối tới Apps Script."));
+        };
 
-/* =========================
-   HIỂN THỊ CHI TIẾT
-========================= */
+        script.src = url + separator + "callback=" + encodeURIComponent(callbackName) + "&_=" + Date.now();
+        document.body.appendChild(script);
+      });
+    }
 
-function detailCard(title, value) {
-  const card = document.createElement('div');
-  card.className = 'detail-card';
+    // Hỗ trợ tên trường phổ biến từ Google Sheets hoặc API.
+    function normalizePromotion(item, index) {
+      const p = { ...item };
+      p.code = text(p.code || p.Code || p.ctkm || p.CTKM || p["Code CTKM"] || `KM-${index + 1}`);
+      p.name = text(p.name || p.title || p.ten_chuong_trinh || p["Tên chương trình"] || "Chương trình khuyến mãi");
+      p.startDate = p.startDate || p.start_date || p.start || p["Ngày bắt đầu"] || "";
+      p.endDate = p.endDate || p.end_date || p.end || p["Ngày kết thúc"] || "";
+      p.location = text(p.location || p.place || p["Địa điểm"] || "Beta Nowzone");
+      p.kpi = text(p.kpi || p["KPI"] || "");
+      p.product = text(p.product || p.products || p["Sản phẩm"] || "");
+      p.content = text(p.content || p.description || p["Nội dung"] || "");
+      p.terms = text(p.terms || p["Điều khoản"] || "");
+      p.process = text(p.process || p.procedure || p["Quy trình"] || "");
+      p.control = text(p.control || p["Kiểm soát"] || "");
+      p.image = text(p.image || p.imageUrl || p.poster || p["Link LCD"] || "");
+      p.status = getStatus(p);
+      return p;
+    }
 
-  const heading = document.createElement('h4');
-  heading.textContent = title;
+    function text(value) {
+      return value == null ? "" : String(value).trim();
+    }
 
-  const text = document.createElement('div');
-  text.className = 'detail-text';
-  text.textContent = value || 'Chưa có thông tin.';
+    function parseDate(value) {
+      if (!value) return null;
+      if (value instanceof Date) return value;
 
-  card.append(heading, text);
-  return card;
-}
+      const s = String(value).trim();
+      let m = s.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);
+      if (m) return new Date(+m[3], +m[2] - 1, +m[1]);
 
-function showDetail(code) {
-  const item = promotions.find(p => p.code === code);
-  if (!item) return;
+      m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+      if (m) return new Date(+m[1], +m[2] - 1, +m[3]);
 
-  selectedCode = code;
-  $('detailCode').textContent = item.code;
+      const d = new Date(s);
+      return Number.isNaN(d.getTime()) ? null : d;
+    }
 
-  const root = $('detailContent');
-  root.innerHTML = '';
+    function getStatus(p) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const start = parseDate(p.startDate);
+      const end = parseDate(p.endDate);
 
-  const head = document.createElement('div');
-  head.className = 'detail-head';
+      if (start) start.setHours(0, 0, 0, 0);
+      if (end) end.setHours(23, 59, 59, 999);
 
-  const info = document.createElement('div');
+      if (start && today < start) return "upcoming";
+      if (end && today > end) return "ended";
+      if (end && Math.ceil((end - today) / 86400000) <= 3) return "ending";
+      return "active";
+    }
 
-  const title = document.createElement('h3');
-  title.textContent = item.name;
+    function statusLabel(status) {
+      return ({
+        active: "Đang áp dụng",
+        upcoming: "Sắp diễn ra",
+        ending: "Sắp hết hạn",
+        ended: "Đã kết thúc"
+      })[status] || "Chưa xác định";
+    }
 
-  const meta = document.createElement('div');
-  meta.className = 'detail-meta';
-  meta.textContent =
-    `Thời gian: ${formatDate(item.start)} – ${formatDate(item.end)}\n` +
-    `Địa điểm: ${item.location}\n` +
-    `Trạng thái: ${statusText(getStatus(item))}\n` +
-    `Thời gian: ${remainingText(item)}\n` +
-    `Sản phẩm: ${item.product}`;
+    function filteredPromotions() {
+      let list = [...state.promotions];
 
-  info.append(title, meta);
-  head.appendChild(info);
+      if (state.filter === "favorites") {
+        list = list.filter((p) => state.favorites.has(p.code));
+      } else if (state.filter !== "all") {
+        list = list.filter((p) => p.status === state.filter);
+      }
 
-  const status = document.createElement('span');
-  status.className = 'badge';
-  status.textContent = statusText(getStatus(item));
-  head.appendChild(status);
+      if (state.query) {
+        list = list.filter((p) => {
+          const haystack = [
+            p.code, p.name, p.product, p.location, p.content, p.kpi
+          ].join(" ").toLowerCase();
+          return haystack.includes(state.query);
+        });
+      }
 
-  root.appendChild(head);
+      list.sort((a, b) => {
+        if (state.sort === "name-asc") return a.name.localeCompare(b.name, "vi");
+        const aDate = parseDate(a.startDate)?.getTime() || 0;
+        const bDate = parseDate(b.startDate)?.getTime() || 0;
+        return state.sort === "date-desc" ? bDate - aDate : aDate - bDate;
+      });
 
-  const grid = document.createElement('div');
-  grid.className = 'detail-grid';
+      return list;
+    }
 
-  grid.append(
-    detailCard('Nội dung chương trình', item.content),
-    detailCard('Điều khoản và điều kiện', item.terms),
-    detailCard('Chuẩn bị và thực hiện', item.process),
-    detailCard('Kiểm soát và xử phạt', item.control)
-  );
+    function render() {
+      const list = filteredPromotions();
+      $("resultCount").textContent = `${list.length} / ${state.promotions.length} chương trình`;
+      syncControls();
 
-  root.appendChild(grid);
+      if (!list.length) {
+        showMessage("Không tìm thấy chương trình phù hợp. Hãy thử đổi từ khóa hoặc bộ lọc.");
+        return;
+      }
 
-  if (item.lcd) {
-    const link = document.createElement('a');
-    link.href = item.lcd;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    link.textContent = 'Mở nội dung LCD';
+      grid.innerHTML = list.map((p) => {
+        const favorite = state.favorites.has(p.code);
+        const image = safeImageUrl(p.image);
+        const imageHtml = image
+          ? `<img src="${escapeAttr(image)}" alt="" loading="lazy" onerror="this.remove()">`
+          : "";
 
-    const container = document.createElement('div');
-    container.style.marginTop = '18px';
-    container.appendChild(link);
-    root.appendChild(container);
-  }
+        return `
+          <article class="card">
+            <div class="poster">
+              ${imageHtml}
+              <div class="poster-title">${escapeHtml(p.code)}</div>
+            </div>
+            <div class="card-body">
+              <div class="badges">
+                <span class="badge ${p.status}">${statusLabel(p.status)}</span>
+                ${p.location ? `<span class="badge">${escapeHtml(p.location)}</span>` : ""}
+              </div>
+              <div class="code">${escapeHtml(p.code)}</div>
+              <h2>${escapeHtml(p.name)}</h2>
+              <div class="dates">Thời gian: ${escapeHtml(formatDate(p.startDate))} – ${escapeHtml(formatDate(p.endDate))}</div>
+              <p class="excerpt">${escapeHtml(p.content || p.product || "Nhấn xem chi tiết để đọc thông tin chương trình.")}</p>
+              <div class="card-actions">
+                <button class="btn btn-primary" type="button" data-action="detail" data-code="${escapeAttr(p.code)}">Xem chi tiết</button>
+                <button class="btn" type="button" data-action="favorite" data-code="${escapeAttr(p.code)}">${favorite ? "★ Đã lưu" : "☆ Yêu thích"}</button>
+              </div>
+            </div>
+          </article>`;
+      }).join("");
+    }
 
-  $('kpiText').textContent = `0 / ${item.kpi} ly`;
-  $('kpiPercent').textContent = '0%';
-  $('kpiBar').style.width = '0%';
-}
+    function handleCardAction(event) {
+      const button = event.target.closest("button[data-action]");
+      if (!button) return;
 
-/* =========================
-   TỔNG HỢP VÀ ĐIỀU HƯỚNG
-========================= */
+      const promotion = state.promotions.find((p) => p.code === button.dataset.code);
+      if (!promotion) return;
 
-function renderAll() {
-  $('totalCount').textContent = promotions.length;
-  $('activeCount').textContent =
-    promotions.filter(p => getStatus(p) === 'active').length;
+      if (button.dataset.action === "detail") openModal(promotion);
+      if (button.dataset.action === "favorite") toggleFavorite(promotion.code);
+    }
 
-  $('timeline').hidden = viewMode === 'list';
-  $('listView').hidden = viewMode !== 'list';
+    function openModal(p) {
+      state.activePromotion = p;
+      $("modalTitle").textContent = p.name;
 
-  if (viewMode === 'list') renderList();
-  else renderTimeline();
-}
+      $("modalContent").innerHTML = `
+        <div class="badges">
+          <span class="badge ${p.status}">${statusLabel(p.status)}</span>
+          <span class="badge">${escapeHtml(p.code)}</span>
+        </div>
+        <div class="detail-grid">
+          ${detailBox("Thời gian", `${formatDate(p.startDate)} – ${formatDate(p.endDate)}`)}
+          ${detailBox("Địa điểm", p.location)}
+          ${detailBox("KPI", p.kpi)}
+          ${detailBox("Sản phẩm", p.product)}
+        </div>
+        ${detailSection("Nội dung chương trình", p.content)}
+        ${detailSection("Điều khoản", p.terms)}
+        ${detailSection("Quy trình thực hiện", p.process)}
+        ${detailSection("Kiểm soát", p.control)}
+        <div class="modal-actions">
+          <button class="btn btn-primary" type="button" data-modal-action="copy">Sao chép nội dung</button>
+          <button class="btn" type="button" data-modal-action="print">In chi tiết</button>
+          <button class="btn" type="button" data-modal-action="favorite">${state.favorites.has(p.code) ? "★ Bỏ yêu thích" : "☆ Thêm yêu thích"}</button>
+        </div>`;
 
-function changePeriod(amount) {
-  if (viewMode === 'week') {
-    anchorDate.setDate(anchorDate.getDate() + amount * 7);
-  } else {
-    anchorDate.setMonth(anchorDate.getMonth() + amount);
-  }
+      $("modal").classList.remove("hidden");
+      document.body.style.overflow = "hidden";
+      $("closeModalBtn").focus();
+    }
 
-  renderAll();
-}
+    function detailBox(label, value) {
+      return `<div class="detail-box"><div class="detail-label">${escapeHtml(label)}</div><div class="detail-value">${escapeHtml(value || "—")}</div></div>`;
+    }
 
-document.querySelectorAll('[data-view]').forEach(button => {
-  button.addEventListener('click', () => {
-    viewMode = button.dataset.view;
+    function detailSection(title, content) {
+      if (!content) return "";
+      return `<section class="detail-section"><h3>${escapeHtml(title)}</h3><p>${escapeHtml(content)}</p></section>`;
+    }
 
-    document.querySelectorAll('[data-view]').forEach(btn => {
-      btn.classList.toggle('active', btn === button);
-    });
+    function handleModalAction(event) {
+      const button = event.target.closest("[data-modal-action]");
+      if (!button || !state.activePromotion) return;
 
-    renderAll();
-  });
-});
+      const p = state.activePromotion;
+      if (button.dataset.modalAction === "copy") copyText(promotionText(p));
+      if (button.dataset.modalAction === "print") window.print();
+      if (button.dataset.modalAction === "favorite") {
+        toggleFavorite(p.code);
+        openModal(p);
+      }
+    }
 
-$('prevBtn').addEventListener('click', () => changePeriod(-1));
-$('nextBtn').addEventListener('click', () => changePeriod(1));
+    function promotionText(p) {
+      return [
+        `MÃ CHƯƠNG TRÌNH: ${p.code}`,
+        `TÊN: ${p.name}`,
+        `THỜI GIAN: ${formatDate(p.startDate)} – ${formatDate(p.endDate)}`,
+        `ĐỊA ĐIỂM: ${p.location}`,
+        `KPI: ${p.kpi}`,
+        `SẢN PHẨM: ${p.product}`,
+        `NỘI DUNG: ${p.content}`,
+        `ĐIỀU KHOẢN: ${p.terms}`,
+        `QUY TRÌNH: ${p.process}`,
+        `KIỂM SOÁT: ${p.control}`
+      ].join("\n");
+    }
 
-$('todayBtn').addEventListener('click', () => {
-  anchorDate = new Date();
-  renderAll();
-});
+    async function copyText(value) {
+      try {
+        await navigator.clipboard.writeText(value);
+      } catch {
+        const textarea = document.createElement("textarea");
+        textarea.value = value;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        textarea.remove();
+      }
+      showToast("Đã sao chép nội dung chương trình.");
+    }
 
-$('refreshBtn').addEventListener('click', loadPromotions);
+    function toggleFavorite(code) {
+      if (state.favorites.has(code)) state.favorites.delete(code);
+      else state.favorites.add(code);
 
-$('searchInput').addEventListener('input', renderAll);
-$('statusFilter').addEventListener('change', renderAll);
+      localStorage.setItem("betaNowzoneFavorites", JSON.stringify([...state.favorites]));
+      render();
+      showToast(state.favorites.has(code) ? "Đã thêm vào yêu thích." : "Đã bỏ khỏi yêu thích.");
+    }
 
-loadPromotions();
-</script>
+    function loadFavorites() {
+      try {
+        state.favorites = new Set(JSON.parse(localStorage.getItem("betaNowzoneFavorites") || "[]"));
+      } catch {
+        state.favorites = new Set();
+      }
+    }
 
+    function syncControls() {
+      $("statusFilter").value = state.filter === "favorites" ? "all" : state.filter;
+      document.querySelectorAll("[data-filter]").forEach((button) => {
+        button.classList.toggle("active", button.dataset.filter === state.filter);
+      });
+    }
+
+    function closeModal() {
+      $("modal").classList.add("hidden");
+      document.body.style.overflow = "";
+      state.activePromotion = null;
+    }
+
+    function showMessage(message, isError = false) {
+      grid.innerHTML = `<div class="message ${isError ? "error" : ""}">${escapeHtml(message)}</div>`;
+      $("resultCount").textContent = isError ? "Lỗi tải dữ liệu" : "0 chương trình";
+    }
+
+    function showToast(message) {
+      const toast = $("toast");
+      toast.textContent = message;
+      toast.classList.remove("hidden");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.add("hidden"), 2400);
+    }
+
+    function formatDate(value) {
+      const date = parseDate(value);
+      if (!date) return value ? String(value) : "Chưa cập nhật";
+      return new Intl.DateTimeFormat("vi-VN", {
+        day: "2-digit", month: "2-digit", year: "numeric"
+      }).format(date);
+    }
+
+    function safeImageUrl(value) {
+      return /^https?:\/\//i.test(String(value || "").trim()) ? String(value).trim() : "";
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      })[char]);
+    }
+
+    function escapeAttr(value) {
+      return escapeHtml(value).replace(/`/g, "&#96;");
+    }
+  </script>
 </body>
 </html>
