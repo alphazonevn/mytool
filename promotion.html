@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Timeline khuyến mãi | Beta Nowzone</title>
+
+<style>
+:root {
+  --blue: #2868ad;
+  --blue-dark: #194e85;
+  --bg: #f2f5f9;
+  --border: #e2e8f0;
+  --text: #26364a;
+  --muted: #718096;
+  --green: #2eaa72;
+  --orange: #e9a23b;
+  --red: #d9534f;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+}
+
+button, input, select {
+  font: inherit;
+}
+
+button { cursor: pointer; }
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+.topbar {
+  background: white;
+  border-bottom: 1px solid var(--border);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-icon {
+  background: var(--blue);
+  color: white;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  font-size: 19px;
+  font-weight: bold;
+}
+
+.brand h1 {
+  font-size: 19px;
+  margin: 0;
+}
+
+.brand p {
+  margin: 5px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.top-actions {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+}
+
+.btn {
+  border: 1px solid var(--border);
+  background: white;
+  border-radius: 7px;
+  padding: 10px 14px;
+  color: var(--text);
+}
+
+.btn:hover { background: #f4f7fb; }
+
+.btn-primary {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--blue-dark);
+}
+
+main {
+  max-width: 1600px;
+  margin: auto;
+  padding: 22px;
+}
+
+.page-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.page-heading h2 {
+  font-size: 21px;
+  margin: 0;
+}
+
+.page-heading p {
+  color: var(--muted);
+  margin: 7px 0 0;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 30px;
+  padding: 7px 12px;
+  background: #e7f5ed;
+  color: #258354;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.stat {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 17px;
+}
+
+.stat-label {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.stat-value {
+  font-size: 25px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.stat-note {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+.panel {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.panel-header {
+  padding: 17px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.panel-header h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.panel-body { padding: 20px; }
+
+.toolbar {
+  display: flex;
+  gap: 9px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.toolbar input,
+.toolbar select {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: white;
+  color: var(--text);
+}
+
+.toolbar input { min-width: 190px; }
+
+.timeline-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.timeline-controls strong {
+  min-width: 130px;
+  text-align: center;
+}
+
+.timeline-scroll {
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.timeline {
+  min-width: 900px;
+  display: grid;
+  grid-template-columns: 155px repeat(30, minmax(25px, 1fr));
+  position: relative;
+}
+
+.month-title {
+  grid-column: 1 / -1;
+  padding: 12px 15px;
+  background: #edf3fa;
+  color: var(--blue-dark);
+  font-weight: bold;
+}
+
+.timeline-label {
+  grid-column: 1;
+  padding: 12px;
+  background: #f5f7fa;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.day {
+  text-align: center;
+  padding: 12px 0;
+  font-size: 11px;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid #edf0f5;
+}
+
+.day.today {
+  background: #e8f2ff;
+  color: var(--blue);
+  font-weight: bold;
+}
+
+.timeline-row {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  min-height: 125px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+
+.timeline-row .timeline-label {
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+}
+
+.timeline-row::after {
+  content: "";
+  grid-column: 2 / -1;
+  grid-row: 1;
+  background-image: linear-gradient(
+    to right,
+    transparent calc(100% - 1px),
+    #edf0f5 calc(100% - 1px)
+  );
+  background-size: calc(100% / 30) 100%;
+  pointer-events: none;
+}
+
+.event {
+  grid-row: 1;
+  z-index: 1;
+  margin: 12px 4px;
+  padding: 13px;
+  background: var(--blue);
+  color: white;
+  border-radius: 7px;
+  overflow: hidden;
+  min-width: 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 7px;
+  box-shadow: 0 3px 8px #2868ad20;
+}
+
+.event:hover {
+  background: var(--blue-dark);
+}
+
+.event.selected {
+  outline: 3px solid #90c4ff;
+  outline-offset: -3px;
+}
+
+.event-name {
+  font-weight: bold;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.event-meta {
+  font-size: 11px;
+  opacity: .9;
+}
+
+.event-progress {
+  height: 5px;
+  background: #ffffff55;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.event-progress div {
+  height: 100%;
+  width: 0%;
+  background: white;
+}
+
+.event.status-future { background: #7a8ca5; }
+.event.status-ended { background: #9aa5b4; }
+
+.status-label {
+  font-size: 11px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.empty {
+  padding: 35px 20px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.detail-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.detail-head h3 {
+  margin: 10px 0;
+  font-size: 20px;
+  line-height: 1.45;
+}
+
+.detail-meta {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.detail-card {
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 17px;
+  min-width: 0;
+}
+
+.detail-card h4 {
+  margin: 0 0 12px;
+  font-size: 14px;
+  color: var(--blue-dark);
+}
+
+.detail-text {
+  white-space: pre-line;
+  line-height: 1.7;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.detail-text a {
+  color: var(--blue);
+}
+
+.kpi-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: 25px;
+  align-items: center;
+}
+
+.kpi-title {
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.kpi-bar {
+  height: 12px;
+  background: #e8edf4;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.kpi-bar div {
+  height: 100%;
+  background: var(--green);
+  border-radius: 10px;
+}
+
+.kpi-number {
+  text-align: right;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.kpi-number strong {
+  display: block;
+  font-size: 28px;
+  margin-bottom: 5px;
+}
+
+.footer {
+  text-align: center;
+  padding: 20px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.loading {
+  padding: 35px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.error {
+  background: #fff0f0;
+  border: 1px solid #f0caca;
+  color: #a53333;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  line-height: 1.6;
+}
+
+@media (max-width: 900px) {
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .kpi-layout { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 600px) {
+  .topbar { padding: 13px; }
+  .brand h1 { font-size: 16px; }
+  .brand-icon { width: 36px; height: 36px; }
+  main { padding: 12px; }
+  .page-heading h2 { font-size: 18px; }
+  .stats { gap: 9px; }
+  .stat { padding: 13px; }
+  .stat-value { font-size: 21px; }
+  .detail-grid { grid-template-columns: 1fr; }
+  .panel-body { padding: 13px; }
+  .toolbar input { width: 100%; }
+  .timeline-controls { width: 100%; justify-content: space-between; }
+}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-icon">B</div>
+    <div>
+      <h1>Beta Nowzone</h1>
+      <p>HỆ THỐNG THEO DÕI KHUYẾN MÃI</p>
+    </div>
+  </div>
+
+  <div class="top-actions">
+    <button class="btn" id="refreshBtn">↻ Tải lại</button>
+    <span class="badge">● Nowzone</span>
+  </div>
+</header>
+
+<main>
+  <div class="page-heading">
+    <div>
+      <h2>Timeline chương trình khuyến mãi</h2>
+      <p>Theo dõi thời gian áp dụng, KPI và quy trình thực hiện tại rạp.</p>
+    </div>
+    <span class="badge">Chỉ dữ liệu Beta Nowzone</span>
+  </div>
+
+  <div id="errorBox"></div>
+
+  <section class="stats">
+    <div class="stat">
+      <div class="stat-label">Tổng chương trình</div>
+      <div class="stat-value" id="totalCount">—</div>
+      <div class="stat-note">Dữ liệu từ Google Sheets</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-label">KPI Nowzone</div>
+      <div class="stat-value">100 ly</div>
+      <div class="stat-note">Chương trình BC766</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-label">Giá trị quà tặng</div>
+      <div class="stat-value">48.000đ</div>
+      <div class="stat-note">Giá trị đền bù mỗi ly</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-label">Địa điểm áp dụng</div>
+      <div class="stat-value">Nowzone</div>
+      <div class="stat-note">235 Nguyễn Văn Cừ, TP.HCM</div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header">
+      <h3>Danh sách chương trình</h3>
+
+      <div class="toolbar">
+        <input
+          id="searchInput"
+          type="search"
+          placeholder="Tìm mã hoặc tên chương trình">
+
+        <select id="statusFilter">
+          <option value="all">Tất cả trạng thái</option>
+          <option value="active">Đang áp dụng</option>
+          <option value="future">Sắp áp dụng</option>
+          <option value="ended">Đã kết thúc</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="panel-body">
+      <div class="timeline-controls">
+        <button class="btn" id="prevMonth">‹ Tháng trước</button>
+        <strong id="monthLabel">Tháng 11/2026</strong>
+        <button class="btn" id="nextMonth">Tháng sau ›</button>
+      </div>
+
+      <div style="height:15px"></div>
+
+      <div class="timeline-scroll">
+        <div id="timeline" class="timeline"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header">
+      <h3>Chi tiết chương trình</h3>
+      <span class="badge" id="detailCode">BC766</span>
+    </div>
+
+    <div class="panel-body" id="detailContent">
+      <div class="loading">Đang tải dữ liệu...</div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header">
+      <h3>KPI chương trình — Beta Nowzone</h3>
+      <span class="badge">Mục tiêu 100 ly</span>
+    </div>
+
+    <div class="panel-body">
+      <div class="kpi-layout">
+        <div>
+          <div class="kpi-title">BC766 — Free Lipton 22oz</div>
+          <div class="kpi-bar"><div id="kpiBar"></div></div>
+          <div class="detail-meta" style="margin-top:10px">
+            KPI theo dõi tại rạp. Chưa có dữ liệu bán thực tế.
+          </div>
+        </div>
+
+        <div class="kpi-number">
+          <strong id="kpiPercent">0%</strong>
+          <span id="kpiText">0 / 100 ly</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="footer">
+  Beta Nowzone · Hệ thống theo dõi chương trình khuyến mãi
+</div>
+
+<script>
+/* =====================================================
+   CẤU HÌNH API
+   Thay URL bên dưới bằng URL triển khai Apps Script.
+   ===================================================== */
+
+const API_URL = 'https://script.google.com/macros/s/AKfycbwCADG1pXAQJhXtDVWbD93Wih2tSpkZjU4P4B5APqMkkUNLOSyUCdjxMzzpH4j18bUlBw/exec';
+
+/* =====================================================
+   TRẠNG THÁI WEBSITE
+   ===================================================== */
+
+let promotions = [];
+let selectedCode = '';
+let selectedMonth = new Date(2026, 10, 1);
+
+const $ = id => document.getElementById(id);
+
+const MONTHS = [
+  'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4',
+  'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8',
+  'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'
+];
+
+function formatDate(value) {
+  if (!value) return '';
+
+  const parts = value.split('-');
+
+  if (parts.length !== 3) return value;
+
+  return `${parts[2]}/${parts[1]}/${parts[0]}`;
+}
+
+function dateOnly(value) {
+  return new Date(value + 'T00:00:00');
+}
+
+function getStatus(item) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const start = dateOnly(item.start);
+  const end = dateOnly(item.end);
+
+  if (today < start) return 'future';
+  if (today > end) return 'ended';
+
+  return 'active';
+}
+
+function statusText(status) {
+  if (status === 'active') return 'Đang áp dụng';
+  if (status === 'future') return 'Sắp áp dụng';
+  return 'Đã kết thúc';
+}
+
+function escapeHTML(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/* =====================================================
+   GỌI BACKEND APPS SCRIPT BẰNG JSONP
+   ===================================================== */
+
+function loadPromotions() {
+  if (API_URL.includes('YOUR_GOOGLE_APPS_SCRIPT_URL')) {
+    showError(
+      'Chưa cấu hình API_URL. Hãy thay bằng URL Apps Script đã triển khai.'
+    );
+    return;
+  }
+
+  $('errorBox').innerHTML = '';
+  $('refreshBtn').disabled = true;
+  $('refreshBtn').textContent = 'Đang tải...';
+
+  const callbackName =
+    'betaCallback_' + Date.now() + '_' +
+    Math.random().toString(36).slice(2);
+
+  const script = document.createElement('script');
+
+  const timeout = setTimeout(() => {
+    cleanup();
+    showError('Backend không phản hồi. Vui lòng kiểm tra URL và quyền truy cập.');
+  }, 20000);
+
+  function cleanup() {
+    clearTimeout(timeout);
+    script.remove();
+    delete window[callbackName];
+
+    $('refreshBtn').disabled = false;
+    $('refreshBtn').textContent = '↻ Tải lại';
+  }
+
+  window[callbackName] = function(result) {
+    cleanup();
+
+    if (!result || !result.success) {
+      showError(
+        result?.message || 'Không thể tải dữ liệu từ backend.'
+      );
+      return;
+    }
+
+    promotions = Array.isArray(result.data)
+      ? result.data
+      : [];
+
+    renderTimeline();
+
+    if (promotions.length > 0) {
+      const selected =
+        promotions.find(p => p.code === selectedCode) ||
+        promotions[0];
+
+      showDetail(selected.code);
+    } else {
+      $('detailContent').textContent =
+        'Chưa có chương trình khuyến mãi.';
+    }
+  };
+
+  const params = new URLSearchParams({
+    action: 'getPromotions',
+    callback: callbackName
+  });
+
+  script.src = API_URL + '?' + params.toString();
+
+  script.onerror = function() {
+    cleanup();
+    showError('Không thể kết nối Google Apps Script.');
+  };
+
+  document.body.appendChild(script);
+}
+
+function showError(message) {
+  $('errorBox').innerHTML = `
+    <div class="error">${escapeHTML(message)}</div>
+  `;
+}
+
+/* =====================================================
+   LỌC DỮ LIỆU
+   ===================================================== */
+
+function getFilteredPromotions() {
+  const keyword = $('searchInput').value
+    .trim()
+    .toLowerCase();
+
+  const status = $('statusFilter').value;
+
+  return promotions.filter(item => {
+    const text = (
+      item.code + ' ' + item.name
+    ).toLowerCase();
+
+    const matchesKeyword = text.includes(keyword);
+
+    const matchesStatus =
+      status === 'all' || getStatus(item) === status;
+
+    const start = dateOnly(item.start);
+    const end = dateOnly(item.end);
+
+    const monthStart = new Date(
+      selectedMonth.getFullYear(),
+      selectedMonth.getMonth(),
+      1
+    );
+
+    const monthEnd = new Date(
+      selectedMonth.getFullYear(),
+      selectedMonth.getMonth() + 1,
+      0
+    );
+
+    const matchesMonth =
+      start <= monthEnd && end >= monthStart;
+
+    return matchesKeyword &&
+           matchesStatus &&
+           matchesMonth;
+  });
+}
+
+/* =====================================================
+   HIỂN THỊ TIMELINE
+   ===================================================== */
+
+function renderTimeline() {
+  const root = $('timeline');
+  const filtered = getFilteredPromotions();
+
+  const year = selectedMonth.getFullYear();
+  const month = selectedMonth.getMonth();
+
+  const daysInMonth =
+    new Date(year, month + 1, 0).getDate();
+
+  root.style.gridTemplateColumns =
+    `155px repeat(${daysInMonth}, minmax(25px, 1fr))`;
+
+  $('monthLabel').textContent =
+    `${MONTHS[month]} / ${year}`;
+
+  root.innerHTML = '';
+
+  const title = document.createElement('div');
+  title.className = 'month-title';
+  title.style.gridColumn = '1 / -1';
+  title.textContent =
+    `LỊCH KHUYẾN MÃI — ${MONTHS[month].toUpperCase()} ${year}`;
+
+  root.appendChild(title);
+
+  const label = document.createElement('div');
+  label.className = 'timeline-label';
+  label.textContent = 'CHƯƠNG TRÌNH';
+
+  root.appendChild(label);
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const cell = document.createElement('div');
+    cell.className = 'day';
+
+    const today = new Date();
+
+    if (
+      today.getFullYear() === year &&
+      today.getMonth() === month &&
+      today.getDate() === day
+    ) {
+      cell.classList.add('today');
+    }
+
+    cell.textContent = day;
+    root.appendChild(cell);
+  }
+
+  if (filtered.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'empty';
+    empty.style.gridColumn = '1 / -1';
+    empty.textContent =
+      'Không có chương trình trong thời gian đã chọn.';
+
+    root.appendChild(empty);
+    return;
+  }
+
+  filtered.forEach(item => {
+    const row = document.createElement('div');
+    row.className = 'timeline-row';
+
+    row.style.gridTemplateColumns =
+      `155px repeat(${daysInMonth}, minmax(25px, 1fr))`;
+
+    const rowLabel = document.createElement('div');
+    rowLabel.className = 'timeline-label';
+    rowLabel.textContent = item.code;
+
+    row.appendChild(rowLabel);
+
+    const start = dateOnly(item.start);
+    const end = dateOnly(item.end);
+
+    const startDay = start.getFullYear() === year &&
+      start.getMonth() === month
+      ? start.getDate()
+      : 1;
+
+    const endDay = end.getFullYear() === year &&
+      end.getMonth() === month
+      ? end.getDate()
+      : daysInMonth;
+
+    const event = document.createElement('div');
+
+    event.className =
+      'event status-' + getStatus(item);
+
+    if (item.code === selectedCode) {
+      event.classList.add('selected');
+    }
+
+    event.style.gridColumn =
+      `${startDay + 1} / ${endDay + 2}`;
+
+    const name = document.createElement('div');
+    name.className = 'event-name';
+    name.textContent = item.name;
+
+    const date = document.createElement('div');
+    date.className = 'event-meta';
+    date.textContent =
+      `${formatDate(item.start)} – ${formatDate(item.end)}`;
+
+    const status = document.createElement('div');
+    status.className = 'status-label';
+    status.textContent = statusText(getStatus(item));
+
+    const kpi = document.createElement('div');
+    kpi.className = 'event-meta';
+    kpi.textContent = `KPI: ${item.kpi} ly`;
+
+    event.append(name, date, status, kpi);
+
+    event.addEventListener('click', () => {
+      showDetail(item.code);
+      renderTimeline();
+    });
+
+    row.appendChild(event);
+    root.appendChild(row);
+  });
+
+  $('totalCount').textContent = promotions.length;
+}
+
+/* =====================================================
+   HIỂN THỊ CHI TIẾT
+   ===================================================== */
+
+function createDetailCard(title, content) {
+  const card = document.createElement('div');
+  card.className = 'detail-card';
+
+  const heading = document.createElement('h4');
+  heading.textContent = title;
+
+  const text = document.createElement('div');
+  text.className = 'detail-text';
+  text.textContent = content || 'Chưa có thông tin.';
+
+  card.append(heading, text);
+
+  return card;
+}
+
+function showDetail(code) {
+  const item = promotions.find(p => p.code === code);
+
+  if (!item) return;
+
+  selectedCode = code;
+
+  $('detailCode').textContent = item.code;
+
+  const root = $('detailContent');
+  root.innerHTML = '';
+
+  const head = document.createElement('div');
+  head.className = 'detail-head';
+
+  const info = document.createElement('div');
+
+  const badge = document.createElement('span');
+  badge.className = 'badge';
+  badge.textContent = item.code;
+
+  const title = document.createElement('h3');
+  title.textContent = item.name;
+
+  const meta = document.createElement('div');
+  meta.className = 'detail-meta';
+  meta.textContent =
+    `Thời gian: ${formatDate(item.start)} – ${formatDate(item.end)}\n` +
+    `Địa điểm: ${item.location}\n` +
+    `Trạng thái: ${statusText(getStatus(item))}\n` +
+    `Sản phẩm: ${item.product}`;
+
+  info.append(badge, title, meta);
+  head.appendChild(info);
+
+  root.appendChild(head);
+
+  const grid = document.createElement('div');
+  grid.className = 'detail-grid';
+
+  grid.append(
+    createDetailCard('Nội dung chương trình', item.content),
+    createDetailCard('Điều khoản và điều kiện', item.terms),
+    createDetailCard('Chuẩn bị và thực hiện', item.process),
+    createDetailCard('Kiểm soát và xử phạt', item.control)
+  );
+
+  root.appendChild(grid);
+
+  if (item.lcd) {
+    const link = document.createElement('a');
+
+    link.href = item.lcd;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.textContent = 'Mở nội dung LCD';
+
+    const box = document.createElement('div');
+    box.style.marginTop = '16px';
+    box.appendChild(link);
+
+    root.appendChild(box);
+  }
+
+  $('kpiText').textContent = `0 / ${item.kpi} ly`;
+  $('kpiPercent').textContent = '0%';
+  $('kpiBar').style.width = '0%';
+}
+
+/* =====================================================
+   SỰ KIỆN
+   ===================================================== */
+
+$('refreshBtn').addEventListener('click', loadPromotions);
+
+$('searchInput').addEventListener('input', renderTimeline);
+
+$('statusFilter').addEventListener('change', renderTimeline);
+
+$('prevMonth').addEventListener('click', () => {
+  selectedMonth.setMonth(selectedMonth.getMonth() - 1);
+  renderTimeline();
+});
+
+$('nextMonth').addEventListener('click', () => {
+  selectedMonth.setMonth(selectedMonth.getMonth() + 1);
+  renderTimeline();
+});
+
+/* =====================================================
+   KHỞI ĐỘNG
+   ===================================================== */
+
+loadPromotions();
+</script>
+
+</body>
+</html>
