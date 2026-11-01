@@ -10,28 +10,31 @@
     <style>
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            background: #f8fafc;
-            background-image: radial-gradient(at 0% 0%, hsla(253,16%,7%,0.03) 0, transparent 50%), radial-gradient(at 50% 0%, hsla(225,39%,30%,0.03) 0, transparent 50%), radial-gradient(at 100% 0%, hsla(339,49%,30%,0.03) 0, transparent 50%);
+            background: #f1f5f9;
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(253,16%,7%,0.05) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, hsla(225,39%,30%,0.05) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(339,49%,30%,0.05) 0, transparent 50%);
             min-height: 100vh;
         }
         
-        /* Hiệu ứng Bento Glassmorphism */
+        /* Hiệu ứng Bento Glassmorphism cao cấp */
         .glass-panel {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 1);
-            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.08);
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,1);
         }
 
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         
-        /* === CSS MỚI CHO CINEMATIC BLUR TV MODE === */
+        /* === CSS CINEMATIC BLUR TV MODE === */
         .tv-layer {
-            transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
             position: absolute;
             inset: 0;
             display: flex;
@@ -45,17 +48,17 @@
             inset: -10%; /* Phóng to nhẹ để tránh viền trắng khi làm mờ */
             background-size: cover;
             background-position: center;
-            filter: blur(35px) brightness(0.6);
+            filter: blur(40px) brightness(0.4);
             z-index: 0;
-            transition: background-image 0.5s ease-in-out;
+            transition: background-image 0.8s ease-in-out;
         }
         .media-content {
             position: relative;
             z-index: 10;
             max-width: 100%;
             max-height: 100%;
-            object-fit: contain; /* Giữ nguyên tỷ lệ 100%, không cắt xén */
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            object-fit: contain;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
         }
         .opacity-0 { opacity: 0; z-index: 1; pointer-events: none; }
         .opacity-100 { opacity: 1; z-index: 10; }
@@ -72,20 +75,20 @@
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="text-slate-800 antialiased">
+<body class="text-slate-800 antialiased transition-colors duration-500">
 
-    <!-- ==================== GIAO DIỆN ADMIN (BENTO GRID) ==================== -->
-    <div id="adminView" class="container mx-auto p-4 lg:p-8 max-w-[1400px] flex flex-col transition-all duration-500 min-h-screen">
+    <!-- ==================== GIAO DIỆN ADMIN ==================== -->
+    <div id="adminView" class="container mx-auto p-4 lg:p-8 max-w-[1400px] flex flex-col transition-all duration-700 min-h-screen">
         
         <!-- Header -->
-        <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
             <div>
-                <h1 class="text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 drop-shadow-sm">
+                <h1 class="text-3xl lg:text-4xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 drop-shadow-sm">
                     ✨ Quản Lý Trình Chiếu
                 </h1>
                 <p class="text-slate-500 text-sm mt-2 font-medium">Hệ thống phân phối nội dung tự động lên Màn hình TV</p>
             </div>
-            <button onclick="startTVMode()" class="group relative px-8 py-3.5 bg-slate-900 hover:bg-black text-white font-bold rounded-2xl shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex items-center overflow-hidden">
+            <button onclick="startTVMode()" class="group relative px-8 py-3.5 bg-gradient-to-r from-slate-900 to-black hover:from-black hover:to-slate-800 text-white font-bold rounded-2xl shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex items-center overflow-hidden">
                 <div class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></div>
                 <svg class="w-6 h-6 mr-2 relative z-10 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 <span class="relative z-10 tracking-wide">Phát Lên TV Ngay</span>
@@ -95,11 +98,13 @@
         <!-- BENTO GRID LAYOUT -->
         <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 flex-1">
             
-            <!-- Cột trái: FORM THÊM MỚI (4 cột) -->
+            <!-- Cột trái: FORM THÊM MỚI -->
             <div class="xl:col-span-4 flex flex-col gap-6">
                 <div class="glass-panel rounded-3xl p-6 lg:p-8 flex-1">
                     <h2 class="text-lg font-bold text-slate-800 mb-6 flex items-center">
-                        <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                        <span class="bg-blue-100 text-blue-600 p-2 rounded-xl mr-3">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                        </span>
                         Thêm Nội Dung Mới
                     </h2>
                     
@@ -109,7 +114,7 @@
                             <div class="flex justify-between items-end mb-2">
                                 <label class="block text-sm font-bold text-slate-700">Nguồn Dữ Liệu</label>
                             </div>
-                            <div class="flex gap-2 p-1.5 bg-slate-100 rounded-xl mb-3">
+                            <div class="flex gap-2 p-1.5 bg-slate-200/50 rounded-xl mb-3">
                                 <label class="flex-1 flex items-center justify-center cursor-pointer text-sm font-semibold px-3 py-2 rounded-lg bg-white shadow-sm transition">
                                     <input type="radio" name="sourceType" value="url" checked class="hidden peer"> 
                                     <span class="text-blue-600">Dùng Link</span>
@@ -120,29 +125,34 @@
                                 </label>
                             </div>
                             
-                            <input type="url" id="mediaUrl" required placeholder="Nhập link https:// (Drive...)" class="w-full p-3.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm">
+                            <input type="url" id="mediaUrl" required placeholder="Nhập link https:// (Drive, Direct MP4...)" class="w-full p-3.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all shadow-sm">
                             
                             <input type="file" id="mediaFile" accept="image/*,video/mp4" multiple class="hidden w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
                             
-                            <p id="sourceHint" class="text-[13px] text-slate-500 mt-2 font-medium">Khuyên dùng link chia sẻ công khai để tải nhanh nhất.</p>
+                            <p id="sourceHint" class="text-[13px] text-slate-500 mt-2 font-medium">Khuyên dùng link MP4 trực tiếp cho Video để tránh bị lỗi Stream.</p>
                         </div>
                         
                         <!-- Loại nội dung -->
                         <div>
                             <label class="block text-sm font-bold text-slate-700 mb-2">Loại (Tự động nhận diện)</label>
-                            <select id="mediaType" class="w-full p-3.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none shadow-sm appearance-none font-medium">
-                                <option value="image">🖼️ Hình Ảnh</option>
-                                <option value="video">🎬 Video (Tự động phát)</option>
-                            </select>
+                            <div class="relative">
+                                <select id="mediaType" class="w-full p-3.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none shadow-sm appearance-none font-medium cursor-pointer">
+                                    <option value="image">🖼️ Hình Ảnh</option>
+                                    <option value="video">🎬 Video (Tự động phát)</option>
+                                </select>
+                                <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-slate-500">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                            </div>
                         </div>
                         
                         <!-- Thời gian -->
                         <div>
                             <label class="block text-sm font-bold text-slate-700 mb-2">Độ trễ hiển thị (Giây)</label>
-                            <input type="number" id="mediaDuration" value="10" min="3" max="3600" class="w-full p-3.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none shadow-sm font-medium" title="Chỉ áp dụng cho Hình ảnh">
+                            <input type="number" id="mediaDuration" value="10" min="3" max="3600" class="w-full p-3.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none shadow-sm font-medium transition-opacity" title="Chỉ áp dụng cho Hình ảnh">
                         </div>
                         
-                        <button type="submit" id="submitBtn" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-xl shadow-lg hover:shadow-blue-500/30 transition-all active:scale-95 flex items-center justify-center">
+                        <button type="submit" id="submitBtn" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-xl shadow-lg shadow-blue-500/30 transition-all hover:-translate-y-0.5 active:scale-95 flex items-center justify-center">
                             <div id="uploadSpinner" class="spinner mr-3 hidden"></div>
                             <span id="submitBtnText">Thêm Vào Danh Sách</span>
                         </button>
@@ -150,28 +160,30 @@
                 </div>
             </div>
 
-            <!-- Cột phải: DANH SÁCH & LƯU TRỮ (8 cột) -->
+            <!-- Cột phải: DANH SÁCH & LƯU TRỮ -->
             <div class="xl:col-span-8 flex flex-col gap-6">
                 <!-- Thông báo -->
-                <div id="statusMsg" class="hidden text-center p-4 rounded-2xl font-semibold text-sm transition-all shadow-sm"></div>
+                <div id="statusMsg" class="hidden text-center p-4 rounded-xl font-semibold text-sm transition-all shadow-sm"></div>
 
                 <div class="glass-panel rounded-3xl p-6 lg:p-8 flex-1 flex flex-col">
-                    <div class="flex justify-between items-center mb-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                         <h2 class="text-lg font-bold text-slate-800 flex items-center">
-                            <svg class="w-5 h-5 mr-2 text-fuchsia-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                            <span class="bg-fuchsia-100 text-fuchsia-600 p-2 rounded-xl mr-3">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                            </span>
                             Danh Sách Phát Hiện Tại
                         </h2>
                         
-                        <button onclick="saveData()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2.5 px-6 rounded-xl shadow-lg hover:shadow-emerald-500/30 transition-all hover:-translate-y-0.5 active:scale-95 flex items-center text-sm">
+                        <button onclick="saveData()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2.5 px-6 rounded-xl shadow-lg hover:shadow-emerald-500/30 transition-all hover:-translate-y-0.5 active:scale-95 flex items-center text-sm w-full sm:w-auto justify-center">
                             <div id="saveSpinner" class="spinner mr-2 w-4 h-4 hidden border-2"></div>
                             💾 Đồng Bộ Cloud
                         </button>
                     </div>
 
-                    <div class="overflow-x-auto rounded-2xl border border-slate-200 shadow-inner bg-slate-50/50 flex-1">
+                    <div class="overflow-x-auto rounded-2xl border border-slate-200/60 shadow-sm bg-white/50 flex-1">
                         <table class="w-full text-left border-collapse bg-transparent">
                             <thead>
-                                <tr class="border-b border-slate-200 text-slate-500 text-xs uppercase tracking-wider font-bold">
+                                <tr class="border-b border-slate-200 bg-slate-50/50 text-slate-500 text-xs uppercase tracking-wider font-bold">
                                     <th class="p-4 text-center w-16">#</th>
                                     <th class="p-4 w-24">Preview</th>
                                     <th class="p-4">Đường dẫn dữ liệu</th>
@@ -179,29 +191,29 @@
                                     <th class="p-4 text-center w-20">Xóa</th>
                                 </tr>
                             </thead>
-                            <tbody id="mediaTableBody" class="divide-y divide-slate-200/60 text-sm">
+                            <tbody id="mediaTableBody" class="divide-y divide-slate-100 text-sm">
                                 <!-- Render qua JS -->
                             </tbody>
                         </table>
                         
                         <div id="emptyState" class="flex flex-col items-center justify-center py-24 text-slate-400">
-                            <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-4 shadow-sm">
+                            <div class="w-20 h-20 bg-slate-100 rounded-3xl flex items-center justify-center mb-5 shadow-sm rotate-3">
                                 <svg class="w-10 h-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                             </div>
-                            <p class="font-bold text-slate-500 text-lg">Chưa có nội dung nào.</p>
-                            <p class="text-sm mt-1">Thêm link hoặc tải file từ cột bên trái để bắt đầu.</p>
+                            <p class="font-bold text-slate-600 text-lg">Chưa có nội dung nào.</p>
+                            <p class="text-sm mt-1 text-slate-500">Thêm link hoặc tải file từ cột bên trái để bắt đầu.</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <p class="text-center text-slate-400 text-xs mt-6 mb-2 font-semibold">Bản quyền phần mềm thuộc về hệ thống Digital Signage Nội Bộ</p>
+        <p class="text-center text-slate-400 text-xs mt-8 mb-2 font-medium">Hệ thống Trình chiếu TV Nội bộ &copy; 2024</p>
     </div>
 
     <!-- HỘP THOẠI XÁC NHẬN XÓA (Custom Modal) -->
     <div id="confirmModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm transition-opacity opacity-0">
         <div id="confirmModalContent" class="bg-white p-7 rounded-3xl shadow-2xl max-w-sm w-full text-center transform transition-all scale-90">
-            <div class="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-5">
+            <div class="w-16 h-16 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center mx-auto mb-5 rotate-3">
                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
             </div>
             <h3 class="text-xl font-bold text-slate-800 mb-2">Xác nhận xóa</h3>
@@ -216,20 +228,24 @@
     <!-- ==================== GIAO DIỆN TV (CINEMATIC BLUR LAYERS) ==================== -->
     <div id="tvView" class="hidden fixed inset-0 bg-black z-[9999]">
         <!-- Khu vực góc phải trên cùng để bấm thoát về Admin -->
-        <div class="fixed top-0 right-0 w-32 h-32 z-[10000] cursor-pointer" onclick="exitTVMode()" title="Thoát trình chiếu"></div>
+        <div class="fixed top-0 right-0 w-32 h-32 z-[10000] cursor-pointer group" onclick="exitTVMode()" title="Thoát trình chiếu">
+            <div class="absolute top-4 right-4 bg-black/50 text-white/50 px-3 py-1 rounded-full text-xs opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-md">Thoát (Click)</div>
+        </div>
         
         <!-- LAYER 1 -->
         <div id="layer1" class="tv-layer opacity-0">
             <div id="bg1" class="cinematic-bg"></div>
             <img id="img1" class="media-content hidden" src="" alt="Layer 1">
-            <video id="vid1" class="media-content hidden" playsinline></video>
+            <!-- Đã thêm autoplay, muted, playsinline mặc định -->
+            <video id="vid1" class="media-content hidden" autoplay muted playsinline></video>
         </div>
 
         <!-- LAYER 2 -->
         <div id="layer2" class="tv-layer opacity-0">
             <div id="bg2" class="cinematic-bg"></div>
             <img id="img2" class="media-content hidden" src="" alt="Layer 2">
-            <video id="vid2" class="media-content hidden" playsinline></video>
+            <!-- Đã thêm autoplay, muted, playsinline mặc định -->
+            <video id="vid2" class="media-content hidden" autoplay muted playsinline></video>
         </div>
 
         <!-- Báo lỗi khi rỗng -->
@@ -242,9 +258,8 @@
     <!-- ==================== JAVASCRIPT LOGIC ==================== -->
     <script>
         let mediaList = [];
-        let itemToDelete = null; // Lưu ID tạm thời để xóa
+        let itemToDelete = null; 
         
-        // Trạng thái hệ thống TV
         let currentSlideIndex = 0;
         let activeLayer = 1;
         let slideTimeout;
@@ -278,13 +293,11 @@
             const durationInput = document.getElementById('mediaDuration');
             const radios = document.querySelectorAll('input[name="sourceType"]');
             
-            // Xử lý nút radio UI kiểu mới
             radios.forEach(radio => {
                 radio.addEventListener('change', (e) => {
                     const urlInput = document.getElementById('mediaUrl');
                     const fileInput = document.getElementById('mediaFile');
                     
-                    // Reset CSS UI cho nút
                     document.querySelectorAll('input[name="sourceType"]').forEach(r => {
                         const span = r.nextElementSibling;
                         r.parentElement.classList.replace('bg-white', 'hover:bg-white/50');
@@ -300,7 +313,7 @@
                     if (e.target.value === 'url') {
                         urlInput.classList.remove('hidden'); urlInput.required = true;
                         fileInput.classList.add('hidden'); fileInput.required = false;
-                        document.getElementById('sourceHint').innerText = "Khuyên dùng link chia sẻ công khai để tải nhanh nhất.";
+                        document.getElementById('sourceHint').innerText = "Khuyên dùng link MP4 trực tiếp cho Video để tránh bị lỗi Stream.";
                     } else {
                         urlInput.classList.add('hidden'); urlInput.required = false;
                         fileInput.classList.remove('hidden'); fileInput.required = true;
@@ -319,7 +332,6 @@
                 }
             });
 
-            // TÍNH NĂNG MỚI: Tự động nhận diện loại nội dung khi dán Link
             document.getElementById('mediaUrl').addEventListener('input', (e) => {
                 const url = e.target.value.toLowerCase();
                 const ts = document.getElementById('mediaType');
@@ -430,7 +442,7 @@
 
             mediaList.forEach((item, index) => {
                 const tr = document.createElement('tr');
-                tr.className = 'hover:bg-blue-50/50 transition-colors bg-white group';
+                tr.className = 'hover:bg-slate-50 transition-colors bg-white group';
                 
                 let previewHtml = '';
                 if (item.type === 'image') {
@@ -444,7 +456,7 @@
                     <td class="p-4 text-center font-bold text-slate-400">${index + 1}</td>
                     <td class="p-4">${previewHtml}</td>
                     <td class="p-4">
-                        <div class="text-[13px] text-slate-500 w-40 md:w-64 truncate font-medium" title="${item.url}">${item.url}</div>
+                        <div class="text-[13px] text-slate-600 w-40 md:w-64 truncate font-medium" title="${item.url}">${item.url}</div>
                     </td>
                     <td class="p-4">
                         <span class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider ${item.type === 'image' ? 'bg-blue-100 text-blue-700' : 'bg-fuchsia-100 text-fuchsia-700'}">
@@ -453,7 +465,7 @@
                         <div class="text-[12px] mt-2 text-slate-500 font-semibold">${item.type === 'image' ? `⏳ ${item.duration} giây` : 'Tự động phát'}</div>
                     </td>
                     <td class="p-4 text-center">
-                        <button onclick="openConfirmModal('${item.id}')" class="text-slate-300 hover:text-red-500 hover:bg-red-50 p-2 rounded-lg transition-all" title="Xóa">
+                        <button onclick="openConfirmModal('${item.id}')" class="text-slate-400 hover:text-red-500 hover:bg-red-50 p-2.5 rounded-xl transition-all" title="Xóa">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         </button>
                     </td>
@@ -462,13 +474,11 @@
             });
         }
 
-        // Custom Modal Logic
         function openConfirmModal(id) {
             itemToDelete = id;
             const modal = document.getElementById('confirmModal');
             const content = document.getElementById('confirmModalContent');
             modal.classList.remove('hidden');
-            // Slight delay for animation
             setTimeout(() => {
                 modal.classList.remove('opacity-0');
                 content.classList.replace('scale-90', 'scale-100');
@@ -496,7 +506,7 @@
         function showStatus(msg, classes) {
             const statusDiv = document.getElementById('statusMsg');
             statusDiv.textContent = msg;
-            statusDiv.className = `p-4 rounded-2xl font-semibold text-sm transition-all shadow-sm ${classes}`;
+            statusDiv.className = `p-4 rounded-xl font-semibold text-sm transition-all shadow-sm ${classes}`;
             statusDiv.classList.remove('hidden');
             setTimeout(() => { statusDiv.classList.add('hidden'); }, 5000);
         }
@@ -622,7 +632,6 @@
             nextVid.classList.add('hidden');
 
             if (currentMedia.type === 'image') {
-                // Tự động tạo nền Cinematic Blur bằng chính ảnh đó
                 nextBg.style.backgroundImage = `url('${safeMediaUrl}')`;
                 
                 nextImg.src = safeMediaUrl;
@@ -636,30 +645,37 @@
                 }, currentMedia.duration * 1000);
 
             } else if (currentMedia.type === 'video') {
-                // Background blur cho Video (Lấy thumbnail nếu là Google Drive)
                 const thumbUrl = formatMediaUrl(currentMedia.url, 'image', true);
                 nextBg.style.backgroundImage = thumbUrl ? `url('${thumbUrl}')` : 'none';
                 
                 nextVid.src = safeMediaUrl;
-                nextVid.classList.remove('hidden');
-                
-                // THUẬT TOÁN AUTOPLAY VIDEO CHỐNG CHẶN (CÓ ÂM THANH)
-                nextVid.muted = false; // Luôn thử phát CÓ tiếng trước
                 nextVid.load();
                 
+                // THUẬT TOÁN AUTOPLAY AN TOÀN (CÓ FALLBACK MUTED)
+                // Ép trình duyệt phát bằng muted trước để lách luật chính sách autoplay
+                nextVid.muted = true;
+                
                 const playPromise = nextVid.play();
+                
                 if (playPromise !== undefined) {
                     playPromise.then(() => {
+                        nextVid.classList.remove('hidden');
                         nextLayerEl.classList.replace('opacity-0', 'opacity-100');
                         preloadNextMedia();
-                    }).catch(err => {
-                        console.warn("Tivi chặn Autoplay âm thanh, tự động chuyển sang Muted Mode...", err);
-                        nextVid.muted = true; // Ép phát bằng cách tắt tiếng
+                        
+                        // Sau khi đã ép phát thành công, thử mở tiếng lên
+                        nextVid.muted = false;
+                    }).catch(error => {
+                        console.warn("Autoplay lỗi, fallback về muted...", error);
+                        // Nếu vẫn lỗi, đảm bảo nó bị mute và phát lại
+                        nextVid.muted = true;
                         nextVid.play().then(() => {
+                            nextVid.classList.remove('hidden');
                             nextLayerEl.classList.replace('opacity-0', 'opacity-100');
                             preloadNextMedia();
                         }).catch(e => {
-                            // Lỗi hoàn toàn (File hỏng/Không hỗ trợ định dạng)
+                            // Link chết hoặc lỗi CORS chặn Stream
+                            console.error("Video không thể phát (Có thể do Link Drive hoặc file lỗi). Chuyển slide sau 3s", e);
                             slideTimeout = setTimeout(() => { playNextSlide(); }, 3000);
                         });
                     });
@@ -675,19 +691,17 @@
                 };
             }
 
-            // FIX LỖI: Lưu lại số thứ tự của Layer cũ trước khi bị đổi để dọn dẹp chính xác
             const layerToClean = activeLayer;
 
             // Cross-Fade: Làm mờ layer cũ
             if (mediaList.length > 1) {
                 currLayerEl.classList.replace('opacity-100', 'opacity-0');
-                // Giải phóng bộ nhớ RAM sau khi chuyển cảnh xong (1.5 giây)
                 setTimeout(() => {
                     if(currLayerEl.classList.contains('opacity-0')) {
                         const oldVid = document.getElementById(`vid${layerToClean}`);
                         const oldImg = document.getElementById(`img${layerToClean}`);
                         oldVid.pause(); oldVid.removeAttribute('src'); oldVid.load();
-                        oldImg.removeAttribute('src'); // Sửa lỗi hiện icon ảnh hỏng
+                        oldImg.removeAttribute('src'); 
                     }
                 }, 1600);
             }
