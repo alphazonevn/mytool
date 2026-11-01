@@ -69,9 +69,19 @@
             <!-- Form Thêm Mới -->
             <form id="addMediaForm" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 bg-blue-50 p-4 rounded-lg border border-blue-100">
                 <div class="col-span-1 md:col-span-2">
-                    <label class="block text-sm font-semibold mb-1">Link (URL) Ảnh / Video <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-semibold mb-1">Nguồn Dữ Liệu <span class="text-red-500">*</span></label>
+                    <div class="flex gap-4 mb-2">
+                        <label class="flex items-center cursor-pointer text-sm"><input type="radio" name="sourceType" value="url" checked class="mr-1"> Dùng Link</label>
+                        <label class="flex items-center cursor-pointer text-sm"><input type="radio" name="sourceType" value="upload" class="mr-1"> Tải lên từ máy</label>
+                    </div>
+                    
+                    <!-- Input nhập URL -->
                     <input type="url" id="mediaUrl" required placeholder="https://..." class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none">
-                    <p class="text-xs text-gray-500 mt-1">Hỗ trợ link .jpg, .png, .mp4. (Link Google Drive cần được chia sẻ công khai)</p>
+                    
+                    <!-- Input chọn File -->
+                    <input type="file" id="mediaFile" accept="image/*,video/mp4" class="hidden w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                    
+                    <p id="sourceHint" class="text-xs text-gray-500 mt-1">Hỗ trợ link .jpg, .png, .mp4. (Link Google Drive cần được chia sẻ công khai)</p>
                 </div>
                 <div>
                     <label class="block text-sm font-semibold mb-1">Loại</label>
@@ -85,7 +95,10 @@
                     <input type="number" id="mediaDuration" value="10" min="3" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none" title="Chỉ áp dụng cho hình ảnh">
                 </div>
                 <div class="col-span-1 md:col-span-4 flex justify-end mt-2">
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded shadow transition">Thêm Vào Danh Sách</button>
+                    <button type="submit" id="submitBtn" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded shadow transition flex items-center">
+                        <span id="uploadSpinner" class="loader mr-2 hidden" style="width: 16px; height: 16px; border-width: 2px;"></span>
+                        <span id="submitBtnText">Thêm Vào Danh Sách</span>
+                    </button>
                 </div>
             </form>
 
@@ -161,6 +174,30 @@
             const form = document.getElementById('addMediaForm');
             const typeSelect = document.getElementById('mediaType');
             const durationInput = document.getElementById('mediaDuration');
+            const radios = document.querySelectorAll('input[name="sourceType"]');
+            
+            // Xử lý chuyển đổi giữa Link và Tải lên
+            radios.forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    const urlInput = document.getElementById('mediaUrl');
+                    const fileInput = document.getElementById('mediaFile');
+                    const hint = document.getElementById('sourceHint');
+                    
+                    if (e.target.value === 'url') {
+                        urlInput.classList.remove('hidden');
+                        urlInput.required = true;
+                        fileInput.classList.add('hidden');
+                        fileInput.required = false;
+                        hint.innerText = "Hỗ trợ link .jpg, .png, .mp4. (Link Google Drive cần được chia sẻ công khai)";
+                    } else {
+                        urlInput.classList.add('hidden');
+                        urlInput.required = false;
+                        fileInput.classList.remove('hidden');
+                        fileInput.required = true;
+                        hint.innerText = "Chọn file ảnh/video từ máy (Khuyên dùng < 10MB để tải lên nhanh chóng).";
+                    }
+                });
+            });
 
             // Ẩn/Hiện ô nhập thời gian tùy vào loại
             typeSelect.addEventListener('change', (e) => {
@@ -174,23 +211,91 @@
                 }
             });
 
-            form.addEventListener('submit', (e) => {
+            form.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const url = document.getElementById('mediaUrl').value;
-                const type = document.getElementById('mediaType').value;
-                const duration = parseInt(document.getElementById('mediaDuration').value) || 10;
+                
+                const sourceType = document.querySelector('input[name="sourceType"]:checked').value;
+                const type = typeSelect.value;
+                const duration = parseInt(durationInput.value) || 10;
+                
+                const submitBtn = document.getElementById('submitBtn');
+                const btnText = document.getElementById('submitBtnText');
+                const spinner = document.getElementById('uploadSpinner');
 
-                mediaList.push({
-                    id: Date.now().toString(),
-                    url: url,
-                    type: type,
-                    duration: duration
-                });
+                if (sourceType === 'url') {
+                    const url = document.getElementById('mediaUrl').value;
+                    addMediaToList(url, type, duration);
+                } else {
+                    // XỬ LÝ UPLOAD FILE
+                    const fileInput = document.getElementById('mediaFile');
+                    const file = fileInput.files[0];
+                    if (!file) return alert("Vui lòng chọn file!");
+                    
+                    // Khóa nút submit và hiện loading
+                    submitBtn.disabled = true;
+                    submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+                    spinner.classList.remove('hidden');
+                    btnText.innerText = 'Đang tải lên Drive...';
 
-                form.reset();
-                if(typeSelect.value === 'video') typeSelect.dispatchEvent(new Event('change')); // reset disable state
-                renderTable();
-                showStatus('Đã thêm vào danh sách tạm. Nhớ bấm "Lưu Lên Hệ Thống"!', 'text-blue-700 bg-blue-100');
+                    try {
+                        const base64String = await readFileAsBase64(file);
+                        // Cắt bỏ phần header (vd: data:image/png;base64,)
+                        const base64Data = base64String.split(',')[1];
+                        
+                        const formData = new URLSearchParams();
+                        formData.append('action', 'upload');
+                        formData.append('filename', file.name);
+                        formData.append('mimeType', file.type);
+                        formData.append('base64', base64Data);
+
+                        const response = await fetch(SCRIPT_URL, {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            addMediaToList(result.url, type, duration);
+                        } else {
+                            showStatus('Lỗi tải lên: ' + result.message, 'text-red-700 bg-red-100');
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        showStatus('Lỗi kết nối khi tải lên!', 'text-red-700 bg-red-100');
+                    } finally {
+                        // Khôi phục nút submit
+                        submitBtn.disabled = false;
+                        submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+                        spinner.classList.add('hidden');
+                        btnText.innerText = 'Thêm Vào Danh Sách';
+                    }
+                }
+            });
+        }
+        
+        function addMediaToList(url, type, duration) {
+            mediaList.push({
+                id: Date.now().toString(),
+                url: url,
+                type: type,
+                duration: duration
+            });
+
+            // Reset form và state
+            document.getElementById('addMediaForm').reset();
+            document.getElementById('mediaType').dispatchEvent(new Event('change'));
+            document.querySelector('input[name="sourceType"][value="url"]').click(); 
+            
+            renderTable();
+            showStatus('Đã thêm vào danh sách tạm. Nhớ bấm "Lưu Lên Hệ Thống"!', 'text-blue-700 bg-blue-100');
+        }
+
+        function readFileAsBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+                reader.readAsDataURL(file);
             });
         }
 
@@ -255,7 +360,7 @@
         }
 
         // --- GIAO TIẾP DỮ LIỆU (Google Apps Script / LocalStorage) ---
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbypSwA-O9jWMLdoIB-7XWUPaDU8mEZaNzttVkabvqyTfSge3EdZp5rO0P0ijM9Bs5qr/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwqHd_24yvWz4VIS3LjLiOKdekmMvibTSF6eOUBmHTIryMWFH2bCs7ksgREfosm4nfk/exec';
 
         async function loadData() {
             try {
