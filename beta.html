@@ -205,6 +205,26 @@
         let activeLayer = 1;
         let slideTimeout;
 
+        // --- THÊM HÀM NÀY ĐỂ FIX LỖI GOOGLE DRIVE ---
+        function formatMediaUrl(url, type, isTV = false) {
+            if (!url || !url.includes('drive.google.com')) return url;
+            
+            // Tìm ID của file trong link Drive
+            const match = url.match(/id=([^&]+)/) || url.match(/d\/([^/]+)/);
+            if (match && match[1]) {
+                const id = match[1];
+                if (type === 'image') {
+                    // Dùng API thumbnail của Google để không bị chặn (w400 cho preview, w1920 cho TV Full HD)
+                    const size = isTV ? 'w1920' : 'w400';
+                    return `https://drive.google.com/thumbnail?id=${id}&sz=${size}`;
+                } else {
+                    // Video phải dùng định dạng download để <video> tag có thể phát được
+                    return `https://drive.google.com/uc?export=download&id=${id}`;
+                }
+            }
+            return url;
+        }
+
         // BẮT ĐẦU
         document.addEventListener("DOMContentLoaded", () => {
             loadData();
@@ -373,7 +393,9 @@
                 
                 let previewHtml = '';
                 if (item.type === 'image') {
-                    previewHtml = `<img src="${item.url}" loading="lazy" class="w-20 h-14 object-cover rounded-lg shadow-sm border border-slate-200" onerror="this.src='https://placehold.co/100x60/fee2e2/ef4444?text=L%E1%BB%97i'">`;
+                    // SỬ DỤNG HÀM FIX LỖI CHO ẢNH PREVIEW
+                    const safeUrl = formatMediaUrl(item.url, 'image', false);
+                    previewHtml = `<img src="${safeUrl}" loading="lazy" class="w-20 h-14 object-cover rounded-lg shadow-sm border border-slate-200" onerror="this.src='https://placehold.co/100x60/fee2e2/ef4444?text=L%E1%BB%97i'">`;
                 } else {
                     previewHtml = `<div class="w-20 h-14 bg-slate-800 rounded-lg shadow-sm flex items-center justify-center text-white"><svg class="w-6 h-6 opacity-80" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4l12 6-12 6z"></path></svg></div>`;
                 }
@@ -525,7 +547,8 @@
             
             if (nextMedia.type === 'image') {
                 const img = new Image();
-                img.src = nextMedia.url;
+                // SỬ DỤNG HÀM FIX LỖI KHI PRELOAD
+                img.src = formatMediaUrl(nextMedia.url, 'image', true);
             } 
             // Video thường được trình duyệt tự động fetch một phần nhờ thẻ ẩn, 
             // nên ta tập trung preload Image để hiệu quả nhất.
@@ -545,10 +568,13 @@
             const nextVid = document.getElementById(`displayVid${nextLayer}`);
             const currImg = document.getElementById(`displayImg${activeLayer}`);
             const currVid = document.getElementById(`displayVid${activeLayer}`);
+            
+            // SỬ DỤNG HÀM FIX LỖI KHI PHÁT LÊN TV
+            const safeMediaUrl = formatMediaUrl(currentMedia.url, currentMedia.type, true);
 
             // Cập nhật DOM để chuẩn bị hiện Layer mới
             if (currentMedia.type === 'image') {
-                nextImg.src = currentMedia.url;
+                nextImg.src = safeMediaUrl;
                 nextImg.classList.replace('opacity-0', 'opacity-100');
                 
                 // Kích hoạt preload cho hình tiếp theo
@@ -560,7 +586,7 @@
                 }, currentMedia.duration * 1000);
 
             } else if (currentMedia.type === 'video') {
-                nextVid.src = currentMedia.url;
+                nextVid.src = safeMediaUrl;
                 nextVid.play().then(() => {
                     nextVid.classList.replace('opacity-0', 'opacity-100');
                     preloadNextMedia();
