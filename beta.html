@@ -2,182 +2,367 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TV Media Studio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TV Slideshow</title>
+
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#0b1020;color:#eef2ff;font:15px Arial}
-header{padding:20px 5%;display:flex;justify-content:space-between;
-align-items:center;border-bottom:1px solid #29334d}
-h1{font-size:22px;margin:0}
-main{max-width:1400px;margin:auto;padding:28px 5%}
-.panel{background:#121a2e;border:1px solid #29334d;
-border-radius:16px;padding:20px;margin-bottom:22px}
-button{border:0;border-radius:9px;padding:11px 15px;
-background:#635bff;color:white;cursor:pointer;font-weight:bold}
-input{background:#0b1020;color:white;border:1px solid #39435e;
-padding:12px;border-radius:9px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:15px}
-.media{background:#19233b;border-radius:12px;overflow:hidden}
-.media img,.media video{width:100%;height:140px;object-fit:cover}
-.info{padding:12px}.name{overflow-wrap:anywhere;font-size:13px}
-.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:15px 0}
-.list{display:flex;flex-direction:column;gap:10px}
-.item{background:#19233b;border-radius:10px;padding:12px;
-display:flex;justify-content:space-between;align-items:center;gap:12px}
-.muted{color:#9aa8c7;font-size:13px}
-.danger{background:#b83249}
-@media(max-width:600px){header,main{padding:18px}
-.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+body{
+  margin:0;
+  background:#080a10;
+  color:#fff;
+  font-family:Arial,sans-serif;
+  overflow:hidden;
+}
+
+#stage{
+  position:relative;
+  width:100vw;
+  height:100vh;
+  height:100dvh;
+  overflow:hidden;
+  background:#080a10;
+}
+
+.slide{
+  position:absolute;
+  inset:0;
+  opacity:0;
+  transition:opacity 1.2s ease-in-out;
+  overflow:hidden;
+}
+
+.slide.active{
+  opacity:1;
+  z-index:2;
+}
+
+.slide img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
+
+.slide.active img{
+  animation:zoom 10s ease-in-out forwards;
+}
+
+@keyframes zoom{
+  from{transform:scale(1)}
+  to{transform:scale(1.08)}
+}
+
+#overlay{
+  position:absolute;
+  z-index:5;
+  left:0;
+  right:0;
+  bottom:0;
+  padding:28px 5%;
+  background:linear-gradient(transparent,rgba(0,0,0,.7));
+  opacity:0;
+  transition:opacity .4s;
+}
+
+#stage:hover #overlay,
+#stage:focus-within #overlay{
+  opacity:1;
+}
+
+#caption{
+  font-size:clamp(16px,2vw,28px);
+  font-weight:bold;
+  margin-bottom:12px;
+}
+
+#progress{
+  height:4px;
+  background:#ffffff40;
+  border-radius:10px;
+  overflow:hidden;
+}
+
+#progressBar{
+  width:0;
+  height:100%;
+  background:#fff;
+}
+
+#controls{
+  display:flex;
+  gap:10px;
+  margin-top:14px;
+  align-items:center;
+}
+
+button{
+  border:1px solid #ffffff50;
+  background:#ffffff18;
+  color:white;
+  border-radius:8px;
+  padding:10px 16px;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#ffffff35;
+}
+
+#counter{
+  margin-left:auto;
+  font-size:14px;
+}
+
+#message{
+  position:absolute;
+  inset:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:#aaa;
+  font-size:18px;
+  text-align:center;
+  padding:30px;
+}
+
+@media(prefers-reduced-motion:reduce){
+  .slide{transition:none}
+  .slide.active img{animation:none}
+}
 </style>
 </head>
+
 <body>
-<header>
-  <h1>TV Media Studio</h1>
-  <button onclick="openTV()">Mở TV ↗</button>
-</header>
+<div id="stage">
 
-<main>
-  <section class="panel">
-    <h2>Thư viện media</h2>
-    <div class="row">
-      <input type="file" id="files" multiple accept="image/*,video/*">
-      <button onclick="upload()">Tải lên Drive</button>
-      <button onclick="load()">Làm mới</button>
-    </div>
-    <div class="muted" id="status"></div>
-    <div class="grid" id="gallery"></div>
-  </section>
+  <div id="message">Đang tải thư viện ảnh...</div>
 
-  <section class="panel">
-    <h2>Danh sách phát</h2>
-    <div class="row">
-      <input id="listName" placeholder="Tên danh sách phát">
-      <button onclick="saveList()">Lưu danh sách</button>
+  <div id="overlay">
+    <div id="caption">TV Slideshow</div>
+    <div id="progress"><div id="progressBar"></div></div>
+
+    <div id="controls">
+      <button onclick="previous()">◀ Trước</button>
+      <button id="playButton" onclick="toggle()">Tạm dừng</button>
+      <button onclick="next()">Tiếp theo ▶</button>
+      <button onclick="fullscreen()">Toàn màn hình</button>
+      <span id="counter"></span>
     </div>
-    <div class="list" id="selected"></div>
-    <hr>
-    <div class="list" id="playlists"></div>
-  </section>
-</main>
+  </div>
+</div>
 
 <script>
-const API='https://script.google.com/macros/s/AKfycbxtyANJDF8ckzbxGWKJcqbAMnz0U0K4RH4dv8uD0jLDRQlAANgyJdTavLra96KkbGEy/exec';
-let media=[],lists=[],selected=[],editing='';
+const API = 'https://script.google.com/macros/s/AKfycbxtyANJDF8ckzbxGWKJcqbAMnz0U0K4RH4dv8uD0jLDRQlAANgyJdTavLra96KkbGEy/exec';
 
-function jsonp(action,params={}){
-  return new Promise((resolve,reject)=>{
-    const cb='cb_'+Date.now()+'_'+Math.random().toString(36).slice(2);
-    const script=document.createElement('script');
-    const query=new URLSearchParams({action,...params,callback:cb});
-    window[cb]=data=>{
-      delete window[cb];script.remove();resolve(data);
+const params = new URLSearchParams(location.search);
+const TV_ID = params.get('tv') || 'TV1';
+
+const DURATION = 8000;
+const TRANSITION = 1200;
+
+let items = [];
+let index = 0;
+let paused = false;
+let timer = null;
+let progressTimer = null;
+let startedAt = 0;
+let remaining = DURATION;
+let currentDuration = DURATION;
+let lastUpdate = '';
+
+const stage = document.getElementById('stage');
+
+function jsonp(action, extra = {}) {
+  return new Promise((resolve, reject) => {
+    const callback = 'cb_' + Date.now() +
+      Math.random().toString(36).slice(2);
+
+    const script = document.createElement('script');
+
+    window[callback] = data => {
+      delete window[callback];
+      script.remove();
+      resolve(data);
     };
-    script.onerror=()=>{delete window[cb];script.remove();
-      reject(new Error('Không thể kết nối backend'));};
-    script.src=API+'?'+query.toString();
+
+    script.onerror = () => {
+      delete window[callback];
+      script.remove();
+      reject(new Error('Không thể kết nối Apps Script'));
+    };
+
+    script.src = API + '?' +
+      new URLSearchParams({
+        action,
+        callback,
+        ...extra
+      }).toString();
+
     document.body.appendChild(script);
   });
 }
 
-// Gửi POST text/plain để tránh preflight CORS.
-// Apps Script xử lý request, nhưng trình duyệt không đọc được response.
-function post(action,data={}){
-  return fetch(API,{
-    method:'POST',
-    mode:'no-cors',
-    headers:{'Content-Type':'text/plain;charset=UTF-8'},
-    body:JSON.stringify({action,...data})
-  });
-}
-
-function openTV(){
-  const url=new URL('tv.html',location.href);
-  url.searchParams.set('tv','TV1');
-  window.open(url,'_blank');
-}
-
-async function load(){
-  try{
-    media=await jsonp('getMedia');
-    lists=await jsonp('getPlaylists');
-    renderMedia();renderLists();
-  }catch(e){document.getElementById('status').textContent=e.message;}
-}
-
-function renderMedia(){
-  const root=document.getElementById('gallery');root.innerHTML='';
-  media.forEach(m=>{
-    const card=document.createElement('div');card.className='media';
-    const preview=document.createElement(m.mimeType.startsWith('video/')?'video':'img');
-    preview.src=m.mimeType.startsWith('video/')?m.url:m.thumbnail;
-    if(preview.tagName==='VIDEO'){preview.muted=true;preview.controls=true;}
-    const info=document.createElement('div');info.className='info';
-    const name=document.createElement('div');name.className='name';name.textContent=m.name;
-    const add=document.createElement('button');
-    add.textContent=selected.includes(m.id)?'Đã chọn':'＋ Chọn';
-    add.onclick=()=>{
-      selected=selected.includes(m.id)?selected.filter(x=>x!==m.id):[...selected,m.id];
-      renderMedia();renderSelected();
-    };
-    info.append(name,add);card.append(preview,info);root.append(card);
-  });
-}
-
-function renderSelected(){
-  const root=document.getElementById('selected');root.innerHTML='';
-  selected.forEach(id=>{
-    const m=media.find(x=>x.id===id);if(!m)return;
-    const row=document.createElement('div');row.className='item';
-    const name=document.createElement('span');name.textContent=m.name;
-    const del=document.createElement('button');del.textContent='Bỏ';
-    del.onclick=()=>{selected=selected.filter(x=>x!==id);renderSelected();renderMedia();};
-    row.append(name,del);root.append(row);
-  });
-}
-
-async function upload(){
-  const files=[...document.getElementById('files').files];
-  for(const file of files){
-    if(file.size>40*1024*1024){alert(file.name+' vượt quá 40 MB');continue;}
-    const base64=await new Promise((resolve,reject)=>{
-      const reader=new FileReader();
-      reader.onload=()=>resolve(reader.result.split(',')[1]);
-      reader.onerror=reject;reader.readAsDataURL(file);
+async function loadImages() {
+  try {
+    const data = await jsonp('getPlayerData', {
+      tvId: TV_ID
     });
-    document.getElementById('status').textContent='Đang tải '+file.name;
-    await post('uploadMedia',{name:file.name,mimeType:file.type,base64,duration:10});
+
+    const images = (data.items || []).filter(item =>
+      item.mimeType &&
+      item.mimeType.startsWith('image/')
+    );
+
+    const key = JSON.stringify(images);
+
+    if (key !== lastUpdate) {
+      lastUpdate = key;
+      items = images;
+      index = 0;
+      remaining = DURATION;
+      show();
+    }
+  } catch (error) {
+    document.getElementById('message').textContent =
+      'Không thể tải ảnh. Đang thử kết nối lại...';
   }
-  document.getElementById('status').textContent='Đã gửi yêu cầu tải lên. Làm mới sau ít phút.';
-  setTimeout(load,5000);
 }
 
-async function saveList(){
-  const name=document.getElementById('listName').value.trim();
-  if(!name||!selected.length)return alert('Nhập tên và chọn media.');
-  await post('savePlaylist',{id:editing,name,mediaIds:selected});
-  editing='';selected=[];
-  document.getElementById('listName').value='';
-  setTimeout(load,3000);
+function createSlide(item, active) {
+  const slide = document.createElement('div');
+  slide.className = 'slide' + (active ? ' active' : '');
+
+  const img = document.createElement('img');
+  img.src = item.url;
+  img.alt = item.name || 'Ảnh trình chiếu';
+  img.loading = 'eager';
+
+  slide.appendChild(img);
+  return slide;
 }
 
-function renderLists(){
-  const root=document.getElementById('playlists');root.innerHTML='';
-  lists.forEach(p=>{
-    const row=document.createElement('div');row.className='item';
-    const name=document.createElement('span');
-    name.textContent=p.name+' · '+p.mediaIds.length+' media';
-    const edit=document.createElement('button');edit.textContent='Sửa';
-    edit.onclick=()=>{
-      editing=p.id;selected=[...p.mediaIds];
-      document.getElementById('listName').value=p.name;
-      renderSelected();renderMedia();
-    };
-    row.append(name,edit);root.append(row);
-  });
+function show() {
+  clearTimeout(timer);
+  clearInterval(progressTimer);
+
+  stage.querySelectorAll('.slide').forEach(el => el.remove());
+
+  if (!items.length) {
+    document.getElementById('message').style.display = 'flex';
+    document.getElementById('message').textContent =
+      'Chưa có ảnh trong danh sách phát';
+    return;
+  }
+
+  document.getElementById('message').style.display = 'none';
+
+  const item = items[index];
+  const slide = createSlide(item, false);
+
+  stage.insertBefore(slide, document.getElementById('overlay'));
+
+  // Chờ ảnh tải xong mới bắt đầu chuyển cảnh.
+  const img = slide.querySelector('img');
+
+  img.onload = () => {
+    requestAnimationFrame(() => {
+      slide.classList.add('active');
+    });
+
+    document.getElementById('caption').textContent = item.name || '';
+    document.getElementById('counter').textContent =
+      (index + 1) + ' / ' + items.length;
+
+    currentDuration = Math.max(
+      3000,
+      Number(item.duration || 8) * 1000
+    );
+
+    remaining = currentDuration;
+
+    if (!paused) startTimer();
+  };
+
+  img.onerror = () => {
+    setTimeout(next, 2000);
+  };
+
+  if (img.complete && img.naturalWidth > 0) img.onload();
 }
 
-load();
+function startTimer() {
+  clearTimeout(timer);
+  clearInterval(progressTimer);
+
+  startedAt = Date.now();
+
+  timer = setTimeout(next, remaining);
+
+  progressTimer = setInterval(() => {
+    const elapsed = Date.now() - startedAt;
+    const percent = Math.min(
+      100,
+      elapsed / currentDuration * 100
+    );
+
+    document.getElementById('progressBar').style.width =
+      percent + '%';
+  }, 50);
+}
+
+function next() {
+  if (!items.length) return;
+
+  index = (index + 1) % items.length;
+  remaining = currentDuration;
+  show();
+}
+
+function previous() {
+  if (!items.length) return;
+
+  index = (index - 1 + items.length) % items.length;
+  remaining = currentDuration;
+  show();
+}
+
+function toggle() {
+  paused = !paused;
+
+  document.getElementById('playButton').textContent =
+    paused ? 'Tiếp tục' : 'Tạm dừng';
+
+  if (paused) {
+    remaining -= Date.now() - startedAt;
+    clearTimeout(timer);
+    clearInterval(progressTimer);
+  } else {
+    startTimer();
+  }
+}
+
+function fullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen?.();
+  } else {
+    document.exitFullscreen?.();
+  }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') next();
+  if (e.key === 'ArrowLeft') previous();
+
+  if (e.key === ' ') {
+    e.preventDefault();
+    toggle();
+  }
+});
+
+loadImages();
+setInterval(loadImages, 30000);
 </script>
 </body>
 </html>
