@@ -4,29 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hệ Thống Trình Chiếu TV</title>
+    <!-- Favicon hiện đại bằng SVG -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📺</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            /* Hình nền Gradient hiện đại */
+            background: linear-gradient(135deg, #f0f4ff 0%, #e5e9fc 50%, #f3ebfa 100%);
+            min-height: 100vh;
+        }
+        
+        /* Hiệu ứng Glassmorphism cho thẻ UI */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 1);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        /* Tùy chỉnh thanh cuộn siêu nhỏ */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         
         /* Hiệu ứng chuyển cảnh cho chế độ TV */
         .fade-transition {
-            transition: opacity 1.5s ease-in-out;
+            transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1); /* Mượt hơn */
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            object-fit: contain; /* Có thể đổi thành 'cover' nếu muốn full kín viền */
+            object-fit: cover; /* Tràn viền tivi */
+            background-color: black;
         }
-        .opacity-0 { opacity: 0; z-index: 1; }
+        .opacity-0 { opacity: 0; z-index: 1; pointer-events: none; }
         .opacity-100 { opacity: 1; z-index: 10; }
 
         /* Ẩn thanh cuộn và chuột ở chế độ TV */
         .tv-mode-active {
             overflow: hidden;
             background-color: black;
-            cursor: none; /* Ẩn chuột trên màn hình TV */
+            cursor: none; 
         }
 
         /* Nút ẩn để thoát TV Mode (góc trên bên phải) */
@@ -34,141 +57,161 @@
             position: fixed;
             top: 0;
             right: 0;
-            width: 100px;
-            height: 100px;
+            width: 150px;
+            height: 150px;
             z-index: 9999;
             cursor: pointer;
-            opacity: 0; /* Hoàn toàn trong suốt */
+            opacity: 0; 
         }
 
-        /* Loader */
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
+        /* Hiệu ứng load hiện đại */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
+            border-top-color: #fff;
+            animation: spin 0.8s ease-in-out infinite;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="text-slate-800 antialiased">
 
     <!-- ==================== GIAO DIỆN ADMIN ==================== -->
-    <div id="adminView" class="container mx-auto p-4 max-w-4xl min-h-screen flex flex-col">
-        <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
-            <div class="flex justify-between items-center mb-6 border-b pb-4">
-                <h1 class="text-2xl font-bold text-blue-700">📺 Quản Lý Nội Dung Trình Chiếu</h1>
-                <button onclick="startTVMode()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg shadow transition transform hover:scale-105 flex items-center">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    Phát Lên TV
-                </button>
+    <div id="adminView" class="container mx-auto p-4 md:p-8 max-w-5xl flex flex-col transition-all duration-500">
+        
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+            <div>
+                <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-indigo-600 drop-shadow-sm">
+                    ✨ Quản Lý Trình Chiếu TV
+                </h1>
+                <p class="text-slate-500 text-sm mt-1">Thiết lập danh sách phát đa phương tiện tự động</p>
             </div>
+            <button onclick="startTVMode()" class="group relative px-8 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold rounded-2xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center overflow-hidden">
+                <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></div>
+                <svg class="w-6 h-6 mr-2 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span class="relative z-10">Phát Lên TV Ngay</span>
+            </button>
+        </div>
 
+        <div class="glass-card rounded-3xl p-6 md:p-8 mb-6">
             <!-- Form Thêm Mới -->
-            <form id="addMediaForm" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 bg-blue-50 p-4 rounded-lg border border-blue-100">
-                <div class="col-span-1 md:col-span-2">
-                    <label class="block text-sm font-semibold mb-1">Nguồn Dữ Liệu <span class="text-red-500">*</span></label>
-                    <div class="flex gap-4 mb-2">
-                        <label class="flex items-center cursor-pointer text-sm"><input type="radio" name="sourceType" value="url" checked class="mr-1"> Dùng Link</label>
-                        <label class="flex items-center cursor-pointer text-sm"><input type="radio" name="sourceType" value="upload" class="mr-1"> Tải lên từ máy</label>
+            <form id="addMediaForm" class="grid grid-cols-1 md:grid-cols-12 gap-5 mb-8 bg-slate-50/50 p-6 rounded-2xl border border-slate-100">
+                <div class="col-span-1 md:col-span-7 relative">
+                    <div class="flex justify-between items-end mb-2">
+                        <label class="block text-sm font-bold text-slate-700">Nguồn Dữ Liệu <span class="text-red-500">*</span></label>
+                        <div class="flex gap-4 bg-white p-1 rounded-lg border border-slate-200 shadow-sm">
+                            <label class="flex items-center cursor-pointer text-xs font-medium px-2 py-1 rounded hover:bg-slate-50 transition">
+                                <input type="radio" name="sourceType" value="url" checked class="mr-1.5 accent-blue-600"> Dùng Link
+                            </label>
+                            <label class="flex items-center cursor-pointer text-xs font-medium px-2 py-1 rounded hover:bg-slate-50 transition">
+                                <input type="radio" name="sourceType" value="upload" class="mr-1.5 accent-blue-600"> Tải từ máy
+                            </label>
+                        </div>
                     </div>
                     
-                    <!-- Input nhập URL -->
-                    <input type="url" id="mediaUrl" required placeholder="https://..." class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none">
+                    <input type="url" id="mediaUrl" required placeholder="Nhập đường dẫn https:// (Drive, Ảnh mạng...)" class="w-full p-3.5 bg-white border border-slate-200 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all shadow-sm">
                     
-                    <!-- Input chọn File -->
-                    <input type="file" id="mediaFile" accept="image/*,video/mp4" class="hidden w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                    <!-- Hỗ trợ chọn nhiều file (multiple) -->
+                    <input type="file" id="mediaFile" accept="image/*,video/mp4" multiple class="hidden w-full p-3 bg-white border border-slate-200 rounded-xl focus:ring-4 focus:ring-blue-500/20 outline-none transition-all shadow-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
                     
-                    <p id="sourceHint" class="text-xs text-gray-500 mt-1">Hỗ trợ link .jpg, .png, .mp4. (Link Google Drive cần được chia sẻ công khai)</p>
+                    <p id="sourceHint" class="text-xs text-slate-500 mt-2 flex items-center"><svg class="w-4 h-4 mr-1 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg> Dùng Link chia sẻ công khai để tốc độ hiển thị nhanh nhất.</p>
                 </div>
-                <div>
-                    <label class="block text-sm font-semibold mb-1">Loại</label>
-                    <select id="mediaType" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none">
-                        <option value="image">Hình Ảnh</option>
-                        <option value="video">Video</option>
+                
+                <div class="col-span-1 md:col-span-3">
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Loại (Tự động nhận diện)</label>
+                    <select id="mediaType" class="w-full p-3.5 bg-white border border-slate-200 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all shadow-sm appearance-none">
+                        <option value="image">🖼️ Hình Ảnh</option>
+                        <option value="video">🎬 Video</option>
                     </select>
                 </div>
-                <div>
-                    <label class="block text-sm font-semibold mb-1">Thời gian (giây)</label>
-                    <input type="number" id="mediaDuration" value="10" min="3" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none" title="Chỉ áp dụng cho hình ảnh">
+                
+                <div class="col-span-1 md:col-span-2">
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Độ trễ (giây)</label>
+                    <input type="number" id="mediaDuration" value="10" min="3" max="3600" class="w-full p-3.5 bg-white border border-slate-200 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all shadow-sm" title="Áp dụng cho hình ảnh">
                 </div>
-                <div class="col-span-1 md:col-span-4 flex justify-end mt-2">
-                    <button type="submit" id="submitBtn" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded shadow transition flex items-center">
-                        <span id="uploadSpinner" class="loader mr-2 hidden" style="width: 16px; height: 16px; border-width: 2px;"></span>
-                        <span id="submitBtnText">Thêm Vào Danh Sách</span>
+                
+                <div class="col-span-1 md:col-span-12 flex justify-end mt-2">
+                    <button type="submit" id="submitBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-xl shadow-md hover:shadow-lg transition-all active:scale-95 flex items-center justify-center min-w-[200px]">
+                        <div id="uploadSpinner" class="spinner mr-3 hidden"></div>
+                        <span id="submitBtnText">Thêm Nội Dung</span>
                     </button>
                 </div>
             </form>
 
-            <!-- Trạng thái lưu -->
-            <div id="statusMsg" class="hidden text-center p-2 rounded mb-4 font-semibold"></div>
+            <!-- Trạng thái thông báo -->
+            <div id="statusMsg" class="hidden text-center p-3 rounded-xl mb-6 font-medium text-sm transition-all shadow-sm"></div>
 
             <!-- Bảng Danh Sách -->
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
+            <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+                <table class="w-full text-left border-collapse bg-white">
                     <thead>
-                        <tr class="bg-gray-100">
-                            <th class="p-3 border-b w-16 text-center">STT</th>
-                            <th class="p-3 border-b">Bản Xem Trước</th>
-                            <th class="p-3 border-b">Loại & Thời Gian</th>
-                            <th class="p-3 border-b text-center w-24">Hành Động</th>
+                        <tr class="bg-slate-50/80 text-slate-600 text-sm uppercase tracking-wider">
+                            <th class="p-4 font-semibold text-center w-16">#</th>
+                            <th class="p-4 font-semibold">Bản Xem Trước</th>
+                            <th class="p-4 font-semibold w-40">Định dạng</th>
+                            <th class="p-4 font-semibold text-center w-28">Xóa</th>
                         </tr>
                     </thead>
-                    <tbody id="mediaTableBody">
+                    <tbody id="mediaTableBody" class="divide-y divide-slate-100">
                         <!-- Render qua JS -->
                     </tbody>
                 </table>
-                <div id="emptyState" class="text-center py-10 text-gray-500 hidden">
-                    Chưa có nội dung nào. Hãy thêm ảnh/video ở form phía trên.
+                <div id="emptyState" class="flex flex-col items-center justify-center py-16 text-slate-400 bg-white">
+                    <svg class="w-16 h-16 mb-4 text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <p class="font-medium">Chưa có nội dung nào.</p>
+                    <p class="text-sm">Hãy tải lên hoặc dán link vào khung bên trên.</p>
                 </div>
             </div>
             
-            <div class="mt-6 flex justify-end">
-                <button onclick="saveData()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-8 rounded-lg shadow-lg flex items-center">
-                    <span id="saveSpinner" class="loader mr-2 hidden" style="width: 20px; height: 20px; border-width: 3px;"></span>
-                    Lưu Lên Hệ Thống
+            <!-- Lưu thay đổi -->
+            <div class="mt-8 flex justify-end">
+                <button onclick="saveData()" class="bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3 px-10 rounded-xl shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5 active:scale-95 flex items-center">
+                    <div id="saveSpinner" class="spinner mr-3 hidden"></div>
+                    💾 Đồng Bộ Lên Đám Mây
                 </button>
             </div>
         </div>
-        <p class="text-center text-gray-400 text-sm mt-auto">Mẹo: Để TV chạy mượt mà, hãy sử dụng kết nối Wifi ổn định và link hình/video chất lượng cao.</p>
+        <p class="text-center text-slate-400 text-xs mt-auto font-medium">Bản quyền phần mềm thuộc về hệ thống Digital Signage Nội Bộ</p>
     </div>
 
     <!-- ==================== GIAO DIỆN TV (SLIDESHOW) ==================== -->
     <div id="tvView" class="hidden fixed inset-0 bg-black z-50">
         <!-- Khu vực bí mật góc phải trên cùng để bấm thoát về Admin -->
-        <div class="exit-tv-btn" onclick="exitTVMode()" title="Bấm vào góc này để thoát trình chiếu"></div>
+        <div class="exit-tv-btn" onclick="exitTVMode()" title="Thoát trình chiếu"></div>
         
-        <!-- Element để hiển thị nội dung, dùng 2 thẻ để tạo hiệu ứng mờ dần (cross-fade) -->
-        <img id="displayImg1" class="fade-transition opacity-0" src="" alt="TV Display 1">
-        <img id="displayImg2" class="fade-transition opacity-0" src="" alt="TV Display 2">
+        <!-- Các Layer chéo nhau (Cross-fade) -->
+        <img id="displayImg1" class="fade-transition opacity-0" src="" alt="Layer 1">
+        <img id="displayImg2" class="fade-transition opacity-0" src="" alt="Layer 2">
         <video id="displayVid1" class="fade-transition opacity-0" muted playsinline></video>
         <video id="displayVid2" class="fade-transition opacity-0" muted playsinline></video>
 
-        <!-- Thông báo lỗi khi không có dữ liệu -->
-        <div id="tvNoData" class="hidden absolute inset-0 flex items-center justify-center text-white text-3xl font-light">
-            Không có dữ liệu trình chiếu. Vui lòng quay lại cài đặt.
+        <!-- Thông báo lỗi khi trống -->
+        <div id="tvNoData" class="hidden absolute inset-0 flex flex-col items-center justify-center text-white/50 text-2xl font-light">
+            <svg class="w-20 h-20 mb-4 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <p>Danh sách phát rỗng. Hãy quay lại thiết lập.</p>
         </div>
     </div>
 
-    <!-- ==================== JAVASCRIPT ==================== -->
+    <!-- ==================== JAVASCRIPT LOGIC ==================== -->
     <script>
-        // State
+        // TRẠNG THÁI (STATE)
         let mediaList = [];
         
-        // TV Slide State
+        // TRẠNG THÁI TV
         let currentSlideIndex = 0;
-        let activeLayer = 1; // Luân phiên giữa lớp 1 và 2 để tạo cross-fade
+        let activeLayer = 1;
         let slideTimeout;
 
-        // Khởi tạo
+        // BẮT ĐẦU
         document.addEventListener("DOMContentLoaded", () => {
             loadData();
             setupForm();
         });
 
-        // --- ADMIN LOGIC ---
+        // ==================== QUẢN LÝ (ADMIN) ====================
 
         function setupForm() {
             const form = document.getElementById('addMediaForm');
@@ -176,7 +219,7 @@
             const durationInput = document.getElementById('mediaDuration');
             const radios = document.querySelectorAll('input[name="sourceType"]');
             
-            // Xử lý chuyển đổi giữa Link và Tải lên
+            // Xử lý chuyển đổi loại Input
             radios.forEach(radio => {
                 radio.addEventListener('change', (e) => {
                     const urlInput = document.getElementById('mediaUrl');
@@ -184,27 +227,22 @@
                     const hint = document.getElementById('sourceHint');
                     
                     if (e.target.value === 'url') {
-                        urlInput.classList.remove('hidden');
-                        urlInput.required = true;
-                        fileInput.classList.add('hidden');
-                        fileInput.required = false;
-                        hint.innerText = "Hỗ trợ link .jpg, .png, .mp4. (Link Google Drive cần được chia sẻ công khai)";
+                        urlInput.classList.remove('hidden'); urlInput.required = true;
+                        fileInput.classList.add('hidden'); fileInput.required = false;
+                        hint.innerHTML = `<svg class="w-4 h-4 mr-1 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg> Hỗ trợ .jpg, .png, .mp4 từ bất cứ đâu.`;
                     } else {
-                        urlInput.classList.add('hidden');
-                        urlInput.required = false;
-                        fileInput.classList.remove('hidden');
-                        fileInput.required = true;
-                        hint.innerText = "Chọn file ảnh/video từ máy (Khuyên dùng < 10MB để tải lên nhanh chóng).";
+                        urlInput.classList.add('hidden'); urlInput.required = false;
+                        fileInput.classList.remove('hidden'); fileInput.required = true;
+                        hint.innerHTML = `<svg class="w-4 h-4 mr-1 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg> Hỗ trợ chọn <b>Nhiều file cùng lúc</b> (Khuyên dùng file < 15MB/file).`;
                     }
                 });
             });
 
-            // Ẩn/Hiện ô nhập thời gian tùy vào loại
+            // Giao diện ô thời gian
             typeSelect.addEventListener('change', (e) => {
                 if (e.target.value === 'video') {
                     durationInput.parentElement.style.opacity = '0.5';
                     durationInput.disabled = true;
-                    durationInput.title = 'Video sẽ chạy theo thời lượng thực tế của video';
                 } else {
                     durationInput.parentElement.style.opacity = '1';
                     durationInput.disabled = false;
@@ -215,7 +253,6 @@
                 e.preventDefault();
                 
                 const sourceType = document.querySelector('input[name="sourceType"]:checked').value;
-                const type = typeSelect.value;
                 const duration = parseInt(durationInput.value) || 10;
                 
                 const submitBtn = document.getElementById('submitBtn');
@@ -224,70 +261,87 @@
 
                 if (sourceType === 'url') {
                     const url = document.getElementById('mediaUrl').value;
+                    const type = typeSelect.value;
                     addMediaToList(url, type, duration);
+                    resetFormState();
                 } else {
-                    // XỬ LÝ UPLOAD FILE
+                    // XỬ LÝ UPLOAD NHIỀU FILE (BATCH UPLOAD)
                     const fileInput = document.getElementById('mediaFile');
-                    const file = fileInput.files[0];
-                    if (!file) return alert("Vui lòng chọn file!");
+                    const files = fileInput.files;
+                    if (files.length === 0) return alert("Vui lòng chọn ít nhất 1 file!");
                     
-                    // Khóa nút submit và hiện loading
                     submitBtn.disabled = true;
                     submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
                     spinner.classList.remove('hidden');
-                    btnText.innerText = 'Đang tải lên Drive...';
 
-                    try {
-                        const base64String = await readFileAsBase64(file);
-                        // Cắt bỏ phần header (vd: data:image/png;base64,)
-                        const base64Data = base64String.split(',')[1];
-                        
-                        const formData = new URLSearchParams();
-                        formData.append('action', 'upload');
-                        formData.append('filename', file.name);
-                        formData.append('mimeType', file.type);
-                        formData.append('base64', base64Data);
+                    let successCount = 0;
 
-                        const response = await fetch(SCRIPT_URL, {
-                            method: 'POST',
-                            body: formData
-                        });
-                        const result = await response.json();
+                    for (let i = 0; i < files.length; i++) {
+                        const file = files[i];
+                        btnText.innerText = `Đang xử lý ${i + 1}/${files.length}...`;
                         
-                        if (result.success) {
-                            addMediaToList(result.url, type, duration);
-                        } else {
-                            showStatus('Lỗi tải lên: ' + result.message, 'text-red-700 bg-red-100');
+                        // Thông minh: Tự nhận diện file video/ảnh
+                        const detectedType = file.type.startsWith('video/') ? 'video' : 'image';
+                        
+                        try {
+                            const base64String = await readFileAsBase64(file);
+                            const base64Data = base64String.split(',')[1];
+                            
+                            const formData = new URLSearchParams();
+                            formData.append('action', 'upload');
+                            formData.append('filename', file.name);
+                            formData.append('mimeType', file.type);
+                            formData.append('base64', base64Data);
+
+                            const response = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
+                            const result = await response.json();
+                            
+                            if (result.success) {
+                                mediaList.push({
+                                    id: Date.now().toString() + Math.random().toString(36).substr(2, 5), // Tạo ID duy nhất
+                                    url: result.url,
+                                    type: detectedType,
+                                    duration: duration
+                                });
+                                successCount++;
+                            }
+                        } catch (err) {
+                            console.error(`Lỗi tải file ${file.name}:`, err);
                         }
-                    } catch (err) {
-                        console.error(err);
-                        showStatus('Lỗi kết nối khi tải lên!', 'text-red-700 bg-red-100');
-                    } finally {
-                        // Khôi phục nút submit
-                        submitBtn.disabled = false;
-                        submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
-                        spinner.classList.add('hidden');
-                        btnText.innerText = 'Thêm Vào Danh Sách';
+                    }
+
+                    // Khôi phục nút submit
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+                    spinner.classList.add('hidden');
+                    btnText.innerText = 'Thêm Nội Dung';
+                    
+                    if (successCount > 0) {
+                        showStatus(`Đã tải lên thành công ${successCount}/${files.length} file. Bấm "Lưu" để hoàn tất!`, 'text-emerald-700 bg-emerald-50 border border-emerald-200');
+                        renderTable();
+                        resetFormState();
+                    } else {
+                        showStatus('Tải lên thất bại. Kiểm tra lại kết nối.', 'text-red-700 bg-red-50 border border-red-200');
                     }
                 }
             });
         }
         
+        function resetFormState() {
+            document.getElementById('addMediaForm').reset();
+            document.getElementById('mediaType').dispatchEvent(new Event('change'));
+            document.querySelector('input[name="sourceType"][value="url"]').click(); 
+        }
+
         function addMediaToList(url, type, duration) {
             mediaList.push({
-                id: Date.now().toString(),
+                id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
                 url: url,
                 type: type,
                 duration: duration
             });
-
-            // Reset form và state
-            document.getElementById('addMediaForm').reset();
-            document.getElementById('mediaType').dispatchEvent(new Event('change'));
-            document.querySelector('input[name="sourceType"][value="url"]').click(); 
-            
             renderTable();
-            showStatus('Đã thêm vào danh sách tạm. Nhớ bấm "Lưu Lên Hệ Thống"!', 'text-blue-700 bg-blue-100');
+            showStatus('Thêm thành công! Hãy lưu lại để đồng bộ.', 'text-blue-700 bg-blue-50 border border-blue-200');
         }
 
         function readFileAsBase64(file) {
@@ -306,38 +360,40 @@
 
             if (mediaList.length === 0) {
                 emptyState.classList.remove('hidden');
+                document.querySelector('table').classList.add('hidden');
                 return;
             } else {
                 emptyState.classList.add('hidden');
+                document.querySelector('table').classList.remove('hidden');
             }
 
             mediaList.forEach((item, index) => {
                 const tr = document.createElement('tr');
-                tr.className = 'hover:bg-gray-50 border-b';
+                tr.className = 'hover:bg-slate-50 transition-colors group';
                 
                 let previewHtml = '';
                 if (item.type === 'image') {
-                    previewHtml = `<img src="${item.url}" class="w-24 h-16 object-cover rounded shadow" onerror="this.src='https://placehold.co/100x60/fee2e2/ef4444?text=L%E1%BB%97i+Link'">`;
+                    previewHtml = `<img src="${item.url}" loading="lazy" class="w-20 h-14 object-cover rounded-lg shadow-sm border border-slate-200" onerror="this.src='https://placehold.co/100x60/fee2e2/ef4444?text=L%E1%BB%97i'">`;
                 } else {
-                    previewHtml = `<div class="relative w-24 h-16 bg-black rounded shadow flex items-center justify-center text-white"><svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4l12 6-12 6z"></path></svg></div>`;
+                    previewHtml = `<div class="w-20 h-14 bg-slate-800 rounded-lg shadow-sm flex items-center justify-center text-white"><svg class="w-6 h-6 opacity-80" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4l12 6-12 6z"></path></svg></div>`;
                 }
 
                 tr.innerHTML = `
-                    <td class="p-3 text-center font-semibold text-gray-500">${index + 1}</td>
-                    <td class="p-3">
-                        <div class="flex items-center gap-3">
+                    <td class="p-4 text-center font-bold text-slate-400">${index + 1}</td>
+                    <td class="p-4">
+                        <div class="flex items-center gap-4">
                             ${previewHtml}
-                            <div class="text-xs text-gray-400 w-48 truncate" title="${item.url}">${item.url}</div>
+                            <div class="text-xs text-slate-500 w-48 md:w-96 truncate" title="${item.url}">${item.url}</div>
                         </div>
                     </td>
-                    <td class="p-3">
-                        <span class="px-2 py-1 text-xs font-semibold rounded-full ${item.type === 'image' ? 'bg-green-100 text-green-700' : 'bg-purple-100 text-purple-700'} uppercase">
-                            ${item.type === 'image' ? 'Ảnh' : 'Video'}
+                    <td class="p-4">
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${item.type === 'image' ? 'bg-blue-100 text-blue-700' : 'bg-fuchsia-100 text-fuchsia-700'}">
+                            ${item.type === 'image' ? '🖼️ Hình Ảnh' : '🎬 Video'}
                         </span>
-                        <div class="text-sm mt-1 text-gray-600">${item.type === 'image' ? item.duration + ' giây' : 'Tự động theo video'}</div>
+                        <div class="text-xs mt-1.5 text-slate-500 font-medium">${item.type === 'image' ? `Hiển thị: ${item.duration}s` : 'Thời lượng: Tự động'}</div>
                     </td>
-                    <td class="p-3 text-center">
-                        <button onclick="removeMedia('${item.id}')" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded transition">
+                    <td class="p-4 text-center">
+                        <button onclick="removeMedia('${item.id}')" class="text-slate-300 hover:text-red-500 hover:bg-red-50 p-2 rounded-lg transition-all" title="Xóa">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         </button>
                     </td>
@@ -347,31 +403,31 @@
         }
 
         function removeMedia(id) {
-            mediaList = mediaList.filter(item => item.id !== id);
-            renderTable();
+            if(confirm("Bạn có chắc chắn muốn xóa file này khỏi danh sách phát?")) {
+                mediaList = mediaList.filter(item => item.id !== id);
+                renderTable();
+            }
         }
 
         function showStatus(msg, classes) {
             const statusDiv = document.getElementById('statusMsg');
             statusDiv.textContent = msg;
-            statusDiv.className = `p-3 rounded mb-4 font-semibold ${classes}`;
+            statusDiv.className = `p-3 rounded-xl mb-6 font-medium text-sm transition-all shadow-sm ${classes}`;
             statusDiv.classList.remove('hidden');
-            setTimeout(() => { statusDiv.classList.add('hidden'); }, 3000);
+            setTimeout(() => { statusDiv.classList.add('hidden'); }, 4000);
         }
 
-        // --- GIAO TIẾP DỮ LIỆU (Google Apps Script / LocalStorage) ---
+        // ==================== ĐỒNG BỘ DỮ LIỆU VỚI APPS SCRIPT ====================
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwqHd_24yvWz4VIS3LjLiOKdekmMvibTSF6eOUBmHTIryMWFH2bCs7ksgREfosm4nfk/exec';
 
         async function loadData() {
             try {
-                // Gọi API GET để lấy dữ liệu
                 const response = await fetch(`${SCRIPT_URL}?action=load`);
                 const result = await response.json();
                 mediaList = result || [];
                 renderTable();
             } catch (error) {
-                console.error("Lỗi khi tải dữ liệu từ máy chủ:", error);
-                // Fallback: Chạy giả lập (Preview) dùng localStorage nếu API lỗi
+                console.warn("Dùng dữ liệu local (nếu không có mạng):", error);
                 const localData = localStorage.getItem('TV_MEDIA_DATA');
                 mediaList = localData ? JSON.parse(localData) : [];
                 renderTable();
@@ -385,56 +441,47 @@
             const dataStr = JSON.stringify(mediaList);
 
             try {
-                // Sử dụng URLSearchParams để tránh lỗi CORS Preflight (OPTIONS)
                 const formData = new URLSearchParams();
                 formData.append('action', 'save');
                 formData.append('data', dataStr);
 
-                // Gọi API POST để lưu dữ liệu
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    body: formData
-                });
-                
+                const response = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
                 const result = await response.json();
-                spinner.classList.add('hidden');
                 
+                spinner.classList.add('hidden');
                 if(result.success) {
-                    showStatus('Đã đồng bộ dữ liệu lên máy chủ thành công!', 'text-green-700 bg-green-100');
+                    showStatus('Đã đồng bộ dữ liệu lên Đám mây thành công!', 'text-emerald-700 bg-emerald-50 border border-emerald-200');
+                    localStorage.setItem('TV_MEDIA_DATA', dataStr); // Backup local
                 } else {
-                    showStatus('Lỗi Server: ' + result.message, 'text-red-700 bg-red-100');
+                    showStatus('Lỗi Server: ' + result.message, 'text-red-700 bg-red-50');
                 }
             } catch (error) {
                 spinner.classList.add('hidden');
-                console.error("Lỗi kết nối:", error);
-                // Lưu tạm vào trình duyệt nếu mất mạng/lỗi link
                 localStorage.setItem('TV_MEDIA_DATA', dataStr);
-                showStatus('Lỗi mạng. Đã lưu tạm vào trình duyệt cục bộ.', 'text-yellow-700 bg-yellow-100');
+                showStatus('Lỗi mạng. Đã lưu tạm vào máy tính của bạn.', 'text-amber-700 bg-amber-50 border border-amber-200');
             }
         }
 
 
-        // --- TV SLIDESHOW LOGIC ---
+        // ==================== ENGINE TRÌNH CHIẾU TV ====================
 
         function startTVMode() {
             if (mediaList.length === 0) {
-                alert("Vui lòng thêm ít nhất 1 ảnh hoặc video trước khi trình chiếu.");
+                alert("Vui lòng thêm nội dung trước khi phát lên TV.");
                 return;
             }
             
             document.body.classList.add('tv-mode-active');
-            document.getElementById('adminView').classList.add('hidden');
+            document.getElementById('adminView').classList.add('opacity-0', 'pointer-events-none', 'hidden');
             document.getElementById('tvView').classList.remove('hidden');
             
-            // Vào chế độ toàn màn hình (nếu trình duyệt hỗ trợ)
             if (document.documentElement.requestFullscreen) {
-                document.documentElement.requestFullscreen().catch(err => console.log("Không thể Fullscreen:", err));
+                document.documentElement.requestFullscreen().catch(err => console.log("Thiết bị không hỗ trợ Fullscreen."));
             }
 
             currentSlideIndex = 0;
             activeLayer = 1;
             
-            // Xóa rác layer cũ
             resetLayers();
             playNextSlide();
         }
@@ -445,7 +492,9 @@
             
             document.body.classList.remove('tv-mode-active');
             document.getElementById('tvView').classList.add('hidden');
-            document.getElementById('adminView').classList.remove('hidden');
+            const admin = document.getElementById('adminView');
+            admin.classList.remove('hidden');
+            setTimeout(() => admin.classList.remove('opacity-0', 'pointer-events-none'), 50);
 
             if (document.fullscreenElement) {
                 document.exitFullscreen().catch(() => {});
@@ -460,10 +509,26 @@
         }
 
         function stopAllVideos() {
-            const v1 = document.getElementById('displayVid1');
-            const v2 = document.getElementById('displayVid2');
-            v1.pause(); v1.src = "";
-            v2.pause(); v2.src = "";
+            ['displayVid1', 'displayVid2'].forEach(id => {
+                const vid = document.getElementById(id);
+                vid.pause();
+                vid.removeAttribute('src');
+                vid.load();
+            });
+        }
+        
+        // Thuật toán Preload để tải trước slide tiếp theo (Tăng tốc hiển thị, tránh chớp đen)
+        function preloadNextMedia() {
+            if(mediaList.length <= 1) return; // Không cần tải trước nếu chỉ có 1 slide
+            const nextIdx = (currentSlideIndex + 1) % mediaList.length;
+            const nextMedia = mediaList[nextIdx];
+            
+            if (nextMedia.type === 'image') {
+                const img = new Image();
+                img.src = nextMedia.url;
+            } 
+            // Video thường được trình duyệt tự động fetch một phần nhờ thẻ ẩn, 
+            // nên ta tập trung preload Image để hiệu quả nhất.
         }
 
         function playNextSlide() {
@@ -474,68 +539,72 @@
             document.getElementById('tvNoData').classList.add('hidden');
 
             const currentMedia = mediaList[currentSlideIndex];
-            
-            // Xác định layer đang hoạt động và layer sẽ hiển thị
             const nextLayer = activeLayer === 1 ? 2 : 1;
             
-            // Lấy các element DOM của layer tiếp theo
             const nextImg = document.getElementById(`displayImg${nextLayer}`);
             const nextVid = document.getElementById(`displayVid${nextLayer}`);
-            
-            // Lấy các element DOM của layer hiện tại (để làm mờ đi)
             const currImg = document.getElementById(`displayImg${activeLayer}`);
             const currVid = document.getElementById(`displayVid${activeLayer}`);
 
-            // 1. CHUẨN BỊ LAYER TIẾP THEO
+            // Cập nhật DOM để chuẩn bị hiện Layer mới
             if (currentMedia.type === 'image') {
                 nextImg.src = currentMedia.url;
                 nextImg.classList.replace('opacity-0', 'opacity-100');
                 
-                // Set thời gian để nhảy slide tiếp theo
+                // Kích hoạt preload cho hình tiếp theo
+                preloadNextMedia();
+                
                 slideTimeout = setTimeout(() => {
-                    playNextSlide();
+                    if (mediaList.length > 1) { playNextSlide(); } 
+                    else { resetSingleSlide(); } // Fix lỗi 1 slide
                 }, currentMedia.duration * 1000);
 
             } else if (currentMedia.type === 'video') {
                 nextVid.src = currentMedia.url;
-                // Phát video
                 nextVid.play().then(() => {
                     nextVid.classList.replace('opacity-0', 'opacity-100');
+                    preloadNextMedia();
                 }).catch(err => {
-                    console.error("Lỗi phát video (Có thể do trình duyệt chặn autoplay):", err);
-                    // Bỏ qua nếu lỗi, nhảy slide sau 5s
-                    slideTimeout = setTimeout(() => playNextSlide(), 5000);
+                    console.error("Lỗi Auto-play Video:", err);
+                    slideTimeout = setTimeout(() => { playNextSlide(); }, 3000);
                 });
                 
-                // Lắng nghe sự kiện video kết thúc
                 nextVid.onended = () => {
-                    playNextSlide();
+                    if (mediaList.length > 1) { playNextSlide(); } 
+                    else { nextVid.play(); } // Fix lỗi 1 video -> lặp lại luôn
                 };
                 
-                // Lỗi load video
                 nextVid.onerror = () => {
-                    slideTimeout = setTimeout(() => playNextSlide(), 2000);
+                    slideTimeout = setTimeout(() => { playNextSlide(); }, 2000);
                 };
             }
 
-            // 2. LÀM MỜ LAYER HIỆN TẠI (Hiệu ứng Cross-fade)
-            currImg.classList.replace('opacity-100', 'opacity-0');
-            currVid.classList.replace('opacity-100', 'opacity-0');
-            
-            // Dừng video cũ sau khi đã mờ hẳn (khoảng 1.5s theo CSS transition)
-            setTimeout(() => {
-                if(currVid.src) {
-                    currVid.pause();
-                    currVid.src = ""; 
-                }
-                if(currImg.src && currImg.classList.contains('opacity-0')) {
-                    currImg.src = ""; // giải phóng bộ nhớ
-                }
-            }, 1500);
+            // Làm mờ layer hiện tại (chỉ làm khi có nhiều hơn 1 slide)
+            if (mediaList.length > 1) {
+                currImg.classList.replace('opacity-100', 'opacity-0');
+                currVid.classList.replace('opacity-100', 'opacity-0');
+                
+                // Giải phóng tài nguyên layer cũ sau khi quá trình làm mờ (1.2s) kết thúc
+                setTimeout(() => {
+                    if(currVid.src && currVid.classList.contains('opacity-0')) {
+                        currVid.pause(); currVid.removeAttribute('src'); currVid.load();
+                    }
+                    if(currImg.src && currImg.classList.contains('opacity-0')) {
+                        currImg.src = ""; 
+                    }
+                }, 1300);
+            }
 
-            // Cập nhật state
             activeLayer = nextLayer;
-            currentSlideIndex = (currentSlideIndex + 1) % mediaList.length;
+            if (mediaList.length > 1) {
+                currentSlideIndex = (currentSlideIndex + 1) % mediaList.length;
+            }
+        }
+        
+        // Dùng riêng khi danh sách chỉ có 1 hình ảnh duy nhất
+        function resetSingleSlide() {
+            clearTimeout(slideTimeout);
+            slideTimeout = setTimeout(() => { resetSingleSlide(); }, mediaList[0].duration * 1000);
         }
 
     </script>
