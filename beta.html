@@ -236,7 +236,6 @@
         <div id="layer1" class="tv-layer opacity-0">
             <div id="bg1" class="cinematic-bg"></div>
             <img id="img1" class="media-content hidden" src="" alt="Layer 1">
-            <!-- Đã thêm autoplay, muted, playsinline mặc định -->
             <video id="vid1" class="media-content hidden" autoplay muted playsinline></video>
         </div>
 
@@ -244,7 +243,6 @@
         <div id="layer2" class="tv-layer opacity-0">
             <div id="bg2" class="cinematic-bg"></div>
             <img id="img2" class="media-content hidden" src="" alt="Layer 2">
-            <!-- Đã thêm autoplay, muted, playsinline mặc định -->
             <video id="vid2" class="media-content hidden" autoplay muted playsinline></video>
         </div>
 
@@ -648,34 +646,40 @@
                 const thumbUrl = formatMediaUrl(currentMedia.url, 'image', true);
                 nextBg.style.backgroundImage = thumbUrl ? `url('${thumbUrl}')` : 'none';
                 
+                // Mở không gian render đồ họa cho Video để tránh giật/chớp đen
+                nextVid.classList.remove('hidden');
+                
+                // Chèn ảnh poster để che khoảng đen trong lúc load video (đặc biệt khi dùng link Drive)
+                if (thumbUrl) nextVid.poster = thumbUrl;
+                
                 nextVid.src = safeMediaUrl;
                 nextVid.load();
                 
-                // THUẬT TOÁN AUTOPLAY AN TOÀN (CÓ FALLBACK MUTED)
                 // Ép trình duyệt phát bằng muted trước để lách luật chính sách autoplay
                 nextVid.muted = true;
                 
+                // Chờ sự kiện onplaying để đảm bảo frame hình đầu tiên đã bung ra mới hiện layer
+                nextVid.onplaying = () => {
+                    nextLayerEl.classList.replace('opacity-0', 'opacity-100');
+                    preloadNextMedia();
+                    
+                    // Thử mở tiếng lên sau khi video đã chạy thành công
+                    nextVid.muted = false;
+                    
+                    // Xóa event để tránh kích hoạt lại mỗi khi video buffering
+                    nextVid.onplaying = null;
+                };
+
                 const playPromise = nextVid.play();
                 
                 if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        nextVid.classList.remove('hidden');
-                        nextLayerEl.classList.replace('opacity-0', 'opacity-100');
-                        preloadNextMedia();
-                        
-                        // Sau khi đã ép phát thành công, thử mở tiếng lên
-                        nextVid.muted = false;
-                    }).catch(error => {
-                        console.warn("Autoplay lỗi, fallback về muted...", error);
+                    playPromise.catch(error => {
+                        console.warn("Autoplay lỗi (Trình duyệt chặn có tiếng), đang fallback về muted...", error);
                         // Nếu vẫn lỗi, đảm bảo nó bị mute và phát lại
                         nextVid.muted = true;
-                        nextVid.play().then(() => {
-                            nextVid.classList.remove('hidden');
-                            nextLayerEl.classList.replace('opacity-0', 'opacity-100');
-                            preloadNextMedia();
-                        }).catch(e => {
-                            // Link chết hoặc lỗi CORS chặn Stream
-                            console.error("Video không thể phát (Có thể do Link Drive hoặc file lỗi). Chuyển slide sau 3s", e);
+                        nextVid.play().catch(e => {
+                            // Link chết hoặc lỗi CORS chặn Stream, bỏ qua sang slide kế
+                            console.error("Video không thể phát. Đang chuyển slide sau 3s...", e);
                             slideTimeout = setTimeout(() => { playNextSlide(); }, 3000);
                         });
                     });
