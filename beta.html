@@ -319,6 +319,19 @@
                 }
             });
 
+            // TÍNH NĂNG MỚI: Tự động nhận diện loại nội dung khi dán Link
+            document.getElementById('mediaUrl').addEventListener('input', (e) => {
+                const url = e.target.value.toLowerCase();
+                const ts = document.getElementById('mediaType');
+                if (url.match(/\.(mp4|webm|mov|mkv)$/i)) {
+                    ts.value = 'video';
+                    ts.dispatchEvent(new Event('change'));
+                } else if (url.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+                    ts.value = 'image';
+                    ts.dispatchEvent(new Event('change'));
+                }
+            });
+
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const sourceType = document.querySelector('input[name="sourceType"]:checked').value;
@@ -662,16 +675,19 @@
                 };
             }
 
+            // FIX LỖI: Lưu lại số thứ tự của Layer cũ trước khi bị đổi để dọn dẹp chính xác
+            const layerToClean = activeLayer;
+
             // Cross-Fade: Làm mờ layer cũ
             if (mediaList.length > 1) {
                 currLayerEl.classList.replace('opacity-100', 'opacity-0');
                 // Giải phóng bộ nhớ RAM sau khi chuyển cảnh xong (1.5 giây)
                 setTimeout(() => {
                     if(currLayerEl.classList.contains('opacity-0')) {
-                        const currVid = document.getElementById(`vid${activeLayer}`);
-                        const currImg = document.getElementById(`img${activeLayer}`);
-                        currVid.pause(); currVid.removeAttribute('src'); currVid.load();
-                        currImg.src = "";
+                        const oldVid = document.getElementById(`vid${layerToClean}`);
+                        const oldImg = document.getElementById(`img${layerToClean}`);
+                        oldVid.pause(); oldVid.removeAttribute('src'); oldVid.load();
+                        oldImg.removeAttribute('src'); // Sửa lỗi hiện icon ảnh hỏng
                     }
                 }, 1600);
             }
