@@ -99,7 +99,7 @@
                             <i class="fa-solid fa-camera mr-2"></i> Chụp / Chọn ảnh
                             <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handleImageSelection(this, 'foundImagePreview', 'foundImageBase64')">
                         </label>
-                        <img id="foundImagePreview" class="h-12 w-12 object-cover rounded-lg border border-slate-200 hidden shadow-sm" />
+                        <img id="foundImagePreview" class="h-16 w-16 object-contain bg-slate-50 rounded-lg border border-slate-200 hidden shadow-sm" />
                     </div>
                     <input type="hidden" id="foundImageBase64" required>
                 </div>
@@ -188,7 +188,7 @@
                                     <i class="fa-solid fa-id-card mr-2"></i> Chụp CCCD
                                     <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handleImageSelection(this, 'proofImagePreview', 'proofImageBase64')">
                                 </label>
-                                <img id="proofImagePreview" class="h-20 w-full object-cover rounded-lg border border-slate-200 hidden shadow-sm" />
+                                <img id="proofImagePreview" class="h-32 w-full object-contain bg-slate-50 rounded-lg border border-slate-200 hidden shadow-sm" />
                                 <input type="hidden" id="proofImageBase64">
                             </div>
                         </div>
@@ -199,7 +199,7 @@
                                     <i class="fa-solid fa-camera mr-2"></i> Chụp Bàn giao
                                     <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handleImageSelection(this, 'returnImgPreview', 'returnImageBase64')">
                                 </label>
-                                <img id="returnImgPreview" class="h-20 w-full object-cover rounded-lg border border-slate-200 hidden shadow-sm" />
+                                <img id="returnImgPreview" class="h-32 w-full object-contain bg-slate-50 rounded-lg border border-slate-200 hidden shadow-sm" />
                                 <input type="hidden" id="returnImageBase64">
                             </div>
                         </div>
@@ -214,12 +214,12 @@
     </div>
 
     <!-- Modal Xem Ảnh Phóng To (Sửa lỗi hiển thị ảnh) -->
-    <div id="imageModal" class="fixed inset-0 bg-slate-900/90 hidden items-center justify-center z-[60] backdrop-blur-sm" onclick="closeImageModal()">
-        <div class="relative max-w-4xl w-full mx-4 flex justify-center" onclick="event.stopPropagation()">
-            <button onclick="closeImageModal()" class="absolute -top-10 right-0 text-white hover:text-red-400 transition-colors">
-                <i class="fa-solid fa-times text-3xl"></i>
+    <div id="imageModal" class="fixed inset-0 bg-slate-900/95 hidden items-center justify-center z-[60] backdrop-blur-sm p-4" onclick="closeImageModal()">
+        <div class="relative w-full h-full flex items-center justify-center" onclick="event.stopPropagation()">
+            <button onclick="closeImageModal()" class="absolute top-2 right-2 md:top-6 md:right-6 text-white/70 hover:text-white bg-black/40 hover:bg-black/60 rounded-full w-10 h-10 flex items-center justify-center transition-colors z-10">
+                <i class="fa-solid fa-times text-2xl"></i>
             </button>
-            <img id="fullSizeImage" src="" class="max-h-[85vh] object-contain rounded-lg shadow-2xl">
+            <img id="fullSizeImage" src="" onerror="handleImageError(this)" class="max-w-full max-h-full object-contain rounded shadow-2xl transition-opacity">
         </div>
     </div>
 
@@ -355,7 +355,18 @@
                         ? `<button class="text-xs text-slate-400 cursor-not-allowed" title="Đã trả: ${item.claimer?.name}"><i class="fa-solid fa-check-double"></i> Hoàn tất</button>`
                         : `<button onclick="openReturnModal(${item.id})" class="text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 px-3 py-1.5 rounded font-medium transition-colors border border-blue-200"><i class="fa-solid fa-hand-holding-hand mr-1"></i> Trả đồ</button>`;
 
-                    const imgIcon = item.foundImage ? `<button type="button" onclick="showImage('${item.foundImage}')" class="text-blue-500 hover:text-blue-700 ml-2 inline-block cursor-pointer focus:outline-none" title="Xem ảnh lúc nhặt"><i class="fa-solid fa-image text-lg"></i></button>` : '';
+                    // Tích hợp tất cả các icon xem ảnh vào cột trạng thái
+                    const imgIcon = item.foundImage ? `<button type="button" onclick="showImage('${item.foundImage}')" class="text-blue-500 hover:text-blue-700 inline-block cursor-pointer focus:outline-none" title="Xem ảnh lúc nhặt"><i class="fa-solid fa-image text-lg"></i></button>` : '';
+                    
+                    let returnIcons = '';
+                    if (isReturned && item.claimer) {
+                        if(item.claimer.proofLink && item.claimer.proofLink !== '#') {
+                            returnIcons += `<button type="button" onclick="showImage('${item.claimer.proofLink}')" class="text-emerald-500 hover:text-emerald-700 inline-block cursor-pointer" title="Xem ảnh CCCD"><i class="fa-solid fa-id-card text-lg"></i></button>`;
+                        }
+                        if(item.claimer.returnImage && item.claimer.returnImage !== '#') {
+                            returnIcons += `<button type="button" onclick="showImage('${item.claimer.returnImage}')" class="text-emerald-500 hover:text-emerald-700 inline-block cursor-pointer" title="Xem ảnh bàn giao"><i class="fa-solid fa-camera-retro text-lg"></i></button>`;
+                        }
+                    }
 
                     const tr = document.createElement('tr');
                     tr.className = "hover:bg-slate-50 transition-colors group";
@@ -365,7 +376,7 @@
                             <div class="text-xs text-slate-500">${formattedDate.split(' ')[0]}</div>
                         </td>
                         <td class="px-4 py-3">
-                            <div class="font-semibold text-slate-800 truncate max-w-[200px]" title="${item.itemName}">${item.itemName} ${imgIcon}</div>
+                            <div class="font-semibold text-slate-800 truncate max-w-[200px]" title="${item.itemName}">${item.itemName}</div>
                             <div class="text-xs text-slate-500">${item.category}</div>
                         </td>
                         <td class="px-4 py-3 text-slate-600">
@@ -378,7 +389,13 @@
                                 ${item.finderName}
                             </div>
                         </td>
-                        <td class="px-4 py-3">${statusBadge}</td>
+                        <td class="px-4 py-3">
+                            <div class="mb-1.5">${statusBadge}</div>
+                            <div class="flex items-center gap-2">
+                                ${imgIcon}
+                                ${returnIcons}
+                            </div>
+                        </td>
                         <td class="px-4 py-3 text-center">${actionBtn}</td>
                     `;
                     tbody.appendChild(tr);
@@ -558,16 +575,44 @@
 
         // --- TÍNH NĂNG MỚI VÀ SỬA LỖI ---
         
-        // 1. Sửa lỗi hiển thị ảnh: Dùng Modal để xem ảnh Base64 trực tiếp không bị trình duyệt chặn
+        // 1. Sửa lỗi hiển thị ảnh và Fallback nếu bị trình duyệt chặn
+        function handleImageError(img) {
+            if (img.src && img.src.length > 10) {
+                img.style.display = 'none'; // Ẩn ảnh bị vỡ đi
+                const container = img.parentElement;
+                
+                // Tránh tạo nhiều nút bấm
+                if (!document.getElementById('imgErrorLink')) {
+                    const link = document.createElement('a');
+                    link.id = 'imgErrorLink';
+                    link.href = img.src;
+                    link.target = '_blank';
+                    link.className = 'text-white bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg flex items-center gap-2 font-medium shadow-lg transition-transform hover:scale-105';
+                    link.innerHTML = '<i class="fa-solid fa-external-link-alt"></i> Nhấn vào đây để xem ảnh (Mở tab mới)';
+                    container.appendChild(link);
+                }
+            }
+        }
+
         function showImage(url) {
-            document.getElementById('fullSizeImage').src = url;
+            const img = document.getElementById('fullSizeImage');
+            img.style.display = 'block';
+            
+            // Xóa nút bấm dự phòng cũ nếu có
+            const errorLink = document.getElementById('imgErrorLink');
+            if (errorLink) errorLink.remove();
+
+            img.src = url;
             document.getElementById('imageModal').classList.replace('hidden', 'flex');
         }
 
         function closeImageModal() {
             document.getElementById('imageModal').classList.replace('flex', 'hidden');
-            // Xóa src để giải phóng bộ nhớ khi đóng
-            setTimeout(() => { document.getElementById('fullSizeImage').src = ''; }, 300);
+            setTimeout(() => { 
+                document.getElementById('fullSizeImage').src = ''; 
+                const errorLink = document.getElementById('imgErrorLink');
+                if (errorLink) errorLink.remove();
+            }, 300);
         }
 
         // 2. Tính năng Thông minh: Tự động phân loại dựa vào tên vật dụng
