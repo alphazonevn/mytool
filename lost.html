@@ -228,16 +228,12 @@
 
     <script>
         // ==========================================
-        // CẤU HÌNH GOOGLE APPS SCRIPT (APPS SCRIPT)
+        // CẤU HÌNH GOOGLE APPS SCRIPT
         // ==========================================
-        // Bạn sẽ thay link này bằng link Web App của Google Apps Script sau khi deploy
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxTsyzDvrmsKXa6dIdRVO1ZRFOeZVY325wGuDiEis2QsNRe2v4tsEY9SbFn5nFAhXGI/exec'; // Link thực tế đã được cập nhật
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyMxrQY4CkyK0oABREh7ezOJvamVOWuuum-cX5MoOXL61-6KwYUNXgmstHnLCMy38o/exec'; 
 
-        // Dữ liệu tạm (In-memory) để ứng dụng hoạt động ngay lập tức 
-        let lostItems = [
-            { id: 1731600000000, itemName: 'Ví da Nam màu nâu', category: 'Ví/Giấy tờ', location: 'Rạp 2', seat: 'H8', description: 'Có CCCD tên Nguyễn Văn A', finderName: 'Nhân viên Tâm', foundTime: '2023-11-14T20:30', status: 'Chưa nhận', foundImage: 'https://placehold.co/600x400/eee/999?text=Anh+Luc+Nhat', claimer: null },
-            { id: 1731500000000, itemName: 'Chìa khóa xe máy Honda', category: 'Chìa khóa', location: 'Khu vực chờ (Lobby)', seat: '', description: 'Có móc khóa hình gấu', finderName: 'Bảo vệ Hùng', foundTime: '2023-11-14T15:10', status: 'Đã trả', foundImage: 'https://placehold.co/600x400/eee/999?text=Anh+Luc+Nhat', claimer: { name: 'Trần Thị B', phone: '0901234567', proofLink: '#', returnImage: '#', time: '2023-11-15T10:00' } }
-        ];
+        // Dữ liệu tạm cục bộ
+        let lostItems = [];
 
         // --- Utils & UI ---
         
@@ -302,7 +298,7 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
                     
-                    // Nén chất lượng JPEG xuống 70%
+                    // Nén chất lượng JPEG xuống 70% để tải lên cực nhanh
                     const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
                     callback(dataUrl);
                 }
@@ -322,7 +318,7 @@
             }
         }
 
-        // --- Logic ---
+        // --- Logic Render Giao diện ---
 
         function renderTable(filter = '') {
             const tbody = document.getElementById('tableBody');
@@ -355,7 +351,6 @@
                         ? `<button class="text-xs text-slate-400 cursor-not-allowed" title="Đã trả: ${item.claimer?.name}"><i class="fa-solid fa-check-double"></i> Hoàn tất</button>`
                         : `<button onclick="openReturnModal(${item.id})" class="text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 px-3 py-1.5 rounded font-medium transition-colors border border-blue-200"><i class="fa-solid fa-hand-holding-hand mr-1"></i> Trả đồ</button>`;
 
-                    // Tích hợp tất cả các icon xem ảnh vào cột trạng thái
                     const imgIcon = item.foundImage ? `<button type="button" onclick="showImage('${item.foundImage}')" class="text-blue-500 hover:text-blue-700 inline-block cursor-pointer focus:outline-none" title="Xem ảnh lúc nhặt"><i class="fa-solid fa-image text-lg"></i></button>` : '';
                     
                     let returnIcons = '';
@@ -414,7 +409,7 @@
             }
 
             const btn = document.getElementById('submitBtn');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Đang tải ảnh lên hệ thống...';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Đang tải lên hệ thống...';
             btn.disabled = true;
 
             const newItem = {
@@ -423,8 +418,8 @@
                 category: document.getElementById('category').value,
                 location: document.getElementById('location').value,
                 seat: document.getElementById('seat').value,
-                foundImageBase64: base64Image, // Gửi ảnh dạng base64
-                foundImage: '', // URL sẽ được backend điền
+                foundImageBase64: base64Image,
+                foundImage: '', 
                 description: document.getElementById('description').value,
                 finderName: document.getElementById('finderName').value,
                 foundTime: document.getElementById('foundTime').value,
@@ -434,20 +429,14 @@
             };
 
             try {
-                if (SCRIPT_URL !== 'MOCK_URL') {
-                    // Xóa 'no-cors' để có thể đọc JSON response báo lỗi hoặc thành công từ Google
-                    const response = await fetch(SCRIPT_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // Apps Script thích text/plain hơn khi nhận JSON lớn
-                        body: JSON.stringify(newItem)
-                    });
-                    const result = await response.json();
-                    if(result.success) {
-                        newItem.foundImage = result.imageUrl; // Lấy URL thật từ Drive nếu có trả về
-                    }
-                } else {
-                    await new Promise(r => setTimeout(r, 1000));
-                    newItem.foundImage = base64Image; // Giả lập dùng luôn base64 hiển thị tạm
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(newItem)
+                });
+                const result = await response.json();
+                if(result.success) {
+                    newItem.foundImage = result.imageUrl; 
                 }
 
                 // Cập nhật State cục bộ
@@ -533,21 +522,15 @@
             btn.disabled = true;
 
             try {
-                if (SCRIPT_URL !== 'MOCK_URL') {
-                    const response = await fetch(SCRIPT_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: JSON.stringify(updateData)
-                    });
-                    const result = await response.json();
-                    if(result.success) {
-                        updateData.claimer.proofLink = result.proofUrl;
-                        updateData.claimer.returnImage = result.returnUrl;
-                    }
-                } else {
-                    await new Promise(r => setTimeout(r, 1000));
-                    updateData.claimer.proofLink = proofB64;
-                    updateData.claimer.returnImage = returnImgB64;
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(updateData)
+                });
+                const result = await response.json();
+                if(result.success) {
+                    updateData.claimer.proofLink = result.proofUrl;
+                    updateData.claimer.returnImage = result.returnUrl;
                 }
 
                 // Cập nhật State cục bộ
@@ -587,7 +570,7 @@
                     link.id = 'imgErrorLink';
                     link.href = img.src;
                     link.target = '_blank';
-                    link.className = 'text-white bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg flex items-center gap-2 font-medium shadow-lg transition-transform hover:scale-105';
+                    link.className = 'text-white bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg flex items-center gap-2 font-medium shadow-lg transition-transform hover:scale-105 mt-4';
                     link.innerHTML = '<i class="fa-solid fa-external-link-alt"></i> Nhấn vào đây để xem ảnh (Mở tab mới)';
                     container.appendChild(link);
                 }
@@ -633,10 +616,6 @@
 
         // 3. Khởi tạo: Đồng bộ dữ liệu từ Google Sheets (Backend) khi mở web
         async function loadData() {
-            if (SCRIPT_URL === 'MOCK_URL') {
-                renderTable();
-                return;
-            }
             try {
                 showToast("Đang đồng bộ dữ liệu từ hệ thống...", "info");
                 const response = await fetch(SCRIPT_URL);
@@ -644,10 +623,15 @@
                 if (Array.isArray(data)) {
                     lostItems = data;
                     renderTable();
+                    if(data.length > 0) {
+                        showToast(`Đã tải thành công ${data.length} dữ liệu!`);
+                    } else {
+                        showToast("Hệ thống hiện tại chưa có dữ liệu đồ thất lạc.");
+                    }
                 }
             } catch (error) {
                 console.error("Lỗi khi tải dữ liệu:", error);
-                showToast("Không thể tải dữ liệu mới. Đang hiển thị bản nháp.", "error");
+                showToast("Lỗi kết nối. Không thể tải dữ liệu.", "error");
                 renderTable();
             }
         }
