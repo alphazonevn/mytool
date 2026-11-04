@@ -213,6 +213,16 @@
         </div>
     </div>
 
+    <!-- Modal Xem Ảnh Phóng To (Sửa lỗi hiển thị ảnh) -->
+    <div id="imageModal" class="fixed inset-0 bg-slate-900/90 hidden items-center justify-center z-[60] backdrop-blur-sm" onclick="closeImageModal()">
+        <div class="relative max-w-4xl w-full mx-4 flex justify-center" onclick="event.stopPropagation()">
+            <button onclick="closeImageModal()" class="absolute -top-10 right-0 text-white hover:text-red-400 transition-colors">
+                <i class="fa-solid fa-times text-3xl"></i>
+            </button>
+            <img id="fullSizeImage" src="" class="max-h-[85vh] object-contain rounded-lg shadow-2xl">
+        </div>
+    </div>
+
     <!-- Toast Notifications Container -->
     <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2"></div>
 
@@ -345,7 +355,7 @@
                         ? `<button class="text-xs text-slate-400 cursor-not-allowed" title="Đã trả: ${item.claimer?.name}"><i class="fa-solid fa-check-double"></i> Hoàn tất</button>`
                         : `<button onclick="openReturnModal(${item.id})" class="text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 px-3 py-1.5 rounded font-medium transition-colors border border-blue-200"><i class="fa-solid fa-hand-holding-hand mr-1"></i> Trả đồ</button>`;
 
-                    const imgIcon = item.foundImage ? `<a href="${item.foundImage}" target="_blank" class="text-blue-500 hover:text-blue-700 ml-1 inline-block" title="Xem ảnh lúc nhặt"><i class="fa-solid fa-image"></i></a>` : '';
+                    const imgIcon = item.foundImage ? `<button type="button" onclick="showImage('${item.foundImage}')" class="text-blue-500 hover:text-blue-700 ml-2 inline-block cursor-pointer focus:outline-none" title="Xem ảnh lúc nhặt"><i class="fa-solid fa-image text-lg"></i></button>` : '';
 
                     const tr = document.createElement('tr');
                     tr.className = "hover:bg-slate-50 transition-colors group";
@@ -546,8 +556,59 @@
             renderTable(e.target.value);
         });
 
-        // Khởi tạo
-        renderTable();
+        // --- TÍNH NĂNG MỚI VÀ SỬA LỖI ---
+        
+        // 1. Sửa lỗi hiển thị ảnh: Dùng Modal để xem ảnh Base64 trực tiếp không bị trình duyệt chặn
+        function showImage(url) {
+            document.getElementById('fullSizeImage').src = url;
+            document.getElementById('imageModal').classList.replace('hidden', 'flex');
+        }
+
+        function closeImageModal() {
+            document.getElementById('imageModal').classList.replace('flex', 'hidden');
+            // Xóa src để giải phóng bộ nhớ khi đóng
+            setTimeout(() => { document.getElementById('fullSizeImage').src = ''; }, 300);
+        }
+
+        // 2. Tính năng Thông minh: Tự động phân loại dựa vào tên vật dụng
+        document.getElementById('itemName').addEventListener('input', function(e) {
+            const val = e.target.value.toLowerCase();
+            const categorySelect = document.getElementById('category');
+            
+            if (val.match(/điện thoại|phone|iphone|samsung|oppo|xiaomi|ipad|tablet|laptop|tai nghe|airpod|đồng hồ|watch|tai nghe|cáp|sạc/)) {
+                categorySelect.value = 'Điện thoại/Thiết bị';
+            } else if (val.match(/ví|bóp|giấy tờ|cccd|cmnd|passport|hộ chiếu|thẻ/)) {
+                categorySelect.value = 'Ví/Giấy tờ';
+            } else if (val.match(/chìa|khóa|key/)) {
+                categorySelect.value = 'Chìa khóa';
+            } else if (val.match(/áo|quần|mũ|nón|túi|balo|giày|dép|kính|khăn/)) {
+                categorySelect.value = 'Quần áo/Phụ kiện';
+            }
+        });
+
+        // 3. Khởi tạo: Đồng bộ dữ liệu từ Google Sheets (Backend) khi mở web
+        async function loadData() {
+            if (SCRIPT_URL === 'MOCK_URL') {
+                renderTable();
+                return;
+            }
+            try {
+                showToast("Đang đồng bộ dữ liệu từ hệ thống...", "info");
+                const response = await fetch(SCRIPT_URL);
+                const data = await response.json();
+                if (Array.isArray(data)) {
+                    lostItems = data;
+                    renderTable();
+                }
+            } catch (error) {
+                console.error("Lỗi khi tải dữ liệu:", error);
+                showToast("Không thể tải dữ liệu mới. Đang hiển thị bản nháp.", "error");
+                renderTable();
+            }
+        }
+
+        // Gọi loadData ngay khi web vừa tải xong
+        loadData();
 
     </script>
 </body>
