@@ -1,644 +1,743 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sổ Đồ Thất Lạc - BETA NOWZONE</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        .toast-enter { animation: slideInRight 0.3s ease-out forwards; }
-        .toast-exit { animation: fadeOut 0.3s ease-out forwards; }
-        @keyframes slideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
-        }
-        
-        /* Custom Scrollbar for table */
-        .table-container::-webkit-scrollbar { height: 8px; width: 8px; }
-        .table-container::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
-        .table-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        .table-container::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#123d78">
+  <title>Sổ Đồ Thất Lạc - BETA NOWZONE</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: Inter, sans-serif; }
+    .table-container::-webkit-scrollbar { width: 8px; height: 8px; }
+    .table-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    .table-container::-webkit-scrollbar-track { background: #f8fafc; }
+    .toast-enter { animation: toastIn .22s ease-out; }
+    .toast-exit { animation: toastOut .25s ease-in forwards; }
+    @keyframes toastIn { from { opacity: 0; transform: translateX(18px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes toastOut { to { opacity: 0; transform: translateX(18px); } }
+    .modal-backdrop { background: rgba(15, 23, 42, .68); backdrop-filter: blur(4px); }
+    .photo-preview { width: 100%; height: 132px; object-fit: contain; background: #f8fafc; }
+    button:disabled { opacity: .55; cursor: not-allowed; }
+    @media (max-width: 1023px) { body { min-height: 100vh; height: auto; overflow: auto; } main { overflow: visible !important; } }
+  </style>
 </head>
-<body class="bg-slate-50 text-slate-800 h-screen flex flex-col overflow-hidden">
-
-    <!-- Header -->
-    <header class="bg-blue-800 text-white shadow-md z-10 shrink-0">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center font-bold text-xl shadow-inner">
-                    B
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold uppercase tracking-wide">BETA NOWZONE</h1>
-                    <p class="text-xs text-blue-200">Hệ thống quản lý Đồ Thất Lạc (Lost & Found)</p>
-                </div>
-            </div>
-            <div class="text-sm hidden sm:block font-medium">
-                <i class="fa-solid fa-clock mr-1"></i> <span id="currentTime"></span>
-            </div>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col">
+  <header class="bg-blue-900 text-white shadow-lg shrink-0">
+    <div class="max-w-[1600px] mx-auto px-4 md:px-6 py-3 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="w-11 h-11 rounded-xl bg-orange-500 flex items-center justify-center font-extrabold text-2xl shadow">B</div>
+        <div class="min-w-0">
+          <h1 class="font-extrabold tracking-wide text-lg md:text-xl">BETA NOWZONE</h1>
+          <p class="text-xs md:text-sm text-blue-200">Hệ thống quản lý đồ thất lạc · Lost & Found</p>
         </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="flex-1 container mx-auto px-4 py-6 flex flex-col lg:flex-row gap-6 overflow-hidden">
-        
-        <!-- Cột Trái: Form Nhập Liệu -->
-        <div class="w-full lg:w-1/3 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col shrink-0 overflow-y-auto">
-            <div class="p-4 border-b border-slate-100 bg-slate-50 rounded-t-xl">
-                <h2 class="font-semibold text-lg text-slate-700 flex items-center">
-                    <i class="fa-solid fa-plus-circle text-blue-600 mr-2"></i> Ghi nhận đồ mới
-                </h2>
-            </div>
-            <form id="lostItemForm" class="p-5 space-y-4">
-                
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Tên vật dụng <span class="text-red-500">*</span></label>
-                    <input type="text" id="itemName" required placeholder="VD: iPhone 13 Pro Max, Ví da đen..." class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Phân loại <span class="text-red-500">*</span></label>
-                        <select id="category" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="Điện thoại/Thiết bị">Điện thoại/Thiết bị</option>
-                            <option value="Ví/Giấy tờ">Ví/Giấy tờ</option>
-                            <option value="Chìa khóa">Chìa khóa</option>
-                            <option value="Quần áo/Phụ kiện">Quần áo/Phụ kiện</option>
-                            <option value="Khác">Khác</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Khu vực / Rạp <span class="text-red-500">*</span></label>
-                        <input type="text" id="location" required placeholder="VD: Rạp 1, Sảnh chờ..." class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Số ghế (nếu có)</label>
-                        <input type="text" id="seat" placeholder="VD: E5, H8..." class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Nhân viên nhặt <span class="text-red-500">*</span></label>
-                        <input type="text" id="finderName" required placeholder="Tên NV..." class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Hình ảnh lúc nhặt <span class="text-red-500">*</span></label>
-                    <div class="flex items-center gap-3 mt-1">
-                        <label class="cursor-pointer bg-slate-100 border border-slate-300 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center">
-                            <i class="fa-solid fa-camera mr-2"></i> Chụp / Chọn ảnh
-                            <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handleImageSelection(this, 'foundImagePreview', 'foundImageBase64')">
-                        </label>
-                        <img id="foundImagePreview" class="h-16 w-16 object-contain bg-slate-50 rounded-lg border border-slate-200 hidden shadow-sm" />
-                    </div>
-                    <input type="hidden" id="foundImageBase64" required>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Mô tả đặc điểm (Tình trạng, màu sắc...)</label>
-                    <textarea id="description" rows="2" placeholder="Ốp lưng màu đỏ, màn hình bị nứt góc..." class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Thời gian nhặt</label>
-                    <input type="datetime-local" id="foundTime" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
-                </div>
-
-                <button type="submit" id="submitBtn" class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg transition-colors flex items-center justify-center">
-                    <i class="fa-solid fa-save mr-2"></i> Lưu Thông Tin
-                </button>
-            </form>
-        </div>
-
-        <!-- Cột Phải: Danh sách -->
-        <div class="w-full lg:w-2/3 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
-            <div class="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center shrink-0">
-                <h2 class="font-semibold text-lg text-slate-700 flex items-center">
-                    <i class="fa-solid fa-list-ul text-blue-600 mr-2"></i> Danh sách Đồ Thất Lạc
-                </h2>
-                <div class="relative">
-                    <i class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
-                    <input type="text" id="searchInput" placeholder="Tìm kiếm..." class="pl-9 pr-4 py-1.5 border border-slate-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-            </div>
-            
-            <div class="flex-1 overflow-auto table-container p-0">
-                <table class="w-full text-left border-collapse whitespace-nowrap min-w-[800px]">
-                    <thead class="bg-slate-50 sticky top-0 z-10 shadow-sm">
-                        <tr>
-                            <th class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Thời gian</th>
-                            <th class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Vật dụng</th>
-                            <th class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Khu vực / Ghế</th>
-                            <th class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Người nhặt</th>
-                            <th class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Trạng thái</th>
-                            <th class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider text-center">Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody" class="divide-y divide-slate-100 text-sm">
-                        <!-- Dữ liệu được render bằng JS -->
-                    </tbody>
-                </table>
-                
-                <div id="emptyState" class="hidden flex-col items-center justify-center py-12 text-slate-400">
-                    <i class="fa-solid fa-box-open text-4xl mb-3 text-slate-300"></i>
-                    <p>Chưa có dữ liệu đồ thất lạc</p>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Modal Cập nhật Trả Đồ -->
-    <div id="returnModal" class="fixed inset-0 bg-slate-900/50 hidden items-center justify-center z-50 backdrop-blur-sm">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
-            <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center">
-                <h3 class="font-bold text-lg text-slate-800">Xác nhận Trả Đồ</h3>
-                <button onclick="closeReturnModal()" class="text-slate-400 hover:text-red-500 transition-colors">
-                    <i class="fa-solid fa-times text-xl"></i>
-                </button>
-            </div>
-            <div class="p-5">
-                <p class="text-sm text-slate-600 mb-4">Vui lòng ghi nhận thông tin khách hàng nhận lại đồ: <strong id="modalItemName" class="text-blue-600"></strong></p>
-                <input type="hidden" id="modalItemId">
-                
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Họ tên khách hàng <span class="text-red-500">*</span></label>
-                        <input type="text" id="customerName" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Số điện thoại <span class="text-red-500">*</span></label>
-                        <input type="tel" id="customerPhone" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-                    
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Ảnh CCCD <span class="text-red-500">*</span></label>
-                            <div class="flex flex-col gap-2 mt-1">
-                                <label class="cursor-pointer bg-slate-100 border border-slate-300 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center w-full">
-                                    <i class="fa-solid fa-id-card mr-2"></i> Chụp CCCD
-                                    <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handleImageSelection(this, 'proofImagePreview', 'proofImageBase64')">
-                                </label>
-                                <img id="proofImagePreview" class="h-32 w-full object-contain bg-slate-50 rounded-lg border border-slate-200 hidden shadow-sm" />
-                                <input type="hidden" id="proofImageBase64">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Ảnh Bàn giao <span class="text-red-500">*</span></label>
-                            <div class="flex flex-col gap-2 mt-1">
-                                <label class="cursor-pointer bg-slate-100 border border-slate-300 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center w-full">
-                                    <i class="fa-solid fa-camera mr-2"></i> Chụp Bàn giao
-                                    <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handleImageSelection(this, 'returnImgPreview', 'returnImageBase64')">
-                                </label>
-                                <img id="returnImgPreview" class="h-32 w-full object-contain bg-slate-50 rounded-lg border border-slate-200 hidden shadow-sm" />
-                                <input type="hidden" id="returnImageBase64">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="px-5 py-3 bg-slate-50 border-t border-slate-100 flex justify-end space-x-3">
-                <button onclick="closeReturnModal()" class="px-4 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">Hủy</button>
-                <button onclick="confirmReturn()" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors">Xác nhận Đã Trả</button>
-            </div>
-        </div>
+      </div>
+      <div class="text-right shrink-0">
+        <div class="text-sm font-semibold"><i class="fa-regular fa-clock mr-1"></i><span id="currentTime">--:--</span></div>
+        <div id="connectionStatus" class="text-[11px] text-blue-200 mt-1"><i class="fa-solid fa-circle-notch fa-spin mr-1"></i>Đang kết nối</div>
+      </div>
     </div>
+  </header>
 
-    <!-- Modal Xem Ảnh Phóng To (Sửa lỗi hiển thị ảnh) -->
-    <div id="imageModal" class="fixed inset-0 bg-slate-900/95 hidden items-center justify-center z-[60] backdrop-blur-sm p-4" onclick="closeImageModal()">
-        <div class="relative w-full h-full flex items-center justify-center" onclick="event.stopPropagation()">
-            <button onclick="closeImageModal()" class="absolute top-2 right-2 md:top-6 md:right-6 text-white/70 hover:text-white bg-black/40 hover:bg-black/60 rounded-full w-10 h-10 flex items-center justify-center transition-colors z-10">
-                <i class="fa-solid fa-times text-2xl"></i>
-            </button>
-            <img id="fullSizeImage" src="" onerror="handleImageError(this)" class="max-w-full max-h-full object-contain rounded shadow-2xl transition-opacity">
+  <main class="w-full max-w-[1600px] mx-auto p-4 md:p-6 flex-1 flex flex-col lg:flex-row gap-5 min-h-0">
+    <!-- Form ghi nhận -->
+    <section class="w-full lg:w-[390px] xl:w-[420px] shrink-0 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+      <div class="px-5 py-4 bg-slate-50 border-b border-slate-200">
+        <h2 class="font-bold text-lg"><i class="fa-solid fa-circle-plus text-blue-600 mr-2"></i>Ghi nhận đồ mới</h2>
+        <p class="text-xs text-slate-500 mt-1">Nhập thông tin và chụp ảnh hiện trạng vật dụng.</p>
+      </div>
+      <form id="lostItemForm" class="p-5 space-y-4">
+        <div>
+          <label for="itemName" class="block text-sm font-semibold mb-1">Tên vật dụng <span class="text-red-500">*</span></label>
+          <input id="itemName" required maxlength="120" autocomplete="off" placeholder="VD: iPhone 13, ví da màu đen..." class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+          <p class="text-[11px] text-slate-400 mt-1">Hệ thống gợi ý phân loại theo tên vật dụng.</p>
         </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label for="category" class="block text-sm font-semibold mb-1">Phân loại <span class="text-red-500">*</span></label>
+            <select id="category" required class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm bg-white outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="Điện thoại/Thiết bị">Điện thoại/Thiết bị</option>
+              <option value="Ví/Giấy tờ">Ví/Giấy tờ</option>
+              <option value="Chìa khóa">Chìa khóa</option>
+              <option value="Quần áo/Phụ kiện">Quần áo/Phụ kiện</option>
+              <option value="Đồ ăn/Thức uống">Đồ ăn/Thức uống</option>
+              <option value="Khác">Khác</option>
+            </select>
+          </div>
+          <div>
+            <label for="location" class="block text-sm font-semibold mb-1">Khu vực / Rạp <span class="text-red-500">*</span></label>
+            <input id="location" required maxlength="100" placeholder="VD: Rạp 1, sảnh chờ..." class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label for="seat" class="block text-sm font-semibold mb-1">Số ghế</label>
+            <input id="seat" maxlength="20" placeholder="VD: E5, H8..." class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div>
+            <label for="finderName" class="block text-sm font-semibold mb-1">Nhân viên nhặt <span class="text-red-500">*</span></label>
+            <input id="finderName" required maxlength="100" placeholder="Họ tên nhân viên" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold mb-1">Ảnh lúc nhặt <span class="text-red-500">*</span></label>
+          <label class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 cursor-pointer text-sm font-semibold">
+            <i class="fa-solid fa-camera text-blue-600"></i> Chụp / Chọn ảnh
+            <input id="foundImageInput" type="file" accept="image/*" capture="environment" class="hidden">
+          </label>
+          <div id="foundPreviewWrap" class="hidden mt-2 rounded-xl border border-slate-200 p-2">
+            <img id="foundImagePreview" class="photo-preview rounded-lg" alt="Ảnh vật dụng xem trước">
+            <div id="foundImageInfo" class="text-[11px] text-slate-500 mt-1 text-center"></div>
+            <button type="button" id="clearFoundImage" class="text-xs text-red-600 hover:underline mt-1"><i class="fa-solid fa-trash-can mr-1"></i>Xóa ảnh đã chọn</button>
+          </div>
+          <input type="hidden" id="foundImageBase64">
+          <p class="text-[11px] text-slate-400 mt-1">Ảnh được tự động thu nhỏ trước khi tải lên.</p>
+        </div>
+
+        <div>
+          <label for="description" class="block text-sm font-semibold mb-1">Mô tả đặc điểm</label>
+          <textarea id="description" rows="3" maxlength="1000" placeholder="Màu sắc, thương hiệu, tình trạng, đặc điểm nhận dạng..." class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 resize-y"></textarea>
+        </div>
+
+        <div>
+          <label for="foundTime" class="block text-sm font-semibold mb-1">Thời gian nhặt <span class="text-red-500">*</span></label>
+          <input id="foundTime" type="datetime-local" required class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <button id="submitBtn" type="submit" class="w-full rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-floppy-disk"></i><span>Lưu thông tin</span>
+        </button>
+        <p class="text-[11px] text-slate-400 text-center">Dữ liệu chỉ được cập nhật trên giao diện sau khi máy chủ xác nhận lưu thành công.</p>
+      </form>
+    </section>
+
+    <!-- Danh sách / quản trị -->
+    <section class="flex-1 min-w-0 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col min-h-[650px]">
+      <div class="px-4 md:px-5 py-4 border-b border-slate-200 bg-slate-50">
+        <div class="flex flex-wrap justify-between items-center gap-3">
+          <div>
+            <h2 class="font-bold text-lg"><i class="fa-solid fa-rectangle-list text-blue-600 mr-2"></i>Danh sách đồ thất lạc</h2>
+            <p class="text-xs text-slate-500 mt-1">Theo dõi tình trạng lưu giữ và bàn giao vật dụng.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="lastSync" class="hidden sm:inline text-[11px] text-slate-400">Chưa đồng bộ</span>
+            <button id="refreshBtn" type="button" class="px-3 py-2 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-sm font-semibold"><i class="fa-solid fa-rotate mr-1.5"></i>Làm mới</button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 xl:grid-cols-4 gap-2 mt-4">
+          <div class="rounded-xl border border-slate-200 bg-white p-3"><div class="text-[11px] text-slate-500">Tổng ghi nhận</div><div id="statTotal" class="text-2xl font-extrabold text-slate-800">0</div></div>
+          <div class="rounded-xl border border-amber-200 bg-amber-50 p-3"><div class="text-[11px] text-amber-700">Chưa trả</div><div id="statPending" class="text-2xl font-extrabold text-amber-700">0</div></div>
+          <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-3"><div class="text-[11px] text-emerald-700">Đã trả</div><div id="statReturned" class="text-2xl font-extrabold text-emerald-700">0</div></div>
+          <div class="rounded-xl border border-blue-200 bg-blue-50 p-3"><div class="text-[11px] text-blue-700">Ghi nhận hôm nay</div><div id="statToday" class="text-2xl font-extrabold text-blue-700">0</div></div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-2 mt-3">
+          <div class="md:col-span-1 relative">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+            <input id="searchInput" type="search" placeholder="Tìm mã, vật dụng, nhân viên, SĐT..." class="w-full pl-9 pr-3 py-2.5 rounded-lg border border-slate-300 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+          <select id="statusFilter" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="ALL">Tất cả trạng thái</option><option value="Chưa nhận">Chưa trả</option><option value="Đã trả">Đã trả</option>
+          </select>
+          <select id="categoryFilter" class="w-full rounded-lg border border-slate-300 px-3 py-2.5 bg-white text-sm outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="ALL">Tất cả phân loại</option>
+            <option value="Điện thoại/Thiết bị">Điện thoại/Thiết bị</option><option value="Ví/Giấy tờ">Ví/Giấy tờ</option><option value="Chìa khóa">Chìa khóa</option><option value="Quần áo/Phụ kiện">Quần áo/Phụ kiện</option><option value="Đồ ăn/Thức uống">Đồ ăn/Thức uống</option><option value="Khác">Khác</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="flex-1 min-h-0 overflow-auto table-container">
+        <table class="w-full min-w-[900px] text-left border-collapse">
+          <thead class="sticky top-0 z-10 bg-slate-100 shadow-sm">
+            <tr class="text-[11px] uppercase tracking-wide text-slate-500">
+              <th class="px-4 py-3 font-bold">Mã / Thời gian</th><th class="px-4 py-3 font-bold">Vật dụng</th><th class="px-4 py-3 font-bold">Khu vực / Ghế</th><th class="px-4 py-3 font-bold">Người nhặt</th><th class="px-4 py-3 font-bold">Trạng thái / Ảnh</th><th class="px-4 py-3 text-center font-bold">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody" class="divide-y divide-slate-100 text-sm"></tbody>
+        </table>
+        <div id="loadingState" class="hidden py-16 text-center text-slate-500"><i class="fa-solid fa-circle-notch fa-spin text-2xl text-blue-600"></i><p class="mt-3 text-sm">Đang tải dữ liệu...</p></div>
+        <div id="emptyState" class="hidden py-16 text-center text-slate-400"><i class="fa-solid fa-box-open text-4xl text-slate-300"></i><p class="font-semibold mt-3">Không tìm thấy dữ liệu phù hợp</p><p class="text-xs mt-1">Thử thay đổi từ khóa hoặc bộ lọc.</p></div>
+      </div>
+      <div class="px-4 py-3 border-t border-slate-200 bg-slate-50 flex justify-between items-center text-xs text-slate-500"><span id="resultCount">0 kết quả</span><span>Tự đồng bộ mỗi 45 giây khi trang đang mở</span></div>
+    </section>
+  </main>
+
+  <!-- Modal xác nhận trả đồ -->
+  <div id="returnModal" class="fixed inset-0 z-40 hidden items-center justify-center modal-backdrop p-3 overflow-y-auto">
+    <div class="w-full max-w-xl bg-white rounded-2xl shadow-2xl overflow-hidden my-auto">
+      <div class="px-5 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+        <div><h3 class="font-extrabold text-lg">Xác nhận bàn giao vật dụng</h3><p class="text-xs text-slate-500 mt-1">Ghi nhận người nhận và bằng chứng bàn giao.</p></div>
+        <button type="button" id="closeReturnX" class="w-9 h-9 rounded-full hover:bg-slate-200 text-slate-500"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <div class="p-5 space-y-4">
+        <input type="hidden" id="modalItemId">
+        <div class="rounded-lg bg-blue-50 border border-blue-100 p-3 text-sm">Vật dụng: <strong id="modalItemName" class="text-blue-800"></strong></div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div><label for="customerName" class="block text-sm font-semibold mb-1">Họ tên khách nhận <span class="text-red-500">*</span></label><input id="customerName" maxlength="120" required class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500" placeholder="Nhập họ tên"></div>
+          <div><label for="customerPhone" class="block text-sm font-semibold mb-1">Số điện thoại <span class="text-red-500">*</span></label><input id="customerPhone" type="tel" maxlength="20" required class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500" placeholder="09xxxxxxxx"></div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div><label class="block text-sm font-semibold mb-1">Ảnh CCCD / giấy tờ <span class="text-red-500">*</span></label><label class="flex justify-center items-center gap-2 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 px-3 py-2.5 text-sm font-semibold cursor-pointer"><i class="fa-solid fa-id-card text-blue-600"></i> Chụp / Chọn ảnh<input id="proofImageInput" type="file" accept="image/*" capture="environment" class="hidden"></label><div id="proofPreviewWrap" class="hidden mt-2 border rounded-lg p-2"><img id="proofImagePreview" class="photo-preview rounded" alt="Ảnh giấy tờ xem trước"><div id="proofImageInfo" class="text-[11px] text-slate-500 text-center mt-1"></div><button type="button" id="clearProofImage" class="text-xs text-red-600 mt-1">Xóa ảnh</button></div><input type="hidden" id="proofImageBase64"></div>
+          <div><label class="block text-sm font-semibold mb-1">Ảnh bàn giao <span class="text-red-500">*</span></label><label class="flex justify-center items-center gap-2 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 px-3 py-2.5 text-sm font-semibold cursor-pointer"><i class="fa-solid fa-camera text-blue-600"></i> Chụp / Chọn ảnh<input id="returnImageInput" type="file" accept="image/*" capture="environment" class="hidden"></label><div id="returnPreviewWrap" class="hidden mt-2 border rounded-lg p-2"><img id="returnImgPreview" class="photo-preview rounded" alt="Ảnh bàn giao xem trước"><div id="returnImageInfo" class="text-[11px] text-slate-500 text-center mt-1"></div><button type="button" id="clearReturnImage" class="text-xs text-red-600 mt-1">Xóa ảnh</button></div><input type="hidden" id="returnImageBase64"></div>
+        </div>
+        <p class="text-xs text-amber-700 bg-amber-50 border border-amber-100 rounded-lg p-3"><i class="fa-solid fa-shield-halved mr-1"></i>Ảnh giấy tờ và ảnh bàn giao được lưu trong thư mục Google Drive riêng tư. Nhân viên cần được cấp quyền thư mục để xem.</p>
+      </div>
+      <div class="px-5 py-4 bg-slate-50 border-t border-slate-200 flex justify-end gap-2"><button type="button" id="cancelReturnBtn" class="px-4 py-2.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-sm font-semibold">Hủy</button><button type="button" id="confirmReturnBtn" class="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold"><i class="fa-solid fa-check mr-1"></i>Xác nhận đã trả</button></div>
     </div>
+  </div>
 
-    <!-- Toast Notifications Container -->
-    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2"></div>
+  <!-- Modal xem ảnh vật dụng -->
+  <div id="imageModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/95 p-4" role="dialog" aria-modal="true" aria-label="Xem ảnh vật dụng">
+    <button id="closeImageBtn" type="button" class="absolute top-4 right-4 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white"><i class="fa-solid fa-xmark text-2xl"></i></button>
+    <div class="max-w-6xl max-h-full flex flex-col items-center gap-3">
+      <img id="fullSizeImage" src="" alt="Ảnh vật dụng" class="max-w-full max-h-[82vh] object-contain rounded-lg shadow-2xl">
+      <a id="imageFallbackLink" href="#" target="_blank" rel="noopener noreferrer" class="hidden text-white bg-blue-600 hover:bg-blue-700 rounded-lg px-4 py-2 text-sm font-semibold"><i class="fa-solid fa-arrow-up-right-from-square mr-2"></i>Mở ảnh trong Google Drive</a>
+    </div>
+  </div>
 
-    <script>
-        // ==========================================
-        // CẤU HÌNH GOOGLE APPS SCRIPT
-        // ==========================================
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyMxrQY4CkyK0oABREh7ezOJvamVOWuuum-cX5MoOXL61-6KwYUNXgmstHnLCMy38o/exec'; 
+  <div id="toastContainer" class="fixed top-4 right-4 z-[60] flex flex-col gap-2 w-[min(92vw,380px)]"></div>
 
-        // Dữ liệu tạm cục bộ
-        let lostItems = [];
+  <script>
+    'use strict';
 
-        // --- Utils & UI ---
-        
-        // Cập nhật đồng hồ
-        setInterval(() => {
-            const now = new Date();
-            document.getElementById('currentTime').textContent = now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) + ' - ' + now.toLocaleDateString('vi-VN');
-        }, 1000);
+    // Dùng URL Web App hiện tại của dự án Apps Script.
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyo8Y0XLrOOM-amZSbpGOLpQdXbaL73ycp-SofbOwWeNG8jbXlX6dWPJ-3bkPST_eUX/exec';
+    const AUTO_SYNC_MS = 45000;
+    const MAX_UPLOAD_BYTES = 1.6 * 1024 * 1024; // Giới hạn ảnh sau nén.
 
-        // Set default time for input
-        const now = new Date();
-        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-        document.getElementById('foundTime').value = now.toISOString().slice(0,16);
+    let lostItems = [];
+    let isLoading = false;
+    let isSubmitting = false;
+    let currentImageUrl = '';
 
-        // Hệ thống thông báo (Toast)
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            const bgColor = type === 'success' ? 'bg-green-500' : (type === 'error' ? 'bg-red-500' : 'bg-blue-500');
-            const icon = type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle');
-            
-            toast.className = `${bgColor} text-white px-4 py-3 rounded-lg shadow-lg flex items-center space-x-3 toast-enter max-w-sm`;
-            toast.innerHTML = `
-                <i class="fa-solid ${icon} text-xl"></i>
-                <span class="font-medium text-sm">${message}</span>
-            `;
-            container.appendChild(toast);
+    const $ = (id) => document.getElementById(id);
 
-            setTimeout(() => {
-                toast.classList.replace('toast-enter', 'toast-exit');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
+    function setDefaultFoundTime() {
+      const now = new Date();
+      now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+      $('foundTime').value = now.toISOString().slice(0, 16);
+    }
 
-        // Nén và chuyển ảnh sang Base64
-        function compressImage(file, callback) {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = function(event) {
-                const img = new Image();
-                img.src = event.target.result;
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 800; // Giới hạn chiều rộng
-                    const MAX_HEIGHT = 800; // Giới hạn chiều cao
-                    let width = img.width;
-                    let height = img.height;
+    function updateClock() {
+      $('currentTime').textContent = new Date().toLocaleString('vi-VN', {
+        weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit', second: '2-digit'
+      });
+    }
 
-                    if (width > height) {
-                        if (width > MAX_WIDTH) {
-                            height *= MAX_WIDTH / width;
-                            width = MAX_WIDTH;
-                        }
-                    } else {
-                        if (height > MAX_HEIGHT) {
-                            width *= MAX_HEIGHT / height;
-                            height = MAX_HEIGHT;
-                        }
-                    }
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-                    
-                    // Nén chất lượng JPEG xuống 70% để tải lên cực nhanh
-                    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-                    callback(dataUrl);
-                }
-            }
-        }
+    function setConnectionState(connected, message) {
+      $('connectionStatus').innerHTML = connected
+        ? '<i class="fa-solid fa-circle-check mr-1"></i>' + message
+        : '<i class="fa-solid fa-triangle-exclamation mr-1"></i>' + message;
+      $('connectionStatus').className = connected ? 'text-[11px] text-emerald-200 mt-1' : 'text-[11px] text-amber-200 mt-1';
+    }
 
-        // Xử lý khi chọn/chụp ảnh
-        function handleImageSelection(input, previewId, hiddenInputId) {
-            if (input.files && input.files[0]) {
-                const file = input.files[0];
-                compressImage(file, function(base64Data) {
-                    const preview = document.getElementById(previewId);
-                    preview.src = base64Data;
-                    preview.classList.remove('hidden');
-                    document.getElementById(hiddenInputId).value = base64Data;
-                });
-            }
-        }
+    function showToast(message, type = 'success') {
+      const palette = {
+        success: ['bg-emerald-600', 'fa-circle-check'],
+        error: ['bg-red-600', 'fa-circle-exclamation'],
+        info: ['bg-blue-700', 'fa-circle-info'],
+        warning: ['bg-amber-600', 'fa-triangle-exclamation']
+      };
+      const [bg, icon] = palette[type] || palette.info;
+      const node = document.createElement('div');
+      node.className = `${bg} toast-enter text-white px-4 py-3 rounded-xl shadow-xl flex items-start gap-3`;
+      const iconEl = document.createElement('i');
+      iconEl.className = `fa-solid ${icon} mt-0.5`;
+      const textEl = document.createElement('span');
+      textEl.className = 'text-sm font-medium leading-5';
+      textEl.textContent = String(message || 'Có lỗi xảy ra');
+      node.append(iconEl, textEl);
+      $('toastContainer').appendChild(node);
+      setTimeout(() => {
+        node.classList.replace('toast-enter', 'toast-exit');
+        setTimeout(() => node.remove(), 260);
+      }, 3500);
+    }
 
-        // --- Logic Render Giao diện ---
+    function safeText(value) {
+      return value === null || value === undefined ? '' : String(value);
+    }
 
-        function renderTable(filter = '') {
-            const tbody = document.getElementById('tableBody');
-            const emptyState = document.getElementById('emptyState');
-            tbody.innerHTML = '';
-            
-            const filteredItems = lostItems.filter(item => {
-                const searchStr = `${item.itemName} ${item.location} ${item.seat || ''} ${item.finderName} ${item.description}`.toLowerCase();
-                return searchStr.includes(filter.toLowerCase());
-            });
+    function normalizeItem(raw) {
+      const claimerRaw = raw && raw.claimer ? raw.claimer : null;
+      return {
+        id: safeText(raw.id),
+        itemName: safeText(raw.itemName),
+        category: safeText(raw.category),
+        location: safeText(raw.location),
+        seat: safeText(raw.seat),
+        foundImage: safeText(raw.foundImage),
+        description: safeText(raw.description),
+        finderName: safeText(raw.finderName),
+        foundTime: safeText(raw.foundTime),
+        status: safeText(raw.status) || 'Chưa nhận',
+        claimer: claimerRaw ? {
+          name: safeText(claimerRaw.name),
+          phone: safeText(claimerRaw.phone),
+          proofLink: safeText(claimerRaw.proofLink),
+          returnImage: safeText(claimerRaw.returnImage),
+          time: safeText(claimerRaw.time)
+        } : null
+      };
+    }
 
-            if(filteredItems.length === 0) {
-                emptyState.classList.replace('hidden', 'flex');
-                tbody.parentNode.classList.add('hidden');
-            } else {
-                emptyState.classList.replace('flex', 'hidden');
-                tbody.parentNode.classList.remove('hidden');
-                
-                // Sort by ID (time) descending
-                filteredItems.sort((a,b) => b.id - a.id).forEach(item => {
-                    const dateObj = new Date(item.foundTime);
-                    const formattedDate = dateObj.toLocaleDateString('vi-VN') + ' ' + dateObj.toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'});
-                    
-                    const isReturned = item.status === 'Đã trả';
-                    const statusBadge = isReturned 
-                        ? `<span class="px-2.5 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold border border-green-200">Đã trả khách</span>`
-                        : `<span class="px-2.5 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-semibold border border-amber-200">Chưa nhận</span>`;
-                    
-                    const actionBtn = isReturned 
-                        ? `<button class="text-xs text-slate-400 cursor-not-allowed" title="Đã trả: ${item.claimer?.name}"><i class="fa-solid fa-check-double"></i> Hoàn tất</button>`
-                        : `<button onclick="openReturnModal(${item.id})" class="text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 px-3 py-1.5 rounded font-medium transition-colors border border-blue-200"><i class="fa-solid fa-hand-holding-hand mr-1"></i> Trả đồ</button>`;
+    function parseDate(value) {
+      if (!value) return null;
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? null : date;
+    }
 
-                    const imgIcon = item.foundImage ? `<button type="button" onclick="showImage('${item.foundImage}')" class="text-blue-500 hover:text-blue-700 inline-block cursor-pointer focus:outline-none" title="Xem ảnh lúc nhặt"><i class="fa-solid fa-image text-lg"></i></button>` : '';
-                    
-                    let returnIcons = '';
-                    if (isReturned && item.claimer) {
-                        if(item.claimer.proofLink && item.claimer.proofLink !== '#') {
-                            returnIcons += `<button type="button" onclick="showImage('${item.claimer.proofLink}')" class="text-emerald-500 hover:text-emerald-700 inline-block cursor-pointer" title="Xem ảnh CCCD"><i class="fa-solid fa-id-card text-lg"></i></button>`;
-                        }
-                        if(item.claimer.returnImage && item.claimer.returnImage !== '#') {
-                            returnIcons += `<button type="button" onclick="showImage('${item.claimer.returnImage}')" class="text-emerald-500 hover:text-emerald-700 inline-block cursor-pointer" title="Xem ảnh bàn giao"><i class="fa-solid fa-camera-retro text-lg"></i></button>`;
-                        }
-                    }
+    function formatDateTime(value) {
+      const date = parseDate(value);
+      if (!date) return { date: 'Không rõ', time: '--:--' };
+      return {
+        date: date.toLocaleDateString('vi-VN'),
+        time: date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+      };
+    }
 
-                    const tr = document.createElement('tr');
-                    tr.className = "hover:bg-slate-50 transition-colors group";
-                    tr.innerHTML = `
-                        <td class="px-4 py-3">
-                            <div class="font-medium text-slate-700">${formattedDate.split(' ')[1]}</div>
-                            <div class="text-xs text-slate-500">${formattedDate.split(' ')[0]}</div>
-                        </td>
-                        <td class="px-4 py-3">
-                            <div class="font-semibold text-slate-800 truncate max-w-[200px]" title="${item.itemName}">${item.itemName}</div>
-                            <div class="text-xs text-slate-500">${item.category}</div>
-                        </td>
-                        <td class="px-4 py-3 text-slate-600">
-                            <div class="font-medium">${item.location}</div>
-                            ${item.seat ? `<div class="text-xs text-slate-500">Ghế: <span class="font-semibold">${item.seat}</span></div>` : ''}
-                        </td>
-                        <td class="px-4 py-3 text-slate-600">
-                            <div class="flex items-center">
-                                <div class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-xs text-slate-600 mr-2 font-bold">${item.finderName.charAt(0).toUpperCase()}</div>
-                                ${item.finderName}
-                            </div>
-                        </td>
-                        <td class="px-4 py-3">
-                            <div class="mb-1.5">${statusBadge}</div>
-                            <div class="flex items-center gap-2">
-                                ${imgIcon}
-                                ${returnIcons}
-                            </div>
-                        </td>
-                        <td class="px-4 py-3 text-center">${actionBtn}</td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            }
-        }
+    function createItemId() {
+      const d = new Date();
+      const pad = (n) => String(n).padStart(2, '0');
+      const datePart = `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}`;
+      const timePart = `${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`;
+      const randomPart = Math.random().toString(36).slice(2, 7).toUpperCase();
+      return `LAF-${datePart}-${timePart}-${randomPart}`;
+    }
 
-        // Thêm đồ thất lạc mới
-        document.getElementById('lostItemForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const base64Image = document.getElementById('foundImageBase64').value;
-            if(!base64Image) {
-                showToast('Vui lòng chụp ảnh hiện trạng đồ vật!', 'error');
-                return;
-            }
-
-            const btn = document.getElementById('submitBtn');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Đang tải lên hệ thống...';
-            btn.disabled = true;
-
-            const newItem = {
-                id: Date.now(),
-                itemName: document.getElementById('itemName').value,
-                category: document.getElementById('category').value,
-                location: document.getElementById('location').value,
-                seat: document.getElementById('seat').value,
-                foundImageBase64: base64Image,
-                foundImage: '', 
-                description: document.getElementById('description').value,
-                finderName: document.getElementById('finderName').value,
-                foundTime: document.getElementById('foundTime').value,
-                status: 'Chưa nhận',
-                claimer: null,
-                action: 'ADD_ITEM' 
-            };
-
-            try {
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(newItem)
-                });
-                const result = await response.json();
-                if(result.success) {
-                    newItem.foundImage = result.imageUrl; 
-                }
-
-                // Cập nhật State cục bộ
-                lostItems.push(newItem);
-                renderTable(document.getElementById('searchInput').value);
-                
-                // Reset Form
-                document.getElementById('lostItemForm').reset();
-                document.getElementById('foundImageBase64').value = '';
-                document.getElementById('foundImagePreview').classList.add('hidden');
-                document.getElementById('foundImagePreview').src = '';
-                
-                const now = new Date();
-                now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-                document.getElementById('foundTime').value = now.toISOString().slice(0,16);
-
-                showToast('Đã ghi nhận đồ thất lạc và lưu ảnh thành công!');
-            } catch (error) {
-                console.error(error);
-                showToast('Lỗi mạng hoặc tải ảnh quá lâu!', 'error');
-            } finally {
-                btn.innerHTML = '<i class="fa-solid fa-save mr-2"></i> Lưu Thông Tin';
-                btn.disabled = false;
-            }
+    async function apiGet() {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 30000);
+      try {
+        const response = await fetch(`${SCRIPT_URL}?_=${Date.now()}`, {
+          method: 'GET', cache: 'no-store', signal: controller.signal
         });
+        const text = await response.text();
+        let result;
+        try { result = JSON.parse(text); }
+        catch { throw new Error('Máy chủ không trả về JSON hợp lệ. Kiểm tra URL triển khai Apps Script.'); }
+        if (!response.ok) throw new Error(`Lỗi HTTP ${response.status}`);
+        if (!Array.isArray(result)) throw new Error(result.error || result.message || 'Dữ liệu trả về không đúng định dạng.');
+        return result;
+      } finally {
+        clearTimeout(timer);
+      }
+    }
 
-        // --- Logic Trả đồ (Modal) ---
-        
-        function openReturnModal(id) {
-            const item = lostItems.find(i => i.id === id);
-            if(!item) return;
-
-            document.getElementById('modalItemId').value = id;
-            document.getElementById('modalItemName').textContent = item.itemName;
-            document.getElementById('customerName').value = '';
-            document.getElementById('customerPhone').value = '';
-            
-            // Reset ảnh
-            document.getElementById('proofImageBase64').value = '';
-            document.getElementById('proofImagePreview').classList.add('hidden');
-            document.getElementById('proofImagePreview').src = '';
-            
-            document.getElementById('returnImageBase64').value = '';
-            document.getElementById('returnImgPreview').classList.add('hidden');
-            document.getElementById('returnImgPreview').src = '';
-            
-            document.getElementById('returnModal').classList.replace('hidden', 'flex');
-        }
-
-        function closeReturnModal() {
-            document.getElementById('returnModal').classList.replace('flex', 'hidden');
-        }
-
-        async function confirmReturn() {
-            const id = parseInt(document.getElementById('modalItemId').value);
-            const cusName = document.getElementById('customerName').value;
-            const cusPhone = document.getElementById('customerPhone').value;
-            const proofB64 = document.getElementById('proofImageBase64').value;
-            const returnImgB64 = document.getElementById('returnImageBase64').value;
-
-            if(!cusName || !cusPhone || !proofB64 || !returnImgB64) {
-                showToast('Vui lòng nhập tên, SĐT và chụp đầy đủ 2 ảnh!', 'error');
-                return;
-            }
-
-            const updateData = {
-                id: id,
-                action: 'MARK_RETURNED',
-                claimer: {
-                    name: cusName,
-                    phone: cusPhone,
-                    proofImageBase64: proofB64,
-                    returnImageBase64: returnImgB64,
-                    proofLink: '',
-                    returnImage: '',
-                    time: new Date().toISOString()
-                }
-            };
-
-            const btn = document.querySelector('#returnModal .bg-green-600');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Đang tải ảnh lên...';
-            btn.disabled = true;
-
-            try {
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(updateData)
-                });
-                const result = await response.json();
-                if(result.success) {
-                    updateData.claimer.proofLink = result.proofUrl;
-                    updateData.claimer.returnImage = result.returnUrl;
-                }
-
-                // Cập nhật State cục bộ
-                const index = lostItems.findIndex(i => i.id === id);
-                if (index > -1) {
-                    lostItems[index].status = 'Đã trả';
-                    lostItems[index].claimer = updateData.claimer;
-                    renderTable(document.getElementById('searchInput').value);
-                    closeReturnModal();
-                    showToast(`Đã xác nhận trả đồ cho khách ${cusName}`);
-                }
-            } catch (error) {
-                console.error(error);
-                showToast('Lỗi khi cập nhật trạng thái!', 'error');
-            } finally {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
-        }
-
-        // Tìm kiếm
-        document.getElementById('searchInput').addEventListener('input', (e) => {
-            renderTable(e.target.value);
+    async function apiPost(payload) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 90000);
+      try {
+        const response = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload),
+          signal: controller.signal
         });
+        const text = await response.text();
+        let result;
+        try { result = JSON.parse(text); }
+        catch { throw new Error('Máy chủ không trả về JSON hợp lệ. Hãy kiểm tra quyền triển khai Apps Script.'); }
+        if (!response.ok) throw new Error(`Lỗi HTTP ${response.status}`);
+        if (!result || result.success !== true) throw new Error(result.message || result.error || 'Không thể lưu dữ liệu.');
+        return result;
+      } catch (error) {
+        if (error.name === 'AbortError') throw new Error('Quá thời gian chờ máy chủ. Vui lòng kiểm tra kết nối rồi đồng bộ lại.');
+        throw error;
+      } finally {
+        clearTimeout(timer);
+      }
+    }
 
-        // --- TÍNH NĂNG MỚI VÀ SỬA LỖI ---
-        
-        // 1. Sửa lỗi hiển thị ảnh và Fallback nếu bị trình duyệt chặn
-        function handleImageError(img) {
-            if (img.src && img.src.length > 10) {
-                img.style.display = 'none'; // Ẩn ảnh bị vỡ đi
-                const container = img.parentElement;
-                
-                // Tránh tạo nhiều nút bấm
-                if (!document.getElementById('imgErrorLink')) {
-                    const link = document.createElement('a');
-                    link.id = 'imgErrorLink';
-                    link.href = img.src;
-                    link.target = '_blank';
-                    link.className = 'text-white bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg flex items-center gap-2 font-medium shadow-lg transition-transform hover:scale-105 mt-4';
-                    link.innerHTML = '<i class="fa-solid fa-external-link-alt"></i> Nhấn vào đây để xem ảnh (Mở tab mới)';
-                    container.appendChild(link);
-                }
+    async function loadData(options = {}) {
+      const silent = Boolean(options.silent);
+      if (isLoading || (isSubmitting && !options.force)) return;
+      isLoading = true;
+      $('refreshBtn').disabled = true;
+      $('loadingState').classList.remove('hidden');
+      $('emptyState').classList.add('hidden');
+      if (!silent) setConnectionState(true, 'Đang đồng bộ dữ liệu...');
+      try {
+        const rows = await apiGet();
+        lostItems = rows.map(normalizeItem).filter(item => item.id);
+        renderTable();
+        setConnectionState(true, 'Đã kết nối Google Sheets');
+        $('lastSync').textContent = 'Đồng bộ: ' + new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        if (!silent) showToast(`Đã đồng bộ ${lostItems.length} bản ghi.`, 'success');
+      } catch (error) {
+        console.error('Lỗi đồng bộ:', error);
+        setConnectionState(false, 'Chưa đồng bộ được dữ liệu');
+        if (!silent) showToast(error.message || 'Không thể tải dữ liệu từ Google Sheets.', 'error');
+      } finally {
+        isLoading = false;
+        $('refreshBtn').disabled = false;
+        $('loadingState').classList.add('hidden');
+      }
+    }
+
+    function updateStats() {
+      const today = new Date();
+      const todayKey = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
+      const pending = lostItems.filter(x => x.status !== 'Đã trả').length;
+      const returned = lostItems.filter(x => x.status === 'Đã trả').length;
+      const todayCount = lostItems.filter(x => {
+        const d = parseDate(x.foundTime);
+        return d && `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}` === todayKey;
+      }).length;
+      $('statTotal').textContent = lostItems.length;
+      $('statPending').textContent = pending;
+      $('statReturned').textContent = returned;
+      $('statToday').textContent = todayCount;
+    }
+
+    function addPhotoButton(parent, label, icon, url, mode = 'image') {
+      if (!url || url === '#') return;
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'inline-flex items-center gap-1 text-xs text-blue-700 hover:text-blue-900 hover:underline mr-3 mt-1';
+      const i = document.createElement('i');
+      i.className = `fa-solid ${icon}`;
+      const span = document.createElement('span');
+      span.textContent = label;
+      button.append(i, span);
+      button.addEventListener('click', () => mode === 'drive' ? openDriveFile(url) : showImage(url));
+      parent.appendChild(button);
+    }
+
+    function renderTable() {
+      const tbody = $('tableBody');
+      tbody.replaceChildren();
+      updateStats();
+
+      const query = $('searchInput').value.trim().toLocaleLowerCase('vi-VN');
+      const status = $('statusFilter').value;
+      const category = $('categoryFilter').value;
+      const filtered = lostItems.filter(item => {
+        const searchContent = [item.id, item.itemName, item.category, item.location, item.seat,
+          item.finderName, item.description, item.claimer?.name, item.claimer?.phone]
+          .join(' ').toLocaleLowerCase('vi-VN');
+        return (!query || searchContent.includes(query))
+          && (status === 'ALL' || (status === 'Chưa nhận' ? item.status !== 'Đã trả' : item.status === status))
+          && (category === 'ALL' || item.category === category);
+      }).sort((a, b) => (parseDate(b.foundTime)?.getTime() || 0) - (parseDate(a.foundTime)?.getTime() || 0));
+
+      $('resultCount').textContent = `${filtered.length} / ${lostItems.length} kết quả`;
+      $('emptyState').classList.toggle('hidden', filtered.length !== 0);
+      if (!filtered.length) return;
+
+      const fragment = document.createDocumentFragment();
+      filtered.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-blue-50/50 transition-colors align-top';
+
+        const dateCell = document.createElement('td');
+        dateCell.className = 'px-4 py-3';
+        const id = document.createElement('div'); id.className = 'font-bold text-blue-800 text-xs'; id.textContent = item.id;
+        const dt = formatDateTime(item.foundTime);
+        const time = document.createElement('div'); time.className = 'font-semibold text-slate-700 mt-1'; time.textContent = dt.time;
+        const date = document.createElement('div'); date.className = 'text-xs text-slate-500'; date.textContent = dt.date;
+        dateCell.append(id, time, date);
+
+        const itemCell = document.createElement('td'); itemCell.className = 'px-4 py-3 max-w-[240px]';
+        const name = document.createElement('div'); name.className = 'font-bold text-slate-800 whitespace-normal'; name.textContent = item.itemName || 'Chưa có tên';
+        const cat = document.createElement('div'); cat.className = 'text-xs text-slate-500 mt-1'; cat.textContent = item.category;
+        const desc = document.createElement('div'); desc.className = 'text-xs text-slate-500 mt-1 whitespace-normal break-words'; desc.textContent = item.description;
+        itemCell.append(name, cat); if (item.description) itemCell.append(desc);
+
+        const locationCell = document.createElement('td'); locationCell.className = 'px-4 py-3';
+        const loc = document.createElement('div'); loc.className = 'font-semibold text-slate-700 whitespace-normal'; loc.textContent = item.location;
+        locationCell.append(loc);
+        if (item.seat) { const seat = document.createElement('div'); seat.className = 'text-xs text-slate-500 mt-1'; seat.textContent = `Ghế: ${item.seat}`; locationCell.append(seat); }
+
+        const finderCell = document.createElement('td'); finderCell.className = 'px-4 py-3';
+        const finder = document.createElement('div'); finder.className = 'font-medium text-slate-700 whitespace-normal'; finder.textContent = item.finderName || 'Không rõ';
+        finderCell.append(finder);
+
+        const statusCell = document.createElement('td'); statusCell.className = 'px-4 py-3 min-w-[150px]';
+        const badge = document.createElement('span');
+        badge.className = item.status === 'Đã trả'
+          ? 'inline-flex rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 px-2.5 py-1 text-xs font-bold'
+          : 'inline-flex rounded-full bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 text-xs font-bold';
+        badge.textContent = item.status === 'Đã trả' ? 'Đã trả khách' : 'Chưa trả';
+        statusCell.append(badge);
+        const photos = document.createElement('div'); photos.className = 'mt-1';
+        addPhotoButton(photos, 'Ảnh nhặt', 'fa-image', item.foundImage, 'image');
+        if (item.claimer) {
+          addPhotoButton(photos, 'CCCD', 'fa-id-card', item.claimer.proofLink, 'drive');
+          addPhotoButton(photos, 'Bàn giao', 'fa-camera', item.claimer.returnImage, 'drive');
+        }
+        statusCell.append(photos);
+        if (item.claimer?.name) {
+          const receiver = document.createElement('div'); receiver.className = 'text-xs text-slate-500 mt-1 whitespace-normal';
+          receiver.textContent = `Người nhận: ${item.claimer.name}${item.claimer.phone ? ' · ' + item.claimer.phone : ''}`;
+          statusCell.append(receiver);
+        }
+
+        const actionCell = document.createElement('td'); actionCell.className = 'px-4 py-3 text-center';
+        if (item.status !== 'Đã trả') {
+          const btn = document.createElement('button');
+          btn.type = 'button'; btn.className = 'inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 text-xs font-bold whitespace-nowrap';
+          btn.innerHTML = '<i class="fa-solid fa-hand-holding-hand"></i><span>Trả đồ</span>';
+          btn.addEventListener('click', () => openReturnModal(item.id)); actionCell.append(btn);
+        } else {
+          const done = document.createElement('span'); done.className = 'text-xs text-emerald-700 font-semibold'; done.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i>Hoàn tất'; actionCell.append(done);
+        }
+        tr.append(dateCell, itemCell, locationCell, finderCell, statusCell, actionCell);
+        fragment.appendChild(tr);
+      });
+      tbody.appendChild(fragment);
+    }
+
+    function compressImage(file) {
+      return new Promise((resolve, reject) => {
+        if (!file || !file.type || !file.type.startsWith('image/')) return reject(new Error('Vui lòng chọn tệp hình ảnh hợp lệ.'));
+        if (file.size > 15 * 1024 * 1024) return reject(new Error('Ảnh gốc vượt quá 15 MB. Vui lòng chọn ảnh khác.'));
+        const reader = new FileReader();
+        reader.onerror = () => reject(new Error('Không đọc được tệp ảnh.'));
+        reader.onload = () => {
+          const image = new Image();
+          image.onerror = () => reject(new Error('Tệp ảnh bị lỗi hoặc không được hỗ trợ.'));
+          image.onload = () => {
+            const maxSide = 1600;
+            const scale = Math.min(1, maxSide / Math.max(image.width, image.height));
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.max(1, Math.round(image.width * scale));
+            canvas.height = Math.max(1, Math.round(image.height * scale));
+            const ctx = canvas.getContext('2d', { alpha: false });
+            if (!ctx) return reject(new Error('Trình duyệt không hỗ trợ xử lý ảnh.'));
+            ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+            let quality = 0.82;
+            let dataUrl = canvas.toDataURL('image/jpeg', quality);
+            while (dataUrl.length * 0.75 > MAX_UPLOAD_BYTES && quality > 0.48) {
+              quality -= 0.07;
+              dataUrl = canvas.toDataURL('image/jpeg', quality);
             }
-        }
+            if (dataUrl.length * 0.75 > MAX_UPLOAD_BYTES) return reject(new Error('Ảnh sau nén vẫn quá lớn. Vui lòng chọn ảnh có dung lượng thấp hơn.'));
+            resolve({ dataUrl, size: Math.round(dataUrl.length * 0.75), width: canvas.width, height: canvas.height });
+          };
+          image.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
 
-        function showImage(url) {
-            const img = document.getElementById('fullSizeImage');
-            img.style.display = 'block';
-            
-            // Xóa nút bấm dự phòng cũ nếu có
-            const errorLink = document.getElementById('imgErrorLink');
-            if (errorLink) errorLink.remove();
+    async function handleImageSelection(input, previewId, hiddenId, wrapId, infoId) {
+      const file = input.files && input.files[0];
+      if (!file) return;
+      const preview = $(previewId);
+      const info = $(infoId);
+      info.textContent = 'Đang xử lý ảnh...';
+      try {
+        const result = await compressImage(file);
+        $(hiddenId).value = result.dataUrl;
+        preview.src = result.dataUrl;
+        $(wrapId).classList.remove('hidden');
+        info.textContent = `${result.width} × ${result.height}px · ${(result.size / 1024).toFixed(0)} KB sau nén`;
+      } catch (error) {
+        $(hiddenId).value = '';
+        $(wrapId).classList.add('hidden');
+        showToast(error.message, 'error');
+      } finally {
+        input.value = '';
+      }
+    }
 
-            img.src = url;
-            document.getElementById('imageModal').classList.replace('hidden', 'flex');
-        }
+    function clearImage(hiddenId, previewId, wrapId) {
+      $(hiddenId).value = '';
+      $(previewId).src = '';
+      $(wrapId).classList.add('hidden');
+    }
 
-        function closeImageModal() {
-            document.getElementById('imageModal').classList.replace('flex', 'hidden');
-            setTimeout(() => { 
-                document.getElementById('fullSizeImage').src = ''; 
-                const errorLink = document.getElementById('imgErrorLink');
-                if (errorLink) errorLink.remove();
-            }, 300);
-        }
+    function setButtonLoading(button, loading, loadingText, defaultHtml) {
+      button.disabled = loading;
+      button.innerHTML = loading ? `<i class="fa-solid fa-circle-notch fa-spin mr-2"></i>${loadingText}` : defaultHtml;
+    }
 
-        // 2. Tính năng Thông minh: Tự động phân loại dựa vào tên vật dụng
-        document.getElementById('itemName').addEventListener('input', function(e) {
-            const val = e.target.value.toLowerCase();
-            const categorySelect = document.getElementById('category');
-            
-            if (val.match(/điện thoại|phone|iphone|samsung|oppo|xiaomi|ipad|tablet|laptop|tai nghe|airpod|đồng hồ|watch|tai nghe|cáp|sạc/)) {
-                categorySelect.value = 'Điện thoại/Thiết bị';
-            } else if (val.match(/ví|bóp|giấy tờ|cccd|cmnd|passport|hộ chiếu|thẻ/)) {
-                categorySelect.value = 'Ví/Giấy tờ';
-            } else if (val.match(/chìa|khóa|key/)) {
-                categorySelect.value = 'Chìa khóa';
-            } else if (val.match(/áo|quần|mũ|nón|túi|balo|giày|dép|kính|khăn/)) {
-                categorySelect.value = 'Quần áo/Phụ kiện';
-            }
-        });
+    async function submitNewItem(event) {
+      event.preventDefault();
+      if (isSubmitting) return;
+      const imageData = $('foundImageBase64').value;
+      if (!imageData) return showToast('Vui lòng chụp hoặc chọn ảnh hiện trạng vật dụng.', 'warning');
+      if (!$('lostItemForm').reportValidity()) return;
 
-        // 3. Khởi tạo: Đồng bộ dữ liệu từ Google Sheets (Backend) khi mở web
-        async function loadData() {
-            try {
-                showToast("Đang đồng bộ dữ liệu từ hệ thống...", "info");
-                const response = await fetch(SCRIPT_URL);
-                const data = await response.json();
-                if (Array.isArray(data)) {
-                    lostItems = data;
-                    renderTable();
-                    if(data.length > 0) {
-                        showToast(`Đã tải thành công ${data.length} dữ liệu!`);
-                    } else {
-                        showToast("Hệ thống hiện tại chưa có dữ liệu đồ thất lạc.");
-                    }
-                }
-            } catch (error) {
-                console.error("Lỗi khi tải dữ liệu:", error);
-                showToast("Lỗi kết nối. Không thể tải dữ liệu.", "error");
-                renderTable();
-            }
-        }
+      const button = $('submitBtn');
+      const defaultHtml = '<i class="fa-solid fa-floppy-disk"></i><span>Lưu thông tin</span>';
+      isSubmitting = true;
+      setButtonLoading(button, true, 'Đang lưu dữ liệu...', defaultHtml);
+      try {
+        const payload = {
+          action: 'ADD_ITEM', id: createItemId(),
+          itemName: $('itemName').value.trim(), category: $('category').value,
+          location: $('location').value.trim(), seat: $('seat').value.trim(),
+          foundImageBase64: imageData, description: $('description').value.trim(),
+          finderName: $('finderName').value.trim(), foundTime: $('foundTime').value,
+          status: 'Chưa nhận'
+        };
+        await apiPost(payload);
+        $('lostItemForm').reset();
+        clearImage('foundImageBase64', 'foundImagePreview', 'foundPreviewWrap');
+        setDefaultFoundTime();
+        showToast('Đã ghi nhận đồ thất lạc thành công.', 'success');
+        await loadData({ silent: true, force: true });
+      } catch (error) {
+        console.error('Lỗi thêm vật dụng:', error);
+        showToast(error.message || 'Không thể lưu vật dụng.', 'error');
+      } finally {
+        isSubmitting = false;
+        setButtonLoading(button, false, '', defaultHtml);
+      }
+    }
 
-        // Gọi loadData ngay khi web vừa tải xong
-        loadData();
+    function openReturnModal(id) {
+      const item = lostItems.find(x => x.id === String(id));
+      if (!item || item.status === 'Đã trả') return;
+      $('modalItemId').value = item.id;
+      $('modalItemName').textContent = item.itemName;
+      $('customerName').value = '';
+      $('customerPhone').value = '';
+      clearImage('proofImageBase64', 'proofImagePreview', 'proofPreviewWrap');
+      clearImage('returnImageBase64', 'returnImgPreview', 'returnPreviewWrap');
+      $('returnModal').classList.remove('hidden');
+      $('returnModal').classList.add('flex');
+    }
 
-    </script>
+    function closeReturnModal() {
+      $('returnModal').classList.add('hidden');
+      $('returnModal').classList.remove('flex');
+    }
+
+    function validVietnamPhone(phone) {
+      const normalized = phone.replace(/[\s.()-]/g, '');
+      return /^(\+?84|0)(3|5|7|8|9)\d{8}$/.test(normalized);
+    }
+
+    async function confirmReturn() {
+      if (isSubmitting) return;
+      const id = $('modalItemId').value;
+      const name = $('customerName').value.trim();
+      const phone = $('customerPhone').value.trim();
+      const proof = $('proofImageBase64').value;
+      const handover = $('returnImageBase64').value;
+      if (!name || !phone || !proof || !handover) return showToast('Vui lòng nhập họ tên, SĐT và đủ 2 ảnh xác nhận.', 'warning');
+      if (!validVietnamPhone(phone)) return showToast('Số điện thoại chưa đúng định dạng Việt Nam.', 'warning');
+
+      const button = $('confirmReturnBtn');
+      const defaultHtml = '<i class="fa-solid fa-check mr-1"></i>Xác nhận đã trả';
+      isSubmitting = true;
+      setButtonLoading(button, true, 'Đang lưu ảnh và cập nhật...', defaultHtml);
+      try {
+        const payload = {
+          action: 'MARK_RETURNED', id,
+          claimer: {
+            name, phone,
+            proofImageBase64: proof,
+            returnImageBase64: handover,
+            time: new Date().toISOString()
+          }
+        };
+        await apiPost(payload);
+        closeReturnModal();
+        showToast(`Đã xác nhận bàn giao vật dụng cho ${name}.`, 'success');
+        await loadData({ silent: true, force: true });
+      } catch (error) {
+        console.error('Lỗi cập nhật trả đồ:', error);
+        showToast(error.message || 'Không thể cập nhật trạng thái trả đồ.', 'error');
+      } finally {
+        isSubmitting = false;
+        setButtonLoading(button, false, '', defaultHtml);
+      }
+    }
+
+    function toDriveThumbnail(url) {
+      if (!url) return '';
+      const match = url.match(/[?&]id=([^&]+)/) || url.match(/\/d\/([^/]+)/);
+      if (match && match[1]) return `https://drive.google.com/thumbnail?id=${encodeURIComponent(match[1])}&sz=w1600`;
+      return url;
+    }
+
+    function showImage(url) {
+      if (!url) return;
+      currentImageUrl = url;
+      $('imageFallbackLink').href = url;
+      $('imageFallbackLink').classList.add('hidden');
+      $('fullSizeImage').classList.remove('hidden');
+      $('fullSizeImage').src = toDriveThumbnail(url);
+      $('imageModal').classList.remove('hidden');
+      $('imageModal').classList.add('flex');
+    }
+
+    function handleImageError() {
+      $('fullSizeImage').classList.add('hidden');
+      $('imageFallbackLink').classList.remove('hidden');
+    }
+
+    function closeImageModal() {
+      $('imageModal').classList.add('hidden');
+      $('imageModal').classList.remove('flex');
+      $('fullSizeImage').src = '';
+      currentImageUrl = '';
+    }
+
+    function openDriveFile(url) {
+      if (!url) return;
+      const win = window.open(url, '_blank', 'noopener,noreferrer');
+      if (!win) showToast('Trình duyệt đã chặn cửa sổ mới. Hãy cho phép mở liên kết Google Drive.', 'warning');
+    }
+
+    function suggestCategory(value) {
+      const v = value.toLocaleLowerCase('vi-VN');
+      const rules = [
+        [/điện thoại|iphone|samsung|oppo|xiaomi|ipad|tablet|laptop|máy tính|tai nghe|airpod|đồng hồ|watch|cáp|sạc|usb/, 'Điện thoại/Thiết bị'],
+        [/ví|bóp|giấy tờ|cccd|cmnd|passport|hộ chiếu|thẻ ngân hàng|thẻ căn cước/, 'Ví/Giấy tờ'],
+        [/chìa|khóa|key/, 'Chìa khóa'],
+        [/áo|quần|mũ|nón|túi|balo|ba lô|giày|dép|kính|khăn|phụ kiện/, 'Quần áo/Phụ kiện'],
+        [/bắp|nước|đồ ăn|thức ăn|ly|nước uống/, 'Đồ ăn/Thức uống']
+      ];
+      const match = rules.find(([regex]) => regex.test(v));
+      if (match) $('category').value = match[1];
+    }
+
+    // Gắn sự kiện giao diện.
+    $('lostItemForm').addEventListener('submit', submitNewItem);
+    $('itemName').addEventListener('input', e => suggestCategory(e.target.value));
+    $('searchInput').addEventListener('input', renderTable);
+    $('statusFilter').addEventListener('change', renderTable);
+    $('categoryFilter').addEventListener('change', renderTable);
+    $('refreshBtn').addEventListener('click', () => loadData());
+    $('foundImageInput').addEventListener('change', e => handleImageSelection(e.target, 'foundImagePreview', 'foundImageBase64', 'foundPreviewWrap', 'foundImageInfo'));
+    $('proofImageInput').addEventListener('change', e => handleImageSelection(e.target, 'proofImagePreview', 'proofImageBase64', 'proofPreviewWrap', 'proofImageInfo'));
+    $('returnImageInput').addEventListener('change', e => handleImageSelection(e.target, 'returnImgPreview', 'returnImageBase64', 'returnPreviewWrap', 'returnImageInfo'));
+    $('clearFoundImage').addEventListener('click', () => clearImage('foundImageBase64', 'foundImagePreview', 'foundPreviewWrap'));
+    $('clearProofImage').addEventListener('click', () => clearImage('proofImageBase64', 'proofImagePreview', 'proofPreviewWrap'));
+    $('clearReturnImage').addEventListener('click', () => clearImage('returnImageBase64', 'returnImgPreview', 'returnPreviewWrap'));
+    $('closeReturnX').addEventListener('click', closeReturnModal);
+    $('cancelReturnBtn').addEventListener('click', closeReturnModal);
+    $('confirmReturnBtn').addEventListener('click', confirmReturn);
+    $('closeImageBtn').addEventListener('click', closeImageModal);
+    $('imageModal').addEventListener('click', e => { if (e.target === $('imageModal')) closeImageModal(); });
+    $('fullSizeImage').addEventListener('error', handleImageError);
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { closeReturnModal(); closeImageModal(); }
+    });
+
+    // Khởi tạo và tự đồng bộ khi trang đang được mở.
+    setDefaultFoundTime();
+    updateClock();
+    setInterval(updateClock, 1000);
+    loadData();
+    setInterval(() => {
+      if (document.visibilityState === 'visible' && !$('returnModal').classList.contains('flex')) {
+        loadData({ silent: true });
+      }
+    }, AUTO_SYNC_MS);
+  </script>
 </body>
 </html>
