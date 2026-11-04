@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sổ Đồ Thất Lạc - BETA NOWZONE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .toast-enter { animation: slideInRight 0.3s ease-out forwards; }
+        .toast-exit { animation: fadeOut 0.3s ease-out forwards; }
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        
+        /* Custom Scrollbar for table */
+        .table-container::-webkit-scrollbar { height: 8px; width: 8px; }
+        .table-container::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        .table-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .table-container::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 h-screen flex flex-col overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-blue-800 text-white shadow-md z-10 shrink-0">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center font-bold text-xl shadow-inner">
+                    B
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold uppercase tracking-wide">BETA NOWZONE</h1>
+                    <p class="text-xs text-blue-200">Hệ thống quản lý Đồ Thất Lạc (Lost & Found)</p>
+                </div>
+            </div>
+            <div class="text-sm hidden sm:block font-medium">
+                <i class="fa-solid fa-clock mr-1"></i> <span id="currentTime"></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 container mx-auto px-4 py-6 flex flex-col lg:flex-row gap-6 overflow-hidden">
+        
+        <!-- Cột Trái: Form Nhập Liệu -->
+        <div class="w-full lg:w-1/3 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col shrink-0 overflow-y-auto">
+            <div class="p-4 border-b border-slate-100 bg-slate-50 rounded-t-xl">
+                <h2 class="font-semibold text-lg text-slate-700 flex items-center">
+                    <i class="fa-solid fa-plus-circle text-blue-600 mr-2"></i> Ghi nhận đồ mới
+                </h2>
+            </div>
+            <form id="lostItemForm" class="p-5 space-y-4">
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Tên vật dụng <span class="text-red-500">*</span></label>
+                    <input type="text" id="itemName" required placeholder="VD: iPhone 13 Pro Max, Ví da đen..." class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Phân loại <span class="text-red-500">*</span></label>
+                        <select id="category" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="Điện thoại/Thiết bị">Điện thoại/Thiết bị</option>
+                            <option value="Ví/Giấy tờ">Ví/Giấy tờ</option>
+                            <option value="Chìa khóa">Chìa khóa</option>
+                            <option value="Quần áo/Phụ kiện">Quần áo/Phụ kiện</option>
+                            <option value="Khác">Khác</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Khu vực / Rạp <span class="text-red-500">*</span></label>
+                        <input type="text" id="location" required placeholder="VD: Rạp 1, Sảnh chờ..." class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Số ghế (nếu có)</label>
+                        <input type="text" id="seat" placeholder="VD: E5, H8..." class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Nhân viên nhặt <span class="text-red-500">*</span></label>
+                        <input type="text" id="finderName" required placeholder="Tên NV..." class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Hình ảnh lúc nhặt (Link ảnh/Drive) <span class="text-red-500">*</span></label>
+                    <input type="url" id="foundImage" required placeholder="Link ảnh chụp hiện trạng lúc nhặt..." class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Mô tả đặc điểm (Tình trạng, màu sắc...)</label>
+                    <textarea id="description" rows="2" placeholder="Ốp lưng màu đỏ, màn hình bị nứt góc..." class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Thời gian nhặt</label>
+                    <input type="datetime-local" id="foundTime" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+                </div>
+
+                <button type="submit" id="submitBtn" class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg transition-colors flex items-center justify-center">
+                    <i class="fa-solid fa-save mr-2"></i> Lưu Thông Tin
+                </button>
+            </form>
+        </div>
+
+        <!-- Cột Phải: Danh sách -->
+        <div class="w-full lg:w-2/3 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
+            <div class="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center shrink-0">
+                <h2 class="font-semibold text-lg text-slate-700 flex items-center">
+                    <i class="fa-solid fa-list-ul text-blue-600 mr-2"></i> Danh sách Đồ Thất Lạc
+                </h2>
+                <div class="relative">
+                    <i class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="searchInput" placeholder="Tìm kiếm..." class="pl-9 pr-4 py-1.5 border border-slate-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+            
+            <div class="flex-1 overflow-auto table-container p-0">
+                <table class="w-full text-left border-collapse whitespace-nowrap min-w-[800px]">
+                    <thead class="bg-slate-50 sticky top-0 z-10 shadow-sm">
+                        <tr>
+                            <th class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Thời gian</th>
+                            <th class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Vật dụng</th>
+                            <th class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Khu vực / Ghế</th>
+                            <th class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Người nhặt</th>
+                            <th class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Trạng thái</th>
+                            <th class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider text-center">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="divide-y divide-slate-100 text-sm">
+                        <!-- Dữ liệu được render bằng JS -->
+                    </tbody>
+                </table>
+                
+                <div id="emptyState" class="hidden flex-col items-center justify-center py-12 text-slate-400">
+                    <i class="fa-solid fa-box-open text-4xl mb-3 text-slate-300"></i>
+                    <p>Chưa có dữ liệu đồ thất lạc</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Cập nhật Trả Đồ -->
+    <div id="returnModal" class="fixed inset-0 bg-slate-900/50 hidden items-center justify-center z-50 backdrop-blur-sm">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
+            <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center">
+                <h3 class="font-bold text-lg text-slate-800">Xác nhận Trả Đồ</h3>
+                <button onclick="closeReturnModal()" class="text-slate-400 hover:text-red-500 transition-colors">
+                    <i class="fa-solid fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="p-5">
+                <p class="text-sm text-slate-600 mb-4">Vui lòng ghi nhận thông tin khách hàng nhận lại đồ: <strong id="modalItemName" class="text-blue-600"></strong></p>
+                <input type="hidden" id="modalItemId">
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Họ tên khách hàng <span class="text-red-500">*</span></label>
+                        <input type="text" id="customerName" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Số điện thoại <span class="text-red-500">*</span></label>
+                        <input type="tel" id="customerPhone" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Hình ảnh CCCD (Link ảnh/Drive) <span class="text-red-500">*</span></label>
+                        <input type="url" id="proofLink" placeholder="Link ảnh chụp CCCD của khách..." required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Hình ảnh lúc bàn giao (Link/Drive) <span class="text-red-500">*</span></label>
+                        <input type="url" id="returnImage" placeholder="Link ảnh khách đang nhận đồ..." required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                    </div>
+                </div>
+            </div>
+            <div class="px-5 py-3 bg-slate-50 border-t border-slate-100 flex justify-end space-x-3">
+                <button onclick="closeReturnModal()" class="px-4 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">Hủy</button>
+                <button onclick="confirmReturn()" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors">Xác nhận Đã Trả</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2"></div>
+
+    <script>
+        // ==========================================
+        // CẤU HÌNH GOOGLE APPS SCRIPT (APPS SCRIPT)
+        // ==========================================
+        // Bạn sẽ thay link này bằng link Web App của Google Apps Script sau khi deploy
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxEIxyo4rYkKWUCuYu8pv47Qx88qJowFPfCcIkM24-OeDsXGsJOkYeh5ikUogM6HjNj/exec'; // Thay 'MOCK_URL' bằng link thực tế, VD: 'https://script.google.com/macros/s/AKfycb.../exec'
+
+        // Dữ liệu tạm (In-memory) để ứng dụng hoạt động ngay lập tức 
+        let lostItems = [
+            { id: 1731600000000, itemName: 'Ví da Nam màu nâu', category: 'Ví/Giấy tờ', location: 'Rạp 2', seat: 'H8', description: 'Có CCCD tên Nguyễn Văn A', finderName: 'Nhân viên Tâm', foundTime: '2023-11-14T20:30', status: 'Chưa nhận', foundImage: 'https://placehold.co/600x400/eee/999?text=Anh+Luc+Nhat', claimer: null },
+            { id: 1731500000000, itemName: 'Chìa khóa xe máy Honda', category: 'Chìa khóa', location: 'Khu vực chờ (Lobby)', seat: '', description: 'Có móc khóa hình gấu', finderName: 'Bảo vệ Hùng', foundTime: '2023-11-14T15:10', status: 'Đã trả', foundImage: 'https://placehold.co/600x400/eee/999?text=Anh+Luc+Nhat', claimer: { name: 'Trần Thị B', phone: '0901234567', proofLink: '#', returnImage: '#', time: '2023-11-15T10:00' } }
+        ];
+
+        // --- Utils & UI ---
+        
+        // Cập nhật đồng hồ
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('currentTime').textContent = now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) + ' - ' + now.toLocaleDateString('vi-VN');
+        }, 1000);
+
+        // Set default time for input
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        document.getElementById('foundTime').value = now.toISOString().slice(0,16);
+
+        // Hệ thống thông báo (Toast)
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-green-500' : (type === 'error' ? 'bg-red-500' : 'bg-blue-500');
+            const icon = type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle');
+            
+            toast.className = `${bgColor} text-white px-4 py-3 rounded-lg shadow-lg flex items-center space-x-3 toast-enter max-w-sm`;
+            toast.innerHTML = `
+                <i class="fa-solid ${icon} text-xl"></i>
+                <span class="font-medium text-sm">${message}</span>
+            `;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.replace('toast-enter', 'toast-exit');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // --- Logic ---
+
+        function renderTable(filter = '') {
+            const tbody = document.getElementById('tableBody');
+            const emptyState = document.getElementById('emptyState');
+            tbody.innerHTML = '';
+            
+            const filteredItems = lostItems.filter(item => {
+                const searchStr = `${item.itemName} ${item.location} ${item.seat || ''} ${item.finderName} ${item.description}`.toLowerCase();
+                return searchStr.includes(filter.toLowerCase());
+            });
+
+            if(filteredItems.length === 0) {
+                emptyState.classList.replace('hidden', 'flex');
+                tbody.parentNode.classList.add('hidden');
+            } else {
+                emptyState.classList.replace('flex', 'hidden');
+                tbody.parentNode.classList.remove('hidden');
+                
+                // Sort by ID (time) descending
+                filteredItems.sort((a,b) => b.id - a.id).forEach(item => {
+                    const dateObj = new Date(item.foundTime);
+                    const formattedDate = dateObj.toLocaleDateString('vi-VN') + ' ' + dateObj.toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'});
+                    
+                    const isReturned = item.status === 'Đã trả';
+                    const statusBadge = isReturned 
+                        ? `<span class="px-2.5 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold border border-green-200">Đã trả khách</span>`
+                        : `<span class="px-2.5 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-semibold border border-amber-200">Chưa nhận</span>`;
+                    
+                    const actionBtn = isReturned 
+                        ? `<button class="text-xs text-slate-400 cursor-not-allowed" title="Đã trả: ${item.claimer?.name}"><i class="fa-solid fa-check-double"></i> Hoàn tất</button>`
+                        : `<button onclick="openReturnModal(${item.id})" class="text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 px-3 py-1.5 rounded font-medium transition-colors border border-blue-200"><i class="fa-solid fa-hand-holding-hand mr-1"></i> Trả đồ</button>`;
+
+                    const imgIcon = item.foundImage ? `<a href="${item.foundImage}" target="_blank" class="text-blue-500 hover:text-blue-700 ml-1 inline-block" title="Xem ảnh lúc nhặt"><i class="fa-solid fa-image"></i></a>` : '';
+
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-50 transition-colors group";
+                    tr.innerHTML = `
+                        <td class="px-4 py-3">
+                            <div class="font-medium text-slate-700">${formattedDate.split(' ')[1]}</div>
+                            <div class="text-xs text-slate-500">${formattedDate.split(' ')[0]}</div>
+                        </td>
+                        <td class="px-4 py-3">
+                            <div class="font-semibold text-slate-800 truncate max-w-[200px]" title="${item.itemName}">${item.itemName} ${imgIcon}</div>
+                            <div class="text-xs text-slate-500">${item.category}</div>
+                        </td>
+                        <td class="px-4 py-3 text-slate-600">
+                            <div class="font-medium">${item.location}</div>
+                            ${item.seat ? `<div class="text-xs text-slate-500">Ghế: <span class="font-semibold">${item.seat}</span></div>` : ''}
+                        </td>
+                        <td class="px-4 py-3 text-slate-600">
+                            <div class="flex items-center">
+                                <div class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-xs text-slate-600 mr-2 font-bold">${item.finderName.charAt(0).toUpperCase()}</div>
+                                ${item.finderName}
+                            </div>
+                        </td>
+                        <td class="px-4 py-3">${statusBadge}</td>
+                        <td class="px-4 py-3 text-center">${actionBtn}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+
+        // Thêm đồ thất lạc mới
+        document.getElementById('lostItemForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Đang xử lý...';
+            btn.disabled = true;
+
+            const newItem = {
+                id: Date.now(),
+                itemName: document.getElementById('itemName').value,
+                category: document.getElementById('category').value,
+                location: document.getElementById('location').value,
+                seat: document.getElementById('seat').value,
+                foundImage: document.getElementById('foundImage').value,
+                description: document.getElementById('description').value,
+                finderName: document.getElementById('finderName').value,
+                foundTime: document.getElementById('foundTime').value,
+                status: 'Chưa nhận',
+                claimer: null,
+                action: 'ADD_ITEM' // Biến dùng cho Apps Script nhận diện
+            };
+
+            // Mô phỏng gọi API hoặc gọi thật nếu có SCRIPT_URL
+            try {
+                if (SCRIPT_URL !== 'MOCK_URL') {
+                    // Gửi lên Google Apps Script
+                    await fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'no-cors', // Cần thiết khi gửi data từ client lên Apps Script
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(newItem)
+                    });
+                } else {
+                    // Mô phỏng delay mạng
+                    await new Promise(r => setTimeout(r, 600));
+                }
+
+                // Cập nhật State cục bộ
+                lostItems.push(newItem);
+                renderTable(document.getElementById('searchInput').value);
+                
+                // Reset Form
+                document.getElementById('lostItemForm').reset();
+                const now = new Date();
+                now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+                document.getElementById('foundTime').value = now.toISOString().slice(0,16);
+
+                showToast('Đã ghi nhận đồ thất lạc thành công!');
+            } catch (error) {
+                console.error(error);
+                showToast('Có lỗi xảy ra khi lưu dữ liệu!', 'error');
+            } finally {
+                btn.innerHTML = '<i class="fa-solid fa-save mr-2"></i> Lưu Thông Tin';
+                btn.disabled = false;
+            }
+        });
+
+        // --- Logic Trả đồ (Modal) ---
+        
+        function openReturnModal(id) {
+            const item = lostItems.find(i => i.id === id);
+            if(!item) return;
+
+            document.getElementById('modalItemId').value = id;
+            document.getElementById('modalItemName').textContent = item.itemName;
+            document.getElementById('customerName').value = '';
+            document.getElementById('customerPhone').value = '';
+            document.getElementById('proofLink').value = '';
+            document.getElementById('returnImage').value = '';
+            
+            document.getElementById('returnModal').classList.replace('hidden', 'flex');
+        }
+
+        function closeReturnModal() {
+            document.getElementById('returnModal').classList.replace('flex', 'hidden');
+        }
+
+        async function confirmReturn() {
+            const id = parseInt(document.getElementById('modalItemId').value);
+            const cusName = document.getElementById('customerName').value;
+            const cusPhone = document.getElementById('customerPhone').value;
+            const proof = document.getElementById('proofLink').value;
+            const returnImg = document.getElementById('returnImage').value;
+
+            if(!cusName || !cusPhone || !proof || !returnImg) {
+                showToast('Vui lòng nhập đủ thông tin và kèm link ảnh!', 'error');
+                return;
+            }
+
+            const updateData = {
+                id: id,
+                action: 'MARK_RETURNED',
+                claimer: {
+                    name: cusName,
+                    phone: cusPhone,
+                    proofLink: proof,
+                    returnImage: returnImg,
+                    time: new Date().toISOString()
+                }
+            };
+
+            const btn = document.querySelector('#returnModal .bg-green-600');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            btn.disabled = true;
+
+            try {
+                if (SCRIPT_URL !== 'MOCK_URL') {
+                    // Gửi yêu cầu cập nhật lên Apps Script
+                    await fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(updateData)
+                    });
+                } else {
+                    await new Promise(r => setTimeout(r, 500));
+                }
+
+                // Cập nhật State cục bộ
+                const index = lostItems.findIndex(i => i.id === id);
+                if (index > -1) {
+                    lostItems[index].status = 'Đã trả';
+                    lostItems[index].claimer = updateData.claimer;
+                    renderTable(document.getElementById('searchInput').value);
+                    closeReturnModal();
+                    showToast(`Đã xác nhận trả đồ cho khách ${cusName}`);
+                }
+            } catch (error) {
+                console.error(error);
+                showToast('Lỗi khi cập nhật trạng thái!', 'error');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // Tìm kiếm
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            renderTable(e.target.value);
+        });
+
+        // Khởi tạo
+        renderTable();
+
+    </script>
+</body>
+</html>
