@@ -93,8 +93,15 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Hình ảnh lúc nhặt (Link ảnh/Drive) <span class="text-red-500">*</span></label>
-                    <input type="url" id="foundImage" required placeholder="Link ảnh chụp hiện trạng lúc nhặt..." class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Hình ảnh lúc nhặt <span class="text-red-500">*</span></label>
+                    <div class="flex items-center gap-3 mt-1">
+                        <label class="cursor-pointer bg-slate-100 border border-slate-300 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center">
+                            <i class="fa-solid fa-camera mr-2"></i> Chụp / Chọn ảnh
+                            <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handleImageSelection(this, 'foundImagePreview', 'foundImageBase64')">
+                        </label>
+                        <img id="foundImagePreview" class="h-12 w-12 object-cover rounded-lg border border-slate-200 hidden shadow-sm" />
+                    </div>
+                    <input type="hidden" id="foundImageBase64" required>
                 </div>
 
                 <div>
@@ -172,13 +179,30 @@
                         <label class="block text-sm font-medium text-slate-700 mb-1">Số điện thoại <span class="text-red-500">*</span></label>
                         <input type="tel" id="customerPhone" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Hình ảnh CCCD (Link ảnh/Drive) <span class="text-red-500">*</span></label>
-                        <input type="url" id="proofLink" placeholder="Link ảnh chụp CCCD của khách..." required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Hình ảnh lúc bàn giao (Link/Drive) <span class="text-red-500">*</span></label>
-                        <input type="url" id="returnImage" placeholder="Link ảnh khách đang nhận đồ..." required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Ảnh CCCD <span class="text-red-500">*</span></label>
+                            <div class="flex flex-col gap-2 mt-1">
+                                <label class="cursor-pointer bg-slate-100 border border-slate-300 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center w-full">
+                                    <i class="fa-solid fa-id-card mr-2"></i> Chụp CCCD
+                                    <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handleImageSelection(this, 'proofImagePreview', 'proofImageBase64')">
+                                </label>
+                                <img id="proofImagePreview" class="h-20 w-full object-cover rounded-lg border border-slate-200 hidden shadow-sm" />
+                                <input type="hidden" id="proofImageBase64">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Ảnh Bàn giao <span class="text-red-500">*</span></label>
+                            <div class="flex flex-col gap-2 mt-1">
+                                <label class="cursor-pointer bg-slate-100 border border-slate-300 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center w-full">
+                                    <i class="fa-solid fa-camera mr-2"></i> Chụp Bàn giao
+                                    <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handleImageSelection(this, 'returnImgPreview', 'returnImageBase64')">
+                                </label>
+                                <img id="returnImgPreview" class="h-20 w-full object-cover rounded-lg border border-slate-200 hidden shadow-sm" />
+                                <input type="hidden" id="returnImageBase64">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -236,6 +260,56 @@
                 toast.classList.replace('toast-enter', 'toast-exit');
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
+        }
+
+        // Nén và chuyển ảnh sang Base64
+        function compressImage(file, callback) {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function(event) {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 800; // Giới hạn chiều rộng
+                    const MAX_HEIGHT = 800; // Giới hạn chiều cao
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                    } else {
+                        if (height > MAX_HEIGHT) {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    // Nén chất lượng JPEG xuống 70%
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                    callback(dataUrl);
+                }
+            }
+        }
+
+        // Xử lý khi chọn/chụp ảnh
+        function handleImageSelection(input, previewId, hiddenInputId) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                compressImage(file, function(base64Data) {
+                    const preview = document.getElementById(previewId);
+                    preview.src = base64Data;
+                    preview.classList.remove('hidden');
+                    document.getElementById(hiddenInputId).value = base64Data;
+                });
+            }
         }
 
         // --- Logic ---
@@ -305,8 +379,15 @@
         // Thêm đồ thất lạc mới
         document.getElementById('lostItemForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            
+            const base64Image = document.getElementById('foundImageBase64').value;
+            if(!base64Image) {
+                showToast('Vui lòng chụp ảnh hiện trạng đồ vật!', 'error');
+                return;
+            }
+
             const btn = document.getElementById('submitBtn');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Đang xử lý...';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Đang tải ảnh lên hệ thống...';
             btn.disabled = true;
 
             const newItem = {
@@ -315,28 +396,31 @@
                 category: document.getElementById('category').value,
                 location: document.getElementById('location').value,
                 seat: document.getElementById('seat').value,
-                foundImage: document.getElementById('foundImage').value,
+                foundImageBase64: base64Image, // Gửi ảnh dạng base64
+                foundImage: '', // URL sẽ được backend điền
                 description: document.getElementById('description').value,
                 finderName: document.getElementById('finderName').value,
                 foundTime: document.getElementById('foundTime').value,
                 status: 'Chưa nhận',
                 claimer: null,
-                action: 'ADD_ITEM' // Biến dùng cho Apps Script nhận diện
+                action: 'ADD_ITEM' 
             };
 
-            // Mô phỏng gọi API hoặc gọi thật nếu có SCRIPT_URL
             try {
                 if (SCRIPT_URL !== 'MOCK_URL') {
-                    // Gửi lên Google Apps Script
-                    await fetch(SCRIPT_URL, {
+                    // Xóa 'no-cors' để có thể đọc JSON response báo lỗi hoặc thành công từ Google
+                    const response = await fetch(SCRIPT_URL, {
                         method: 'POST',
-                        mode: 'no-cors', // Cần thiết khi gửi data từ client lên Apps Script
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // Apps Script thích text/plain hơn khi nhận JSON lớn
                         body: JSON.stringify(newItem)
                     });
+                    const result = await response.json();
+                    if(result.success) {
+                        newItem.foundImage = result.imageUrl; // Lấy URL thật từ Drive nếu có trả về
+                    }
                 } else {
-                    // Mô phỏng delay mạng
-                    await new Promise(r => setTimeout(r, 600));
+                    await new Promise(r => setTimeout(r, 1000));
+                    newItem.foundImage = base64Image; // Giả lập dùng luôn base64 hiển thị tạm
                 }
 
                 // Cập nhật State cục bộ
@@ -345,14 +429,18 @@
                 
                 // Reset Form
                 document.getElementById('lostItemForm').reset();
+                document.getElementById('foundImageBase64').value = '';
+                document.getElementById('foundImagePreview').classList.add('hidden');
+                document.getElementById('foundImagePreview').src = '';
+                
                 const now = new Date();
                 now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
                 document.getElementById('foundTime').value = now.toISOString().slice(0,16);
 
-                showToast('Đã ghi nhận đồ thất lạc thành công!');
+                showToast('Đã ghi nhận đồ thất lạc và lưu ảnh thành công!');
             } catch (error) {
                 console.error(error);
-                showToast('Có lỗi xảy ra khi lưu dữ liệu!', 'error');
+                showToast('Lỗi mạng hoặc tải ảnh quá lâu!', 'error');
             } finally {
                 btn.innerHTML = '<i class="fa-solid fa-save mr-2"></i> Lưu Thông Tin';
                 btn.disabled = false;
@@ -369,8 +457,15 @@
             document.getElementById('modalItemName').textContent = item.itemName;
             document.getElementById('customerName').value = '';
             document.getElementById('customerPhone').value = '';
-            document.getElementById('proofLink').value = '';
-            document.getElementById('returnImage').value = '';
+            
+            // Reset ảnh
+            document.getElementById('proofImageBase64').value = '';
+            document.getElementById('proofImagePreview').classList.add('hidden');
+            document.getElementById('proofImagePreview').src = '';
+            
+            document.getElementById('returnImageBase64').value = '';
+            document.getElementById('returnImgPreview').classList.add('hidden');
+            document.getElementById('returnImgPreview').src = '';
             
             document.getElementById('returnModal').classList.replace('hidden', 'flex');
         }
@@ -383,11 +478,11 @@
             const id = parseInt(document.getElementById('modalItemId').value);
             const cusName = document.getElementById('customerName').value;
             const cusPhone = document.getElementById('customerPhone').value;
-            const proof = document.getElementById('proofLink').value;
-            const returnImg = document.getElementById('returnImage').value;
+            const proofB64 = document.getElementById('proofImageBase64').value;
+            const returnImgB64 = document.getElementById('returnImageBase64').value;
 
-            if(!cusName || !cusPhone || !proof || !returnImg) {
-                showToast('Vui lòng nhập đủ thông tin và kèm link ảnh!', 'error');
+            if(!cusName || !cusPhone || !proofB64 || !returnImgB64) {
+                showToast('Vui lòng nhập tên, SĐT và chụp đầy đủ 2 ảnh!', 'error');
                 return;
             }
 
@@ -397,28 +492,35 @@
                 claimer: {
                     name: cusName,
                     phone: cusPhone,
-                    proofLink: proof,
-                    returnImage: returnImg,
+                    proofImageBase64: proofB64,
+                    returnImageBase64: returnImgB64,
+                    proofLink: '',
+                    returnImage: '',
                     time: new Date().toISOString()
                 }
             };
 
             const btn = document.querySelector('#returnModal .bg-green-600');
             const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Đang tải ảnh lên...';
             btn.disabled = true;
 
             try {
                 if (SCRIPT_URL !== 'MOCK_URL') {
-                    // Gửi yêu cầu cập nhật lên Apps Script
-                    await fetch(SCRIPT_URL, {
+                    const response = await fetch(SCRIPT_URL, {
                         method: 'POST',
-                        mode: 'no-cors',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                         body: JSON.stringify(updateData)
                     });
+                    const result = await response.json();
+                    if(result.success) {
+                        updateData.claimer.proofLink = result.proofUrl;
+                        updateData.claimer.returnImage = result.returnUrl;
+                    }
                 } else {
-                    await new Promise(r => setTimeout(r, 500));
+                    await new Promise(r => setTimeout(r, 1000));
+                    updateData.claimer.proofLink = proofB64;
+                    updateData.claimer.returnImage = returnImgB64;
                 }
 
                 // Cập nhật State cục bộ
