@@ -60,9 +60,9 @@
         </nav>
         <div class="p-4 border-t border-slate-100">
             <div class="flex items-center gap-3 px-2">
-                <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" class="w-9 h-9 rounded-full ring-2 ring-slate-100">
+                <img src="https://ui-avatars.com/api/?name=Thủ+Kho&background=0D8ABC&color=fff" class="w-9 h-9 rounded-full ring-2 ring-slate-100">
                 <div class="text-sm">
-                    <p class="font-semibold">Quản trị viên</p>
+                    <p class="font-semibold">Nhân viên kho</p>
                     <p class="text-xs text-slate-400" id="currentDate">--/--/----</p>
                 </div>
             </div>
@@ -72,12 +72,12 @@
     <!-- MAIN CONTENT -->
     <main class="flex-1 flex flex-col relative h-full bg-slate-50/50">
         <!-- Header Mobile -->
-        <header class="md:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between sticky top-0 z-10">
+        <header class="md:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between sticky top-0 z-10 shadow-sm">
             <div class="flex items-center gap-2">
-                <div class="bg-blue-600 text-white p-1.5 rounded-lg"><i class="fa-solid fa-boxes-stacked"></i></div>
+                <div class="bg-gradient-to-br from-blue-600 to-indigo-600 text-white p-1.5 rounded-lg"><i class="fa-solid fa-boxes-stacked"></i></div>
                 <h1 class="font-bold text-slate-800">Smart Inventory</h1>
             </div>
-            <button onclick="fetchData()" class="text-slate-500 hover:text-blue-600 p-2"><i class="fa-solid fa-rotate-right"></i></button>
+            <button onclick="fetchData()" class="text-slate-500 hover:text-blue-600 p-2 transition"><i class="fa-solid fa-rotate-right"></i></button>
         </header>
 
         <!-- Loading Overlay -->
@@ -86,11 +86,11 @@
                 <div class="absolute inset-0 border-4 border-slate-200 rounded-full"></div>
                 <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
             </div>
-            <p class="mt-4 text-slate-600 font-medium">Đang đồng bộ dữ liệu...</p>
+            <p class="mt-4 text-slate-600 font-medium">Đang đồng bộ hệ thống...</p>
         </div>
 
         <!-- TAB VIEWS -->
-        <div class="flex-1 overflow-y-auto p-4 md:p-6 pb-24 md:pb-6">
+        <div class="flex-1 overflow-y-auto p-4 md:p-6 pb-24 md:pb-6 relative">
             
             <!-- VIEW: KIỂM ĐẾM -->
             <section id="view-kiemdem" class="tab-view block space-y-4 max-w-6xl mx-auto fade-in">
@@ -99,23 +99,28 @@
                         <h2 class="text-xl font-bold text-slate-800">Kiểm Đếm Hàng Ngày</h2>
                         <p class="text-sm text-slate-500">Quét mã vạch hoặc nhập số lượng thực tế</p>
                     </div>
-                    <button onclick="saveKiemDem()" id="btnSaveKiemDem" class="hidden md:flex bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-medium shadow-sm shadow-blue-500/30 transition-all items-center gap-2 text-sm">
-                        <i class="fa-solid fa-cloud-arrow-up"></i> Lưu Kết Quả
-                    </button>
+                    <div class="flex gap-2">
+                        <button onclick="fetchData()" class="hidden md:flex bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 px-4 py-2 rounded-lg font-medium shadow-sm transition-all items-center gap-2 text-sm">
+                            <i class="fa-solid fa-rotate-right"></i> Làm mới
+                        </button>
+                        <button onclick="saveKiemDem()" id="btnSaveKiemDem" class="hidden md:flex bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-medium shadow-sm shadow-blue-500/30 transition-all items-center gap-2 text-sm">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Lưu Kết Quả
+                        </button>
+                    </div>
                 </div>
                 
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><p class="text-slate-500 text-xs font-medium mb-1">Tổng mã</p><p class="text-2xl font-bold text-slate-800" id="kd-total">0</p></div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><p class="text-slate-500 text-xs font-medium mb-1">Tổng mã SP</p><p class="text-2xl font-bold text-slate-800" id="kd-total">0</p></div>
                     <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><p class="text-blue-500 text-xs font-medium mb-1">Đã kiểm đếm</p><p class="text-2xl font-bold text-blue-600" id="kd-counted">0</p></div>
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><p class="text-emerald-500 text-xs font-medium mb-1">Khớp</p><p class="text-2xl font-bold text-emerald-600" id="kd-matched">0</p></div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><p class="text-emerald-500 text-xs font-medium mb-1">Đúng khớp</p><p class="text-2xl font-bold text-emerald-600" id="kd-matched">0</p></div>
                     <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><p class="text-rose-500 text-xs font-medium mb-1">Bị lệch</p><p class="text-2xl font-bold text-rose-600" id="kd-diff">0</p></div>
                 </div>
 
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-[calc(100vh-280px)] md:h-[calc(100vh-250px)]">
                     <div class="p-3 border-b border-slate-100 flex gap-2">
                         <div class="relative flex-1">
-                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400"></i>
-                            <input type="text" id="kd-search" placeholder="Quét mã vạch hoặc tìm tên SP..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                            <i class="fa-solid fa-barcode absolute left-3 top-2.5 text-slate-400"></i>
+                            <input type="text" id="kd-search" placeholder="Quét mã vạch, nhập tên, ID..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
                         </div>
                     </div>
                     <div class="flex-1 overflow-auto">
@@ -143,10 +148,10 @@
             <section id="view-nhapxuat" class="tab-view hidden space-y-4 max-w-4xl mx-auto fade-in">
                 <div class="mb-4">
                     <h2 class="text-xl font-bold text-slate-800">Giao Dịch Nhập / Xuất</h2>
-                    <p class="text-sm text-slate-500">Tạo phiếu cộng/trừ tồn kho</p>
+                    <p class="text-sm text-slate-500">Tạo phiếu cộng/trừ vào hệ thống tồn kho</p>
                 </div>
 
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 md:p-6 mb-4">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 md:p-6 mb-4 relative z-20">
                     <div class="flex gap-4 mb-5 border-b border-slate-100 pb-4">
                         <label class="flex-1 relative cursor-pointer">
                             <input type="radio" name="txType" value="NHAP" checked class="peer sr-only">
@@ -166,18 +171,18 @@
                         <div class="md:col-span-6 relative">
                             <label class="block text-xs font-semibold text-slate-500 mb-1">Mã hoặc Tên Sản phẩm <span class="text-red-500">*</span></label>
                             <div class="relative">
-                                <input type="text" id="tx-search" placeholder="Nhập mã SP / Quét Barcode" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none pr-10">
-                                <i class="fa-solid fa-barcode absolute right-3 top-3 text-slate-400"></i>
+                                <input type="text" id="tx-search" placeholder="Nhập mã SP / Quét Barcode" autocomplete="off" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none pr-10">
+                                <i class="fa-solid fa-barcode absolute right-3 top-3.5 text-slate-400"></i>
                             </div>
                             <!-- Autocomplete dropdown -->
-                            <div id="tx-autocomplete" class="hidden absolute w-full bg-white border border-slate-200 mt-1 rounded-lg shadow-lg max-h-48 overflow-y-auto z-20"></div>
+                            <div id="tx-autocomplete" class="hidden absolute w-full bg-white border border-slate-200 mt-1 rounded-lg shadow-xl max-h-56 overflow-y-auto z-30"></div>
                         </div>
                         <div class="md:col-span-3">
                             <label class="block text-xs font-semibold text-slate-500 mb-1">Số lượng <span class="text-red-500">*</span></label>
                             <input type="number" id="tx-qty" min="1" placeholder="0" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none text-center font-bold">
                         </div>
                         <div class="md:col-span-3 flex items-end">
-                            <button onclick="addTransactionItem()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium py-2.5 rounded-lg text-sm transition">
+                            <button onclick="addTransactionItem()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium py-2.5 rounded-lg text-sm transition shadow-sm">
                                 <i class="fa-solid fa-plus mr-1"></i> Thêm vào giỏ
                             </button>
                         </div>
@@ -185,18 +190,18 @@
                 </div>
 
                 <!-- Giỏ hàng Giao dịch -->
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden relative z-10">
                     <div class="bg-slate-50 px-4 py-3 border-b border-slate-200 font-semibold text-slate-700 text-sm flex justify-between">
-                        <span>Danh sách xử lý</span>
+                        <span>Danh sách chờ xử lý</span>
                         <span id="tx-count" class="bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full text-xs">0 items</span>
                     </div>
                     <ul id="tx-list" class="divide-y divide-slate-100 max-h-60 overflow-y-auto">
-                        <li class="p-6 text-center text-slate-400 text-sm italic">Chưa có sản phẩm nào. Tìm và thêm sản phẩm phía trên.</li>
+                        <li class="p-6 text-center text-slate-400 text-sm italic">Chưa có sản phẩm nào được chọn.</li>
                     </ul>
                     <div class="p-4 border-t border-slate-100 bg-slate-50 flex gap-3 flex-col md:flex-row">
-                        <input type="text" id="tx-note" placeholder="Ghi chú chung (VD: Nhập hàng đợt 1, Xuất dự án X...)" class="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        <input type="text" id="tx-note" placeholder="Ghi chú chung (VD: Phiếu nhập N01, Xuất dự án X...)" class="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
                         <button onclick="submitTransaction()" id="btnSubmitTx" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium shadow-sm transition items-center gap-2 text-sm flex justify-center opacity-50 cursor-not-allowed" disabled>
-                            <i class="fa-solid fa-check-double"></i> Thực Hiện Giao Dịch
+                            <i class="fa-solid fa-check-double"></i> Chốt Giao Dịch
                         </button>
                     </div>
                 </div>
@@ -207,7 +212,7 @@
                 <div class="flex justify-between items-end mb-2">
                     <div>
                         <h2 class="text-xl font-bold text-slate-800">Danh Mục Hàng Hóa</h2>
-                        <p class="text-sm text-slate-500">Quản lý, thêm mới hoặc sửa thông tin mã hàng</p>
+                        <p class="text-sm text-slate-500">Quản lý kho, cập nhật và thêm mới hàng hóa</p>
                     </div>
                     <button onclick="openProductModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium shadow-sm transition flex items-center gap-2 text-sm">
                         <i class="fa-solid fa-plus"></i> <span class="hidden md:inline">Thêm Mới</span>
@@ -218,10 +223,10 @@
                     <div class="p-3 border-b border-slate-100 flex flex-col md:flex-row gap-3">
                         <div class="relative flex-1">
                             <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400"></i>
-                            <input type="text" id="sp-search" placeholder="Tìm kiếm mã, tên..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                            <input type="text" id="sp-search" placeholder="Tìm kiếm mã, barcode, tên..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
                         </div>
                         <div class="text-sm text-slate-500 flex items-center px-2">
-                            Tổng: <span id="sp-total-count" class="font-bold text-slate-800 ml-1">0</span> SP
+                            Tổng: <span id="sp-total-count" class="font-bold text-indigo-600 ml-1">0</span> SP
                         </div>
                     </div>
                     <div class="flex-1 overflow-auto">
@@ -271,7 +276,7 @@
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-semibold text-slate-500 mb-1">Mã SP <span class="text-red-500">*</span></label>
-                        <input type="text" id="fm-id" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none uppercase font-mono">
+                        <input type="text" id="fm-id" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none uppercase font-mono bg-slate-50">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-500 mb-1">Mã vạch (Barcode)</label>
@@ -294,8 +299,8 @@
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-500 mb-1">Tồn kho HT ban đầu</label>
-                    <input type="number" id="fm-qty" value="0" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none bg-slate-50">
-                    <p class="text-[10px] text-slate-400 mt-1">Lưu ý: Nếu cập nhật mã cũ, tồn kho hiện tại sẽ không bị ghi đè bởi ô này trừ khi thủ kho yêu cầu.</p>
+                    <input type="number" id="fm-qty" value="0" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                    <p class="text-[10px] text-slate-400 mt-1">Lưu ý: Nếu bạn đang cập nhật mã cũ, dữ liệu trong ô này sẽ ghi đè hệ thống.</p>
                 </div>
             </div>
             <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-3">
@@ -317,31 +322,33 @@
         let transactionCart = [];
         let currentTab = 'kiemdem';
         
-        // --- 1. APPS SCRIPT WRAPPER (Giả lập khi dev local, gọi thật khi lên Apps Script) ---
+        // --- 1. APPS SCRIPT WRAPPER THÔNG MINH ---
+        // Khi được chèn vào Google Apps Script, API.call sẽ gọi trực tiếp các hàm trong Code.gs
         const API = {
             isGas: typeof google !== 'undefined' && typeof google.script !== 'undefined',
             
             call: function(funcName, ...args) {
                 return new Promise((resolve, reject) => {
                     if (this.isGas) {
+                        // Môi trường Apps Script thực tế
                         google.script.run
                             .withSuccessHandler(resolve)
-                            .withFailureHandler(reject)
+                            .withFailureHandler((err) => reject(err.message || err))
                             [funcName](...args);
                     } else {
-                        // Mock Data & Responses cho môi trường Dev ngoài Apps Script
+                        // Môi trường Demo (Mock Data khi chạy file HTML này trực tiếp trên máy tính)
                         setTimeout(() => {
-                            console.log(`[Mock API] Gọi ${funcName}`, args);
+                            console.log(`[Dev Mode] API Call: ${funcName}`, args);
                             if(funcName === 'getInventoryData') {
                                 resolve(inventoryData.length ? inventoryData : [
-                                    { id: "SP001", barcode: "89350011", name: "Iphone 15 Pro Max", unit: "Cái", location: "Khu A", systemQty: 10, actualQty: null, note: "" },
-                                    { id: "SP002", barcode: "89350022", name: "Sạc dự phòng Anker", unit: "Cái", location: "Khu B", systemQty: 50, actualQty: null, note: "" },
-                                    { id: "SP003", barcode: "89350033", name: "Cáp Type-C 2m", unit: "Sợi", location: "Khu B", systemQty: 120, actualQty: null, note: "" }
+                                    { id: "SP001", barcode: "89350011", name: "Iphone 15 Pro Max 256GB", unit: "Cái", location: "Khu A-01", systemQty: 10, actualQty: null, note: "" },
+                                    { id: "SP002", barcode: "89350022", name: "Sạc dự phòng Anker 10000mAh", unit: "Cái", location: "Khu B-02", systemQty: 50, actualQty: null, note: "" },
+                                    { id: "SP003", barcode: "89350033", name: "Cáp Type-C 2m Ugreen", unit: "Sợi", location: "Khu B-03", systemQty: 120, actualQty: null, note: "" }
                                 ]);
                             } else {
-                                resolve({ success: true, message: "Mô phỏng thành công!" });
+                                resolve({ success: true, message: "Thao tác thành công (Dev Mode)!" });
                             }
-                        }, 800);
+                        }, 600);
                     }
                 });
             }
@@ -349,18 +356,27 @@
 
         // --- 2. KHỞI TẠO & ĐIỀU HƯỚNG ---
         window.onload = () => {
-            document.getElementById('currentDate').innerText = new Date().toLocaleDateString('vi-VN');
+            const today = new Date();
+            document.getElementById('currentDate').innerText = `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getFullYear()}`;
             fetchData();
             
-            // Events
+            // Lắng nghe bộ gõ cho tìm kiếm
             document.getElementById('kd-search').addEventListener('input', renderKiemDem);
             document.getElementById('sp-search').addEventListener('input', renderSanPham);
             
-            // Autocomplete Giao dịch
+            // Xử lý sự kiện quét Barcode cho phần Kiểm Đếm (Tự động focus sau khi gõ enter)
+            document.getElementById('kd-search').addEventListener('keypress', function(e) {
+                if(e.key === 'Enter') {
+                    const firstInput = document.querySelector('.kd-qty');
+                    if(firstInput) firstInput.focus();
+                }
+            });
+
+            // Autocomplete Giao dịch Nhập Xuất
             const txSearch = document.getElementById('tx-search');
             txSearch.addEventListener('input', handleTxSearch);
             txSearch.addEventListener('focus', handleTxSearch);
-            // Ẩn dropdown khi click ngoài
+            // Ẩn dropdown khi click ra ngoài
             document.addEventListener('click', (e) => {
                 if(!e.target.closest('#tx-search') && !e.target.closest('#tx-autocomplete')) {
                     document.getElementById('tx-autocomplete').classList.add('hidden');
@@ -385,8 +401,8 @@
             if(tabId==='nhapxuat') mobileBtns[1].classList.add('mobile-nav-active');
             if(tabId==='sanpham') mobileBtns[2].classList.add('mobile-nav-active');
             
-            // Render dữ liệu tương ứng
-            if(tabId === 'kiemdem') renderKiemDem();
+            // Render dữ liệu tương ứng và focus
+            if(tabId === 'kiemdem') { renderKiemDem(); document.getElementById('kd-search').focus(); }
             if(tabId === 'sanpham') renderSanPham();
             if(tabId === 'nhapxuat') document.getElementById('tx-search').focus();
         }
@@ -395,15 +411,19 @@
             setLoading(true);
             try {
                 const data = await API.call('getInventoryData');
-                // Khởi tạo thêm actualQty và note nếu chưa có
-                inventoryData = data.map(item => ({
-                    ...item, 
-                    actualQty: item.actualQty !== undefined ? item.actualQty : null, 
-                    note: item.note || ""
-                }));
+                // Gán lại dữ liệu và bảo toàn trạng thái kiểm đếm nếu đang kiểm dở
+                inventoryData = data.map(item => {
+                    const existing = inventoryData.find(i => i.id === item.id);
+                    return {
+                        ...item, 
+                        actualQty: existing && existing.actualQty !== null ? existing.actualQty : null, 
+                        note: existing ? existing.note : item.note || ""
+                    };
+                });
+                
                 if(currentTab === 'kiemdem') renderKiemDem();
                 if(currentTab === 'sanpham') renderSanPham();
-                showToast("Đã đồng bộ dữ liệu kho mới nhất.", "success");
+                showToast("Đã tải dữ liệu mới nhất từ kho.", "info");
             } catch (err) {
                 showToast("Lỗi tải dữ liệu: " + err, "error");
             } finally {
@@ -431,6 +451,7 @@
                 let diff = 0;
                 let diffText = '-';
                 let diffColor = 'text-slate-400';
+                let bgRow = '';
                 
                 if (isCounted) {
                     diff = Number(item.actualQty) - Number(item.systemQty);
@@ -440,8 +461,9 @@
                         diffText = '0';
                     } else {
                         diffCount++;
-                        diffColor = 'text-rose-500 font-bold bg-rose-50 px-2 py-0.5 rounded';
+                        diffColor = 'text-rose-600 font-bold bg-rose-100 px-2 py-0.5 rounded';
                         diffText = diff > 0 ? `+${diff}` : diff;
+                        bgRow = 'bg-rose-50/40 hover:bg-rose-50/60';
                     }
                 }
 
@@ -449,28 +471,28 @@
                 if(term && !item.name.toLowerCase().includes(term) && !item.id.toLowerCase().includes(term) && item.barcode !== term) return;
 
                 html += `
-                    <tr class="hover:bg-slate-50 transition-colors ${diff !== 0 && isCounted ? 'bg-rose-50/30' : ''}">
+                    <tr class="hover:bg-slate-50 transition-colors border-b border-slate-100 ${bgRow}">
                         <td class="px-4 py-3">
                             <div class="font-semibold text-slate-800">${item.name}</div>
-                            <div class="text-xs text-slate-500 mt-0.5 flex gap-2">
+                            <div class="text-xs text-slate-500 mt-0.5 flex gap-3">
                                 <span><i class="fa-solid fa-tag text-slate-300"></i> ${item.id}</span>
-                                <span><i class="fa-solid fa-location-dot text-slate-300"></i> ${item.location || 'N/A'}</span>
+                                <span><i class="fa-solid fa-location-dot text-slate-300"></i> ${item.location || 'Chưa xếp'}</span>
                             </div>
                         </td>
                         <td class="px-4 py-3 text-center font-bold text-slate-600">${item.systemQty}</td>
                         <td class="px-4 py-3">
                             <input type="number" min="0" data-idx="${index}" value="${item.actualQty !== null ? item.actualQty : ''}" 
-                                class="kd-qty w-full text-center py-1.5 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 outline-none shadow-inner" placeholder="?">
+                                class="kd-qty w-full text-center py-1.5 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 outline-none focus:bg-blue-50 transition-colors" placeholder="?">
                         </td>
                         <td class="px-4 py-3 text-center text-sm ${diffColor}">${diffText}</td>
                         <td class="px-4 py-3">
-                            <input type="text" data-idx="${index}" value="${item.note}" class="kd-note w-full py-1.5 px-2 border border-slate-200 rounded-md text-xs outline-none focus:border-blue-400" placeholder="...">
+                            <input type="text" data-idx="${index}" value="${item.note}" class="kd-note w-full py-1.5 px-2 border border-slate-200 rounded-md text-xs outline-none focus:border-blue-400" placeholder="Ghi chú...">
                         </td>
                     </tr>
                 `;
             });
 
-            tbody.innerHTML = html || '<tr><td colspan="5" class="p-8 text-center text-slate-400">Không tìm thấy sản phẩm.</td></tr>';
+            tbody.innerHTML = html || '<tr><td colspan="5" class="p-8 text-center text-slate-400"><i class="fa-solid fa-box-open text-2xl mb-2"></i><br>Không tìm thấy sản phẩm hợp lệ.</td></tr>';
             
             // Cập nhật stats
             document.getElementById('kd-total').innerText = total;
@@ -478,12 +500,17 @@
             document.getElementById('kd-matched').innerText = matched;
             document.getElementById('kd-diff').innerText = diffCount;
 
-            // Events cho Input
+            // Events cho Input (Debounce nhẹ)
             document.querySelectorAll('.kd-qty').forEach(el => {
                 el.addEventListener('change', (e) => {
                     const idx = e.target.getAttribute('data-idx');
                     inventoryData[idx].actualQty = e.target.value === "" ? null : Number(e.target.value);
-                    renderKiemDem(); // Rerender update màu lệch
+                    renderKiemDem(); // Tự cập nhật lại màu lệch
+                    // Giữ focus (Tùy chọn UX, nếu muốn đếm liên tiếp)
+                    setTimeout(() => {
+                        const nextInput = document.querySelector(`.kd-qty[data-idx="${parseInt(idx) + 1}"]`);
+                        if(nextInput) nextInput.focus();
+                    }, 10);
                 });
             });
             document.querySelectorAll('.kd-note').forEach(el => {
@@ -495,7 +522,7 @@
 
         async function saveKiemDem() {
             const dataToSave = inventoryData.filter(i => i.actualQty !== null);
-            if(dataToSave.length === 0) return showToast("Chưa có dữ liệu kiểm đếm nào để lưu!", "warning");
+            if(dataToSave.length === 0) return showToast("Vui lòng đếm ít nhất 1 sản phẩm trước khi lưu!", "warning");
             
             const btn1 = document.getElementById('btnSaveKiemDem');
             const btn2 = document.getElementById('btnSaveKiemDemMobile');
@@ -504,6 +531,11 @@
             try {
                 const res = await API.call('saveInventoryData', dataToSave);
                 showToast(res.message || "Lưu kiểm đếm thành công", "success");
+                
+                // Clear state sau khi lưu
+                inventoryData.forEach(i => { i.actualQty = null; i.note = ""; });
+                renderKiemDem();
+                
             } catch (err) {
                 showToast("Lỗi: " + err, "error");
             } finally {
@@ -518,15 +550,19 @@
             const box = document.getElementById('tx-autocomplete');
             if(!term) { box.classList.add('hidden'); return; }
             
-            const matches = inventoryData.filter(i => i.name.toLowerCase().includes(term) || i.id.toLowerCase().includes(term) || i.barcode === term).slice(0, 5);
+            // Tìm giới hạn 6 kết quả
+            const matches = inventoryData.filter(i => i.name.toLowerCase().includes(term) || i.id.toLowerCase().includes(term) || i.barcode === term).slice(0, 6);
             
             if(matches.length === 0) {
-                box.innerHTML = `<div class="p-3 text-sm text-slate-500 italic">Không tìm thấy SP</div>`;
+                box.innerHTML = `<div class="p-3 text-sm text-slate-500 italic text-center">Không tìm thấy mã nào khớp.</div>`;
             } else {
                 box.innerHTML = matches.map(m => `
-                    <div class="p-2 border-b border-slate-100 hover:bg-blue-50 cursor-pointer flex justify-between items-center" onclick="selectTxProduct('${m.id}')">
-                        <div><p class="font-semibold text-sm text-slate-800">${m.name}</p><p class="text-xs text-slate-500">${m.id} | Tồn: ${m.systemQty}</p></div>
-                        <i class="fa-solid fa-plus text-blue-500 text-xs"></i>
+                    <div class="p-3 border-b border-slate-100 hover:bg-blue-50 cursor-pointer flex justify-between items-center transition" onclick="selectTxProduct('${m.id}')">
+                        <div>
+                            <p class="font-semibold text-sm text-slate-800">${m.name}</p>
+                            <p class="text-[11px] text-slate-500 mt-0.5"><i class="fa-solid fa-tag"></i> ${m.id} | Tồn HT: <span class="font-bold text-slate-700">${m.systemQty}</span></p>
+                        </div>
+                        <div class="bg-white border border-slate-200 rounded p-1 shadow-sm"><i class="fa-solid fa-arrow-down text-blue-500 text-xs"></i></div>
                     </div>
                 `).join('');
             }
@@ -544,11 +580,11 @@
         }
 
         function addTransactionItem() {
-            if(!selectedProductForTx) return showToast("Vui lòng chọn sản phẩm trước!", "warning");
+            if(!selectedProductForTx) return showToast("Bạn chưa chọn sản phẩm nào từ danh sách gợi ý!", "warning");
             const qty = parseInt(document.getElementById('tx-qty').value);
-            if(!qty || qty <= 0) return showToast("Số lượng phải lớn hơn 0", "warning");
+            if(!qty || qty <= 0) return showToast("Số lượng phải là số lớn hơn 0", "warning");
 
-            // Kiểm tra trùng
+            // Check giỏ hàng
             const existIdx = transactionCart.findIndex(i => i.id === selectedProductForTx.id);
             if(existIdx > -1) {
                 transactionCart[existIdx].qty += qty;
@@ -580,11 +616,11 @@
             const type = document.querySelector('input[name="txType"]:checked').value;
             const isOut = type === 'XUAT';
             
-            document.getElementById('tx-count').innerText = `${transactionCart.length} mặt hàng`;
+            document.getElementById('tx-count').innerText = `${transactionCart.length} SP`;
             const btnSubmit = document.getElementById('btnSubmitTx');
             
             if(transactionCart.length === 0) {
-                ul.innerHTML = '<li class="p-6 text-center text-slate-400 text-sm italic">Chưa có sản phẩm nào.</li>';
+                ul.innerHTML = '<li class="p-6 text-center text-slate-400 text-sm italic">Giỏ xử lý đang trống.</li>';
                 btnSubmit.disabled = true;
                 btnSubmit.classList.add('opacity-50', 'cursor-not-allowed');
                 return;
@@ -597,26 +633,31 @@
                 const afterQty = isOut ? item.systemQty - item.qty : item.systemQty + item.qty;
                 const warn = isOut && afterQty < 0;
                 return `
-                <li class="p-3 flex justify-between items-center hover:bg-slate-50">
+                <li class="p-3 flex justify-between items-center hover:bg-slate-50 transition border-b border-slate-50 last:border-0">
                     <div class="flex-1">
-                        <div class="font-semibold text-sm text-slate-800">${item.name} <span class="text-xs font-normal text-slate-400">(${item.id})</span></div>
-                        <div class="text-xs mt-1 text-slate-500">
-                            Tồn: ${item.systemQty} <i class="fa-solid fa-arrow-right mx-1"></i> 
-                            <span class="${warn ? 'text-rose-600 font-bold' : 'text-slate-800'}">${afterQty}</span>
-                            ${warn ? '<span class="ml-1 text-rose-500">(Không đủ kho)</span>' : ''}
+                        <div class="font-semibold text-sm text-slate-800">${item.name} <span class="text-[11px] font-normal text-slate-400 bg-slate-100 px-1 rounded ml-1">${item.id}</span></div>
+                        <div class="text-xs mt-1 text-slate-500 flex items-center">
+                            Kho HT: ${item.systemQty} <i class="fa-solid fa-arrow-right-long mx-2 text-slate-300"></i> 
+                            <span class="${warn ? 'text-rose-600 font-bold bg-rose-100 px-1.5 rounded' : 'text-emerald-700 font-bold bg-emerald-50 px-1.5 rounded'}">${afterQty}</span>
+                            ${warn ? '<span class="ml-2 text-rose-500 italic flex items-center gap-1"><i class="fa-solid fa-circle-exclamation"></i> Vượt tồn</span>' : ''}
                         </div>
                     </div>
-                    <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-3">
                         <div class="text-lg font-bold ${isOut ? 'text-rose-600' : 'text-emerald-600'}">${isOut ? '-' : '+'}${item.qty}</div>
-                        <button onclick="removeTxItem('${item.id}')" class="text-slate-300 hover:text-rose-500 p-1"><i class="fa-solid fa-trash-can"></i></button>
+                        <button onclick="removeTxItem('${item.id}')" class="text-slate-300 hover:text-rose-500 hover:bg-rose-50 p-2 rounded-lg transition"><i class="fa-solid fa-trash-can"></i></button>
                     </div>
                 </li>
             `}).join('');
         }
 
-        // Lắng nghe đổi loại giao dịch để render lại view giỏ hàng (cập nhật tồn sau giao dịch)
+        // Lắng nghe đổi loại giao dịch để tính lại giỏ hàng
         document.querySelectorAll('input[name="txType"]').forEach(radio => {
             radio.addEventListener('change', renderTransactionCart);
+        });
+
+        // Hỗ trợ Enter thêm vào giỏ
+        document.getElementById('tx-qty').addEventListener('keypress', function(e) {
+            if(e.key === 'Enter') addTransactionItem();
         });
 
         async function submitTransaction() {
@@ -624,17 +665,17 @@
             const type = document.querySelector('input[name="txType"]:checked').value;
             const note = document.getElementById('tx-note').value;
             
-            // Check hợp lệ nếu là xuất
+            // Validate lại xuất kho
             if(type === 'XUAT') {
                 const invalid = transactionCart.find(i => i.systemQty - i.qty < 0);
-                if(invalid) return showToast(`Sản phẩm ${invalid.name} không đủ tồn kho để xuất!`, 'error');
+                if(invalid) return showToast(`Hủy giao dịch! Mã ${invalid.id} không đủ hàng để xuất.`, 'error');
             }
 
             const btn = document.getElementById('btnSubmitTx');
-            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đang xử lý...`;
+            const ogHTML = btn.innerHTML;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đang đồng bộ...`;
             btn.disabled = true;
 
-            // Map lại mảng gắn chung note
             const itemsToSubmit = transactionCart.map(i => ({id: i.id, qty: i.qty, note: note}));
 
             try {
@@ -643,11 +684,11 @@
                 transactionCart = [];
                 document.getElementById('tx-note').value = '';
                 renderTransactionCart();
-                fetchData(); // Tải lại toàn bộ dữ liệu kho
+                fetchData(); // Bắt buộc Reload để làm mới hệ số tồn kho ở mọi tính năng
             } catch (err) {
                 showToast("Lỗi giao dịch: " + err, "error");
             } finally {
-                btn.innerHTML = `<i class="fa-solid fa-check-double"></i> Thực Hiện Giao Dịch`;
+                btn.innerHTML = ogHTML;
                 btn.disabled = false;
             }
         }
@@ -660,32 +701,34 @@
             let html = '';
 
             inventoryData.forEach(item => {
-                if(term && !item.name.toLowerCase().includes(term) && !item.id.toLowerCase().includes(term)) return;
+                if(term && !item.name.toLowerCase().includes(term) && !item.id.toLowerCase().includes(term) && item.barcode !== term) return;
                 count++;
                 html += `
-                    <tr class="hover:bg-slate-50 transition">
-                        <td class="px-4 py-3 font-semibold text-indigo-600">${item.id}</td>
+                    <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+                        <td class="px-4 py-3 font-semibold text-indigo-700">${item.id}</td>
                         <td class="px-4 py-3">
-                            <div class="text-slate-800 font-medium truncate max-w-xs md:max-w-md">${item.name}</div>
-                            <div class="text-xs text-slate-400"><i class="fa-solid fa-barcode"></i> ${item.barcode || 'N/A'} - ${item.unit}</div>
+                            <div class="text-slate-800 font-medium truncate max-w-[200px] md:max-w-md">${item.name}</div>
+                            <div class="text-[11px] text-slate-400 mt-0.5"><i class="fa-solid fa-barcode mr-1"></i> ${item.barcode || '(Chưa có)'} | ĐVT: ${item.unit}</div>
                         </td>
-                        <td class="px-4 py-3 text-slate-600 text-sm"><span class="bg-slate-100 px-2 py-1 rounded text-xs border border-slate-200">${item.location || 'Chưa set'}</span></td>
+                        <td class="px-4 py-3 text-slate-600 text-sm">
+                            <span class="bg-indigo-50 text-indigo-700 font-medium px-2 py-1 rounded text-xs border border-indigo-100">${item.location || 'N/A'}</span>
+                        </td>
                         <td class="px-4 py-3 text-center text-lg font-bold text-slate-700">${item.systemQty}</td>
                         <td class="px-4 py-3 text-center">
-                            <button onclick='editProduct(${JSON.stringify(item).replace(/'/g, "&#39;")})' class="text-slate-400 hover:text-indigo-600 p-1.5 bg-white border border-slate-200 rounded shadow-sm hover:shadow transition"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick='editProduct(${JSON.stringify(item).replace(/'/g, "&#39;")})' class="text-slate-400 hover:text-indigo-600 p-2 bg-white border border-slate-200 rounded-lg shadow-sm hover:shadow transition"><i class="fa-solid fa-pen-to-square"></i></button>
                         </td>
                     </tr>
                 `;
             });
-            tbody.innerHTML = html || '<tr><td colspan="5" class="p-8 text-center text-slate-400">Không tìm thấy.</td></tr>';
+            tbody.innerHTML = html || '<tr><td colspan="5" class="p-10 text-center text-slate-400"><i class="fa-solid fa-magnifying-glass text-2xl mb-2"></i><br>Không tìm thấy mã hàng.</td></tr>';
             document.getElementById('sp-total-count').innerText = count;
         }
 
         function openProductModal() {
-            // Reset form for new
             document.getElementById('modalProductTitle').innerText = "Thêm Sản Phẩm Mới";
             document.getElementById('fm-id').value = '';
-            document.getElementById('fm-id').disabled = false; // Mở khóa ID khi tạo mới
+            document.getElementById('fm-id').disabled = false;
+            document.getElementById('fm-id').classList.remove('bg-slate-100', 'text-slate-500');
             document.getElementById('fm-barcode').value = '';
             document.getElementById('fm-name').value = '';
             document.getElementById('fm-unit').value = 'Cái';
@@ -696,9 +739,10 @@
         }
 
         function editProduct(item) {
-            document.getElementById('modalProductTitle').innerText = "Cập Nhật Thông Tin";
+            document.getElementById('modalProductTitle').innerText = "Cập Nhật Hàng Hóa";
             document.getElementById('fm-id').value = item.id;
             document.getElementById('fm-id').disabled = true; // Khóa ID khi sửa
+            document.getElementById('fm-id').classList.add('bg-slate-100', 'text-slate-500'); // Trực quan hơn
             document.getElementById('fm-barcode').value = item.barcode;
             document.getElementById('fm-name').value = item.name;
             document.getElementById('fm-unit').value = item.unit;
@@ -722,18 +766,18 @@
                 systemQty: Number(document.getElementById('fm-qty').value)
             };
 
-            if(!data.id || !data.name) return showToast("Mã SP và Tên SP không được để trống!", "warning");
+            if(!data.id || !data.name) return showToast("Mã SP và Tên SP bắt buộc phải điền!", "warning");
 
             const btn = document.getElementById('btnSaveProduct');
             const ogHtml = btn.innerHTML;
-            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đang lưu...`;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đang xử lý...`;
             btn.disabled = true;
 
             try {
                 const res = await API.call('updateProductCatalog', data);
                 showToast(res.message, "success");
                 closeProductModal();
-                fetchData(); // Reload toàn bộ data
+                fetchData(); // Load lại data kho
             } catch (err) {
                 showToast("Lỗi cập nhật: " + err, "error");
             } finally {
@@ -742,7 +786,7 @@
             }
         }
 
-        // --- 6. UTILS (TOAST) ---
+        // --- 6. UTILITIES (TOAST NOTIFICATIONS) ---
         function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
@@ -750,7 +794,8 @@
             const styles = {
                 success: 'bg-emerald-50 border-emerald-200 text-emerald-800 icon-fa-circle-check icon-text-emerald-500',
                 error: 'bg-rose-50 border-rose-200 text-rose-800 icon-fa-circle-xmark icon-text-rose-500',
-                warning: 'bg-amber-50 border-amber-200 text-amber-800 icon-fa-triangle-exclamation icon-text-amber-500'
+                warning: 'bg-amber-50 border-amber-200 text-amber-800 icon-fa-triangle-exclamation icon-text-amber-500',
+                info: 'bg-blue-50 border-blue-200 text-blue-800 icon-fa-circle-info icon-text-blue-500'
             };
             const s = styles[type] || styles.success;
             const [bg, border, text, icon, iconColor] = s.split(' icon-');
@@ -758,19 +803,19 @@
             toast.className = `flex items-start gap-3 p-4 border rounded-xl shadow-lg ${bg} ${border} ${text} toast-enter toast-enter-active`;
             toast.innerHTML = `
                 <i class="fa-solid ${icon} ${iconColor} text-xl mt-0.5"></i>
-                <div class="flex-1 font-medium text-sm pr-4">${message}</div>
-                <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+                <div class="flex-1 font-medium text-sm pr-4 leading-tight">${message}</div>
+                <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-slate-600 transition"><i class="fa-solid fa-xmark"></i></button>
             `;
             container.appendChild(toast);
             
-            // Reflow
+            // Xóa class để CSS animation chạy
             void toast.offsetWidth;
             
             setTimeout(() => {
                 toast.classList.remove('toast-enter-active');
                 toast.classList.add('toast-exit');
                 setTimeout(() => toast.remove(), 300);
-            }, 4000);
+            }, 3500);
         }
     </script>
 </body>
