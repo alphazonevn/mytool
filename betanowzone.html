@@ -3,14 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#080b12">
+  <meta name="theme-color" content="#07579f">
   <title>Beta Nowzone | Cổng Nhân Sự Nội Bộ</title>
-  <link rel="icon" type="image/png" href="https://play-lh.googleusercontent.com/so_2mIzE8qaobdSafVStIV7olRZL8Q1SkclYErPgbFDPn1SzAUO33stPfshdztJZCVA0eqfWsO_iia59aHLKZL8">
-  <link rel="apple-touch-icon" href="https://play-lh.googleusercontent.com/so_2mIzE8qaobdSafVStIV7olRZL8Q1SkclYErPgbFDPn1SzAUO33stPfshdztJZCVA0eqfWsO_iia59aHLKZL8">
-  <meta property="og:image" content="https://play-lh.googleusercontent.com/so_2mIzE8qaobdSafVStIV7olRZL8Q1SkclYErPgbFDPn1SzAUO33stPfshdztJZCVA0eqfWsO_iia59aHLKZL8">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrHqRceRcnxQuqHdl1GRiVzTAJ9JsLd6RiJs_cSgBz9w&amp;s=10" type="image/jpeg">
   <style>
     :root {
       --bg: #080b12;
@@ -258,6 +253,1158 @@
       .modal-grid .span-2 { grid-column: auto; }
       .top-actions .btn { padding: 9px 10px; font-size: 9px; }
     }
+
+
+    /* BETA NOWZONE PRO — giao diện xanh thương hiệu, tối ưu hiển thị */
+    :root {
+      color-scheme: dark;
+      --bg: #071321;
+      --bg-2: #0a1b2e;
+      --panel: rgba(12, 29, 49, .94);
+      --panel-2: #102842;
+      --line: rgba(137, 184, 226, .14);
+      --text: #f4f8fd;
+      --muted: #9aacc0;
+      --muted-2: #71869e;
+      --orange: #2479d0;
+      --orange-2: #66b5ff;
+      --blue: #1766a6;
+      --green: #39c995;
+      --red: #ff7185;
+      --yellow: #ffd16a;
+      --radius: 18px;
+      --shadow: 0 20px 55px rgba(0, 8, 20, .34);
+    }
+    html { background: var(--bg); scroll-behavior: smooth; }
+    body {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background:
+        radial-gradient(ellipse at 5% 0%, rgba(20, 104, 185, .20), transparent 34%),
+        radial-gradient(ellipse at 100% 100%, rgba(22, 79, 135, .16), transparent 35%),
+        var(--bg);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    button, input, select, textarea { font-family: inherit; }
+    button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+    :focus-visible { outline: 2px solid #67b8ff; outline-offset: 2px; }
+    .brand-mark {
+      border-radius: 14px;
+      box-shadow: 0 8px 24px rgba(28, 117, 201, .20);
+    }
+    .login-wrap {
+      border-color: rgba(104, 171, 230, .18);
+      background: rgba(8, 23, 40, .96);
+      box-shadow: 0 28px 90px rgba(0, 7, 18, .46);
+      backdrop-filter: blur(14px);
+    }
+    .login-aside {
+      background:
+        radial-gradient(circle at 90% 12%, rgba(83, 172, 255, .16), transparent 34%),
+        linear-gradient(145deg, rgba(13, 75, 132, .50), rgba(8, 26, 46, .25));
+    }
+    .login-aside h1 span { color: #78beff; }
+    .feature-dot { color: #8bc9ff; background: rgba(45, 139, 218, .18); }
+    .login-card { background: linear-gradient(180deg, rgba(14, 32, 53, .22), transparent); }
+    .field input, .field select, .field textarea, .search-box input {
+      border-color: rgba(133, 177, 218, .17);
+      border-radius: 12px;
+      background: rgba(4, 15, 28, .52);
+      transition: border-color .16s ease, box-shadow .16s ease, background .16s ease;
+    }
+    .field input:focus, .field textarea:focus, .field select:focus, .search-box input:focus {
+      border-color: rgba(91, 177, 255, .78);
+      box-shadow: 0 0 0 3px rgba(43, 132, 211, .15);
+      background: rgba(7, 24, 42, .82);
+    }
+    .btn { border-radius: 11px; transition: background-color .16s ease, border-color .16s ease, transform .16s ease; }
+    .btn-primary {
+      color: #061729;
+      background: linear-gradient(135deg, #54adf5, #2180d5);
+      box-shadow: 0 8px 20px rgba(25, 117, 200, .20);
+    }
+    .btn-primary:hover {
+      color: #041321;
+      background: linear-gradient(135deg, #83c8ff, #3d9be9);
+      transform: translateY(-1px);
+      box-shadow: 0 10px 25px rgba(25, 117, 200, .25);
+    }
+    .btn-secondary {
+      color: #dcecff;
+      border-color: rgba(134, 179, 220, .17);
+      background: rgba(22, 49, 75, .50);
+    }
+    .btn-secondary:hover { border-color: rgba(112, 185, 246, .38); background: rgba(33, 72, 107, .58); }
+    .nav-item { border-radius: 12px; }
+    .nav-item.active {
+      color: #f5faff;
+      border-color: rgba(85, 169, 239, .24);
+      background: linear-gradient(100deg, rgba(32, 122, 202, .23), rgba(20, 75, 126, .13));
+    }
+    .nav-item.active .nav-icon {
+      color: #8bcaff;
+      background: rgba(46, 141, 220, .20);
+    }
+    .sidebar {
+      background: rgba(5, 17, 30, .96);
+      border-right-color: rgba(127, 178, 222, .13);
+    }
+    .avatar { color: #06182a; background: linear-gradient(145deg, #a0d7ff, #398ed6); }
+    .main-area { padding-left: clamp(18px, 2.6vw, 38px); padding-right: clamp(18px, 2.6vw, 38px); }
+    .topbar { border-bottom-color: rgba(130, 178, 221, .14); }
+    .welcome-panel {
+      border-color: rgba(79, 163, 235, .25);
+      background:
+        radial-gradient(circle at 88% 8%, rgba(85, 173, 247, .20), transparent 30%),
+        linear-gradient(110deg, rgba(14, 77, 132, .58), rgba(13, 39, 66, .85));
+      box-shadow: 0 12px 32px rgba(0, 10, 24, .16);
+    }
+    .welcome-panel .eyebrow { color: #8bcaff; }
+    .welcome-panel:after { color: rgba(185, 221, 250, .045); }
+    .announcement {
+      border-color: rgba(82, 161, 226, .20);
+      background: rgba(24, 82, 132, .14);
+    }
+    .announcement-icon { color: #8bcaff; background: rgba(48, 140, 218, .18); }
+    .announcement-title, .module-category { color: #83c4ff; }
+    .stat-card, .module-card, .table-card, .panel {
+      border-color: rgba(130, 177, 219, .14);
+      background: linear-gradient(145deg, rgba(16, 37, 60, .88), rgba(10, 27, 46, .92));
+      box-shadow: 0 8px 22px rgba(0, 8, 20, .12);
+    }
+    .stat-card { border-radius: 15px; }
+    .stat-icon, .module-icon {
+      color: #8bcaff;
+      border-color: rgba(97, 169, 229, .16);
+      background: rgba(34, 117, 185, .13);
+    }
+    .module-card { border-radius: 15px; min-height: 158px; }
+    .module-card:hover {
+      border-color: rgba(95, 181, 250, .48);
+      background: linear-gradient(145deg, rgba(21, 58, 91, .96), rgba(12, 36, 61, .96));
+      box-shadow: 0 14px 30px rgba(0, 9, 22, .24);
+      transform: translateY(-2px);
+    }
+    .filter-chip { border-color: rgba(134, 179, 220, .17); }
+    .filter-chip.active {
+      color: #9bd2ff;
+      border-color: rgba(94, 177, 245, .40);
+      background: rgba(40, 127, 194, .17);
+    }
+    .table-card { border-radius: 15px; }
+    th { color: #a4bdd5; background: rgba(38, 84, 124, .18); }
+    td { border-top-color: rgba(134, 178, 216, .10); }
+    tr:hover td { background: rgba(56, 127, 184, .08); }
+    .role-pill { color: #b8d8f5; background: rgba(67, 128, 180, .13); border-color: rgba(108, 169, 219, .14); }
+    .icon-btn { border-color: rgba(134, 179, 220, .15); background: rgba(18, 47, 74, .45); }
+    .icon-btn:hover { border-color: rgba(100, 180, 245, .40); color: #a9d8ff; }
+    .page-note { border-color: rgba(81, 157, 220, .19); background: rgba(22, 84, 135, .13); }
+    #modalRoot { background: rgba(0, 8, 18, .76); }
+    .modal { background: #0d2035; border-color: rgba(125, 180, 226, .20); }
+    .toast, .busy-box { background: #102943; border-color: rgba(135, 185, 226, .18); }
+    .spinner { border-top-color: #71bdff; }
+    #toastArea { right: 18px; bottom: max(18px, env(safe-area-inset-bottom)); }
+    .search-box input { min-height: 38px; }
+    .empty-state { border-color: rgba(136, 183, 222, .18); }
+    /* BETA NOWZONE — xanh lá & be, ưu tiên tương phản và tốc độ */
+    :root {
+      --bg: #f2eee4;
+      --bg-2: #e9e1d1;
+      --panel: #fffdf7;
+      --panel-2: #f8f4e9;
+      --line: #ddd5c5;
+      --text: #26392f;
+      --muted: #718075;
+      --muted-2: #8c978c;
+      --orange: #286247;
+      --orange-2: #d9c8a8;
+      --blue: #315f49;
+      --green: #43835b;
+      --red: #b85f56;
+      --yellow: #a77c38;
+      --sand: #e8ddc8;
+      --cream: #fbf8ef;
+      --radius: 16px;
+      --shadow: 0 10px 26px rgba(48, 57, 43, .075);
+    }
+
+    html { background: var(--bg); scroll-behavior: auto; }
+    body {
+      color: var(--text);
+      background: var(--bg);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", Roboto, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: auto;
+    }
+    /* Tắt blur và hiệu ứng nặng để giao diện phản hồi nhanh trên máy cấu hình thấp. */
+    .login-wrap, .login-card, .sidebar, .stat-card, .module-card,
+    .table-card, .panel, .modal, #modalRoot, #busyOverlay {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+    .login-wrap {
+      border-color: #d9d0bf;
+      background: var(--cream);
+      box-shadow: 0 14px 38px rgba(38, 57, 47, .10);
+    }
+    .login-aside {
+      background: linear-gradient(145deg, #214f3b, #2e674c);
+    }
+    .login-aside h1, .login-aside p, .login-aside .feature,
+    .login-aside .login-foot { color: #f8f4e9; }
+    .login-aside h1 span {
+      color: #e7d8b9;
+      background: none;
+      -webkit-text-fill-color: currentColor;
+    }
+    .login-aside:after {
+      border-color: rgba(245, 239, 222, .13);
+      box-shadow: 0 0 0 45px rgba(245, 239, 222, .035), 0 0 0 90px rgba(245, 239, 222, .02);
+    }
+    .login-card { background: var(--cream); }
+    .login-card .brand-name { color: #28583f; text-shadow: none; }
+    .login-card .brand-sub { color: #798477; }
+    .brand-mark { display: none !important; }
+    .brand-row { gap: 0; }
+    .brand-name { color: #fff; letter-spacing: .65px; text-shadow: none; }
+    .brand-sub { color: #d7e4d9; }
+    .login-card h2 { color: #26392f; }
+    .login-card .lead { color: #6f7c70; }
+    .login-support { color: #788477; border-top-color: #e1d9c9; }
+    .field label { color: #526356; }
+    .field input, .field select, .field textarea, .search-box input {
+      color: #26392f;
+      border-color: #d9d2c4;
+      background: #fffdf8;
+      border-radius: 10px;
+      transition: border-color .12s ease, box-shadow .12s ease;
+    }
+    .field select { color-scheme: light; }
+    .field input:focus, .field textarea:focus, .field select:focus,
+    .search-box input:focus {
+      border-color: #5c8a6c;
+      box-shadow: 0 0 0 3px rgba(55, 111, 77, .12);
+      background: #fffefb;
+    }
+    .field input::placeholder, .field textarea::placeholder,
+    .search-box input::placeholder { color: #9a9e91; }
+    .password-toggle { color: #58715f; }
+    .login-options { color: #6e7a70; }
+    .check-label input { accent-color: #286247; }
+    .btn {
+      border-radius: 9px;
+      transition: background-color .12s ease, border-color .12s ease;
+    }
+    .btn-primary {
+      color: #fffdf7;
+      background: #286247;
+      box-shadow: none;
+    }
+    .btn-primary:hover {
+      color: #fff;
+      background: #347553;
+      transform: none;
+      box-shadow: none;
+    }
+    .btn-secondary {
+      color: #345643;
+      border-color: #d8d0c0;
+      background: #eee7d8;
+    }
+    .btn-secondary:hover {
+      color: #214c37;
+      border-color: #b9c7b7;
+      background: #e6eadf;
+    }
+    .btn-danger {
+      color: #a94f49;
+      border-color: #e6c7c1;
+      background: #f8e9e5;
+    }
+    .btn-danger:hover { background: #f2dcd6; }
+    .login-error {
+      color: #a64d48;
+      border-color: #e8c8c2;
+      background: #faece8;
+    }
+
+    #appScreen { background: var(--bg); }
+    .sidebar {
+      color: #f8f4e9;
+      background: #214b39;
+      border-right-color: #315d49;
+    }
+    .sidebar .brand-name { color: #fffdf7; }
+    .sidebar .brand-sub { color: #d4e1d5; }
+    .nav-label { color: #b7cbb9; }
+    .nav-item { color: #d9e4d8; }
+    .nav-item .nav-icon {
+      color: #e2eadf;
+      background: rgba(255, 255, 255, .09);
+    }
+    .nav-item:hover { color: #fffdf7; background: rgba(255,255,255,.08); }
+    .nav-item.active {
+      color: #26392f;
+      border-color: #e4d7bb;
+      background: #e9dfca;
+      box-shadow: inset 3px 0 0 #c4ab7c;
+    }
+    .nav-item.active .nav-icon {
+      color: #28583f;
+      background: #d8c9aa;
+    }
+    .sidebar-bottom { border-top-color: rgba(238, 232, 215, .20); }
+    .security-note { color: #c1d0c2; }
+    .side-user-name { color: #fffdf7; }
+    .side-user-role { color: #c4d3c5; }
+    .avatar {
+      color: #214b39;
+      background: linear-gradient(145deg, #efe5ce, #d6c5a1);
+      box-shadow: none;
+    }
+    .sidebar .btn-secondary {
+      color: #f6f1e6;
+      border-color: rgba(246, 241, 230, .25);
+      background: rgba(255,255,255,.08);
+    }
+    .sidebar .btn-secondary:hover { background: rgba(255,255,255,.15); }
+    .main-area { color: var(--text); }
+    .topbar { border-bottom-color: #ded7c8; }
+    .page-heading h1 { color: #26392f; }
+    .page-heading p { color: #758176; }
+    .top-time { color: #718075; }
+    .eyebrow { color: #748176; }
+
+    .welcome-panel {
+      border-color: #315f48;
+      background: linear-gradient(110deg, #244f3c, #37694e);
+      box-shadow: none;
+    }
+    .welcome-panel .eyebrow { color: #e5d7b9; }
+    .welcome-panel h2 { color: #fffdf7; }
+    .welcome-panel p { color: #e4eadf; }
+    .welcome-panel:after { color: rgba(255, 250, 235, .055); }
+    .announcement {
+      border-color: #e2d6c0;
+      background: #eee6d5;
+    }
+    .announcement-icon {
+      color: #355f46;
+      background: #ded2b8;
+    }
+    .announcement-title { color: #365e45; }
+    .announcement-text { color: #49584d; }
+    .stats-grid { gap: 12px; }
+    .stat-card, .module-card, .table-card, .panel {
+      border-color: #ded6c6;
+      background: #fffdf7;
+      box-shadow: 0 3px 12px rgba(45, 56, 43, .035);
+    }
+    .stat-card { border-radius: 13px; }
+    .stat-label { color: #748176; }
+    .stat-value { color: #26392f; }
+    .stat-foot { color: #879083; }
+    .stat-icon, .module-icon {
+      color: #356449;
+      border-color: #e0d8c8;
+      background: #f0eadc;
+    }
+    .section-head h2 { color: #2c4034; }
+    .section-head p { color: #7b867a; }
+    .search-icon { color: #718075; }
+    .filter-chip {
+      color: #5c6d60;
+      border-color: #dcd4c4;
+      background: #faf7ef;
+    }
+    .filter-chip.active {
+      color: #285b40;
+      border-color: #9fb6a1;
+      background: #e7eee4;
+    }
+    .module-card {
+      color: #26392f;
+      border-radius: 13px;
+      min-height: 150px;
+      box-shadow: none;
+    }
+    .module-card:hover {
+      color: #26392f;
+      border-color: #99b29e;
+      background: #f7f6ed;
+      box-shadow: 0 5px 14px rgba(37, 76, 51, .07);
+      transform: translateY(-1px);
+    }
+    .module-category { color: #477451; }
+    .module-title { color: #2b4033; }
+    .module-desc { color: #748176; }
+    .module-bottom { color: #718075; }
+    .empty-state {
+      color: #748176;
+      border-color: #d8d0c0;
+      background: rgba(255, 253, 247, .55);
+    }
+
+    .table-card { border-radius: 13px; }
+    .table-toolbar { border-bottom-color: #e4ddce; }
+    th {
+      color: #526457;
+      background: #eee8da;
+    }
+    td {
+      color: #46564a;
+      border-top-color: #ece6d9;
+    }
+    tr:hover td { background: #f7f4eb; }
+    .cell-main { color: #26392f; }
+    .cell-sub { color: #7d887d; }
+    .status-active { color: #34734d; background: #e7f0e5; }
+    .status-inactive { color: #ad5750; background: #f7e9e5; }
+    .role-pill {
+      color: #48634f;
+      border-color: #dce3d7;
+      background: #edf1e8;
+    }
+    .icon-btn {
+      color: #5b705f;
+      border-color: #ded7c8;
+      background: #f8f5ed;
+    }
+    .icon-btn:hover { color: #285b40; border-color: #a9bda9; }
+    .icon-btn.danger:hover { color: #ae514b; border-color: #dfbdb7; }
+    .page-note {
+      color: #556458;
+      border-color: #e1d5bd;
+      background: #f0e8d8;
+    }
+    .settings-grid { gap: 14px; }
+    .panel h3 { color: #2b4033; }
+    .panel .panel-desc { color: #758176; }
+
+    #modalRoot { background: rgba(25, 38, 29, .48); }
+    .modal {
+      color: #26392f;
+      border-color: #d9d0bf;
+      background: #fffdf7;
+      box-shadow: 0 15px 42px rgba(27, 45, 32, .18);
+    }
+    .modal-head { border-bottom-color: #e5dece; }
+    .modal-head h2 { color: #2b4033; }
+    .modal-close {
+      color: #657568;
+      border-color: #ded6c6;
+      background: #f5f0e5;
+    }
+    #toastArea { right: 18px; bottom: max(18px, env(safe-area-inset-bottom)); }
+    .toast, .busy-box {
+      color: #2b4033;
+      border-color: #ded6c6;
+      background: #fffdf7;
+      box-shadow: 0 5px 16px rgba(35, 50, 37, .10);
+    }
+    .toast.error { color: #a84e48; border-color: #e5c5bf; }
+    .toast.success { border-color: #cbdcc9; }
+    .spinner { border-top-color: #34734d; }
+    #busyOverlay { background: rgba(35, 49, 38, .25); }
+    .search-box input { min-height: 38px; }
+
+    /* Giảm chuyển động và repaint không cần thiết. */
+    .sidebar, .module-card, .btn, .nav-item { transition-duration: .12s; }
+    .module-card:hover { transform: none; }
+    @media (max-width: 930px) {
+      .main-area { padding-left: 20px; padding-right: 20px; }
+    }
+    @media (max-width: 720px) {
+      #loginScreen { min-height: 100svh; }
+      .login-card { padding: 30px 24px; }
+      .sidebar { background: #214b39; }
+      .main-area { padding-left: 14px; padding-right: 14px; }
+      .topbar { gap: 10px; }
+      .welcome-panel { padding: 21px 19px; }
+      .module-card { min-height: 145px; }
+      .stats-grid { gap: 9px; }
+    }
+    @media (max-width: 430px) {
+      .page-heading p { max-width: 210px; line-height: 1.45; }
+      .top-actions .btn { padding: 9px; }
+      .module-card { padding: 12px; }
+      .stat-card { min-height: 104px; }
+      .modal { border-radius: 15px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+
+    /* Hạn chế hiệu ứng tốn GPU; giữ chuyển động ngắn và nhẹ. */
+    .sidebar, .module-card, .btn, .nav-item { transition-duration: .16s; }
+    @media (max-width: 930px) {
+      .main-area { padding-left: 20px; padding-right: 20px; }
+    }
+    @media (max-width: 720px) {
+      #loginScreen { min-height: 100svh; }
+      .login-card { padding: 30px 24px; }
+      .sidebar { background: #071a2c; }
+      .main-area { padding-left: 14px; padding-right: 14px; }
+      .topbar { gap: 10px; }
+      .welcome-panel { padding: 21px 19px; }
+      .module-card { min-height: 145px; }
+      .stats-grid { gap: 9px; }
+    }
+    @media (max-width: 430px) {
+      .page-heading p { max-width: 210px; line-height: 1.45; }
+      .top-actions .btn { padding: 9px; }
+      .module-card { padding: 12px; }
+      .stat-card { min-height: 104px; }
+      .modal { border-radius: 15px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+
+  </style>
+
+  <style id="beta-black-beige-mirror-theme">
+    :root {
+      color-scheme: dark;
+      --bg: #090908;
+      --bg-2: #12110f;
+      --panel: rgba(30, 28, 24, .90);
+      --panel-2: #211f1a;
+      --line: rgba(232, 218, 190, .19);
+      --text: #f3ecdf;
+      --muted: #b8ad9b;
+      --muted-2: #8f8575;
+      --orange: #c9b58f;
+      --orange-2: #f0e3c8;
+      --blue: #b9a47e;
+      --green: #9db89c;
+      --red: #e0a29a;
+      --yellow: #e5ca91;
+      --sand: #d9c9aa;
+      --cream: #e9dfcc;
+      --radius: 17px;
+      --shadow: 0 18px 48px rgba(0, 0, 0, .42);
+    }
+    html, body, #appScreen { background: var(--bg); }
+    body {
+      color: var(--text);
+      background:
+        radial-gradient(ellipse at 12% -8%, rgba(205, 184, 145, .11), transparent 34%),
+        radial-gradient(ellipse at 92% 105%, rgba(236, 223, 198, .07), transparent 34%),
+        linear-gradient(145deg, #080807, #11100e 54%, #090908);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    }
+    :focus-visible { outline-color: #dfcba5; }
+    .login-wrap {
+      border: 1px solid rgba(239, 224, 195, .26);
+      background: linear-gradient(135deg, rgba(255,255,255,.095), rgba(255,255,255,.018) 40%, rgba(219,199,161,.075)), rgba(20,19,17,.93);
+      box-shadow: 0 26px 78px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.20), inset 0 -1px 0 rgba(231,214,180,.08);
+    }
+    .login-aside {
+      background:
+        linear-gradient(118deg, rgba(255,255,255,.13), transparent 34%, rgba(222,202,166,.045) 70%, transparent),
+        linear-gradient(145deg, #191815, #28251f 55%, #141310);
+    }
+    .login-aside h1 span { color: #e8d8b8; }
+    .login-aside p, .login-aside .feature { color: #ded5c4; }
+    .feature-dot { color: #f0e2c5; background: rgba(228,211,178,.13); border: 1px solid rgba(231,216,188,.18); }
+    .login-foot { color: #a99d89; }
+    .login-card {
+      color: var(--text);
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.085), transparent 40%),
+        linear-gradient(160deg, rgba(37,34,28,.96), rgba(19,18,16,.98));
+    }
+    .login-card .brand-name { color: #f2e7d2; }
+    .login-card .brand-sub, .login-card .lead, .login-support { color: #b7ab98; }
+    .login-support { border-top-color: rgba(232,218,190,.16); }
+    .brand-name { color: #f3e9d8; letter-spacing: .75px; }
+    .brand-sub { color: #b9ad98; }
+    .field label { color: #d0c3ad; }
+    .field input, .field select, .field textarea, .search-box input {
+      color: #f1eadc;
+      border: 1px solid rgba(228,211,178,.20);
+      background: linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.018)), #171613;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.075), inset 0 -1px 0 rgba(0,0,0,.30);
+    }
+    .field select { color-scheme: dark; }
+    .field input:focus, .field textarea:focus, .field select:focus, .search-box input:focus {
+      border-color: rgba(226,207,169,.72);
+      background: #1b1915;
+      box-shadow: 0 0 0 3px rgba(214,194,156,.12), inset 0 1px 0 rgba(255,255,255,.09);
+    }
+    .field input::placeholder, .field textarea::placeholder, .search-box input::placeholder { color: #897f70; }
+    .password-toggle, .login-options { color: #b9ad99; }
+    .check-label input { accent-color: #d8c39c; }
+    .btn { border-radius: 11px; }
+    .btn-primary {
+      color: #171510;
+      border-color: rgba(255,246,226,.40);
+      background: linear-gradient(135deg, #f0e4cc 0%, #d9c7a4 46%, #bca783 100%);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.65), 0 7px 18px rgba(0,0,0,.24);
+    }
+    .btn-primary:hover {
+      color: #100f0c;
+      background: linear-gradient(135deg, #fff4df, #e5d3af 52%, #cbb58c);
+      transform: translateY(-1px);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.78), 0 10px 23px rgba(0,0,0,.30);
+    }
+    .btn-secondary {
+      color: #e6dcc9;
+      border-color: rgba(230,215,187,.21);
+      background: linear-gradient(135deg, rgba(255,255,255,.085), rgba(255,255,255,.018)), #211f1a;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.10);
+    }
+    .btn-secondary:hover { color: #fff4df; border-color: rgba(232,216,186,.42); background: #2b2821; }
+    .btn-danger { color: #f0b6ad; border-color: rgba(224,162,154,.28); background: rgba(125,52,46,.22); }
+    .login-error { color: #f0b6ad; border-color: rgba(224,162,154,.25); background: rgba(125,52,46,.18); }
+
+    .sidebar {
+      color: #efe5d2;
+      border-right: 1px solid rgba(231,215,185,.16);
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.075), transparent 38%),
+        linear-gradient(180deg, #171613, #0d0c0a 78%, #14120f);
+      box-shadow: 8px 0 28px rgba(0,0,0,.20);
+    }
+    .sidebar .brand-name { color: #f4ead7; }
+    .sidebar .brand-sub { color: #b5a991; }
+    .nav-label { color: #9f927d; }
+    .nav-item { color: #c7bda9; }
+    .nav-item .nav-icon { color: #d7c9ad; background: rgba(232,218,190,.075); }
+    .nav-item:hover { color: #fff4df; background: rgba(232,218,190,.075); }
+    .nav-item.active {
+      color: #f8edda;
+      border-color: rgba(231,215,185,.28);
+      background: linear-gradient(105deg, rgba(226,208,173,.20), rgba(255,255,255,.035));
+      box-shadow: inset 3px 0 0 #d9c39a, inset 0 1px 0 rgba(255,255,255,.08);
+    }
+    .nav-item.active .nav-icon { color: #f1e2c2; background: rgba(224,204,166,.15); }
+    .sidebar-bottom { border-top-color: rgba(232,218,190,.16); }
+    .security-note, .side-user-role { color: #a89d89; }
+    .side-user-name { color: #f1e7d5; }
+    .avatar {
+      color: #191711;
+      background: linear-gradient(145deg, #fff3db, #d0bc96 55%, #a58f69);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.75), 0 4px 12px rgba(0,0,0,.24);
+    }
+
+    .main-area { color: var(--text); }
+    .topbar { border-bottom-color: rgba(232,218,190,.17); }
+    .page-heading h1 { color: #f0e7d8; }
+    .page-heading p, .top-time, .eyebrow { color: #a99e8b; }
+    .welcome-panel {
+      border: 1px solid rgba(230,214,183,.26);
+      background:
+        linear-gradient(112deg, rgba(255,255,255,.13), transparent 35%, rgba(238,222,191,.06) 72%, transparent),
+        linear-gradient(135deg, #28251f, #171613 72%);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.17), 0 14px 34px rgba(0,0,0,.27);
+    }
+    .welcome-panel .eyebrow { color: #ddcba7; }
+    .welcome-panel h2 { color: #f6eddf; }
+    .welcome-panel p { color: #d1c6b3; }
+    .welcome-panel:after { color: rgba(243,230,205,.055); }
+    .announcement {
+      border-color: rgba(226,207,170,.20);
+      background: linear-gradient(120deg, rgba(255,255,255,.07), transparent 55%), #211f1a;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.075);
+    }
+    .announcement-icon { color: #ead8b5; background: rgba(223,204,166,.14); }
+    .announcement-title, .module-category { color: #e2d0ab; }
+    .announcement-text { color: #cec3b1; }
+    .stat-card, .module-card, .table-card, .panel {
+      color: var(--text);
+      border-color: rgba(228,212,182,.18);
+      background:
+        linear-gradient(128deg, rgba(255,255,255,.105), transparent 34%, rgba(225,207,173,.035) 76%, transparent),
+        linear-gradient(145deg, rgba(38,35,29,.96), rgba(19,18,16,.97));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.12), inset 0 -1px 0 rgba(0,0,0,.25), 0 9px 25px rgba(0,0,0,.23);
+    }
+    .stat-card { border-radius: 15px; }
+    .stat-label, .stat-foot, .section-head p, .module-desc, .module-bottom { color: #a99e8b; }
+    .stat-value, .section-head h2, .module-title, .cell-main { color: #f1e8d9; }
+    .stat-icon, .module-icon {
+      color: #e8d8b7;
+      border-color: rgba(230,214,184,.20);
+      background: linear-gradient(145deg, rgba(255,255,255,.11), rgba(231,214,182,.035));
+    }
+    .search-icon { color: #b9ad98; }
+    .filter-chip {
+      color: #c9bda8;
+      border-color: rgba(231,215,185,.19);
+      background: rgba(255,255,255,.035);
+    }
+    .filter-chip.active {
+      color: #f0e4cd;
+      border-color: rgba(232,215,181,.40);
+      background: linear-gradient(110deg, rgba(221,202,164,.17), rgba(255,255,255,.035));
+    }
+    .module-card { color: #f0e7d8; border-radius: 15px; }
+    .module-card:hover {
+      color: #fff4df;
+      border-color: rgba(235,218,185,.42);
+      background: linear-gradient(130deg, rgba(255,255,255,.13), transparent 45%), #2a2720;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 12px 28px rgba(0,0,0,.30);
+      transform: none;
+    }
+    .empty-state { color: #b7ac99; border-color: rgba(229,213,182,.20); background: rgba(255,255,255,.025); }
+    .table-toolbar { border-bottom-color: rgba(231,215,185,.15); }
+    th { color: #d8c9ad; background: rgba(228,210,176,.09); }
+    td { color: #d0c5b3; border-top-color: rgba(231,215,185,.11); }
+    tr:hover td { background: rgba(232,218,190,.055); }
+    .cell-sub { color: #a69a86; }
+    .status-active { color: #bdd5b7; background: rgba(105,145,100,.17); }
+    .status-inactive { color: #edb6ad; background: rgba(146,72,65,.18); }
+    .role-pill { color: #e0d2b7; border-color: rgba(230,214,184,.17); background: rgba(223,203,166,.08); }
+    .icon-btn { color: #d6c8ae; border-color: rgba(230,214,184,.18); background: rgba(255,255,255,.045); }
+    .icon-btn:hover { color: #fff2d8; border-color: rgba(237,220,188,.42); }
+    .page-note { color: #d0c5b3; border-color: rgba(231,215,185,.20); background: rgba(224,204,166,.075); }
+    .panel h3 { color: #f0e6d6; }
+    .panel .panel-desc { color: #b2a792; }
+
+    #modalRoot { background: rgba(0,0,0,.78); }
+    .modal {
+      color: #f0e7d8;
+      border-color: rgba(233,216,184,.25);
+      background: linear-gradient(135deg, rgba(255,255,255,.10), transparent 35%), #181713;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.14), 0 24px 75px rgba(0,0,0,.62);
+    }
+    .modal-head { border-bottom-color: rgba(231,215,185,.16); }
+    .modal-head h2 { color: #f0e7d8; }
+    .modal-close { color: #d2c5ae; border-color: rgba(231,215,185,.20); background: rgba(255,255,255,.05); }
+    .modal-body { color: #e8dece; }
+    .toast, .busy-box {
+      color: #eee4d3;
+      border-color: rgba(232,216,185,.22);
+      background: linear-gradient(135deg, rgba(255,255,255,.10), transparent 45%), #211f1a;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 8px 25px rgba(0,0,0,.32);
+    }
+    .toast.error { color: #f0b9b0; border-color: rgba(224,162,154,.30); }
+    .toast.success { border-color: rgba(190,208,174,.27); }
+    .spinner { border-top-color: #e5d3ae; }
+    #busyOverlay { background: rgba(0,0,0,.50); }
+
+    /* Gương phản chiếu: dùng lớp gradient tĩnh thay vì blur diện rộng để hạn chế tải GPU. */
+    .login-wrap, .login-card, .welcome-panel, .stat-card, .module-card,
+    .table-card, .panel, .modal, .announcement {
+      background-clip: padding-box;
+    }
+    .login-wrap { position: relative; }
+    .login-wrap::before {
+      content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+      background: linear-gradient(118deg, rgba(255,255,255,.12), transparent 19%, transparent 72%, rgba(235,220,191,.045));
+    }
+    .login-aside > * { position: relative; z-index: 1; }
+    .stat-card, .module-card, .panel { position: relative; }
+    .module-card, .stat-card, .panel { overflow: hidden; }
+    .stat-card::after, .module-card::after, .panel::after {
+      content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+      background: linear-gradient(120deg, rgba(255,255,255,.075), transparent 22%, transparent 78%, rgba(236,220,190,.035));
+    }
+    .sidebar, .module-card, .btn, .nav-item { transition-duration: .12s !important; }
+    .module-card:hover { transform: none !important; }
+    @media (max-width: 720px) {
+      .sidebar { background: linear-gradient(155deg, #1d1b17, #0c0b09 82%); }
+      .main-area { padding-left: 14px; padding-right: 14px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+  </style>
+  <style id="beta-nowzone-modern-bright-theme">
+    :root {
+      color-scheme: light;
+      --bg: #f4f7f4;
+      --bg-2: #edf3ee;
+      --panel: #ffffff;
+      --panel-2: #f8fbf8;
+      --line: #e3ebe4;
+      --text: #20352a;
+      --muted: #6f8075;
+      --muted-2: #91a096;
+      --orange: #18734f;
+      --orange-2: #2c9469;
+      --blue: #347ea0;
+      --green: #27885c;
+      --red: #bd625b;
+      --yellow: #b78639;
+      --sand: #e9dfca;
+      --cream: #fffdf8;
+      --radius: 18px;
+      --shadow: 0 12px 32px rgba(31, 65, 45, .075);
+    }
+
+    html { min-height: 100%; background: var(--bg); color-scheme: light; }
+    body {
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(ellipse at 0% 0%, rgba(194, 225, 203, .42), transparent 32%),
+        radial-gradient(ellipse at 100% 100%, rgba(234, 220, 190, .34), transparent 30%),
+        #f4f7f4;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    button, input, select, textarea { font: inherit; }
+    button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+    ::selection { color: #124a34; background: #cce9d6; }
+    :focus-visible { outline: 3px solid rgba(39, 136, 92, .32); outline-offset: 2px; }
+
+    /* Đăng nhập: thoáng, sáng và có điểm nhấn thương hiệu xanh ngọc. */
+    #loginScreen {
+      min-height: 100vh;
+      min-height: 100svh;
+      padding: clamp(16px, 3vw, 34px);
+      background: radial-gradient(circle at 50% 50%, rgba(255,255,255,.58), transparent 62%);
+    }
+    .login-wrap {
+      width: min(100%, 1040px);
+      border: 1px solid rgba(255,255,255,.88);
+      border-radius: 28px;
+      background: #fff;
+      box-shadow: 0 28px 80px rgba(35, 71, 49, .13), 0 3px 10px rgba(31, 62, 43, .035);
+      overflow: hidden;
+      backdrop-filter: none;
+    }
+    .login-aside {
+      background:
+        radial-gradient(circle at 92% 10%, rgba(255,255,255,.20), transparent 28%),
+        radial-gradient(circle at 4% 95%, rgba(190,230,203,.18), transparent 34%),
+        linear-gradient(145deg, #125b42 0%, #187451 52%, #248760 100%);
+      padding: clamp(28px, 4vw, 48px);
+    }
+    .login-aside:after {
+      width: 390px; height: 390px; right: -160px; bottom: -165px;
+      border-color: rgba(255,255,255,.18);
+      box-shadow: 0 0 0 48px rgba(255,255,255,.045), 0 0 0 96px rgba(255,255,255,.025);
+    }
+    .login-aside h1 {
+      color: #fff;
+      font-size: clamp(32px, 4.2vw, 47px);
+      letter-spacing: -1.9px;
+      line-height: 1.14;
+    }
+    .login-aside h1 span {
+      color: #e6f3d9;
+      background: linear-gradient(90deg, #fff4d8, #d6efcf 80%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .login-aside p { color: rgba(248,255,249,.83); line-height: 1.9; }
+    .feature { color: #f1faf2; }
+    .feature-dot {
+      color: #165d40;
+      background: #e5f2df;
+      border-radius: 9px;
+      font-weight: 800;
+    }
+    .login-foot { color: rgba(236,248,238,.68); }
+    .login-card {
+      background: #fff;
+      padding: clamp(30px, 4vw, 50px) clamp(26px, 3.2vw, 42px);
+    }
+    .brand-mark { display: none !important; }
+    .brand-row { gap: 0; }
+    .login-card .brand-name { color: #185f43; font-size: 14px; letter-spacing: .9px; }
+    .login-card .brand-sub { color: #829187; }
+    .login-card h2 { color: #21372b; font-size: 25px; letter-spacing: -.8px; }
+    .login-card .lead { color: #748278; font-size: 12px; }
+    .login-support { color: #839087; border-top-color: #edf1ec; }
+
+    /* Khung ứng dụng và thanh điều hướng. */
+    #appScreen { min-height: 100vh; background: transparent; }
+    .sidebar {
+      color: #284236;
+      background: rgba(255,255,255,.94);
+      border-right: 1px solid #e4ebe4;
+      box-shadow: 8px 0 30px rgba(40, 72, 51, .035);
+      padding-top: 24px;
+    }
+    .sidebar .brand-name { color: #185f43; font-weight: 850; letter-spacing: .7px; }
+    .sidebar .brand-sub { color: #85948a; }
+    .nav-label { color: #91a095; letter-spacing: 1.35px; }
+    .nav-item {
+      color: #65776b;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      padding: 11px 12px;
+    }
+    .nav-item .nav-icon {
+      color: #648573;
+      background: #f0f5f0;
+      border-radius: 8px;
+    }
+    .nav-item:hover { color: #1d6546; background: #f3f8f3; }
+    .nav-item.active {
+      color: #185d40;
+      border-color: #d6e9d9;
+      background: linear-gradient(100deg, #e8f4e9, #f5faf4);
+      box-shadow: inset 3px 0 0 #2b9161;
+    }
+    .nav-item.active .nav-icon { color: #176344; background: #d7ebda; }
+    .sidebar-bottom { border-top-color: #e8eee8; }
+    .security-note, .side-user-role { color: #87958b; }
+    .side-user-name { color: #294235; }
+    .avatar {
+      color: #fff;
+      background: linear-gradient(145deg, #3c9a70, #176344);
+      box-shadow: 0 5px 12px rgba(30,112,74,.16);
+    }
+    .sidebar .btn-secondary {
+      color: #35614a;
+      border-color: #dce8dd;
+      background: #f7faf6;
+      box-shadow: none;
+    }
+    .sidebar .btn-secondary:hover { color: #185d40; background: #edf6ee; border-color: #c9dfce; }
+
+    .main-area { color: var(--text); padding-left: clamp(18px, 2.7vw, 40px); padding-right: clamp(18px, 2.7vw, 40px); }
+    .topbar {
+      border-bottom: 1px solid #e4ebe5;
+      min-height: 86px;
+      margin-bottom: 28px;
+    }
+    .page-heading h1 { color: #1f382b; font-size: 22px; letter-spacing: -.7px; }
+    .page-heading p, .top-time, .eyebrow { color: #849187; }
+    .page-heading p { font-size: 11px; }
+
+    /* Thẻ nội dung: nền trắng, viền mảnh, phản sáng nhẹ. */
+    .welcome-panel {
+      border: 1px solid #d2e8d7;
+      border-radius: 20px;
+      padding: 30px 32px;
+      background:
+        radial-gradient(circle at 90% 5%, rgba(255,255,255,.8), transparent 28%),
+        linear-gradient(115deg, #e5f3e7 0%, #eff7ed 56%, #f7f5e9 100%);
+      box-shadow: 0 10px 26px rgba(44,105,65,.055);
+    }
+    .welcome-panel .eyebrow { color: #548465; }
+    .welcome-panel h2 { color: #214a34; }
+    .welcome-panel p { color: #617868; }
+    .welcome-panel:after { color: rgba(39,111,69,.06); }
+    .announcement {
+      border: 1px solid #eadfc7;
+      border-radius: 14px;
+      background: linear-gradient(110deg, #fffaf0, #f8f4e9);
+      box-shadow: 0 4px 14px rgba(105,85,46,.035);
+    }
+    .announcement-icon { color: #8b6a31; background: #f0e4c9; }
+    .announcement-title { color: #8a6b36; }
+    .announcement-text { color: #6d6758; }
+
+    .stat-card, .module-card, .table-card, .panel {
+      color: #263d30;
+      border: 1px solid #e3ebe4;
+      border-radius: 17px;
+      background: #fff;
+      box-shadow: 0 5px 18px rgba(40,72,51,.045), 0 1px 2px rgba(40,72,51,.025);
+    }
+    .stat-card { padding: 18px; }
+    .stat-label { color: #7b8b80; }
+    .stat-value { color: #213b2d; }
+    .stat-foot { color: #91a095; }
+    .stat-icon, .module-icon {
+      color: #28734f;
+      border: 1px solid #e1eee3;
+      background: linear-gradient(145deg, #f0f8f0, #e6f2e8);
+      border-radius: 10px;
+    }
+    .section-head h2 { color: #253e30; font-size: 15px; }
+    .section-head p { color: #87958b; }
+    .search-icon { color: #87978b; }
+    .field label { color: #52665a; }
+    .field input, .field select, .field textarea, .search-box input {
+      color: #263d30;
+      border: 1px solid #dce7dd;
+      border-radius: 11px;
+      background: #fbfdfb;
+      box-shadow: inset 0 1px 2px rgba(39,73,49,.025);
+      transition: border-color .14s ease, box-shadow .14s ease, background .14s ease;
+    }
+    .field select { color-scheme: light; }
+    .field input:focus, .field select:focus, .field textarea:focus, .search-box input:focus {
+      border-color: #79b58d;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(54,139,86,.11);
+    }
+    .field input::placeholder, .field textarea::placeholder, .search-box input::placeholder { color: #9ba89e; }
+    .password-toggle { color: #527661; }
+    .login-options { color: #75857a; }
+    .check-label input { accent-color: #247a52; }
+
+    .btn {
+      border-radius: 11px;
+      padding: 11px 16px;
+      font-weight: 700;
+      transition: transform .14s ease, background-color .14s ease, border-color .14s ease, box-shadow .14s ease;
+    }
+    .btn-primary {
+      color: #fff;
+      border-color: #1d774e;
+      background: linear-gradient(135deg, #27865b, #176946);
+      box-shadow: 0 6px 16px rgba(31,121,77,.16), inset 0 1px 0 rgba(255,255,255,.18);
+    }
+    .btn-primary:hover {
+      color: #fff;
+      background: linear-gradient(135deg, #319868, #1b7650);
+      box-shadow: 0 8px 20px rgba(31,121,77,.20);
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      color: #456452;
+      border-color: #dce7dd;
+      background: #fff;
+      box-shadow: 0 2px 5px rgba(40,72,51,.025);
+    }
+    .btn-secondary:hover { color: #1d6746; border-color: #c9dfce; background: #f4faf4; }
+    .btn-danger { color: #ad514a; border-color: #f0d6d1; background: #fff6f4; }
+    .btn-danger:hover { background: #ffefec; }
+    .login-error { color: #a74e48; border-color: #f0d0cb; background: #fff2ef; }
+
+    .module-grid { gap: 14px; }
+    .module-card {
+      min-height: 158px;
+      padding: 18px;
+      color: #294233;
+      text-decoration: none;
+      border-radius: 17px;
+      background: linear-gradient(160deg, #fff 0%, #fff 68%, #f8fbf7 100%);
+      transition: border-color .16s ease, box-shadow .16s ease, transform .16s ease;
+    }
+    .module-card:hover {
+      color: #1d5e40;
+      border-color: #b9d9c1;
+      background: linear-gradient(155deg, #fff, #f3faf3);
+      box-shadow: 0 12px 26px rgba(35,104,62,.085);
+      transform: translateY(-2px);
+    }
+    .module-category { color: #39815a; }
+    .module-title { color: #294334; font-size: 12px; }
+    .module-desc { color: #78897d; }
+    .module-bottom { color: #718579; }
+    .filter-row { gap: 8px; }
+    .filter-chip {
+      color: #617568;
+      border: 1px solid #dfe8df;
+      background: #fff;
+      border-radius: 999px;
+      padding: 7px 12px;
+    }
+    .filter-chip:hover { background: #f4f9f4; border-color: #c9dfcd; }
+    .filter-chip.active { color: #176343; border-color: #b9d9c1; background: #eaf5eb; }
+    .empty-state { color: #78897d; border-color: #dce7dd; background: #fbfdfb; }
+
+    .table-card { overflow: hidden; border-radius: 16px; }
+    .table-toolbar { border-bottom: 1px solid #e8eee8; background: #fff; }
+    table { background: #fff; }
+    th {
+      color: #52695b;
+      background: #f2f7f2;
+      border-bottom: 1px solid #e5ede6;
+    }
+    td { color: #53665a; border-top-color: #edf1ed; }
+    tr:hover td { background: #f8fbf8; }
+    .cell-main { color: #294334; }
+    .cell-sub { color: #89978d; }
+    .status-active { color: #26764d; background: #e8f5eb; }
+    .status-inactive { color: #b0524a; background: #fff0ed; }
+    .role-pill { color: #3e6b50; border-color: #dce9dc; background: #f0f6ef; }
+    .icon-btn {
+      color: #587464;
+      border-color: #dce7dd;
+      background: #fbfdfb;
+      border-radius: 9px;
+    }
+    .icon-btn:hover { color: #176343; border-color: #b9d8c0; background: #f1f8f2; }
+    .icon-btn.danger:hover { color: #a84e48; border-color: #e8c6c0; background: #fff3f0; }
+    .page-note { color: #617466; border-color: #e8dec8; background: #fbf6ea; }
+    .panel h3 { color: #294334; }
+    .panel .panel-desc { color: #7f8e83; }
+
+    /* Hộp thoại, thông báo và trạng thái tải. */
+    #modalRoot { background: rgba(24,48,34,.34); backdrop-filter: blur(3px); }
+    .modal {
+      color: #294334;
+      border: 1px solid rgba(255,255,255,.92);
+      border-radius: 19px;
+      background: #fff;
+      box-shadow: 0 24px 72px rgba(28,64,41,.22);
+    }
+    .modal-head { border-bottom: 1px solid #e9efea; background: linear-gradient(180deg,#fff,#fcfefc); }
+    .modal-head h2 { color: #263e30; }
+    .modal-close { color: #708176; border-color: #e1e9e2; background: #f7faf7; }
+    .modal-close:hover { color: #1b6544; background: #edf6ee; }
+    .modal-body { color: #52665a; }
+    .modal-actions { border-top: 1px solid #edf1ed; margin-top: 10px; }
+    #toastArea { right: 20px; bottom: max(18px, env(safe-area-inset-bottom)); }
+    .toast, .busy-box {
+      color: #2d4637;
+      border: 1px solid #e2ebe3;
+      border-radius: 13px;
+      background: rgba(255,255,255,.98);
+      box-shadow: 0 10px 28px rgba(31,67,45,.12);
+    }
+    .toast.error { color: #a74f49; border-color: #f0d1cb; background: #fff8f6; }
+    .toast.success { border-color: #d2e8d5; }
+    #busyOverlay { background: rgba(245,248,245,.64); backdrop-filter: blur(2px); }
+    .busy-box { padding: 17px 22px; }
+    .spinner { border-color: #dcebe0; border-top-color: #27865b; }
+
+    /* Bề mặt sáng nhẹ có phản sáng, không dùng blur nặng trên toàn trang. */
+    .stat-card, .module-card, .panel, .welcome-panel { position: relative; background-clip: padding-box; }
+    .stat-card::after, .module-card::after, .panel::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      border-radius: inherit;
+      background: linear-gradient(125deg, rgba(255,255,255,.42), transparent 24%, transparent 80%, rgba(206,225,208,.10));
+    }
+    .module-card > *, .stat-card > *, .panel > * { position: relative; z-index: 1; }
+    .sidebar, .module-card, .btn, .nav-item { transition-duration: .14s; }
+    .table-wrap { scrollbar-color: #c8d8cb #f3f7f3; }
+    .table-card a { color: #2878a0 !important; }
+
+    @media (max-width: 930px) {
+      .main-area { padding-left: 20px; padding-right: 20px; }
+      .login-aside { padding: 34px; }
+    }
+    @media (max-width: 720px) {
+      #loginScreen { min-height: 100svh; padding: 14px; }
+      .login-wrap { max-width: 460px; border-radius: 22px; }
+      .login-aside { display: none; }
+      .login-card { padding: 34px 26px; }
+      #appScreen { background: #f4f7f4; }
+      .sidebar {
+        background: #fff;
+        border-right: 1px solid #e4ebe4;
+        box-shadow: 14px 0 38px rgba(31,65,45,.13);
+      }
+      .main-area { padding: 0 14px 30px; }
+      .topbar { min-height: 72px; margin-bottom: 20px; }
+      .welcome-panel { padding: 22px 20px; }
+      .stats-grid { gap: 9px; }
+      .module-grid { gap: 9px; }
+      .module-card { min-height: 145px; }
+    }
+    @media (max-width: 430px) {
+      .login-card { padding: 30px 22px; }
+      .page-heading h1 { font-size: 17px; }
+      .page-heading p { max-width: 210px; line-height: 1.45; }
+      .top-actions { gap: 6px; }
+      .top-actions .btn { padding: 9px 10px; }
+      .stat-card { padding: 12px; }
+      .module-card { padding: 12px; }
+      .modal { border-radius: 16px; }
+      .modal-body { padding: 16px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+    }
   </style>
 </head>
 <body>
@@ -267,10 +1414,10 @@
       <div class="login-aside">
         <div>
           <div class="brand-row">
-            <div class="brand-mark"><img src="https://play-lh.googleusercontent.com/so_2mIzE8qaobdSafVStIV7olRZL8Q1SkclYErPgbFDPn1SzAUO33stPfshdztJZCVA0eqfWsO_iia59aHLKZL8" alt="Logo Beta Nowzone"></div>
+            <div class="brand-mark"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrHqRceRcnxQuqHdl1GRiVzTAJ9JsLd6RiJs_cSgBz9w&amp;s=10" alt="Logo Beta Cinemas" decoding="async" loading="eager" fetchpriority="high" referrerpolicy="no-referrer"></div>
             <div><div class="brand-name">BETA NOWZONE</div><div class="brand-sub">INTERNAL WORKSPACE</div></div>
           </div>
-          <h1>Một không gian<br><span>vận hành thông minh.</span></h1>
+          <h1>KHÔNG GIAN<br><span>VẬN HÀNH THÔNG MINH<span></h1>
           <p>Cổng thông tin nội bộ dành cho đội ngũ Beta Nowzone. Truy cập nhanh các công cụ nghiệp vụ, thông báo và tài nguyên được phân quyền theo tài khoản.</p>
           <div class="feature-list">
             <div class="feature"><span class="feature-dot">✓</span> Tập trung các ứng dụng nghiệp vụ</div>
@@ -282,15 +1429,15 @@
       </div>
       <div class="login-card">
         <div class="brand-row">
-          <div class="brand-mark"><img src="https://play-lh.googleusercontent.com/so_2mIzE8qaobdSafVStIV7olRZL8Q1SkclYErPgbFDPn1SzAUO33stPfshdztJZCVA0eqfWsO_iia59aHLKZL8" alt="Logo Beta Nowzone"></div>
+            <div class="brand-mark"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrHqRceRcnxQuqHdl1GRiVzTAJ9JsLd6RiJs_cSgBz9w&amp;s=10" alt="Logo Beta Cinemas" decoding="async" loading="eager" fetchpriority="high" referrerpolicy="no-referrer"></div>
           <div><div class="brand-name">BETA NOWZONE</div><div class="brand-sub">CỔNG NHÂN SỰ NỘI BỘ</div></div>
         </div>
         <h2>Đăng nhập hệ thống</h2>
-        <p class="lead">Sử dụng tên tài khoản và mật khẩu được Quản lý cấp. Không cần email.</p>
+        <p class="lead">Sử dụng tên tài khoản và mật khẩu được Quản lý cấp</p>
         <form id="loginForm" autocomplete="on">
           <div class="field">
             <label for="loginUsername">Tài khoản nhân viên</label>
-            <input id="loginUsername" name="username" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="Ví dụ: nv001" required maxlength="80">
+            <input id="loginUsername" name="username" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="Tên tài khoản" required maxlength="80">
           </div>
           <div class="field">
             <label for="loginPassword">Mật khẩu</label>
@@ -300,8 +1447,8 @@
             </div>
           </div>
           <div class="login-options">
-            <label class="check-label"><input id="rememberUsername" type="checkbox"> Ghi nhớ tài khoản</label>
-            <span>Phiên làm việc 6 giờ</span>
+            <label class="check-label"><input id="rememberUsername" type="checkbox"> Duy trì đăng nhập trên thiết bị này</label>
+            <span>Chỉ lưu trên trình duyệt này</span>
           </div>
           <button class="btn btn-primary btn-full" id="loginButton" type="submit">ĐĂNG NHẬP <span>→</span></button>
           <div class="login-error" id="loginError" role="alert"></div>
@@ -315,7 +1462,7 @@
   <section id="appScreen" class="hidden">
     <aside class="sidebar" id="sidebar">
       <div class="brand-row">
-        <div class="brand-mark"><img src="https://play-lh.googleusercontent.com/so_2mIzE8qaobdSafVStIV7olRZL8Q1SkclYErPgbFDPn1SzAUO33stPfshdztJZCVA0eqfWsO_iia59aHLKZL8" alt="Logo Beta Nowzone"></div>
+            <div class="brand-mark"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrHqRceRcnxQuqHdl1GRiVzTAJ9JsLd6RiJs_cSgBz9w&amp;s=10" alt="Logo Beta Cinemas" decoding="async" loading="eager" fetchpriority="high" referrerpolicy="no-referrer"></div>
         <div><div class="brand-name">BETA NOWZONE</div><div class="brand-sub">INTERNAL WORKSPACE</div></div>
       </div>
       <div class="nav-label">Không gian làm việc</div>
@@ -360,16 +1507,760 @@
   <div id="toastArea" aria-live="polite"></div>
   <div id="busyOverlay"><div class="busy-box"><span class="spinner"></span><span id="busyText">Đang xử lý...</span></div></div>
 
+
+  <style id="beta-cinemas-brand-concept">
+    :root {
+      color-scheme: light;
+      --bg: #f4f8fc;
+      --bg-2: #eaf2f9;
+      --panel: #ffffff;
+      --panel-2: #f7fafd;
+      --line: #dfe8f0;
+      --text: #2e3540;
+      --muted: #687887;
+      --muted-2: #8998a6;
+      --orange: #07579f;
+      --orange-2: #0b69b8;
+      --blue: #07579f;
+      --green: #b3d334;
+      --red: #e985a0;
+      --yellow: #f7941d;
+      --beta-blue: #07579f;
+      --beta-orange: #f7941d;
+      --beta-lime: #b3d334;
+      --beta-pink: #ed8ba3;
+      --beta-charcoal: #464646;
+      --cream: #fffdf9;
+      --radius: 18px;
+      --shadow: 0 12px 32px rgba(24, 69, 109, .075);
+    }
+    html, body { background-color: var(--bg); color-scheme: light; }
+    body {
+      color: var(--text);
+      background:
+        radial-gradient(ellipse at 0% 0%, rgba(7,87,159,.075), transparent 34%),
+        radial-gradient(ellipse at 100% 0%, rgba(247,148,29,.075), transparent 24%),
+        radial-gradient(ellipse at 100% 100%, rgba(179,211,52,.08), transparent 30%),
+        #f4f8fc;
+    }
+    ::selection { color: #fff; background: var(--beta-blue); }
+    :focus-visible { outline: 3px solid rgba(7,87,159,.28); outline-offset: 2px; }
+
+    /* Wordmark Beta Cinemas: giữ ảnh logo làm nguồn, không tự vẽ lại biểu tượng. */
+    .brand-row { align-items: center; gap: 11px; }
+    .brand-mark {
+      display: grid !important;
+      width: 174px;
+      height: 88px;
+      flex: 0 0 174px;
+      place-items: center;
+      overflow: hidden;
+      border: 1px solid #e8edf2;
+      border-radius: 13px;
+      background: #fff;
+      box-shadow: 0 5px 16px rgba(7, 55, 97, .08);
+    }
+    .brand-mark img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      padding: 0;
+    }
+    .brand-name { color: var(--beta-blue) !important; font-weight: 850; letter-spacing: .45px; }
+    .brand-sub { color: #6d7e8d !important; }
+    .login-aside .brand-name { color: #ffffff !important; }
+    .login-aside .brand-sub { color: rgba(255,255,255,.78) !important; }
+    .login-card .brand-name { color: var(--beta-blue) !important; }
+
+    #loginScreen { background: radial-gradient(circle at 50% 44%, rgba(255,255,255,.92), transparent 63%); }
+    .login-wrap {
+      border-color: rgba(255,255,255,.95);
+      background: #fff;
+      box-shadow: 0 28px 80px rgba(7,55,97,.13), 0 3px 10px rgba(7,55,97,.035);
+    }
+    .login-aside {
+      background:
+        radial-gradient(circle at 89% 13%, rgba(247,148,29,.32), transparent 18%),
+        radial-gradient(circle at 7% 90%, rgba(179,211,52,.22), transparent 25%),
+        radial-gradient(circle at 80% 88%, rgba(237,139,163,.18), transparent 22%),
+        linear-gradient(145deg, #064a88 0%, #07579f 56%, #0b69b8 100%);
+    }
+    .login-aside:after {
+      border-color: rgba(255,255,255,.18);
+      box-shadow: 0 0 0 48px rgba(255,255,255,.045), 0 0 0 96px rgba(255,255,255,.025);
+    }
+    .login-aside h1 span {
+      color: #fbd59f;
+      background: linear-gradient(90deg, #ffd7a2, #d7ee85 78%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .feature-dot { color: var(--beta-blue); background: #fff; }
+    .login-card { background: #fff; }
+    .login-card .brand-sub { color: #748596 !important; }
+    .login-card h2 { color: #2d3944; }
+    .login-card .lead { color: #6e7d89; }
+    .login-support { color: #83909b; border-top-color: #e8eef3; }
+
+    #appScreen { background: transparent; }
+    .sidebar {
+      color: #334657;
+      background: rgba(255,255,255,.97);
+      border-right-color: #e1eaf1;
+      box-shadow: 8px 0 28px rgba(7,55,97,.035);
+    }
+    .sidebar .brand-row { align-items: flex-start; flex-direction: column; gap: 8px; padding-bottom: 22px; }
+    .sidebar .brand-mark { width: 180px; height: 96px; flex-basis: 96px; }
+    .nav-label { color: #8798a7; }
+    .nav-item { color: #657887; border-radius: 12px; }
+    .nav-item .nav-icon { color: var(--beta-blue); background: #edf4fa; }
+    .nav-item:hover { color: var(--beta-blue); background: #f1f7fc; }
+    .nav-item.active {
+      color: #064b86;
+      border-color: #d4e5f3;
+      background: linear-gradient(100deg, #e8f2fa, #f5f9fc);
+      box-shadow: inset 3px 0 0 var(--beta-blue);
+    }
+    .nav-item.active .nav-icon { color: #fff; background: var(--beta-blue); }
+    .sidebar-bottom { border-top-color: #e6edf3; }
+    .security-note, .side-user-role { color: #8b99a5; }
+    .side-user-name { color: #33495b; }
+    .avatar { color: #fff; background: linear-gradient(145deg, #0b69b8, #064a88); box-shadow: 0 5px 12px rgba(7,87,159,.16); }
+
+    .main-area { color: var(--text); }
+    .topbar { border-bottom-color: #e1eaf1; }
+    .page-heading h1, .section-head h2 { color: #2e3d4a; }
+    .page-heading p, .top-time, .eyebrow, .section-head p { color: #8493a0; }
+    .welcome-panel {
+      border: 1px solid #d4e5f2;
+      background:
+        radial-gradient(circle at 89% 10%, rgba(255,255,255,.85), transparent 24%),
+        radial-gradient(circle at 92% 92%, rgba(247,148,29,.10), transparent 22%),
+        linear-gradient(115deg, #e8f2fa 0%, #f0f7fb 60%, #fbf8f1 100%);
+      box-shadow: 0 10px 26px rgba(7,87,159,.055);
+    }
+    .welcome-panel .eyebrow { color: #537b9c; }
+    .welcome-panel h2 { color: #064f90; }
+    .welcome-panel p { color: #607688; }
+    .welcome-panel:after { color: rgba(7,87,159,.055); }
+    .announcement {
+      border-color: #f4dfc4;
+      background: linear-gradient(110deg, #fffaf2, #fff7ed);
+      box-shadow: 0 4px 14px rgba(143,94,34,.035);
+    }
+    .announcement-icon { color: #9b5e12; background: #ffebcf; }
+    .announcement-title { color: #c47718; }
+    .announcement-text { color: #6c675d; }
+
+    .stat-card, .module-card, .table-card, .panel {
+      color: #354654;
+      border-color: #e1eaf1;
+      background: #fff;
+      box-shadow: 0 5px 18px rgba(24,69,109,.045), 0 1px 2px rgba(24,69,109,.025);
+    }
+    .stat-label { color: #748695; }
+    .stat-value { color: #2d4050; }
+    .stat-foot { color: #8b99a6; }
+    .stat-icon, .module-icon { color: var(--beta-blue); border-color: #dce9f3; background: #edf5fb; }
+    .stats-grid .stat-card:nth-child(4n+2) .stat-icon { color: #b46a12; border-color: #f6e2c5; background: #fff5e7; }
+    .stats-grid .stat-card:nth-child(4n+3) .stat-icon { color: #6d8d12; border-color: #e4edc4; background: #f4f8e7; }
+    .stats-grid .stat-card:nth-child(4n+4) .stat-icon { color: #bd607e; border-color: #f4dbe3; background: #fff1f5; }
+
+    .field label { color: #526878; }
+    .field input, .field select, .field textarea, .search-box input {
+      color: #334755;
+      border-color: #dce6ee;
+      background: #fbfdff;
+      box-shadow: inset 0 1px 2px rgba(34,65,91,.025);
+    }
+    .field select { color-scheme: light; }
+    .field input:focus, .field select:focus, .field textarea:focus, .search-box input:focus {
+      border-color: #77a9cf;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(7,87,159,.10);
+    }
+    .field input::placeholder, .field textarea::placeholder, .search-box input::placeholder { color: #9aa8b3; }
+    .password-toggle { color: #527b9c; }
+    .login-options { color: #758694; }
+    .check-label input { accent-color: var(--beta-blue); }
+
+    .btn { border-radius: 11px; }
+    .btn-primary {
+      color: #fff;
+      border-color: #064b88;
+      background: linear-gradient(135deg, #0b69b8, #064a88);
+      box-shadow: 0 6px 16px rgba(7,87,159,.17), inset 0 1px 0 rgba(255,255,255,.18);
+    }
+    .btn-primary:hover { color: #fff; background: linear-gradient(135deg, #1479ca, #07579f); box-shadow: 0 8px 20px rgba(7,87,159,.21); }
+    .btn-secondary { color: #456174; border-color: #dce6ee; background: #fff; }
+    .btn-secondary:hover { color: #07579f; border-color: #bfd4e5; background: #f3f8fc; }
+    .btn-danger { color: #b05265; border-color: #f0d5dc; background: #fff6f8; }
+    .btn-danger:hover { background: #ffedf2; }
+    .login-error { color: #ad5368; border-color: #f0d0d9; background: #fff2f5; }
+
+    .module-card { color: #344957; border-radius: 17px; background: linear-gradient(160deg,#fff 0%,#fff 68%,#f7fafd 100%); }
+    .module-card:hover { color: #07579f; border-color: #b7d2e7; background: linear-gradient(155deg,#fff,#f1f7fc); box-shadow: 0 12px 26px rgba(7,87,159,.085); }
+    .module-category { color: #07579f; }
+    .module-title { color: #324755; }
+    .module-desc, .module-bottom { color: #7b8c99; }
+    .filter-chip { color: #637988; border-color: #dfe8ef; background: #fff; }
+    .filter-chip:hover { background: #f4f8fc; border-color: #c8dce9; }
+    .filter-chip.active { color: #07579f; border-color: #b9d3e6; background: #eaf3fa; }
+    .empty-state { color: #7c8d99; border-color: #dce7ef; background: #fbfdff; }
+
+    .table-toolbar { border-bottom-color: #e7edf2; background: #fff; }
+    table { background: #fff; }
+    th { color: #526b7c; background: #f1f6fa; border-bottom-color: #e2ebf2; }
+    td { color: #596d7a; border-top-color: #edf2f6; }
+    tr:hover td { background: #f8fbfd; }
+    .cell-main { color: #324958; }
+    .cell-sub { color: #8a99a4; }
+    .status-active { color: #397b42; background: #eff7e9; }
+    .status-inactive { color: #b25367; background: #fff0f4; }
+    .role-pill { color: #376987; border-color: #dbe8f1; background: #eff6fb; }
+    .icon-btn { color: #557487; border-color: #dce6ee; background: #fbfdff; }
+    .icon-btn:hover { color: #07579f; border-color: #bed5e7; background: #f0f7fc; }
+    .icon-btn.danger:hover { color: #b05265; border-color: #edc9d3; background: #fff2f5; }
+    .page-note { color: #647482; border-color: #f1dfc6; background: #fff9f0; }
+    .panel h3 { color: #344a58; }
+    .panel .panel-desc { color: #81909c; }
+
+    #modalRoot { background: rgba(17,44,68,.34); backdrop-filter: blur(3px); }
+    .modal { color: #334957; border-color: rgba(255,255,255,.94); background: #fff; box-shadow: 0 24px 72px rgba(7,55,97,.22); }
+    .modal-head { border-bottom-color: #e7eef3; background: linear-gradient(180deg,#fff,#fbfdff); }
+    .modal-head h2 { color: #304755; }
+    .modal-close { color: #748895; border-color: #e0e8ee; background: #f6f9fb; }
+    .modal-close:hover { color: #07579f; background: #edf5fb; }
+    .modal-body { color: #586d7a; }
+    .modal-actions { border-top-color: #edf2f5; }
+    .toast, .busy-box { color: #344b5b; border-color: #e1eaf1; background: rgba(255,255,255,.98); box-shadow: 0 10px 28px rgba(24,69,109,.12); }
+    .toast.error { color: #ad5368; border-color: #f0d0d9; background: #fff8fa; }
+    .toast.success { border-color: #dce9f1; }
+    #busyOverlay { background: rgba(244,248,252,.66); backdrop-filter: blur(2px); }
+    .spinner { border-color: #dce8f1; border-top-color: var(--beta-blue); }
+    .table-wrap { scrollbar-color: #c5d8e7 #f2f7fa; }
+    .table-card a { color: var(--beta-blue) !important; }
+
+    @media (max-width: 720px) {
+      .sidebar .brand-mark { width: 160px; height: 86px; flex-basis: 86px; }
+      .login-card .brand-mark { width: 156px; height: 80px; flex-basis: 156px; }
+    }
+    @media (max-width: 430px) {
+      .login-card .brand-row { gap: 9px; }
+      .login-card .brand-mark { width: 126px; height: 70px; flex-basis: 126px; }
+      .login-card .brand-name { font-size: 12px; }
+      .login-card .brand-sub { font-size: 8px; letter-spacing: .4px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+    }
+  </style>
+
+  <style id="beta-nowzone-cinemaos-full-redesign">
+/* BETA NOWZONE — CINEMA OS / FULL VISUAL REDESIGN
+   Chỉ ghi đè lớp trình bày; không thay đổi DOM chức năng hoặc JavaScript. */
+:root {
+  color-scheme: light;
+  --bg: #eef3f8;
+  --bg-2: #e5edf5;
+  --panel: #ffffff;
+  --panel-2: #f7f9fc;
+  --line: #dce5ee;
+  --text: #172b3d;
+  --muted: #718295;
+  --muted-2: #94a2b0;
+  --orange: #07579f;
+  --orange-2: #0d70c2;
+  --blue: #07579f;
+  --green: #78a51c;
+  --red: #d65d78;
+  --yellow: #f7941d;
+  --beta-blue: #07579f;
+  --beta-orange: #f7941d;
+  --beta-lime: #b3d334;
+  --beta-pink: #ed8ba3;
+  --radius: 20px;
+  --shadow: 0 12px 32px rgba(18, 49, 76, .07);
+}
+
+html, body { min-height: 100%; background: var(--bg); color-scheme: light; }
+body {
+  color: var(--text);
+  background:
+    radial-gradient(ellipse at 90% 2%, rgba(7,87,159,.075), transparent 27%),
+    radial-gradient(ellipse at 4% 90%, rgba(179,211,52,.075), transparent 24%),
+    #eef3f8;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+::selection { background: #07579f; color: #fff; }
+:focus-visible { outline: 3px solid rgba(7,87,159,.28); outline-offset: 3px; }
+button, input, select, textarea { font-family: inherit; }
+
+/* LOGIN: trang chào mừng dạng cinematic split-screen */
+#loginScreen {
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: clamp(16px, 4vw, 48px);
+  background:
+    radial-gradient(circle at 12% 18%, rgba(7,87,159,.10), transparent 27%),
+    radial-gradient(circle at 88% 84%, rgba(247,148,29,.11), transparent 23%),
+    #edf3f8;
+}
+.login-wrap {
+  width: min(100%, 1120px);
+  min-height: 620px;
+  grid-template-columns: minmax(0, 1.12fr) minmax(390px, .88fr);
+  border: 1px solid rgba(255,255,255,.95);
+  border-radius: 30px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 30px 90px rgba(13, 49, 81, .16), 0 3px 10px rgba(13,49,81,.04);
+}
+.login-aside {
+  min-height: 620px;
+  padding: clamp(30px, 4vw, 54px);
+  justify-content: space-between;
+  background:
+    radial-gradient(circle at 88% 16%, rgba(247,148,29,.40), transparent 19%),
+    radial-gradient(circle at 8% 88%, rgba(179,211,52,.22), transparent 25%),
+    radial-gradient(circle at 82% 82%, rgba(237,139,163,.20), transparent 24%),
+    linear-gradient(145deg, #063f73 0%, #07579f 54%, #0c6db9 100%);
+}
+.login-aside:before {
+  content: "";
+  position: absolute;
+  width: 430px; height: 430px;
+  right: -160px; top: 145px;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 50%;
+  box-shadow: 0 0 0 36px rgba(255,255,255,.035), 0 0 0 76px rgba(255,255,255,.025), 0 0 0 118px rgba(255,255,255,.018);
+  pointer-events: none;
+}
+.login-aside:after {
+  content: "NOWZONE";
+  position: absolute;
+  left: 32px; bottom: 46px;
+  color: rgba(255,255,255,.055);
+  font-size: clamp(58px, 9vw, 112px);
+  font-weight: 900; letter-spacing: -7px;
+  pointer-events: none;
+}
+.login-aside > div, .login-aside .login-foot { position: relative; z-index: 1; }
+.login-aside h1 {
+  max-width: 500px;
+  margin: 48px 0 18px;
+  color: #fff;
+  font-size: clamp(34px, 4.4vw, 54px);
+  line-height: 1.09;
+  letter-spacing: -2.2px;
+}
+.login-aside h1 span {
+  color: #ffdaab;
+  background: linear-gradient(90deg, #ffd6a0 0%, #e1f0a3 92%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.login-aside p { max-width: 440px; color: rgba(245,250,255,.82); font-size: 13px; line-height: 1.9; }
+.feature-list { gap: 15px; margin-top: 36px; }
+.feature { color: rgba(255,255,255,.92); font-size: 12px; }
+.feature-dot {
+  width: 27px; height: 27px; border-radius: 9px;
+  color: #07579f; background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,.12);
+}
+.login-foot { color: rgba(255,255,255,.68); font-size: 9px; letter-spacing: 1.4px; }
+.login-card {
+  padding: clamp(32px, 4vw, 58px);
+  background: #fff;
+  justify-content: center;
+}
+.login-card .brand-row { margin-bottom: 32px; }
+.login-card h2 { margin: 10px 0 8px; color: #153e60; font-size: 27px; letter-spacing: -.8px; }
+.login-card .lead { margin-bottom: 32px; color: #718295; font-size: 12px; }
+.login-support { border-top-color: #e8eef4; color: #8a99a7; }
+.brand-row { gap: 12px; align-items: center; }
+.brand-mark {
+  display: grid !important;
+  width: 58px; height: 58px; flex: 0 0 58px;
+  place-items: center; overflow: hidden;
+  border: 1px solid #e8eef4; border-radius: 16px;
+  background: #fff; box-shadow: 0 6px 16px rgba(15,58,92,.08);
+}
+.brand-mark img { width: 100%; height: 100%; display: block; object-fit: contain; padding: 4px; }
+.brand-name { color: #07579f !important; font-size: 14px; font-weight: 900; letter-spacing: .65px; text-shadow: none !important; }
+.brand-sub { color: #778a9b !important; font-size: 9px; letter-spacing: 1px; }
+.login-aside .brand-name { color: #fff !important; }
+.login-aside .brand-sub { color: rgba(255,255,255,.72) !important; }
+
+/* Form controls */
+.field { margin-bottom: 19px; }
+.field label { color: #526b7e; font-size: 10px; letter-spacing: .85px; }
+.field input, .field select, .field textarea, .search-box input {
+  min-height: 44px;
+  color: #243d52;
+  border: 1px solid #dce6ee;
+  border-radius: 12px;
+  background: #f8fbfd;
+  box-shadow: inset 0 1px 2px rgba(20,56,82,.025);
+  transition: border-color .14s ease, box-shadow .14s ease, background .14s ease;
+}
+.field textarea { min-height: 96px; }
+.field select { color-scheme: light; }
+.field input:focus, .field select:focus, .field textarea:focus, .search-box input:focus {
+  border-color: #75a9d0; background: #fff;
+  box-shadow: 0 0 0 3px rgba(7,87,159,.105);
+}
+.field input::placeholder, .field textarea::placeholder, .search-box input::placeholder { color: #9aabb8; }
+.password-toggle { color: #07579f; }
+.login-options { color: #738697; }
+.check-label input { accent-color: #07579f; }
+
+/* APP SHELL: sidebar navy và không gian làm việc sáng */
+#appScreen {
+  min-height: 100vh;
+  grid-template-columns: 258px minmax(0,1fr);
+  background: #eef3f8;
+}
+.sidebar {
+  position: sticky; top: 0; height: 100vh;
+  padding: 24px 17px 18px;
+  color: #eaf3fb;
+  background: linear-gradient(180deg, #082b4a 0%, #063f70 55%, #073b68 100%);
+  border-right: 0;
+  box-shadow: 10px 0 30px rgba(6,39,68,.08);
+}
+.sidebar .brand-row {
+  display: flex; flex-direction: row; align-items: center; gap: 11px;
+  padding: 0 5px 25px;
+}
+.sidebar .brand-mark {
+  width: 54px; height: 54px; flex: 0 0 54px;
+  border-radius: 15px; background: #fff;
+  box-shadow: 0 6px 17px rgba(0,0,0,.12);
+}
+.sidebar .brand-name { color: #fff !important; font-size: 12px; letter-spacing: .7px; }
+.sidebar .brand-sub { color: rgba(226,239,250,.66) !important; font-size: 8px; letter-spacing: .8px; }
+.nav-label {
+  padding: 17px 11px 9px;
+  color: rgba(213,232,248,.54);
+  font-size: 9px; font-weight: 800; letter-spacing: 1.45px;
+}
+.nav-list { gap: 6px; }
+.nav-item {
+  min-height: 43px;
+  padding: 9px 11px;
+  gap: 11px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  color: rgba(232,242,251,.77);
+  font-size: 11px; font-weight: 650;
+  transition: background .14s ease, border-color .14s ease, color .14s ease;
+}
+.nav-item .nav-icon {
+  width: 27px; height: 27px; flex: 0 0 27px;
+  border-radius: 9px; color: #b9d8ef;
+  background: rgba(255,255,255,.09);
+}
+.nav-item:hover { color: #fff; background: rgba(255,255,255,.085); }
+.nav-item.active {
+  color: #fff;
+  border-color: rgba(255,255,255,.13);
+  background: linear-gradient(100deg, rgba(255,255,255,.18), rgba(255,255,255,.075));
+  box-shadow: inset 3px 0 0 #f7941d;
+}
+.nav-item.active .nav-icon { color: #063f70; background: #fff; }
+.sidebar-bottom { border-top-color: rgba(226,239,250,.16); padding-top: 15px; }
+.security-note { color: rgba(214,231,245,.61); }
+.side-user { padding: 12px 5px; }
+.side-user-name { color: #fff; font-size: 10px; }
+.side-user-role { color: rgba(214,231,245,.62); }
+.avatar { color: #073c67; background: linear-gradient(145deg, #fff2d9, #f7941d); box-shadow: 0 4px 12px rgba(0,0,0,.12); }
+.sidebar .btn-secondary {
+  color: #fff; border-color: rgba(255,255,255,.20);
+  background: rgba(255,255,255,.08);
+}
+.sidebar .btn-secondary:hover { color: #fff; background: rgba(255,255,255,.15); border-color: rgba(255,255,255,.32); }
+
+.main-area {
+  min-width: 0;
+  padding: 0 clamp(18px, 3vw, 42px) 46px;
+  background: transparent;
+}
+.topbar {
+  min-height: 78px;
+  margin: 14px 0 25px;
+  padding: 0 20px;
+  border: 1px solid #e2eaf1;
+  border-radius: 17px;
+  background: rgba(255,255,255,.94);
+  box-shadow: 0 4px 16px rgba(20,54,80,.035);
+}
+.page-heading h1 { color: #153e60; font-size: 21px; font-weight: 850; letter-spacing: -.65px; }
+.page-heading p { color: #8495a4; font-size: 10px; }
+.top-time { color: #718598; font-size: 10px; }
+.top-actions { gap: 9px; }
+.page-content { max-width: 1480px; }
+
+/* Dashboard hero */
+.welcome-panel {
+  min-height: 188px;
+  padding: 34px 36px;
+  margin-bottom: 19px;
+  border: 0;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 82% 15%, rgba(255,255,255,.19), transparent 18%),
+    radial-gradient(circle at 96% 100%, rgba(247,148,29,.24), transparent 27%),
+    linear-gradient(112deg, #063f73 0%, #07579f 55%, #1176bd 100%);
+  box-shadow: 0 15px 32px rgba(7,87,159,.16);
+}
+.welcome-panel:before {
+  content: "";
+  position: absolute; width: 250px; height: 250px;
+  right: 8%; top: -120px;
+  border: 1px solid rgba(255,255,255,.17); border-radius: 50%;
+  box-shadow: 0 0 0 28px rgba(255,255,255,.035), 0 0 0 58px rgba(255,255,255,.024);
+  pointer-events: none;
+}
+.welcome-panel .eyebrow { color: #b7d9f3; font-size: 9px; letter-spacing: 1.8px; }
+.welcome-panel h2 { color: #fff; font-size: clamp(24px,3vw,34px); font-weight: 850; letter-spacing: -1.1px; }
+.welcome-panel p { max-width: 690px; color: rgba(242,248,253,.80); font-size: 11px; line-height: 1.85; }
+.welcome-panel:after {
+  right: 23px; bottom: -28px;
+  color: rgba(255,255,255,.075);
+  font-size: clamp(88px, 11vw, 136px);
+  font-weight: 950; letter-spacing: -10px;
+}
+.announcement {
+  align-items: center;
+  padding: 14px 17px;
+  border: 1px solid #f2dfc8;
+  border-left: 4px solid #f7941d;
+  border-radius: 14px;
+  background: linear-gradient(100deg, #fffaf2, #fff);
+  box-shadow: 0 4px 13px rgba(95,69,32,.035);
+}
+.announcement-icon { color: #9e5c0b; background: #ffedcf; }
+.announcement-title { color: #b87318; font-size: 9px; }
+.announcement-text { color: #697989; font-size: 10px; }
+
+/* Metric cards */
+.stats-grid { gap: 14px; margin-bottom: 26px; }
+.stat-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 126px;
+  padding: 18px 19px;
+  border: 1px solid #e0e8f0;
+  border-radius: 17px;
+  background: #fff;
+  box-shadow: 0 5px 17px rgba(22,54,80,.045);
+}
+.stat-card:before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: #07579f; opacity: .9;
+}
+.stats-grid .stat-card:nth-child(4n+2):before { background: #f7941d; }
+.stats-grid .stat-card:nth-child(4n+3):before { background: #b3d334; }
+.stats-grid .stat-card:nth-child(4n+4):before { background: #ed8ba3; }
+.stat-label { color: #75899a; font-size: 9px; letter-spacing: .8px; }
+.stat-value { margin-top: 14px; color: #163f61; font-size: 28px; font-weight: 850; }
+.stat-foot { color: #95a2ad; font-size: 9px; }
+.stat-icon {
+  width: 32px; height: 32px;
+  color: #07579f; border: 1px solid #dce9f3;
+  border-radius: 10px; background: #edf5fb;
+}
+.stats-grid .stat-card:nth-child(4n+2) .stat-icon { color: #a96313; border-color: #f6e2c5; background: #fff5e7; }
+.stats-grid .stat-card:nth-child(4n+3) .stat-icon { color: #6d8d12; border-color: #e4edc4; background: #f4f8e7; }
+.stats-grid .stat-card:nth-child(4n+4) .stat-icon { color: #bd607e; border-color: #f4dbe3; background: #fff1f5; }
+
+/* Sections, search and application cards */
+.section-head { align-items: center; margin: 29px 0 15px; }
+.section-head h2 { color: #173f60; font-size: 15px; font-weight: 850; }
+.section-head p { color: #8a9aa8; font-size: 9px; }
+.search-box { max-width: 340px; }
+.search-box input { min-height: 40px; padding-left: 37px; border-radius: 12px; background: #fff; }
+.search-icon { color: #8297a8; }
+.filter-row { gap: 8px; margin-bottom: 15px; }
+.filter-chip {
+  padding: 7px 13px; color: #617789;
+  border: 1px solid #dce6ee; border-radius: 99px;
+  background: #fff; font-size: 9px; font-weight: 650;
+  transition: background .14s ease, border-color .14s ease, color .14s ease;
+}
+.filter-chip:hover { border-color: #b8d2e5; background: #f2f7fb; }
+.filter-chip.active { color: #07579f; border-color: #b7d3e7; background: #e9f3fa; }
+.module-grid { grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: 15px; }
+.module-card {
+  position: relative; min-height: 174px; padding: 19px;
+  border: 1px solid #e0e8f0; border-radius: 18px;
+  color: #274457; background: #fff;
+  box-shadow: 0 5px 17px rgba(22,54,80,.045);
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+}
+.module-card:after {
+  content: ""; position: absolute; left: 19px; right: 19px; bottom: 0;
+  height: 2px; border-radius: 2px 2px 0 0;
+  background: linear-gradient(90deg, #07579f, #f7941d, #b3d334, #ed8ba3);
+  opacity: .0; transition: opacity .16s ease;
+}
+.module-card:hover {
+  color: #07579f; border-color: #bfd5e6;
+  background: #fff; box-shadow: 0 13px 28px rgba(7,87,159,.10);
+  transform: translateY(-3px);
+}
+.module-card:hover:after { opacity: 1; }
+.module-top { margin-bottom: 5px; }
+.module-category { color: #0a65a9; font-size: 9px; letter-spacing: .9px; }
+.module-icon {
+  width: 38px; height: 38px; border: 1px solid #d9e7f1;
+  border-radius: 12px; color: #07579f; background: #eef6fb;
+  font-size: 10px;
+}
+.module-title { color: #244359; font-size: 12px; font-weight: 800; line-height: 1.5; }
+.module-desc { color: #8193a1; font-size: 9px; line-height: 1.7; }
+.module-bottom { color: #72889a; font-size: 9px; }
+.empty-state { border-color: #dce6ee; border-radius: 16px; color: #8192a0; background: #fff; }
+
+/* Admin tables and settings */
+.table-card, .panel {
+  border: 1px solid #e0e8f0;
+  border-radius: 17px;
+  background: #fff;
+  box-shadow: 0 5px 18px rgba(22,54,80,.045);
+}
+.table-toolbar { padding: 15px 17px; border-bottom: 1px solid #e8eef3; background: #fff; }
+.table-toolbar .eyebrow { color: #7c91a2; }
+.table-wrap { background: #fff; }
+table { background: #fff; }
+th {
+  color: #587184; background: #f2f6f9;
+  border-bottom: 1px solid #e4ebf1;
+  font-size: 9px; letter-spacing: .75px;
+}
+td { color: #607384; border-top-color: #edf1f5; font-size: 10px; }
+tr:hover td { background: #f8fbfd; }
+.cell-main { color: #29485e; }
+.cell-sub { color: #91a0ac; }
+.status-active { color: #397b42; background: #eff7e9; }
+.status-inactive { color: #b25367; background: #fff0f4; }
+.role-pill { color: #376987; border-color: #dbe8f1; background: #eff6fb; }
+.icon-btn { color: #557487; border-color: #dce6ee; background: #fbfdff; }
+.icon-btn:hover { color: #07579f; border-color: #bed5e7; background: #f0f7fc; }
+.page-note { color: #637688; border-color: #f1dfc6; background: #fff9f0; border-radius: 13px; }
+.settings-grid { gap: 16px; }
+.panel { padding: 21px; }
+.panel h3 { color: #24465e; font-size: 13px; font-weight: 850; }
+.panel .panel-desc { color: #8797a4; font-size: 9px; }
+
+/* Dialogs and system feedback */
+#modalRoot { background: rgba(7,31,52,.48); }
+.modal {
+  color: #314b5e; border: 1px solid rgba(255,255,255,.95);
+  border-radius: 20px; background: #fff;
+  box-shadow: 0 24px 70px rgba(7,42,71,.22);
+}
+.modal-head { padding: 20px 22px; border-bottom-color: #e7edf2; background: #fbfdff; }
+.modal-head h2 { color: #24465e; font-size: 14px; }
+.modal-body { color: #5f7383; }
+.modal-close { color: #74899a; border-color: #dfe8ef; background: #f4f8fb; }
+.modal-close:hover { color: #07579f; background: #eaf3f9; }
+.modal-actions { border-top: 1px solid #edf1f5; }
+.toast, .busy-box {
+  color: #29485e; border: 1px solid #dfe8ef; border-radius: 13px;
+  background: #fff; box-shadow: 0 9px 26px rgba(18,54,82,.12);
+}
+.toast.error { color: #ad5368; border-color: #f0d0d9; background: #fff8fa; }
+.toast.success { border-color: #dce9f1; }
+#busyOverlay { background: rgba(238,243,248,.68); }
+.spinner { border-color: #dce8f1; border-top-color: #07579f; }
+#toastArea { right: 20px; bottom: max(18px, env(safe-area-inset-bottom)); }
+
+/* Responsive behavior */
+@media (max-width: 1050px) {
+  #appScreen { grid-template-columns: 236px minmax(0,1fr); }
+  .main-area { padding-left: 22px; padding-right: 22px; }
+  .stats-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .login-wrap { grid-template-columns: minmax(0,1fr) 420px; }
+}
+@media (max-width: 760px) {
+  #loginScreen { padding: 14px; }
+  .login-wrap { display: block; width: min(100%, 480px); min-height: auto; }
+  .login-aside { display: none; }
+  .login-card { padding: 34px 27px; }
+  .login-card .brand-row { margin-bottom: 25px; }
+  #appScreen { display: block; }
+  .sidebar {
+    position: fixed; left: -290px; top: 0; width: 270px; height: 100dvh;
+    padding: 20px 15px 16px; z-index: 20;
+    box-shadow: 18px 0 44px rgba(3,24,43,.22);
+    transition: left .18s ease;
+  }
+  .sidebar.open { left: 0; }
+  .sidebar .brand-row { flex-direction: row; align-items: center; }
+  .sidebar .brand-mark { width: 52px; height: 52px; flex-basis: 52px; }
+  .main-area { padding: 0 14px 30px; }
+  .topbar { min-height: 68px; margin: 10px 0 17px; padding: 0 12px; gap: 8px; border-radius: 14px; }
+  .mobile-menu { display: inline-flex; }
+  .top-time { display: none; }
+  .page-heading h1 { font-size: 17px; }
+  .page-heading p { max-width: 210px; font-size: 9px; line-height: 1.4; }
+  .top-actions .btn { padding: 9px 10px; font-size: 9px; }
+  .welcome-panel { min-height: 160px; padding: 24px 21px; border-radius: 18px; }
+  .welcome-panel:after { font-size: 78px; right: 10px; bottom: -15px; }
+  .section-head { align-items: flex-start; flex-direction: column; }
+  .search-box { width: 100%; max-width: none; }
+  .module-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 9px; }
+  .module-card { min-height: 152px; padding: 14px; }
+  .module-card:after { left: 14px; right: 14px; }
+  .settings-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 460px) {
+  .stats-grid { gap: 9px; }
+  .stat-card { min-height: 110px; padding: 13px; border-radius: 14px; }
+  .stat-value { font-size: 22px; }
+  .stat-label { font-size: 8px; letter-spacing: .45px; }
+  .stat-foot { font-size: 8px; }
+  .stat-icon { width: 28px; height: 28px; }
+  .module-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+  .module-card { min-height: 148px; padding: 12px; }
+  .module-title { font-size: 10px; }
+  .module-desc { font-size: 8px; }
+  .module-category { font-size: 8px; }
+  .table-toolbar { align-items: flex-start; flex-direction: column; }
+  .table-toolbar .search-box { max-width: none; width: 100%; }
+  .modal-grid { grid-template-columns: 1fr; }
+  .modal-grid .span-2 { grid-column: auto; }
+  .modal { border-radius: 16px; }
+  .login-card { padding: 28px 21px; }
+  .login-card .brand-mark { width: 52px; height: 52px; flex-basis: 52px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+
+  </style>
+
   <script>
     'use strict';
 
-    const SESSION_KEY = 'betaNowzoneSessionV2';
+    const SESSION_KEY = 'betaNowzoneSessionV2'; // Tương thích phiên cũ trong tab hiện tại.
+    const DEVICE_SESSION_KEY = 'betaNowzoneDeviceSessionV3'; // Phiên được lưu riêng trong trình duyệt/thiết bị này.
     const USERNAME_KEY = 'betaNowzoneUsername';
     const state = {
       token: '', user: null, dashboard: null, adminData: null,
       activePage: 'home', linkQuery: '', linkCategory: 'Tất cả',
-      accountQuery: '', logQuery: '', linkAdminQuery: ''
+      accountQuery: '', logQuery: '', linkAdminQuery: '',
+      adminDataLoadedAt: 0, adminDataPromise: null,
+      dashboardPromise: null
     };
+    let searchRenderTimer = 0;
 
     const $ = (id) => document.getElementById(id);
 
@@ -382,6 +2273,30 @@
     function makeRequestId() {
       apiRequestCounter += 1;
       return 'bnz_' + Date.now().toString(36) + '_' + apiRequestCounter.toString(36) + '_' + Math.random().toString(36).slice(2, 10);
+    }
+
+    // Trình duyệt có thể chặn storage ở chế độ riêng tư; mọi thao tác lưu đều có fallback an toàn.
+    function storageGet(storage, key) {
+      try { return storage.getItem(key); } catch (error) { return null; }
+    }
+    function storageSet(storage, key, value) {
+      try { storage.setItem(key, value); return true; } catch (error) { return false; }
+    }
+    function storageRemove(storage, key) {
+      try { storage.removeItem(key); } catch (error) { /* Storage không khả dụng. */ }
+    }
+    function saveLoginSession(token, rememberDevice) {
+      const record = JSON.stringify({ token: token, savedAt: Date.now(), scope: 'this-browser' });
+      // Luôn giữ phiên trong tab hiện tại; chỉ ghi localStorage khi người dùng chọn thiết bị tin cậy.
+      storageSet(sessionStorage, SESSION_KEY, record);
+      if (rememberDevice) storageSet(localStorage, DEVICE_SESSION_KEY, record);
+      else storageRemove(localStorage, DEVICE_SESSION_KEY);
+    }
+    function readLoginSession() {
+      const deviceRecord = storageGet(localStorage, DEVICE_SESSION_KEY);
+      if (deviceRecord) return { raw: deviceRecord, persistent: true };
+      const tabRecord = storageGet(sessionStorage, SESSION_KEY);
+      return tabRecord ? { raw: tabRecord, persistent: false } : null;
     }
 
     function serverCall(functionName, ...args) {
@@ -511,6 +2426,15 @@
       }[char]));
     }
 
+    function safeHttpUrl(value) {
+      try {
+        const url = new URL(String(value || '').trim(), window.location.href);
+        return (url.protocol === 'https:' || url.protocol === 'http:') ? escapeHtml(url.href) : '#';
+      } catch (error) {
+        return '#';
+      }
+    }
+
     function initials(name) {
       const words = String(name || 'B').trim().split(/\s+/).filter(Boolean);
       return words.length > 1 ? (words[0][0] + words[words.length - 1][0]).toUpperCase() : (words[0] || 'B').slice(0, 2).toUpperCase();
@@ -526,29 +2450,34 @@
     }
 
     async function boot() {
+      // Điền tên tài khoản đã lưu nếu có; không lưu mật khẩu dạng văn bản.
+      const remembered = storageGet(localStorage, USERNAME_KEY);
+      if (remembered) $('loginUsername').value = remembered;
+
+      // Khôi phục phiên lưu trên thiết bị trước, sau đó mới xét phiên cũ theo tab.
+      const storedSession = readLoginSession();
+      if (storedSession) {
+        try {
+          const session = JSON.parse(storedSession.raw);
+          if (!session || !session.token) throw new Error('Phiên đăng nhập không hợp lệ.');
+          state.token = session.token;
+          $('rememberUsername').checked = storedSession.persistent;
+          await refreshDashboard(false);
+          return;
+        } catch (error) {
+          clearSession();
+          showLoginScreen();
+          displayLoginError(error.message || 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+          return;
+        }
+      }
+
+      // Chỉ gọi cấu hình hỗ trợ khi chưa có phiên nào để khôi phục.
       try {
         const bootData = await callApi('apiBootstrap');
         if (bootData.supportText) $('loginSupport').textContent = bootData.supportText;
-        const remembered = localStorage.getItem(USERNAME_KEY);
-        if (remembered) {
-          $('loginUsername').value = remembered;
-          $('rememberUsername').checked = true;
-        }
       } catch (error) {
         displayLoginError(error.message);
-      }
-
-      const rawSession = sessionStorage.getItem(SESSION_KEY);
-      if (!rawSession) return;
-      try {
-        const session = JSON.parse(rawSession);
-        if (!session.token) throw new Error('Phiên đăng nhập không hợp lệ.');
-        state.token = session.token;
-        await refreshDashboard(false);
-      } catch (error) {
-        clearSession();
-        showLoginScreen();
-        displayLoginError(error.message || 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
       }
     }
 
@@ -563,9 +2492,11 @@
       try {
         const result = await callApi('apiLogin', username, password);
         state.token = result.token;
-        sessionStorage.setItem(SESSION_KEY, JSON.stringify({ token: result.token }));
-        if ($('rememberUsername').checked) localStorage.setItem(USERNAME_KEY, username);
-        else localStorage.removeItem(USERNAME_KEY);
+        state.adminData = null; state.adminDataLoadedAt = 0;
+        const rememberDevice = $('rememberUsername').checked;
+        saveLoginSession(result.token, rememberDevice);
+        if (rememberDevice) storageSet(localStorage, USERNAME_KEY, username);
+        else storageRemove(localStorage, USERNAME_KEY);
         $('loginPassword').value = '';
         await refreshDashboard(true);
         toast('Đăng nhập thành công. Xin chào ' + (state.user.name || state.user.username) + '!');
@@ -581,32 +2512,42 @@
 
     async function refreshDashboard(showLoader) {
       if (!state.token) throw new Error('Bạn chưa đăng nhập.');
+      // Nếu dashboard đang được đồng bộ, dùng chung yêu cầu hiện tại thay vì gửi request trùng.
+      if (state.dashboardPromise) return state.dashboardPromise;
       if (showLoader) showBusy('Đang đồng bộ dữ liệu...');
-      try {
-        const data = await callApi('apiGetDashboard', state.token);
-        state.dashboard = data;
-        state.user = data.user;
-        $('sideUserName').textContent = data.user.name || data.user.username;
-        $('sideUserRole').textContent = data.user.role || 'Nhân viên';
-        $('userAvatar').textContent = initials(data.user.name || data.user.username);
-        $('serverTime').textContent = data.serverTime || '';
-        $('loginScreen').classList.add('hidden');
-        $('appScreen').classList.remove('hidden');
-        document.querySelectorAll('[data-admin-only]').forEach((node) => {
-          node.classList.toggle('hidden', !isAdminUser());
-        });
-        if (!isAdminUser() && ['accounts', 'links', 'logs', 'settings'].includes(state.activePage)) state.activePage = 'home';
-        renderPage();
-      } catch (error) {
-        if (isSessionErrorMessage(error.message)) {
-          clearSession();
-          showLoginScreen();
-          displayLoginError(error.message);
+
+      const request = (async () => {
+        try {
+          const data = await callApi('apiGetDashboard', state.token);
+          state.dashboard = data;
+          state.user = data.user;
+          $('sideUserName').textContent = data.user.name || data.user.username;
+          $('sideUserRole').textContent = data.user.role || 'Nhân viên';
+          $('userAvatar').textContent = initials(data.user.name || data.user.username);
+          $('serverTime').textContent = data.serverTime || '';
+          $('loginScreen').classList.add('hidden');
+          $('appScreen').classList.remove('hidden');
+          document.querySelectorAll('[data-admin-only]').forEach((node) => {
+            node.classList.toggle('hidden', !isAdminUser());
+          });
+          if (!isAdminUser() && ['accounts', 'links', 'logs', 'settings'].includes(state.activePage)) state.activePage = 'home';
+          renderPage();
+          return data;
+        } catch (error) {
+          if (isSessionErrorMessage(error.message)) {
+            clearSession();
+            showLoginScreen();
+            displayLoginError(error.message);
+          }
+          throw error;
+        } finally {
+          if (showLoader) hideBusy();
         }
-        throw error;
-      } finally {
-        if (showLoader) hideBusy();
-      }
+      })();
+
+      state.dashboardPromise = request;
+      try { return await request; }
+      finally { if (state.dashboardPromise === request) state.dashboardPromise = null; }
     }
 
     function isSessionErrorMessage(message) {
@@ -623,7 +2564,10 @@
       state.user = null;
       state.dashboard = null;
       state.adminData = null;
-      sessionStorage.removeItem(SESSION_KEY);
+      state.adminDataLoadedAt = 0;
+      state.dashboardPromise = null;
+      storageRemove(sessionStorage, SESSION_KEY);
+      storageRemove(localStorage, DEVICE_SESSION_KEY);
     }
 
     function showLoginScreen() {
@@ -671,16 +2615,31 @@
       renderPage();
     }
 
-    async function loadAdminData() {
+    async function loadAdminData(force = false) {
+      const cacheFresh = state.adminData && (Date.now() - state.adminDataLoadedAt < 30000);
+      if (!force && cacheFresh) return state.adminData;
+      if (state.adminDataPromise) return state.adminDataPromise;
+
       showBusy('Đang tải dữ liệu quản trị...');
-      try {
-        state.adminData = await callApi('apiAdminGetData', state.token);
-      } catch (error) {
-        if (isSessionErrorMessage(error.message)) {
-          clearSession(); showLoginScreen(); displayLoginError(error.message);
-        } else toast(error.message, 'error');
-        throw error;
-      } finally { hideBusy(); }
+      state.adminDataPromise = (async () => {
+        try {
+          const data = await callApi('apiAdminGetData', state.token);
+          state.adminData = data;
+          state.adminDataLoadedAt = Date.now();
+          return data;
+        } catch (error) {
+          if (isSessionErrorMessage(error.message)) {
+            clearSession(); showLoginScreen(); displayLoginError(error.message);
+          } else {
+            toast(error.message, 'error');
+          }
+          throw error;
+        } finally {
+          state.adminDataPromise = null;
+          hideBusy();
+        }
+      })();
+      return state.adminDataPromise;
     }
 
     function renderPage() {
@@ -724,7 +2683,11 @@
       `;
       renderLinkFilters();
       renderModuleCards();
-      $('linkSearch').addEventListener('input', (event) => { state.linkQuery = event.target.value; renderModuleCards(); });
+      $('linkSearch').addEventListener('input', (event) => {
+        state.linkQuery = event.target.value;
+        window.clearTimeout(searchRenderTimer);
+        searchRenderTimer = window.setTimeout(renderModuleCards, 60);
+      });
     }
 
     function renderLinkFilters() {
@@ -742,7 +2705,7 @@
       const query = state.linkQuery.trim().toLowerCase();
       const links = all.filter((item) => {
         const text = [item.title, item.category, item.description, item.iconText].join(' ').toLowerCase();
-        return (!query || text.includes(query)) && (state.linkCategory === 'Tất cả' || item.category === state.linkCategory);
+        return (!query || text.includes(query)) && (state.linkCategory === 'Tất cả' || (item.category || 'Ứng dụng') === state.linkCategory);
       });
       const grid = $('moduleGrid');
       if (!links.length) {
@@ -750,7 +2713,7 @@
         return;
       }
       grid.innerHTML = links.map((item) => `
-        <a class="module-card" href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer">
+        <a class="module-card" href="${safeHttpUrl(item.url)}" target="_blank" rel="noopener noreferrer">
           <div class="module-top"><span class="module-category">${escapeHtml(item.category || 'Ứng dụng')}</span><span class="module-icon">${escapeHtml(item.iconText || 'APP')}</span></div>
           <div><div class="module-title">${escapeHtml(item.title)}</div><div class="module-desc">${escapeHtml(item.description || 'Truy cập công cụ nghiệp vụ nội bộ.')}</div></div>
           <div class="module-bottom"><span>Mở ứng dụng</span><span>↗</span></div>
@@ -784,7 +2747,7 @@
         </div>
         <div class="page-note">Mật khẩu được lưu dạng văn bản trong sheet Members theo cấu hình hiện tại. Chỉ quản trị viên được quyền truy cập bảng tính; không chia sẻ sheet Members cho nhân viên.</div>
       `;
-      $('accountSearch').addEventListener('input', (event) => { state.accountQuery = event.target.value; renderAccountsPage(); const input = $('accountSearch'); input.focus(); input.setSelectionRange(input.value.length, input.value.length); });
+      $('accountSearch').addEventListener('input', (event) => { state.accountQuery = event.target.value; const cursor = event.target.selectionStart; window.clearTimeout(searchRenderTimer); searchRenderTimer = window.setTimeout(() => { renderAccountsPage(); const input = $('accountSearch'); input.focus(); input.setSelectionRange(cursor, cursor); }, 100); });
     }
 
     function renderLinksAdminPage() {
@@ -796,11 +2759,11 @@
         <div class="section-head" style="margin-top:0"><div><h2>Danh mục ứng dụng</h2><p>Các liên kết được phân quyền sẽ hiển thị trên trang Tổng quan</p></div><button class="btn btn-primary" data-action="new-link">＋ Thêm liên kết</button></div>
         <div class="table-card"><div class="table-toolbar"><div class="eyebrow">CẤU HÌNH LIÊN KẾT · ${shown.length} MỤC</div><div class="search-box"><span class="search-icon">⌕</span><input id="linkAdminSearch" type="search" placeholder="Tìm ứng dụng..." value="${escapeHtml(state.linkAdminQuery)}"></div></div>
           <div class="table-wrap"><table><thead><tr><th>Tên ứng dụng</th><th>Danh mục</th><th>Đường dẫn</th><th>Quyền truy cập</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody>
-            ${shown.length ? shown.map((link) => `<tr><td><div class="cell-main">${escapeHtml(link.title)}</div><div class="cell-sub">${escapeHtml(link.description || link.iconText || '')}</div></td><td>${escapeHtml(link.category)}</td><td><a href="${escapeHtml(link.url)}" target="_blank" rel="noopener noreferrer" style="color:#8fbdf0;text-decoration:none">Mở liên kết ↗</a></td><td>${escapeHtml(link.allowedRoles || '*')}</td><td><span class="status-pill ${link.isActive ? 'status-active' : 'status-inactive'}">${link.isActive ? 'Hiển thị' : 'Ẩn'}</span></td><td><div class="actions"><button class="icon-btn" title="Chỉnh sửa" data-action="edit-link" data-key="${escapeHtml(link.id)}">✎</button><button class="icon-btn" title="${link.isActive ? 'Ẩn liên kết' : 'Hiện liên kết'}" data-action="toggle-link" data-key="${escapeHtml(link.id)}">${link.isActive ? '◉' : '○'}</button><button class="icon-btn danger" title="Xóa" data-action="delete-link" data-key="${escapeHtml(link.id)}">×</button></div></td></tr>`).join('') : '<tr><td colspan="6"><div class="empty-state">Chưa có liên kết nào. Hãy thêm ứng dụng đầu tiên.</div></td></tr>'}
+            ${shown.length ? shown.map((link) => `<tr><td><div class="cell-main">${escapeHtml(link.title)}</div><div class="cell-sub">${escapeHtml(link.description || link.iconText || '')}</div></td><td>${escapeHtml(link.category)}</td><td><a href="${safeHttpUrl(link.url)}" target="_blank" rel="noopener noreferrer" style="color:#8fbdf0;text-decoration:none">Mở liên kết ↗</a></td><td>${escapeHtml(link.allowedRoles || '*')}</td><td><span class="status-pill ${link.isActive ? 'status-active' : 'status-inactive'}">${link.isActive ? 'Hiển thị' : 'Ẩn'}</span></td><td><div class="actions"><button class="icon-btn" title="Chỉnh sửa" data-action="edit-link" data-key="${escapeHtml(link.id)}">✎</button><button class="icon-btn" title="${link.isActive ? 'Ẩn liên kết' : 'Hiện liên kết'}" data-action="toggle-link" data-key="${escapeHtml(link.id)}">${link.isActive ? '◉' : '○'}</button><button class="icon-btn danger" title="Xóa" data-action="delete-link" data-key="${escapeHtml(link.id)}">×</button></div></td></tr>`).join('') : '<tr><td colspan="6"><div class="empty-state">Chưa có liên kết nào. Hãy thêm ứng dụng đầu tiên.</div></td></tr>'}
           </tbody></table></div></div>
         <div class="page-note">Quyền truy cập dùng tên vai trò, phân tách bằng dấu phẩy. Nhập <b>*</b> để cho phép tất cả vai trò. Ví dụ: <b>Admin, Giám sát</b>.</div>
       `;
-      $('linkAdminSearch').addEventListener('input', (event) => { state.linkAdminQuery = event.target.value; renderLinksAdminPage(); const input = $('linkAdminSearch'); input.focus(); input.setSelectionRange(input.value.length, input.value.length); });
+      $('linkAdminSearch').addEventListener('input', (event) => { state.linkAdminQuery = event.target.value; const cursor = event.target.selectionStart; window.clearTimeout(searchRenderTimer); searchRenderTimer = window.setTimeout(() => { renderLinksAdminPage(); const input = $('linkAdminSearch'); input.focus(); input.setSelectionRange(cursor, cursor); }, 100); });
     }
 
     function renderLogsPage() {
@@ -814,7 +2777,7 @@
             ${shown.length ? shown.map((log) => `<tr><td style="white-space:nowrap">${escapeHtml(log.timestamp)}</td><td><div class="cell-main">${escapeHtml(log.fullName || log.username)}</div><div class="cell-sub">${escapeHtml(log.username)}</div></td><td><span class="role-pill">${escapeHtml(log.action)}</span></td><td>${escapeHtml(log.details)}</td></tr>`).join('') : '<tr><td colspan="4"><div class="empty-state">Chưa có dữ liệu hoạt động phù hợp.</div></td></tr>'}
           </tbody></table></div></div>
       `;
-      $('logSearch').addEventListener('input', (event) => { state.logQuery = event.target.value; renderLogsPage(); const input = $('logSearch'); input.focus(); input.setSelectionRange(input.value.length, input.value.length); });
+      $('logSearch').addEventListener('input', (event) => { state.logQuery = event.target.value; const cursor = event.target.selectionStart; window.clearTimeout(searchRenderTimer); searchRenderTimer = window.setTimeout(() => { renderLogsPage(); const input = $('logSearch'); input.focus(); input.setSelectionRange(cursor, cursor); }, 100); });
     }
 
     function renderSettingsPage() {
@@ -890,7 +2853,7 @@
         };
         await runModalAction('Đang lưu tài khoản...', async () => {
           const result = await callApi('apiAdminSaveAccount', state.token, payload);
-          await loadAdminData(); renderAccountsPage(); closeModal(); toast(result.message);
+          await loadAdminData(true); renderAccountsPage(); closeModal(); toast(result.message);
         });
       });
     }
@@ -928,8 +2891,8 @@
         };
         await runModalAction('Đang lưu liên kết...', async () => {
           const result = await callApi('apiAdminSaveLink', state.token, payload);
-          await loadAdminData(); renderLinksAdminPage(); closeModal(); toast(result.message);
-          await refreshDashboard(false);
+          await Promise.all([loadAdminData(true), refreshDashboard(false)]);
+          renderLinksAdminPage(); closeModal(); toast(result.message);
         });
       });
     }
@@ -949,8 +2912,7 @@
           announcement: $('announcementInput').value,
           supportText: $('supportInput').value
         });
-        await loadAdminData();
-        await refreshDashboard(false);
+        await Promise.all([loadAdminData(true), refreshDashboard(false)]);
         renderSettingsPage();
         toast(result.message);
       } catch (error) { toast(error.message, 'error'); }
@@ -987,8 +2949,9 @@
       if (action === 'refresh' || action === 'refresh-admin') {
         showBusy('Đang làm mới dữ liệu...');
         try {
-          await refreshDashboard(false);
-          if (isAdminUser() && ['accounts', 'links', 'logs', 'settings'].includes(state.activePage)) await loadAdminData();
+          const refreshJobs = [refreshDashboard(false)];
+          if (isAdminUser() && ['accounts', 'links', 'logs', 'settings'].includes(state.activePage)) refreshJobs.push(loadAdminData(true));
+          await Promise.all(refreshJobs);
           renderPage(); toast('Dữ liệu đã được cập nhật.');
         } catch (error) { toast(error.message, 'error'); }
         finally { hideBusy(); }
@@ -1006,7 +2969,7 @@
             originalUsername: user.username, username: user.username, fullName: user.fullName,
             role: user.role, status: nextStatus, password: '', note: user.note || ''
           });
-          await loadAdminData(); renderAccountsPage(); toast(result.message);
+          await loadAdminData(true); renderAccountsPage(); toast(result.message);
         } catch (error) { toast(error.message, 'error'); }
         finally { hideBusy(); }
         return;
@@ -1016,7 +2979,7 @@
         showBusy('Đang xóa tài khoản...');
         try {
           const result = await callApi('apiAdminDeleteAccount', state.token, key);
-          await loadAdminData(); renderAccountsPage(); toast(result.message);
+          await loadAdminData(true); renderAccountsPage(); toast(result.message);
         } catch (error) { toast(error.message, 'error'); }
         finally { hideBusy(); }
         return;
@@ -1028,7 +2991,7 @@
         try {
           const payload = Object.assign({}, link, { isActive: !link.isActive });
           const result = await callApi('apiAdminSaveLink', state.token, payload);
-          await loadAdminData(); renderLinksAdminPage(); await refreshDashboard(false); toast(result.message);
+          await Promise.all([loadAdminData(true), refreshDashboard(false)]); renderLinksAdminPage(); toast(result.message);
         } catch (error) { toast(error.message, 'error'); }
         finally { hideBusy(); }
         return;
@@ -1039,7 +3002,7 @@
         showBusy('Đang xóa liên kết...');
         try {
           const result = await callApi('apiAdminDeleteLink', state.token, key);
-          await loadAdminData(); renderLinksAdminPage(); await refreshDashboard(false); toast(result.message);
+          await Promise.all([loadAdminData(true), refreshDashboard(false)]); renderLinksAdminPage(); toast(result.message);
         } catch (error) { toast(error.message, 'error'); }
         finally { hideBusy(); }
       }
@@ -1064,6 +3027,20 @@
     });
 
     $('modalRoot').addEventListener('click', (event) => { if (event.target.id === 'modalRoot') closeModal(); });
+    // Đăng xuất ở một tab sẽ kết thúc phiên đã lưu ở các tab khác cùng trình duyệt.
+    window.addEventListener('storage', (event) => {
+      if (event.key === DEVICE_SESSION_KEY && !event.newValue && state.token) {
+        state.token = '';
+        state.user = null;
+        state.dashboard = null;
+        state.adminData = null;
+        state.adminDataLoadedAt = 0;
+        state.dashboardPromise = null;
+        storageRemove(sessionStorage, SESSION_KEY);
+        showLoginScreen();
+        toast('Phiên đăng nhập trên thiết bị này đã kết thúc.');
+      }
+    });
     $('logoutButton').addEventListener('click', logout);
     $('headerRefreshButton').addEventListener('click', () => handleAction('refresh', ''));
     $('mobileMenuButton').addEventListener('click', () => $('sidebar').classList.toggle('open'));
