@@ -12,8 +12,8 @@
     <style>
         :root {
             color-scheme: dark;
-            --brand-accent: #f58220; /* Cam Beta */
-            --brand-secondary: #00549c; /* Xanh Beta */
+            --brand-accent: #f58220;
+            --brand-secondary: #00549c;
             --surface-glass: rgba(15, 15, 20, 0.65);
             --border-thin: rgba(255, 255, 255, 0.1);
             --text-primary: #ffffff;
@@ -22,288 +22,106 @@
         }
 
         body {
-            margin: 0; 
-            padding: 20px;
+            margin: 0; padding: 20px;
             font-family: 'Be Vietnam Pro', sans-serif;
-            background-color: #030508;
-            color: var(--text-primary);
-            display: flex; 
-            justify-content: center; 
-            align-items: center;
-            min-height: 100vh;
-            position: relative; 
-            overflow-x: hidden;
+            background-color: #030508; color: var(--text-primary);
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; position: relative; overflow-x: hidden;
         }
 
         /* Ambient Holo Lighting */
         body::before, body::after {
-            content: ''; 
-            position: absolute; 
-            border-radius: 50%;
-            filter: blur(90px); 
-            z-index: -1; 
-            opacity: 0.35;
+            content: ''; position: absolute; border-radius: 50%;
+            filter: blur(90px); z-index: -1; opacity: 0.35;
         }
-        body::before {
-            width: 40vw; height: 40vw; 
-            background: var(--brand-secondary); 
-            top: -10%; left: -10%;
-        }
-        body::after {
-            width: 35vw; height: 35vw; 
-            background: var(--brand-accent); 
-            bottom: -10%; right: -10%;
-        }
+        body::before { width: 40vw; height: 40vw; background: var(--brand-secondary); top: -10%; left: -10%; }
+        body::after { width: 35vw; height: 35vw; background: var(--brand-accent); bottom: -10%; right: -10%; }
 
         /* Premium Glass Container */
         .glass-container {
-            position: relative; 
-            width: 100%; 
-            max-width: 400px;
-            padding: 45px 35px; 
-            border-radius: 2px;
+            position: relative; width: 100%; max-width: 400px;
+            padding: 45px 35px; border-radius: 2px;
             background: var(--surface-glass);
-            backdrop-filter: blur(40px); 
-            -webkit-backdrop-filter: blur(40px);
+            backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
             border: 1px solid var(--border-thin);
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), var(--holo-glow);
-            z-index: 1;
-            box-sizing: border-box;
+            z-index: 1; box-sizing: border-box;
         }
 
-        .logo-header { 
-            text-align: center; 
-            margin-bottom: 35px; 
-        }
-        
-        .logo-header img {
-            width: 60px; 
-            height: 60px; 
-            object-fit: cover;
-            border-radius: 4px;
-            filter: grayscale(20%) contrast(120%);
-        }
+        .logo-header { text-align: center; margin-bottom: 35px; }
+        .logo-header img { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; filter: grayscale(20%) contrast(120%); }
 
-        h2 { 
-            text-align: center; 
-            margin: 0 0 35px; 
-            font-weight: 300; 
-            font-size: 1.25rem; 
-            letter-spacing: 3px; 
-            text-transform: uppercase;
-            color: var(--text-primary);
-        }
+        h2 { text-align: center; margin: 0 0 35px; font-weight: 300; font-size: 1.25rem; letter-spacing: 3px; text-transform: uppercase; }
 
         .form-group { margin-bottom: 28px; }
-        .row { display: flex; gap: 20px; } 
-        .row .form-group { flex: 1; }
-        
-        label { 
-            display: block; 
-            margin-bottom: 8px; 
-            font-size: 0.7rem; 
-            font-weight: 500; 
-            color: var(--text-secondary); 
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-        }
+        .row { display: flex; gap: 20px; } .row .form-group { flex: 1; }
+        label { display: block; margin-bottom: 8px; font-size: 0.7rem; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1.5px; }
 
-        /* Minimalist Inputs */
         input, textarea {
-            width: 100%; 
-            padding: 8px 0; 
-            background: transparent;
-            border: none; 
-            border-bottom: 1px solid var(--border-thin);
-            border-radius: 0;
-            color: var(--text-primary); 
-            font-family: inherit; 
-            font-size: 1rem; 
-            font-weight: 300;
-            box-sizing: border-box;
-            transition: all 0.4s ease;
+            width: 100%; padding: 8px 0; background: transparent; border: none; border-bottom: 1px solid var(--border-thin); border-radius: 0;
+            color: var(--text-primary); font-family: inherit; font-size: 1rem; font-weight: 300; box-sizing: border-box; transition: all 0.4s ease;
         }
-        
-        input:focus, textarea:focus {
-            outline: none; 
-            border-bottom-color: var(--brand-accent);
-            background: linear-gradient(to top, rgba(245, 130, 32, 0.03) 0%, transparent 50%);
-        }
-        
-        input::placeholder, textarea::placeholder {
-            color: rgba(255, 255, 255, 0.15);
-        }
-
-        ::-webkit-calendar-picker-indicator { 
-            filter: invert(1); 
-            opacity: 0.3; 
-            cursor: pointer; 
-            transition: opacity 0.3s;
-        }
+        input:focus, textarea:focus { outline: none; border-bottom-color: var(--brand-accent); background: linear-gradient(to top, rgba(245, 130, 32, 0.03) 0%, transparent 50%); }
+        input::placeholder, textarea::placeholder { color: rgba(255, 255, 255, 0.15); }
+        ::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.3; cursor: pointer; transition: opacity 0.3s; }
         ::-webkit-calendar-picker-indicator:hover { opacity: 1; }
 
-        /* Upload Area */
-        .file-upload-wrapper { 
-            position: relative; 
-            overflow: hidden; 
-            display: inline-block; 
-            width: 100%; 
-            margin-top: 5px;
-        }
-        .file-upload-wrapper input[type="file"] { 
-            font-size: 100px; 
-            position: absolute; 
-            left: 0; top: 0; 
-            opacity: 0; 
-            cursor: pointer; 
-            height: 100%; 
-        }
-        
+        .file-upload-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; margin-top: 5px; }
+        .file-upload-wrapper input[type="file"] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; height: 100%; }
         .btn-upload {
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px dashed var(--border-thin);
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            text-align: center; 
-            cursor: pointer; 
-            transition: all 0.4s;
+            display: flex; align-items: center; justify-content: center; padding: 20px;
+            background: rgba(255, 255, 255, 0.02); border: 1px dashed var(--border-thin); color: var(--text-secondary);
+            font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase; text-align: center; cursor: pointer; transition: all 0.4s;
         }
-        .btn-upload:hover {
-            border-color: rgba(255,255,255,0.4);
-            color: var(--text-primary);
-        }
-        
-        .preview-img { 
-            margin-top: 15px; 
-            width: 100%; 
-            height: auto; 
-            display: none; 
-            border: 1px solid var(--border-thin);
-            filter: brightness(0.9);
-        }
+        .btn-upload:hover { border-color: rgba(255,255,255,0.4); color: var(--text-primary); }
+        .preview-img { margin-top: 15px; width: 100%; height: auto; display: none; border: 1px solid var(--border-thin); filter: brightness(0.9); }
 
-        /* Executive Submit Button */
         .btn-submit {
-            width: 100%; 
-            padding: 16px; 
-            margin-top: 20px;
-            background: var(--text-primary);
-            border: none;
-            color: #000000;
-            font-weight: 600; 
-            font-size: 0.85rem; 
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-family: inherit; 
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 100%; padding: 16px; margin-top: 20px; background: var(--text-primary); border: none; color: #000000;
+            font-weight: 600; font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; font-family: inherit; cursor: pointer; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .btn-submit:hover { 
-            background: var(--brand-accent);
-            color: #ffffff;
-            box-shadow: 0 10px 30px rgba(245, 130, 32, 0.3);
-            transform: translateY(-2px);
-        }
-        .btn-submit:disabled { 
-            background: rgba(255,255,255,0.1); 
-            color: rgba(255,255,255,0.3);
-            cursor: not-allowed; 
-            transform: none;
-            box-shadow: none;
-        }
+        .btn-submit:hover { background: var(--brand-accent); color: #ffffff; box-shadow: 0 10px 30px rgba(245, 130, 32, 0.3); transform: translateY(-2px); }
+        .btn-submit:disabled { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.3); cursor: not-allowed; transform: none; box-shadow: none; }
 
-        /* Popup Modal */
+        /* Popup Modal Cập Nhật Hiển Thị Ảnh */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85); 
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            display: none; justify-content: center; align-items: center; 
-            z-index: 1000; padding: 20px; box-sizing: border-box;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px; box-sizing: border-box;
             opacity: 0; transition: opacity 0.4s ease;
         }
         .modal-overlay.active { display: flex; opacity: 1; }
         
-        .modal-content { 
-            text-align: center; 
-            max-width: 380px; 
-            padding: 40px; 
-            border: 1px solid var(--border-thin);
-        }
-        .modal-content h3 { 
-            color: var(--text-primary); 
-            font-size: 1.2rem; 
-            font-weight: 300; 
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin: 0 0 15px; 
-        }
-        .modal-content p { 
-            color: var(--text-secondary); 
-            font-size: 0.9rem; 
-            margin-bottom: 35px; 
-            line-height: 1.6; 
-            font-weight: 300;
+        .modal-content { text-align: center; max-width: 420px; padding: 35px; border: 1px solid var(--border-thin); }
+        .modal-content h3 { color: var(--text-primary); font-size: 1.1rem; font-weight: 300; letter-spacing: 2px; text-transform: uppercase; margin: 0 0 15px; }
+        .modal-content p { color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 20px; line-height: 1.6; font-weight: 300; }
+        
+        /* Cấu hình hiển thị ảnh Preview trong Modal */
+        .modal-receipt-preview {
+            width: 100%; max-height: 320px; object-fit: contain;
+            border-radius: 4px; border: 1px solid rgba(255,255,255,0.15);
+            margin-bottom: 25px; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            background: #050505;
         }
         
-        .modal-actions { display: flex; flex-direction: column; gap: 15px; }
-        .btn-action {
-            padding: 14px; 
-            font-weight: 500; 
-            font-size: 0.8rem; 
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            font-family: inherit; 
-            cursor: pointer; 
-            border: 1px solid transparent; 
-            transition: all 0.3s;
-        }
-        .btn-download { 
-            background: var(--border-thin); 
-            color: var(--text-primary); 
-        }
-        .btn-download:hover {
-            background: rgba(255,255,255,0.15);
-        }
-        .btn-share { 
-            background: transparent; 
-            color: var(--text-primary); 
-            border-color: var(--border-thin); 
-        }
-        .btn-share:hover {
-            border-color: rgba(255,255,255,0.4);
-        }
-        .btn-close { 
-            background: transparent; 
-            color: var(--text-secondary); 
-            margin-top: 10px; 
-            font-size: 0.75rem;
-        }
+        .modal-actions { display: flex; flex-direction: column; gap: 12px; }
+        .btn-action { padding: 14px; font-weight: 500; font-size: 0.8rem; letter-spacing: 1.5px; text-transform: uppercase; font-family: inherit; cursor: pointer; border: 1px solid transparent; transition: all 0.3s; }
+        .btn-download { background: var(--border-thin); color: var(--text-primary); }
+        .btn-download:hover { background: rgba(255,255,255,0.15); }
+        .btn-share { background: transparent; color: var(--text-primary); border-color: var(--border-thin); }
+        .btn-share:hover { border-color: rgba(255,255,255,0.4); }
+        .btn-close { background: transparent; color: var(--text-secondary); margin-top: 5px; font-size: 0.75rem; }
         .btn-close:hover { color: var(--text-primary); }
 
-        /* Hidden Receipt Ticket */
+        /* Hidden Receipt Ticket (Bản thiết kế ảnh để render) */
         #receiptTicket {
             position: absolute; left: -9999px; top: 0; width: 550px;
-            background: #050505;
-            color: #ffffff; padding: 50px; box-sizing: border-box;
-            font-family: 'Be Vietnam Pro', sans-serif;
-            border: 1px solid rgba(255,255,255,0.1);
+            background: #050505; color: #ffffff; padding: 50px; box-sizing: border-box;
+            font-family: 'Be Vietnam Pro', sans-serif; border: 1px solid rgba(255,255,255,0.1);
         }
-        .receipt-header { 
-            text-align: center; 
-            border-bottom: 1px solid rgba(255,255,255,0.1); 
-            padding-bottom: 30px; margin-bottom: 30px; 
-        }
+        .receipt-header { text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 30px; margin-bottom: 30px; }
         .receipt-header img { width: 70px; margin-bottom: 15px; filter: grayscale(100%) brightness(200%); }
-        .receipt-header h1 { 
-            margin: 0; color: #ffffff; font-size: 20px; 
-            font-weight: 300; letter-spacing: 4px; text-transform: uppercase;
-        }
+        .receipt-header h1 { margin: 0; color: #ffffff; font-size: 20px; font-weight: 300; letter-spacing: 4px; text-transform: uppercase; }
         .receipt-header div { margin-top: 8px; color: rgba(255,255,255,0.5); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; }
         .receipt-body { font-size: 15px; line-height: 2.2; font-weight: 300; }
         .receipt-body strong { color: rgba(255,255,255,0.7); display: inline-block; width: 140px; font-weight: 500; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
@@ -342,7 +160,7 @@
         <div class="form-group">
             <label>Tài Liệu Đính Kèm</label>
             <div class="file-upload-wrapper">
-                <div class="btn-upload" id="uploadBtnText">Tải Ảnh Thực Tế Lên</div>
+                <div class="btn-upload" id="uploadBtnText">TẢI ẢNH THỰC TẾ LÊN</div>
                 <input type="file" id="imageFile" accept="image/*" capture="environment" required>
             </div>
             <img id="imagePreview" class="preview-img" alt="Bản xem trước">
@@ -351,11 +169,15 @@
     </form>
 </div>
 
-<!-- Popup Modal -->
+<!-- Popup Modal Mới -->
 <div id="successModal" class="modal-overlay">
     <div class="glass-container modal-content">
         <h3>Hoàn Tất</h3>
-        <p>Hồ sơ nghiệm thu POSM đã được ghi nhận vào cơ sở dữ liệu an toàn.</p>
+        <p>Phiếu xác nhận đã được tạo và lưu trữ tự động.</p>
+        
+        <!-- Khung hiển thị ảnh Preview -->
+        <img id="modalReceiptPreview" class="modal-receipt-preview" alt="Phiếu Xác Nhận">
+        
         <div class="modal-actions">
             <button id="btnDownload" class="btn-action btn-download">Tải Phiếu Xác Nhận</button>
             <button id="btnShare" class="btn-action btn-share">Chia Sẻ Tài Liệu</button>
@@ -368,34 +190,37 @@
 <div id="receiptTicket">
     <div class="receipt-header">
         <img crossorigin="anonymous" src="https://play-lh.googleusercontent.com/so_2mIzE8qaobdSafVStIV7olRZL8Q1SkclYErPgbFDPn1SzAUO33stPfshdztJZCVA0eqfWsO_iia59aHLKZL8" alt="Logo">
-        <h1>Phiếu Nghiệm Thu</h1>
+        <h1>PHIẾU NHẬN HÀNG</h1>
         <div>Beta Cinemas Nowzone</div>
     </div>
     <div class="receipt-body">
         <div><strong>Người Nhận:</strong> <span id="t_receiver"></span></div>
-        <div><strong>Ngày Xử Lý:</strong> <span id="t_date"></span></div>
-        <div><strong>Số Lượng:</strong> <span id="t_qty"></span></div>
+        <div><strong>Ngày Nhận POSM:</strong> <span id="t_date"></span></div>
+        <div><strong>Số Lượng POSM:</strong> <span id="t_qty"></span></div>
         <div><strong>Chi Tiết:</strong> <span id="t_desc"></span></div>
     </div>
     <div class="receipt-img-box">
         <img id="t_img" src="" alt="Tài liệu đính kèm">
     </div>
     <div class="receipt-footer">
-        <p>Tài liệu được xuất tự động từ Alpha Zone System</p>
+        <p>Loading...</p>
     </div>
 </div>
 
 <script>
     // --- ĐIỀN URL WEB APP CỦA APPS SCRIPT VÀO ĐÂY ---
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzAHu_aZ4yYOy7EGvzEbEZYrD_1JAcC4i6RMZc8MoUTKOeRUyEd_e5LEZwhm566xD28/exec';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyi3FEXoipiFl0z4Ek5FgivDT7eLjl5Mk8LlcJ5J5J9RMFeD0ni0c_32wZ3lgwGE6Y/exec';
     
     document.getElementById('receiveDate').valueAsDate = new Date();
 
     let base64ImageString = "";
     let lastSavedReceiver = ""; 
+    let generatedCanvasObj = null; // Lưu trữ biến canvas toàn cục để tải/share cực nhanh
+
     const imageFileInput = document.getElementById('imageFile');
     const imagePreview = document.getElementById('imagePreview');
     const uploadBtnText = document.getElementById('uploadBtnText');
+    const modalReceiptPreview = document.getElementById('modalReceiptPreview');
 
     imageFileInput.addEventListener('change', function(e) {
         const file = e.target.files[0];
@@ -405,7 +230,7 @@
                 base64ImageString = event.target.result;
                 imagePreview.src = base64ImageString;
                 imagePreview.style.display = 'block';
-                uploadBtnText.innerHTML = "Đã Đính Kèm - Nhấp Để Đổi";
+                uploadBtnText.innerHTML = "ĐÃ ĐÍNH KÈM - CHẠM ĐỂ ĐỔI";
                 uploadBtnText.style.borderColor = "var(--text-primary)";
                 uploadBtnText.style.color = "var(--text-primary)";
             };
@@ -423,7 +248,7 @@
         }
 
         submitBtn.disabled = true;
-        submitBtn.textContent = 'ĐANG XỬ LÝ...';
+        submitBtn.textContent = 'ĐANG ĐỒNG BỘ...';
 
         const payload = {
             receiveDate: document.getElementById('receiveDate').value,
@@ -440,8 +265,11 @@
             body: JSON.stringify(payload)
         })
         .then(response => response.json())
-        .then(data => {
+        .then(async data => {
             if(data.status === "success") {
+                submitBtn.textContent = 'ĐANG TẠO PHIẾU...';
+
+                // Điền dữ liệu vào phiếu ẩn
                 document.getElementById('t_receiver').textContent = payload.receiver;
                 const dateParts = payload.receiveDate.split('-');
                 document.getElementById('t_date').textContent = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
@@ -449,8 +277,22 @@
                 document.getElementById('t_desc').textContent = payload.description;
                 document.getElementById('t_img').src = base64ImageString;
 
+                // NGAY LẬP TỨC TẠO ẢNH PHIẾU
+                try {
+                    const canvas = await html2canvas(document.getElementById('receiptTicket'), { useCORS: true, scale: 2 });
+                    generatedCanvasObj = canvas; // Lưu lại
+                    
+                    // Đưa ảnh vừa tạo hiển thị ngay trên Popup
+                    modalReceiptPreview.src = canvas.toDataURL('image/png');
+                    modalReceiptPreview.style.display = 'block';
+                } catch (err) {
+                    console.log("Lỗi tạo hình xem trước", err);
+                }
+
+                // Hiển thị Popup
                 document.getElementById('successModal').classList.add('active');
 
+                // Khôi phục lại form để sẵn sàng nhập cái mới
                 document.getElementById('receivePosmForm').reset();
                 document.getElementById('receiver').value = lastSavedReceiver;
                 document.getElementById('receiveDate').valueAsDate = new Date();
@@ -476,55 +318,45 @@
     const btnShare = document.getElementById('btnShare');
     const btnCloseModal = document.getElementById('btnCloseModal');
     const successModal = document.getElementById('successModal');
-    const receiptTicket = document.getElementById('receiptTicket');
 
     btnCloseModal.addEventListener('click', () => {
         successModal.classList.remove('active');
+        // Reset hình ảnh xem trước khi đóng
+        setTimeout(() => { modalReceiptPreview.style.display = 'none'; }, 300);
     });
 
-    async function generateImage() {
-        const canvas = await html2canvas(receiptTicket, { useCORS: true, scale: 2 });
-        return canvas;
-    }
-
-    btnDownload.addEventListener('click', async () => {
-        const btnOrigin = btnDownload.innerHTML;
-        btnDownload.innerHTML = "ĐANG KHỞI TẠO...";
-        try {
-            const canvas = await generateImage();
-            const link = document.createElement('a');
-            link.download = `Bien_Ban_POSM_${lastSavedReceiver}_${new Date().getTime()}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-        } catch (error) {
-            alert("Không thể khởi tạo tài liệu: " + error);
-        }
-        btnDownload.innerHTML = btnOrigin;
+    // Nút tải ảnh lấy thẳng từ biến đã tạo sẵn, cực mượt
+    btnDownload.addEventListener('click', () => {
+        if(!generatedCanvasObj) return;
+        const link = document.createElement('a');
+        link.download = `Bien_Ban_POSM_${lastSavedReceiver}_${new Date().getTime()}.png`;
+        link.href = generatedCanvasObj.toDataURL('image/png');
+        link.click();
     });
 
-    btnShare.addEventListener('click', async () => {
+    // Nút chia sẻ lấy thẳng từ biến đã tạo sẵn
+    btnShare.addEventListener('click', () => {
+        if(!generatedCanvasObj) return;
         const btnOrigin = btnShare.innerHTML;
-        btnShare.innerHTML = "ĐANG CHUẨN BỊ...";
-        try {
-            const canvas = await generateImage();
-            canvas.toBlob(async (blob) => {
-                const file = new File([blob], `Bien_Ban_POSM_${lastSavedReceiver}.png`, { type: 'image/png' });
-                
-                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        btnShare.innerHTML = "ĐANG MỞ CHIA SẺ...";
+        
+        generatedCanvasObj.toBlob(async (blob) => {
+            const file = new File([blob], `Bien_Ban_POSM_${lastSavedReceiver}.png`, { type: 'image/png' });
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
                     await navigator.share({
                         title: 'Biên Bản Nghiệm Thu POSM',
                         text: `Tài liệu nghiệm thu POSM từ ${lastSavedReceiver}`,
                         files: [file]
                     });
-                } else {
-                    alert("Trình duyệt không hỗ trợ chia sẻ trực tiếp. Vui lòng sử dụng tính năng Tải Xuống.");
+                } catch(e) {
+                    console.log("Hủy chia sẻ", e);
                 }
-                btnShare.innerHTML = btnOrigin;
-            }, 'image/png');
-        } catch (error) {
-            alert("Đã xảy ra lỗi trong quá trình chia sẻ: " + error);
+            } else {
+                alert("Trình duyệt không hỗ trợ chia sẻ trực tiếp. Vui lòng sử dụng tính năng Tải Xuống.");
+            }
             btnShare.innerHTML = btnOrigin;
-        }
+        }, 'image/png');
     });
 </script>
 
