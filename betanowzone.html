@@ -2,335 +2,1074 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#030508">
-  <title>Beta Nowzone | Cổng Nội Bộ Nhân Sự</title>
-  <link rel="icon" href="https://play-lh.googleusercontent.com/so_2mIzE8qaobdSafVStIV7olRZL8Q1SkclYErPgbFDPn1SzAUO33stPfshdztJZCVA0eqfWsO_iia59aHLKZL8" type="image/png">
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#080b12">
+  <title>Beta Nowzone | Cổng Nhân Sự Nội Bộ</title>
+  <link rel="icon" type="image/png" href="https://play-lh.googleusercontent.com/so_2mIzE8qaobdSafVStIV7olRZL8Q1SkclYErPgbFDPn1SzAUO33stPfshdztJZCVA0eqfWsO_iia59aHLKZL8">
+  <link rel="apple-touch-icon" href="https://play-lh.googleusercontent.com/so_2mIzE8qaobdSafVStIV7olRZL8Q1SkclYErPgbFDPn1SzAUO33stPfshdztJZCVA0eqfWsO_iia59aHLKZL8">
+  <meta property="og:image" content="https://play-lh.googleusercontent.com/so_2mIzE8qaobdSafVStIV7olRZL8Q1SkclYErPgbFDPn1SzAUO33stPfshdztJZCVA0eqfWsO_iia59aHLKZL8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      color-scheme: dark;
-      --brand-accent: #f58220;
-      --brand-secondary: #00549c;
-      --surface-glass: rgba(15, 15, 20, .78);
-      --border-thin: rgba(255, 255, 255, .10);
-      --text-primary: #fff;
-      --text-secondary: rgba(255, 255, 255, .52);
-      --holo-glow: 0 0 50px rgba(245, 130, 32, .10);
+      --bg: #080b12;
+      --bg-2: #0d121c;
+      --panel: rgba(18, 24, 36, .92);
+      --panel-2: #121a28;
+      --line: rgba(255,255,255,.085);
+      --text: #f4f6fa;
+      --muted: #8b96a9;
+      --muted-2: #647086;
+      --orange: #f58220;
+      --orange-2: #ff9b45;
+      --blue: #1766a6;
+      --green: #35c58b;
+      --red: #ff6575;
+      --yellow: #f5bd4f;
+      --radius: 18px;
+      --shadow: 0 24px 70px rgba(0,0,0,.35);
     }
     * { box-sizing: border-box; }
+    html { min-height: 100%; background: var(--bg); }
     body {
-      margin: 0; padding: 20px; font-family: 'Be Vietnam Pro', sans-serif;
-      background: #030508; color: var(--text-primary); min-height: 100vh;
-      display: flex; justify-content: center; align-items: center; position: relative;
-      overflow-x: hidden;
+      margin: 0; min-height: 100vh; color: var(--text); font-family: 'Be Vietnam Pro', sans-serif;
+      background: radial-gradient(circle at 8% 8%, rgba(0,84,156,.22), transparent 31%),
+                  radial-gradient(circle at 92% 92%, rgba(245,130,32,.13), transparent 28%), var(--bg);
     }
-    body::before, body::after {
-      content: ''; position: fixed; border-radius: 50%; filter: blur(100px);
-      z-index: 0; opacity: .28; pointer-events: none;
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .hidden { display: none !important; }
+    .muted { color: var(--muted); }
+    .eyebrow { color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: 1.7px; text-transform: uppercase; }
+    .brand-mark {
+      width: 48px; height: 48px; flex: 0 0 48px; display: grid; place-items: center;
+      overflow: hidden; background: #fff; border: 1px solid rgba(255,255,255,.16);
+      border-radius: 13px; box-shadow: 0 8px 25px rgba(245,130,32,.18);
     }
-    body::before { width: 45vw; height: 45vw; min-width: 260px; min-height: 260px; background: var(--brand-secondary); top: -10%; left: -10%; }
-    body::after { width: 40vw; height: 40vw; min-width: 240px; min-height: 240px; background: var(--brand-accent); bottom: -10%; right: -10%; }
-    .glass-container {
-      position: relative; width: 100%; max-width: 480px; padding: 40px 35px;
-      background: var(--surface-glass); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
-      border: 1px solid var(--border-thin); box-shadow: 0 20px 50px rgba(0,0,0,.6), var(--holo-glow);
-      z-index: 1;
+    .brand-mark img { display: block; width: 100%; height: 100%; object-fit: contain; padding: 2px; }
+    .brand-row { display: flex; align-items: center; gap: 12px; }
+    .brand-name { font-size: 14px; font-weight: 800; letter-spacing: .6px; }
+    .brand-sub { color: var(--muted); font-size: 10px; margin-top: 3px; letter-spacing: .7px; }
+
+    /* LOGIN */
+    #loginScreen { min-height: 100vh; display: grid; place-items: center; padding: 28px 18px; }
+    .login-wrap {
+      width: min(100%, 990px); display: grid; grid-template-columns: 1fr 430px; overflow: hidden;
+      border: 1px solid var(--line); border-radius: 25px; background: rgba(12,17,27,.9); box-shadow: var(--shadow);
+      backdrop-filter: blur(24px);
     }
-    .logo-header { text-align: center; margin-bottom: 25px; }
-    .logo-header img { width: 55px; height: 55px; object-fit: cover; border-radius: 4px; filter: grayscale(10%) contrast(120%); }
-    h1 { text-align: center; margin: 0 0 10px; font-weight: 300; font-size: 1.2rem; letter-spacing: 3px; text-transform: uppercase; }
-    .subtitle { text-align: center; font-size: .72rem; color: var(--text-secondary); letter-spacing: 1.4px; text-transform: uppercase; margin-bottom: 32px; }
-    .form-group { margin-bottom: 24px; }
-    label { display: block; margin-bottom: 9px; font-size: .68rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1.4px; }
-    input {
-      width: 100%; padding: 12px 0; background: transparent; border: 0;
-      border-bottom: 1px solid var(--border-thin); border-radius: 0; color: var(--text-primary);
-      font-family: inherit; font-size: .98rem; font-weight: 300; transition: border-color .25s ease;
+    .login-aside {
+      padding: 46px; min-height: 560px; display: flex; flex-direction: column; justify-content: space-between;
+      position: relative; overflow: hidden; background: linear-gradient(145deg, rgba(0,84,156,.28), rgba(245,130,32,.08));
     }
-    input:focus { outline: none; border-bottom-color: var(--brand-accent); }
-    input::placeholder { color: rgba(255,255,255,.2); }
-    .btn-main {
-      width: 100%; padding: 15px; margin-top: 12px; background: #fff; border: 0; color: #000;
-      font-weight: 700; font-size: .76rem; letter-spacing: 1.7px; text-transform: uppercase;
-      font-family: inherit; cursor: pointer; transition: all .25s ease;
+    .login-aside:after { content: ''; width: 360px; height: 360px; border: 1px solid rgba(255,255,255,.07); border-radius: 50%; position: absolute; right: -140px; bottom: -130px; box-shadow: 0 0 0 45px rgba(255,255,255,.018), 0 0 0 90px rgba(255,255,255,.012); }
+    .login-aside h1 { font-size: clamp(30px, 4vw, 43px); line-height: 1.18; letter-spacing: -1.8px; max-width: 480px; margin: 34px 0 17px; }
+    .login-aside h1 span { color: var(--orange-2); }
+    .login-aside p { max-width: 410px; color: #b2bdcd; font-size: 13px; line-height: 1.9; }
+    .feature-list { display: grid; gap: 13px; margin-top: 35px; }
+    .feature { display: flex; align-items: center; gap: 11px; font-size: 12px; color: #d7deea; }
+    .feature-dot { width: 24px; height: 24px; border-radius: 8px; display: grid; place-items: center; color: var(--orange-2); background: rgba(245,130,32,.13); font-size: 12px; }
+    .login-foot { color: #778397; font-size: 10px; letter-spacing: .5px; position: relative; z-index: 1; }
+    .login-card { padding: 48px 38px; display: flex; flex-direction: column; justify-content: center; }
+    .login-card h2 { font-size: 23px; margin: 27px 0 7px; letter-spacing: -.6px; }
+    .login-card .lead { color: var(--muted); font-size: 12px; line-height: 1.7; margin: 0 0 29px; }
+    .field { margin: 0 0 17px; }
+    .field label { display: block; margin: 0 0 8px; color: #aab4c4; font-size: 10px; font-weight: 700; letter-spacing: 1.15px; text-transform: uppercase; }
+    .input-wrap { position: relative; }
+    .field input, .field select, .field textarea, .search-box input {
+      width: 100%; color: var(--text); border: 1px solid var(--line); outline: 0; border-radius: 11px;
+      padding: 13px 14px; background: rgba(255,255,255,.035); transition: .2s ease; font-size: 12px;
     }
-    .btn-main:hover { background: var(--brand-accent); color: #fff; box-shadow: 0 10px 30px rgba(245,130,32,.25); }
-    .btn-main:disabled { opacity: .6; cursor: wait; }
-    .login-hint { color: var(--text-secondary); font-size: .68rem; line-height: 1.6; margin-top: 18px; text-align: center; }
-    #dashboardView { display: none; width: 100%; max-width: 700px; }
-    .announcement-ticker {
-      background: rgba(245,130,32,.08); border: 1px solid rgba(245,130,32,.2);
-      padding: 13px 16px; font-size: .76rem; margin-bottom: 27px;
-      display: flex; align-items: flex-start; gap: 13px; line-height: 1.6;
+    .field textarea { resize: vertical; min-height: 88px; line-height: 1.7; }
+    .field select { color-scheme: dark; }
+    .field input:focus, .field textarea:focus, .field select:focus, .search-box input:focus { border-color: rgba(245,130,32,.7); box-shadow: 0 0 0 3px rgba(245,130,32,.09); }
+    .field input::placeholder, .field textarea::placeholder, .search-box input::placeholder { color: #596579; }
+    .password-toggle { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: transparent; border: 0; color: var(--muted); font-size: 10px; padding: 6px; }
+    .login-options { display: flex; align-items: center; justify-content: space-between; gap: 10px; color: var(--muted); font-size: 10px; margin: 2px 0 18px; }
+    .check-label { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; }
+    .check-label input { accent-color: var(--orange); }
+    .btn {
+      border: 1px solid transparent; border-radius: 10px; padding: 11px 15px; font-weight: 700; font-size: 11px;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: .2s ease; white-space: nowrap;
     }
-    .announcement-ticker strong { flex: 0 0 auto; color: var(--brand-accent); font-size: .67rem; letter-spacing: 1px; text-transform: uppercase; }
-    .section-title { font-size: .7rem; text-transform: uppercase; letter-spacing: 1.8px; color: var(--text-secondary); margin-bottom: 15px; border-bottom: 1px solid var(--border-thin); padding-bottom: 9px; }
-    .modules-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 13px; margin-bottom: 12px; }
-    .module-card {
-      min-height: 132px; padding: 19px; background: rgba(255,255,255,.025); border: 1px solid var(--border-thin);
-      text-decoration: none; color: var(--text-primary); display: flex; flex-direction: column;
-      justify-content: space-between; gap: 12px; transition: all .25s ease; overflow: hidden;
-    }
-    .module-card:hover { border-color: var(--brand-accent); background: rgba(245,130,32,.055); transform: translateY(-3px); }
+    .btn-primary { background: var(--orange); color: #17130f; }
+    .btn-primary:hover { background: var(--orange-2); transform: translateY(-1px); box-shadow: 0 9px 22px rgba(245,130,32,.18); }
+    .btn-primary:disabled, .btn:disabled { opacity: .55; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn-secondary { background: rgba(255,255,255,.055); border-color: var(--line); color: #dce3ed; }
+    .btn-secondary:hover { border-color: rgba(255,255,255,.2); background: rgba(255,255,255,.085); }
+    .btn-danger { background: rgba(255,101,117,.12); border-color: rgba(255,101,117,.2); color: #ff8e9b; }
+    .btn-danger:hover { background: rgba(255,101,117,.2); }
+    .btn-small { padding: 7px 10px; border-radius: 8px; font-size: 10px; }
+    .btn-full { width: 100%; min-height: 45px; }
+    .login-error { display: none; padding: 11px 12px; border-radius: 9px; margin-top: 13px; background: rgba(255,101,117,.09); border: 1px solid rgba(255,101,117,.18); color: #ff9ba5; font-size: 11px; line-height: 1.5; }
+    .login-support { margin-top: 23px; padding-top: 18px; border-top: 1px solid var(--line); color: #788498; font-size: 10px; line-height: 1.8; }
+
+    /* APP SHELL */
+    #appScreen { min-height: 100vh; display: grid; grid-template-columns: 238px minmax(0,1fr); }
+    .sidebar { position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; padding: 25px 16px 17px; background: rgba(9,13,21,.88); border-right: 1px solid var(--line); z-index: 5; }
+    .sidebar .brand-row { padding: 0 8px 28px; }
+    .nav-label { color: #68758a; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; font-size: 9px; padding: 13px 10px 9px; }
+    .nav-list { display: grid; gap: 5px; }
+    .nav-item { border: 1px solid transparent; background: transparent; border-radius: 10px; display: flex; align-items: center; gap: 11px; text-align: left; padding: 11px 12px; width: 100%; color: #95a0b3; font-size: 11px; font-weight: 600; transition: .18s; }
+    .nav-item .nav-icon { width: 24px; height: 24px; border-radius: 7px; display: grid; place-items: center; background: rgba(255,255,255,.045); color: #9aa7bb; font-size: 11px; }
+    .nav-item:hover { color: #fff; background: rgba(255,255,255,.035); }
+    .nav-item.active { color: #fff; background: rgba(245,130,32,.11); border-color: rgba(245,130,32,.18); }
+    .nav-item.active .nav-icon { color: var(--orange-2); background: rgba(245,130,32,.15); }
+    .sidebar-bottom { margin-top: auto; border-top: 1px solid var(--line); padding: 17px 7px 0; }
+    .security-note { color: #6f7c91; font-size: 9px; line-height: 1.7; padding: 0 5px 12px; }
+    .side-user { display: flex; align-items: center; gap: 10px; padding: 10px 5px; }
+    .avatar { width: 34px; height: 34px; flex: 0 0 34px; border-radius: 11px; display: grid; place-items: center; color: #22170d; background: linear-gradient(145deg, #ffb56f, #f58220); font-weight: 800; font-size: 12px; }
+    .side-user-name { font-size: 10px; font-weight: 700; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    .side-user-role { color: var(--muted); font-size: 9px; margin-top: 3px; }
+    .main-area { min-width: 0; padding: 0 32px 42px; }
+    .topbar { min-height: 83px; display: flex; align-items: center; justify-content: space-between; gap: 18px; border-bottom: 1px solid var(--line); margin-bottom: 27px; }
+    .page-heading { min-width: 0; }
+    .page-heading h1 { font-size: 20px; margin: 0; font-weight: 700; letter-spacing: -.55px; }
+    .page-heading p { color: var(--muted); font-size: 10px; margin: 5px 0 0; }
+    .top-actions { display: flex; align-items: center; gap: 9px; }
+    .top-time { color: var(--muted); font-size: 10px; padding-right: 10px; }
+    .mobile-menu { display: none; }
+    .page-content { max-width: 1400px; margin: 0 auto; }
+
+    /* COMPONENTS */
+    .welcome-panel { position: relative; overflow: hidden; padding: 28px 31px; border: 1px solid rgba(245,130,32,.2); border-radius: var(--radius); background: linear-gradient(105deg, rgba(0,84,156,.24), rgba(245,130,32,.11)), #111927; margin-bottom: 19px; }
+    .welcome-panel:after { content: 'BETA'; position: absolute; right: 25px; bottom: -24px; color: rgba(255,255,255,.035); font-size: 100px; font-weight: 800; letter-spacing: -8px; pointer-events: none; }
+    .welcome-panel .eyebrow { color: #ffb16e; }
+    .welcome-panel h2 { font-size: clamp(20px, 3vw, 27px); margin: 9px 0 8px; letter-spacing: -.8px; }
+    .welcome-panel p { color: #aeb9ca; font-size: 11px; line-height: 1.8; margin: 0; max-width: 650px; position: relative; z-index: 1; }
+    .announcement { display: flex; align-items: flex-start; gap: 12px; background: rgba(245,130,32,.07); border: 1px solid rgba(245,130,32,.15); border-radius: 12px; padding: 13px 15px; margin-bottom: 21px; }
+    .announcement-icon { width: 27px; height: 27px; flex: 0 0 27px; border-radius: 8px; display: grid; place-items: center; color: #ffb16e; background: rgba(245,130,32,.13); font-size: 12px; }
+    .announcement-title { color: var(--orange-2); font-size: 9px; text-transform: uppercase; letter-spacing: 1.1px; font-weight: 800; margin-bottom: 4px; }
+    .announcement-text { color: #c1cad7; font-size: 10px; line-height: 1.7; white-space: pre-wrap; }
+    .stats-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; margin-bottom: 25px; }
+    .stat-card { border: 1px solid var(--line); background: rgba(18,24,36,.72); border-radius: 14px; padding: 17px; min-width: 0; }
+    .stat-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .stat-label { color: var(--muted); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; }
+    .stat-icon { width: 27px; height: 27px; display: grid; place-items: center; border-radius: 8px; color: var(--orange-2); background: rgba(245,130,32,.1); font-size: 11px; }
+    .stat-value { font-size: 24px; font-weight: 800; margin-top: 12px; letter-spacing: -.8px; }
+    .stat-foot { color: #69768b; font-size: 9px; margin-top: 2px; }
+    .section-head { display: flex; align-items: end; justify-content: space-between; gap: 15px; margin: 26px 0 13px; }
+    .section-head h2 { font-size: 14px; margin: 0; letter-spacing: -.2px; }
+    .section-head p { color: var(--muted); font-size: 9px; margin: 4px 0 0; }
+    .search-box { min-width: 220px; max-width: 310px; position: relative; }
+    .search-box input { padding: 10px 13px 10px 34px; font-size: 10px; }
+    .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #6f7b90; font-size: 12px; }
+    .filter-row { display: flex; flex-wrap: wrap; gap: 7px; margin: 0 0 13px; }
+    .filter-chip { border: 1px solid var(--line); border-radius: 99px; background: transparent; color: #9ba7b9; padding: 6px 11px; font-size: 9px; }
+    .filter-chip.active { border-color: rgba(245,130,32,.35); color: #ffb16e; background: rgba(245,130,32,.1); }
+    .module-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(205px,1fr)); gap: 12px; }
+    .module-card { display: flex; min-height: 150px; flex-direction: column; justify-content: space-between; gap: 15px; padding: 17px; border: 1px solid var(--line); border-radius: 14px; background: rgba(18,24,36,.72); color: var(--text); text-decoration: none; transition: .2s; }
+    .module-card:hover { transform: translateY(-3px); border-color: rgba(245,130,32,.45); background: rgba(245,130,32,.055); box-shadow: 0 12px 28px rgba(0,0,0,.15); }
     .module-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-    .module-card .tag { font-size: .62rem; color: var(--brand-accent); text-transform: uppercase; letter-spacing: 1px; }
-    .module-card .icon-text { font-size: .62rem; color: var(--text-secondary); border: 1px solid var(--border-thin); padding: 4px 7px; }
-    .module-card .title { font-size: .88rem; font-weight: 600; line-height: 1.45; }
-    .module-card .link-label { font-size: .68rem; color: var(--text-secondary); }
-    .user-welcome { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 25px; }
-    .user-meta { min-width: 0; }
-    .user-name { font-weight: 600; font-size: 1rem; margin-top: 4px; overflow-wrap: anywhere; }
-    .user-role { color: var(--brand-accent); font-size: .66rem; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; }
-    .logout-btn { background: transparent; border: 1px solid var(--border-thin); color: var(--text-secondary); padding: 8px 12px; font-size: .65rem; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; white-space: nowrap; font-family: inherit; }
-    .logout-btn:hover { border-color: #fff; color: #fff; }
-    .error-msg { color: #ff6868; font-size: .73rem; line-height: 1.5; margin-top: 15px; text-align: center; display: none; }
-    .empty-state { color: var(--text-secondary); border: 1px dashed var(--border-thin); padding: 24px 15px; text-align: center; font-size: .76rem; line-height: 1.7; }
-    .loading { color: var(--text-secondary); font-size: .76rem; padding: 16px 0; }
-    @media (max-width: 520px) {
-      body { padding: 14px; align-items: flex-start; }
-      .glass-container { padding: 30px 22px; margin: auto 0; }
-      #dashboardView { margin: 10px 0; }
-      .modules-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-      .module-card { padding: 14px; min-height: 125px; }
-      .module-card .title { font-size: .8rem; }
+    .module-category { color: var(--orange-2); font-size: 9px; text-transform: uppercase; letter-spacing: .8px; font-weight: 700; }
+    .module-icon { width: 31px; height: 31px; border-radius: 9px; display: grid; place-items: center; border: 1px solid var(--line); color: #a7b2c5; font-size: 9px; font-weight: 700; }
+    .module-title { font-size: 12px; font-weight: 700; line-height: 1.55; }
+    .module-desc { color: var(--muted); font-size: 9px; line-height: 1.6; margin-top: 4px; }
+    .module-bottom { display: flex; justify-content: space-between; color: #748196; font-size: 9px; }
+    .empty-state { border: 1px dashed rgba(255,255,255,.13); border-radius: 14px; padding: 32px 18px; color: var(--muted); text-align: center; font-size: 11px; line-height: 1.8; grid-column: 1/-1; }
+    .table-card { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: rgba(18,24,36,.65); }
+    .table-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 13px 15px; border-bottom: 1px solid var(--line); }
+    .table-toolbar .search-box { max-width: 260px; width: 100%; min-width: 160px; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; min-width: 680px; }
+    th { text-align: left; color: #8290a5; background: rgba(255,255,255,.025); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; padding: 12px 14px; white-space: nowrap; }
+    td { border-top: 1px solid rgba(255,255,255,.055); color: #d1d8e2; font-size: 10px; padding: 12px 14px; vertical-align: middle; }
+    tr:hover td { background: rgba(255,255,255,.018); }
+    .cell-main { color: #f0f3f7; font-weight: 700; }
+    .cell-sub { color: var(--muted); font-size: 9px; margin-top: 4px; }
+    .status-pill { display: inline-flex; align-items: center; gap: 6px; border-radius: 99px; padding: 5px 8px; font-size: 9px; font-weight: 700; white-space: nowrap; }
+    .status-pill:before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+    .status-active { color: #55dba5; background: rgba(53,197,139,.1); }
+    .status-inactive { color: #ff8290; background: rgba(255,101,117,.1); }
+    .role-pill { color: #aab9ce; background: rgba(125,155,198,.1); border: 1px solid rgba(125,155,198,.12); border-radius: 7px; padding: 4px 7px; font-size: 9px; white-space: nowrap; }
+    .actions { display: flex; align-items: center; gap: 5px; }
+    .icon-btn { width: 28px; height: 28px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 8px; color: #9aa7ba; background: rgba(255,255,255,.025); font-size: 11px; }
+    .icon-btn:hover { color: white; border-color: rgba(255,255,255,.25); }
+    .icon-btn.danger:hover { color: #ff8996; border-color: rgba(255,101,117,.3); }
+    .page-note { border: 1px solid rgba(245,130,32,.16); border-radius: 11px; background: rgba(245,130,32,.055); color: #b7c1ce; padding: 12px 14px; font-size: 10px; line-height: 1.7; margin-top: 14px; }
+    .settings-grid { display: grid; grid-template-columns: minmax(0,1.2fr) minmax(260px,.8fr); gap: 14px; }
+    .panel { border: 1px solid var(--line); border-radius: 14px; padding: 18px; background: rgba(18,24,36,.65); }
+    .panel h3 { font-size: 12px; margin: 0 0 6px; }
+    .panel .panel-desc { font-size: 9px; color: var(--muted); line-height: 1.7; margin: 0 0 17px; }
+
+    /* MODALS / TOAST */
+    #modalRoot { position: fixed; inset: 0; z-index: 30; display: none; align-items: center; justify-content: center; padding: 18px; background: rgba(0,0,0,.68); backdrop-filter: blur(7px); }
+    #modalRoot.open { display: flex; }
+    .modal { width: min(100%, 560px); max-height: min(92vh, 820px); overflow: auto; border: 1px solid rgba(255,255,255,.12); border-radius: 18px; background: #111824; box-shadow: 0 25px 90px rgba(0,0,0,.55); }
+    .modal-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 19px 21px; border-bottom: 1px solid var(--line); }
+    .modal-head h2 { font-size: 14px; margin: 0; }
+    .modal-close { width: 29px; height: 29px; border: 1px solid var(--line); background: transparent; color: var(--muted); border-radius: 8px; }
+    .modal-body { padding: 20px 21px; }
+    .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 13px; }
+    .modal-grid .span-2 { grid-column: 1/-1; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 8px; padding-top: 8px; }
+    #toastArea { position: fixed; right: 20px; bottom: 20px; z-index: 50; display: grid; gap: 8px; width: min(360px, calc(100vw - 40px)); }
+    .toast { padding: 12px 14px; border-radius: 10px; background: #172333; border: 1px solid rgba(255,255,255,.12); box-shadow: 0 12px 35px rgba(0,0,0,.3); font-size: 10px; line-height: 1.6; color: #e7edf5; animation: toastIn .2s ease; }
+    .toast.error { border-color: rgba(255,101,117,.3); color: #ffabb3; }
+    .toast.success { border-color: rgba(53,197,139,.25); }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    #busyOverlay { position: fixed; inset: 0; z-index: 60; display: none; place-items: center; background: rgba(5,8,13,.55); backdrop-filter: blur(3px); }
+    #busyOverlay.show { display: grid; }
+    .busy-box { padding: 16px 20px; border: 1px solid var(--line); background: #131b29; border-radius: 12px; color: #dbe2ec; font-size: 10px; display: flex; align-items: center; gap: 10px; }
+    .spinner { width: 15px; height: 15px; border: 2px solid rgba(255,255,255,.2); border-top-color: var(--orange); border-radius: 50%; animation: spin .7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 930px) {
+      .login-wrap { grid-template-columns: .9fr 410px; }
+      .login-aside { padding: 35px; }
+      #appScreen { grid-template-columns: 205px minmax(0,1fr); }
+      .main-area { padding: 0 22px 35px; }
+      .stats-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
     }
-    @media (max-width: 360px) { .modules-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 720px) {
+      #loginScreen { padding: 15px; }
+      .login-wrap { display: block; max-width: 430px; }
+      .login-aside { display: none; }
+      .login-card { padding: 35px 27px; }
+      #appScreen { display: block; }
+      .sidebar { position: fixed; left: -270px; top: 0; width: 245px; height: 100dvh; transition: left .22s ease; box-shadow: var(--shadow); }
+      .sidebar.open { left: 0; }
+      .mobile-menu { display: inline-flex; }
+      .main-area { padding: 0 15px 32px; }
+      .topbar { min-height: 72px; margin-bottom: 20px; }
+      .top-time { display: none; }
+      .page-heading h1 { font-size: 17px; }
+      .welcome-panel { padding: 22px; }
+      .welcome-panel:after { font-size: 72px; right: 8px; }
+      .module-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .module-card { min-height: 145px; padding: 13px; }
+      .module-title { font-size: 10px; }
+      .settings-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 430px) {
+      .stats-grid { gap: 8px; }
+      .stat-card { padding: 12px; }
+      .stat-value { font-size: 21px; }
+      .stat-label { font-size: 8px; }
+      .section-head { align-items: flex-start; flex-direction: column; }
+      .search-box { width: 100%; max-width: none; }
+      .module-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .module-card { min-height: 135px; }
+      .module-category { font-size: 8px; }
+      .table-toolbar { align-items: flex-start; flex-direction: column; }
+      .table-toolbar .search-box { max-width: none; }
+      .modal-grid { grid-template-columns: 1fr; }
+      .modal-grid .span-2 { grid-column: auto; }
+      .top-actions .btn { padding: 9px 10px; font-size: 9px; }
+    }
   </style>
 </head>
 <body>
-  <!-- MÀN HÌNH ĐĂNG NHẬP -->
-  <main class="glass-container" id="loginCard">
-    <div class="logo-header">
-      <img src="https://play-lh.googleusercontent.com/so_2mIzE8qaobdSafVStIV7olRZL8Q1SkclYErPgbFDPn1SzAUO33stPfshdztJZCVA0eqfWsO_iia59aHLKZL8" alt="Logo Beta">
-    </div>
-    <h1>Beta Nowzone</h1>
-    <div class="subtitle">Cổng Nhân Sự Nội Bộ</div>
-
-    <form id="loginForm" autocomplete="on">
-      <div class="form-group">
-        <label for="loginUsername">Tài Khoản Nhân Viên</label>
-        <input type="text" id="loginUsername" name="username" required
-          placeholder="Nhập tài khoản được cấp" autocomplete="username"
-          autocapitalize="none" spellcheck="false">
+  <!-- LOGIN -->
+  <section id="loginScreen">
+    <div class="login-wrap">
+      <div class="login-aside">
+        <div>
+          <div class="brand-row">
+            <div class="brand-mark"><img src="https://play-lh.googleusercontent.com/so_2mIzE8qaobdSafVStIV7olRZL8Q1SkclYErPgbFDPn1SzAUO33stPfshdztJZCVA0eqfWsO_iia59aHLKZL8" alt="Logo Beta Nowzone"></div>
+            <div><div class="brand-name">BETA NOWZONE</div><div class="brand-sub">INTERNAL WORKSPACE</div></div>
+          </div>
+          <h1>Một không gian<br><span>vận hành thông minh.</span></h1>
+          <p>Cổng thông tin nội bộ dành cho đội ngũ Beta Nowzone. Truy cập nhanh các công cụ nghiệp vụ, thông báo và tài nguyên được phân quyền theo tài khoản.</p>
+          <div class="feature-list">
+            <div class="feature"><span class="feature-dot">✓</span> Tập trung các ứng dụng nghiệp vụ</div>
+            <div class="feature"><span class="feature-dot">✓</span> Phân quyền theo vai trò nhân sự</div>
+            <div class="feature"><span class="feature-dot">✓</span> Đồng bộ dữ liệu qua Google Sheets</div>
+          </div>
+        </div>
+        <div class="login-foot">BETA CINEMAS · NOWZONE · INTERNAL PORTAL</div>
       </div>
-      <div class="form-group">
-        <label for="loginPass">Mật Khẩu</label>
-        <input type="password" id="loginPass" name="password" required
-          placeholder="Nhập mật khẩu" autocomplete="current-password">
+      <div class="login-card">
+        <div class="brand-row">
+          <div class="brand-mark"><img src="https://play-lh.googleusercontent.com/so_2mIzE8qaobdSafVStIV7olRZL8Q1SkclYErPgbFDPn1SzAUO33stPfshdztJZCVA0eqfWsO_iia59aHLKZL8" alt="Logo Beta Nowzone"></div>
+          <div><div class="brand-name">BETA NOWZONE</div><div class="brand-sub">CỔNG NHÂN SỰ NỘI BỘ</div></div>
+        </div>
+        <h2>Đăng nhập hệ thống</h2>
+        <p class="lead">Sử dụng tên tài khoản và mật khẩu được Quản lý cấp. Không cần email.</p>
+        <form id="loginForm" autocomplete="on">
+          <div class="field">
+            <label for="loginUsername">Tài khoản nhân viên</label>
+            <input id="loginUsername" name="username" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="Ví dụ: nv001" required maxlength="80">
+          </div>
+          <div class="field">
+            <label for="loginPassword">Mật khẩu</label>
+            <div class="input-wrap">
+              <input id="loginPassword" name="password" type="password" autocomplete="current-password" placeholder="Nhập mật khẩu" required maxlength="200">
+              <button class="password-toggle" type="button" data-toggle-password="loginPassword">Hiện</button>
+            </div>
+          </div>
+          <div class="login-options">
+            <label class="check-label"><input id="rememberUsername" type="checkbox"> Ghi nhớ tài khoản</label>
+            <span>Phiên làm việc 6 giờ</span>
+          </div>
+          <button class="btn btn-primary btn-full" id="loginButton" type="submit">ĐĂNG NHẬP <span>→</span></button>
+          <div class="login-error" id="loginError" role="alert"></div>
+        </form>
+        <div class="login-support" id="loginSupport">Vui lòng liên hệ Quản lý nếu bạn chưa được cấp tài khoản.</div>
       </div>
-      <button type="submit" class="btn-main" id="loginBtn">Đăng Nhập Hệ Thống</button>
-      <div class="error-msg" id="loginError" role="alert" aria-live="polite"></div>
-      <div class="login-hint">Sử dụng tài khoản và mật khẩu do Quản lý cấp.</div>
-    </form>
-  </main>
+    </div>
+  </section>
 
-  <!-- DASHBOARD SAU KHI ĐĂNG NHẬP -->
-  <main class="glass-container" id="dashboardView">
-    <div class="user-welcome">
-      <div class="user-meta">
-        <div style="font-size:.66rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:1.2px;">Xin chào,</div>
-        <div class="user-name" id="userNameDisplay"></div>
-        <div class="user-role" id="userRoleDisplay"></div>
+  <!-- APP -->
+  <section id="appScreen" class="hidden">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand-row">
+        <div class="brand-mark"><img src="https://play-lh.googleusercontent.com/so_2mIzE8qaobdSafVStIV7olRZL8Q1SkclYErPgbFDPn1SzAUO33stPfshdztJZCVA0eqfWsO_iia59aHLKZL8" alt="Logo Beta Nowzone"></div>
+        <div><div class="brand-name">BETA NOWZONE</div><div class="brand-sub">INTERNAL WORKSPACE</div></div>
       </div>
-      <button class="logout-btn" id="logoutBtn" type="button">Đăng Xuất</button>
-    </div>
+      <div class="nav-label">Không gian làm việc</div>
+      <nav class="nav-list">
+        <button class="nav-item active" data-nav="home"><span class="nav-icon">⌂</span> Tổng quan</button>
+        <button class="nav-item" data-nav="accounts" data-admin-only><span class="nav-icon">♙</span> Quản lý tài khoản</button>
+        <button class="nav-item" data-nav="links" data-admin-only><span class="nav-icon">▧</span> Quản lý liên kết</button>
+        <button class="nav-item" data-nav="logs" data-admin-only><span class="nav-icon">≡</span> Nhật ký hoạt động</button>
+        <button class="nav-item" data-nav="settings" data-admin-only><span class="nav-icon">⚙</span> Thiết lập hệ thống</button>
+      </nav>
+      <div class="nav-label">Cá nhân</div>
+      <nav class="nav-list">
+        <button class="nav-item" data-action="change-password"><span class="nav-icon">⌑</span> Đổi mật khẩu</button>
+        <button class="nav-item" data-action="refresh"><span class="nav-icon">↻</span> Làm mới dữ liệu</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="security-note">Tài khoản được quản lý nội bộ. Không chia sẻ thông tin đăng nhập cho người khác.</div>
+        <div class="side-user">
+          <div class="avatar" id="userAvatar">B</div>
+          <div style="min-width:0;flex:1"><div class="side-user-name" id="sideUserName">Nhân viên</div><div class="side-user-role" id="sideUserRole">Nhân viên</div></div>
+        </div>
+        <button class="btn btn-secondary btn-full" id="logoutButton" type="button">Đăng xuất</button>
+      </div>
+    </aside>
 
-    <div class="announcement-ticker">
-      <strong>Thông Báo</strong>
-      <div id="tickerText">Hệ thống thông tin nội bộ Beta Nowzone. Vui lòng theo dõi các cập nhật từ Quản lý.</div>
-    </div>
+    <main class="main-area">
+      <header class="topbar">
+        <div style="display:flex;align-items:center;gap:12px;min-width:0">
+          <button class="btn btn-secondary mobile-menu" id="mobileMenuButton" type="button">☰</button>
+          <div class="page-heading"><h1 id="pageTitle">Tổng quan</h1><p id="pageSubtitle">Trung tâm ứng dụng và thông tin nội bộ</p></div>
+        </div>
+        <div class="top-actions">
+          <span class="top-time" id="serverTime"></span>
+          <button class="btn btn-secondary" id="headerRefreshButton" type="button">↻ Làm mới</button>
+        </div>
+      </header>
+      <div class="page-content" id="pageContent"></div>
+    </main>
+  </section>
 
-    <div class="section-title">Ứng Dụng & Công Cụ Nội Bộ</div>
-    <div class="modules-grid" id="modulesGrid">
-      <div class="loading">Đang tải danh mục...</div>
-    </div>
-  </main>
+  <div id="modalRoot" aria-hidden="true"></div>
+  <div id="toastArea" aria-live="polite"></div>
+  <div id="busyOverlay"><div class="busy-box"><span class="spinner"></span><span id="busyText">Đang xử lý...</span></div></div>
 
   <script>
-    // Giữ nguyên URL Web App Apps Script của hệ thống.
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz_fSXIaEfIjxNYIKetWsxX5i3k57j0yHSTyqQiVpdJVQB2Ohcgz1Fqvuhc9XySKnel/exec';
-    const SESSION_KEY = 'betaNowzoneSession';
+    'use strict';
 
-    const loginCard = document.getElementById('loginCard');
-    const dashboardView = document.getElementById('dashboardView');
-    const loginForm = document.getElementById('loginForm');
-    const loginError = document.getElementById('loginError');
-    const loginBtn = document.getElementById('loginBtn');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const userNameDisplay = document.getElementById('userNameDisplay');
-    const userRoleDisplay = document.getElementById('userRoleDisplay');
-    const modulesGrid = document.getElementById('modulesGrid');
+    const SESSION_KEY = 'betaNowzoneSessionV2';
+    const USERNAME_KEY = 'betaNowzoneUsername';
+    const state = {
+      token: '', user: null, dashboard: null, adminData: null,
+      activePage: 'home', linkQuery: '', linkCategory: 'Tất cả',
+      accountQuery: '', logQuery: '', linkAdminQuery: ''
+    };
 
-    /** Gửi JSON trong POST body, không đưa mật khẩu lên URL. */
-    async function apiRequest(payload) {
-      const response = await fetch(SCRIPT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(payload),
-        redirect: 'follow'
-      });
+    const $ = (id) => document.getElementById(id);
 
-      const raw = await response.text();
-      let data;
-      try {
-        data = JSON.parse(raw);
-      } catch (_) {
-        throw new Error('Máy chủ trả về dữ liệu không hợp lệ. Hãy kiểm tra URL triển khai Apps Script.');
-      }
-      if (!response.ok) throw new Error(data.message || 'Không thể kết nối máy chủ.');
-      return data;
+    // Dán URL Web App /exec sau khi Deploy Apps Script dạng backend.
+    // Không thêm tham số ?health=1 vào URL này.
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxZ11NATCjuDkNJDVbBL6FQxGzsh3RXPGb9_l4ugLbILJU5En-6ZJ_v72edMDAK4wtj/exec';
+    const API_TIMEOUT_MS = 45000;
+    let apiRequestCounter = 0;
+
+    function makeRequestId() {
+      apiRequestCounter += 1;
+      return 'bnz_' + Date.now().toString(36) + '_' + apiRequestCounter.toString(36) + '_' + Math.random().toString(36).slice(2, 10);
     }
 
-    function showLoginError(message) {
-      loginError.textContent = message;
-      loginError.style.display = 'block';
-    }
+    function serverCall(functionName, ...args) {
+      return new Promise((resolve, reject) => {
+        if (!API_URL || API_URL.indexOf('PASTE_YOUR_') >= 0 || !/^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec(?:\?.*)?$/i.test(API_URL)) {
+          reject(new Error('Chưa cấu hình API_URL. Hãy dán URL Web App /exec của Google Apps Script vào đầu phần JavaScript.'));
+          return;
+        }
 
-    function showLogin() {
-      dashboardView.style.display = 'none';
-      loginCard.style.display = 'block';
-      loginForm.reset();
-      loginError.textContent = '';
-      loginError.style.display = 'none';
-      loginBtn.disabled = false;
-      loginBtn.textContent = 'ĐĂNG NHẬP HỆ THỐNG';
-    }
+        const requestId = makeRequestId();
+        const nonce = makeRequestId() + '_' + Math.random().toString(36).slice(2);
+        const frameName = 'beta_api_frame_' + requestId;
+        const iframe = document.createElement('iframe');
+        iframe.name = frameName;
+        iframe.title = 'Kết nối máy chủ Beta Nowzone';
+        iframe.setAttribute('aria-hidden', 'true');
+        iframe.tabIndex = -1;
+        iframe.style.cssText = 'position:absolute;width:1px;height:1px;left:-9999px;top:-9999px;border:0;';
 
-    loginForm.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      const username = document.getElementById('loginUsername').value.trim();
-      const password = document.getElementById('loginPass').value;
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = API_URL;
+        form.target = frameName;
+        form.acceptCharset = 'UTF-8';
+        form.enctype = 'application/x-www-form-urlencoded';
+        form.style.display = 'none';
 
-      loginBtn.disabled = true;
-      loginBtn.textContent = 'ĐANG XÁC THỰC...';
-      loginError.style.display = 'none';
+        const payload = {};
+        switch (functionName) {
+          case 'apiLogin':
+            payload.username = args[0]; payload.password = args[1]; break;
+          case 'apiGetDashboard':
+          case 'apiLogout':
+          case 'apiAdminGetData':
+            payload.token = args[0]; break;
+          case 'apiChangePassword':
+            payload.token = args[0]; payload.currentPassword = args[1]; payload.newPassword = args[2]; break;
+          case 'apiAdminSaveAccount':
+          case 'apiAdminSaveLink':
+          case 'apiAdminSaveSettings':
+            payload.token = args[0]; payload.data = args[1] || {}; break;
+          case 'apiAdminDeleteAccount':
+            payload.token = args[0]; payload.username = args[1]; break;
+          case 'apiAdminDeleteLink':
+            payload.token = args[0]; payload.id = args[1]; break;
+          case 'apiBootstrap':
+            break;
+          default:
+            reject(new Error('Chức năng API không được hỗ trợ: ' + functionName));
+            return;
+        }
 
-      try {
-        const data = await apiRequest({
-          action: 'login',
-          username: username,
-          password: password
+        const fields = {
+          action: functionName,
+          payload: JSON.stringify(payload),
+          requestId: requestId,
+          nonce: nonce
+        };
+        Object.keys(fields).forEach((key) => {
+          const input = document.createElement('input');
+          input.type = 'hidden'; input.name = key; input.value = String(fields[key] == null ? '' : fields[key]);
+          form.appendChild(input);
         });
 
-        if (data.status !== 'success' || !data.token || !data.user) {
-          throw new Error(data.message || 'Không thể xác thực tài khoản.');
+        let finished = false;
+        const timeout = window.setTimeout(() => finish(new Error('Máy chủ phản hồi quá thời gian. Hãy kiểm tra quyền triển khai Web App và thử lại.')), API_TIMEOUT_MS);
+        function cleanup() {
+          window.removeEventListener('message', onMessage);
+          window.clearTimeout(timeout);
+          form.remove();
+          // Đợi một nhịp để trình duyệt hoàn tất điều hướng iframe rồi mới gỡ node.
+          window.setTimeout(() => iframe.remove(), 100);
+        }
+        function finish(error, value) {
+          if (finished) return;
+          finished = true;
+          cleanup();
+          if (error) reject(error); else resolve(value);
+        }
+        function onMessage(event) {
+          const message = event.data;
+          if (!message || message.channel !== 'BETA_NOWZONE_API') return;
+          if (message.requestId !== requestId || message.nonce !== nonce) return;
+          // HtmlService có thể trả nội dung từ script.googleusercontent.com.
+          // Chỉ nhận postMessage từ origin Google Apps Script/Googleusercontent.
+          let trustedOrigin = false;
+          try {
+            const originUrl = new URL(event.origin);
+            trustedOrigin = originUrl.protocol === 'https:' &&
+              (originUrl.hostname === 'script.google.com' || originUrl.hostname.endsWith('.googleusercontent.com'));
+          } catch (ignored) {}
+          if (!trustedOrigin) return;
+          finish(null, message.result);
         }
 
-        const session = { token: data.token, user: data.user };
-        sessionStorage.setItem(SESSION_KEY, JSON.stringify(session));
-        await initDashboard(session);
-      } catch (error) {
-        loginCard.style.display = 'block';
-        dashboardView.style.display = 'none';
-        showLoginError(error.message || 'Lỗi kết nối máy chủ.');
-        loginBtn.disabled = false;
-        loginBtn.textContent = 'ĐĂNG NHẬP HỆ THỐNG';
-      }
-    });
-
-    /** Kiểm tra lại token với máy chủ trước khi hiển thị dashboard. */
-    async function initDashboard(session) {
-      if (!session || !session.token) throw new Error('Phiên đăng nhập không hợp lệ.');
-
-      loginCard.style.display = 'none';
-      dashboardView.style.display = 'block';
-      userNameDisplay.textContent = (session.user && session.user.name) || 'Nhân viên';
-      userRoleDisplay.textContent = (session.user && session.user.role) || '';
-      modulesGrid.innerHTML = '<div class="loading">Đang tải danh mục...</div>';
-
-      const data = await apiRequest({ action: 'getConfig', token: session.token });
-      if (data.status !== 'success') {
-        sessionStorage.removeItem(SESSION_KEY);
-        throw new Error(data.message || 'Phiên đăng nhập đã hết hạn.');
-      }
-
-      // Dữ liệu người dùng được lấy lại từ máy chủ, không tin dữ liệu cache trên trình duyệt.
-      if (data.user) {
-        userNameDisplay.textContent = data.user.name || data.user.username || 'Nhân viên';
-        userRoleDisplay.textContent = data.user.role || '';
-      }
-      renderLinks(data.links || []);
-    }
-
-    /** Render an toàn bằng textContent, không chèn dữ liệu Sheet trực tiếp vào HTML. */
-    function renderLinks(links) {
-      modulesGrid.replaceChildren();
-      if (!links.length) {
-        const empty = document.createElement('div');
-        empty.className = 'empty-state';
-        empty.textContent = 'Hiện chưa có ứng dụng nào được cấp quyền cho tài khoản này. Vui lòng liên hệ Quản lý.';
-        modulesGrid.appendChild(empty);
-        return;
-      }
-
-      links.forEach(item => {
-        if (!item.url || !/^https?:\/\//i.test(item.url)) return;
-
-        const card = document.createElement('a');
-        card.className = 'module-card';
-        card.href = item.url;
-        card.target = '_blank';
-        card.rel = 'noopener noreferrer';
-
-        const top = document.createElement('div');
-        top.className = 'module-top';
-        const tag = document.createElement('div');
-        tag.className = 'tag';
-        tag.textContent = item.category || 'Ứng dụng';
-        top.appendChild(tag);
-
-        if (item.iconText) {
-          const icon = document.createElement('div');
-          icon.className = 'icon-text';
-          icon.textContent = item.iconText;
-          top.appendChild(icon);
-        }
-
-        const title = document.createElement('div');
-        title.className = 'title';
-        title.textContent = item.title || 'Ứng dụng nội bộ';
-
-        const label = document.createElement('div');
-        label.className = 'link-label';
-        label.textContent = 'Truy cập hệ thống  →';
-
-        card.append(top, title, label);
-        modulesGrid.appendChild(card);
+        window.addEventListener('message', onMessage);
+        document.body.appendChild(iframe);
+        document.body.appendChild(form);
+        try { form.submit(); }
+        catch (error) { finish(new Error('Không thể gửi yêu cầu đến máy chủ: ' + error.message)); }
       });
     }
 
-    logoutBtn.addEventListener('click', async () => {
-      const raw = sessionStorage.getItem(SESSION_KEY);
-      let session = null;
-      try { session = raw ? JSON.parse(raw) : null; } catch (_) {}
+    async function callApi(functionName, ...args) {
+      const result = await serverCall(functionName, ...args);
+      if (!result || result.ok !== true) throw new Error(result && result.message ? result.message : 'Máy chủ trả về dữ liệu không hợp lệ.');
+      return result;
+    }
 
-      logoutBtn.disabled = true;
+    function showBusy(message) {
+      $('busyText').textContent = message || 'Đang xử lý...';
+      $('busyOverlay').classList.add('show');
+    }
+    function hideBusy() { $('busyOverlay').classList.remove('show'); }
+
+    function toast(message, type) {
+      const el = document.createElement('div');
+      el.className = 'toast ' + (type || 'success');
+      el.textContent = message;
+      $('toastArea').appendChild(el);
+      window.setTimeout(() => el.remove(), 3600);
+    }
+
+    function escapeHtml(value) {
+      return String(value == null ? '' : value).replace(/[&<>"']/g, (char) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[char]));
+    }
+
+    function initials(name) {
+      const words = String(name || 'B').trim().split(/\s+/).filter(Boolean);
+      return words.length > 1 ? (words[0][0] + words[words.length - 1][0]).toUpperCase() : (words[0] || 'B').slice(0, 2).toUpperCase();
+    }
+
+    function displayLoginError(message) {
+      $('loginError').textContent = message;
+      $('loginError').style.display = 'block';
+    }
+    function clearLoginError() {
+      $('loginError').textContent = '';
+      $('loginError').style.display = 'none';
+    }
+
+    async function boot() {
       try {
-        if (session && session.token) {
-          await apiRequest({ action: 'logout', token: session.token });
+        const bootData = await callApi('apiBootstrap');
+        if (bootData.supportText) $('loginSupport').textContent = bootData.supportText;
+        const remembered = localStorage.getItem(USERNAME_KEY);
+        if (remembered) {
+          $('loginUsername').value = remembered;
+          $('rememberUsername').checked = true;
         }
       } catch (error) {
-        // Dù máy chủ mất kết nối, vẫn xóa phiên cục bộ trên thiết bị hiện tại.
+        displayLoginError(error.message);
+      }
+
+      const rawSession = sessionStorage.getItem(SESSION_KEY);
+      if (!rawSession) return;
+      try {
+        const session = JSON.parse(rawSession);
+        if (!session.token) throw new Error('Phiên đăng nhập không hợp lệ.');
+        state.token = session.token;
+        await refreshDashboard(false);
+      } catch (error) {
+        clearSession();
+        showLoginScreen();
+        displayLoginError(error.message || 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+      }
+    }
+
+    $('loginForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      clearLoginError();
+      const username = $('loginUsername').value.trim();
+      const password = $('loginPassword').value;
+      const button = $('loginButton');
+      button.disabled = true;
+      button.textContent = 'ĐANG XÁC THỰC...';
+      try {
+        const result = await callApi('apiLogin', username, password);
+        state.token = result.token;
+        sessionStorage.setItem(SESSION_KEY, JSON.stringify({ token: result.token }));
+        if ($('rememberUsername').checked) localStorage.setItem(USERNAME_KEY, username);
+        else localStorage.removeItem(USERNAME_KEY);
+        $('loginPassword').value = '';
+        await refreshDashboard(true);
+        toast('Đăng nhập thành công. Xin chào ' + (state.user.name || state.user.username) + '!');
+      } catch (error) {
+        if (state.token) clearSession();
+        showLoginScreen();
+        displayLoginError(error.message || 'Không thể đăng nhập.');
       } finally {
-        sessionStorage.removeItem(SESSION_KEY);
-        logoutBtn.disabled = false;
-        showLogin();
+        button.disabled = false;
+        button.innerHTML = 'ĐĂNG NHẬP <span>→</span>';
       }
     });
 
-    window.addEventListener('DOMContentLoaded', async () => {
-      const raw = sessionStorage.getItem(SESSION_KEY);
-      if (!raw) return;
+    async function refreshDashboard(showLoader) {
+      if (!state.token) throw new Error('Bạn chưa đăng nhập.');
+      if (showLoader) showBusy('Đang đồng bộ dữ liệu...');
       try {
-        const session = JSON.parse(raw);
-        await initDashboard(session);
+        const data = await callApi('apiGetDashboard', state.token);
+        state.dashboard = data;
+        state.user = data.user;
+        $('sideUserName').textContent = data.user.name || data.user.username;
+        $('sideUserRole').textContent = data.user.role || 'Nhân viên';
+        $('userAvatar').textContent = initials(data.user.name || data.user.username);
+        $('serverTime').textContent = data.serverTime || '';
+        $('loginScreen').classList.add('hidden');
+        $('appScreen').classList.remove('hidden');
+        document.querySelectorAll('[data-admin-only]').forEach((node) => {
+          node.classList.toggle('hidden', !isAdminUser());
+        });
+        if (!isAdminUser() && ['accounts', 'links', 'logs', 'settings'].includes(state.activePage)) state.activePage = 'home';
+        renderPage();
       } catch (error) {
-        sessionStorage.removeItem(SESSION_KEY);
-        showLogin();
-        if (error.message) showLoginError(error.message);
+        if (isSessionErrorMessage(error.message)) {
+          clearSession();
+          showLoginScreen();
+          displayLoginError(error.message);
+        }
+        throw error;
+      } finally {
+        if (showLoader) hideBusy();
+      }
+    }
+
+    function isSessionErrorMessage(message) {
+      return /phiên đăng nhập|tài khoản không còn hoạt động|vui lòng đăng nhập lại|mật khẩu hoặc quyền truy cập/i.test(String(message || ''));
+    }
+
+    function isAdminUser() {
+      const role = String(state.user && state.user.role || '').trim().toLowerCase();
+      return role === 'admin' || role === 'quản trị viên';
+    }
+
+    function clearSession() {
+      state.token = '';
+      state.user = null;
+      state.dashboard = null;
+      state.adminData = null;
+      sessionStorage.removeItem(SESSION_KEY);
+    }
+
+    function showLoginScreen() {
+      $('appScreen').classList.add('hidden');
+      $('loginScreen').classList.remove('hidden');
+      $('loginPassword').value = '';
+    }
+
+    async function logout() {
+      showBusy('Đang đăng xuất...');
+      try { if (state.token) await callApi('apiLogout', state.token); } catch (error) { /* Xóa phiên cục bộ dù máy chủ mất kết nối. */ }
+      clearSession();
+      state.activePage = 'home';
+      hideBusy();
+      $('sidebar').classList.remove('open');
+      showLoginScreen();
+      toast('Bạn đã đăng xuất khỏi hệ thống.');
+    }
+
+    function pageMeta(page) {
+      const map = {
+        home: ['Tổng quan', 'Trung tâm ứng dụng và thông tin nội bộ'],
+        accounts: ['Quản lý tài khoản', 'Tạo, cập nhật, khóa và phân quyền nhân sự'],
+        links: ['Quản lý liên kết', 'Cấu hình các ứng dụng hiển thị trên cổng nội bộ'],
+        logs: ['Nhật ký hoạt động', 'Theo dõi các thao tác quan trọng trong hệ thống'],
+        settings: ['Thiết lập hệ thống', 'Quản lý thông báo và hướng dẫn hỗ trợ']
+      };
+      return map[page] || map.home;
+    }
+
+    async function navigate(page) {
+      if (['accounts', 'links', 'logs', 'settings'].includes(page) && !isAdminUser()) {
+        toast('Bạn không có quyền truy cập chức năng này.', 'error');
+        return;
+      }
+      state.activePage = page;
+      $('sidebar').classList.remove('open');
+      document.querySelectorAll('[data-nav]').forEach((button) => button.classList.toggle('active', button.dataset.nav === page));
+      const meta = pageMeta(page);
+      $('pageTitle').textContent = meta[0];
+      $('pageSubtitle').textContent = meta[1];
+      if (['accounts', 'links', 'logs', 'settings'].includes(page)) {
+        await loadAdminData();
+      }
+      renderPage();
+    }
+
+    async function loadAdminData() {
+      showBusy('Đang tải dữ liệu quản trị...');
+      try {
+        state.adminData = await callApi('apiAdminGetData', state.token);
+      } catch (error) {
+        if (isSessionErrorMessage(error.message)) {
+          clearSession(); showLoginScreen(); displayLoginError(error.message);
+        } else toast(error.message, 'error');
+        throw error;
+      } finally { hideBusy(); }
+    }
+
+    function renderPage() {
+      const page = state.activePage;
+      if (page === 'accounts') return renderAccountsPage();
+      if (page === 'links') return renderLinksAdminPage();
+      if (page === 'logs') return renderLogsPage();
+      if (page === 'settings') return renderSettingsPage();
+      return renderHomePage();
+    }
+
+    function renderHomePage() {
+      const data = state.dashboard || { links: [], stats: {} };
+      const stats = data.stats || {};
+      const admin = isAdminUser();
+      $('pageContent').innerHTML = `
+        <section class="welcome-panel">
+          <div class="eyebrow">BETA NOWZONE · INTERNAL PORTAL</div>
+          <h2>Xin chào, ${escapeHtml(state.user && state.user.name || 'bạn')}.</h2>
+          <p>Chào mừng bạn quay trở lại không gian làm việc nội bộ. Các tiện ích bên dưới được hiển thị theo quyền truy cập của tài khoản.</p>
+        </section>
+        <section class="announcement">
+          <div class="announcement-icon">!</div>
+          <div><div class="announcement-title">Thông báo từ quản lý</div><div class="announcement-text">${escapeHtml(data.announcement || 'Hiện chưa có thông báo mới.')}</div></div>
+        </section>
+        <section class="stats-grid">
+          <div class="stat-card"><div class="stat-top"><span class="stat-label">Ứng dụng được cấp</span><span class="stat-icon">▧</span></div><div class="stat-value">${Number(stats.availableLinks || 0)}</div><div class="stat-foot">Có thể truy cập bằng tài khoản hiện tại</div></div>
+          ${admin ? `
+            <div class="stat-card"><div class="stat-top"><span class="stat-label">Nhân sự</span><span class="stat-icon">♙</span></div><div class="stat-value">${Number(stats.totalMembers || 0)}</div><div class="stat-foot">${Number(stats.activeMembers || 0)} tài khoản đang hoạt động</div></div>
+            <div class="stat-card"><div class="stat-top"><span class="stat-label">Liên kết hoạt động</span><span class="stat-icon">↗</span></div><div class="stat-value">${Number(stats.activeLinks || 0)}</div><div class="stat-foot">Trên tổng ${Number(stats.totalLinks || 0)} liên kết</div></div>
+            <div class="stat-card"><div class="stat-top"><span class="stat-label">Hoạt động gần đây</span><span class="stat-icon">≡</span></div><div class="stat-value">${Number(stats.recentActivities || 0)}</div><div class="stat-foot">Sự kiện gần nhất trong nhật ký</div></div>
+          ` : `
+            <div class="stat-card"><div class="stat-top"><span class="stat-label">Tài khoản</span><span class="stat-icon">♙</span></div><div class="stat-value" style="font-size:17px">${escapeHtml(state.user.role || 'Nhân viên')}</div><div class="stat-foot">Vai trò hiện tại</div></div>
+            <div class="stat-card"><div class="stat-top"><span class="stat-label">Trạng thái</span><span class="stat-icon">✓</span></div><div class="stat-value" style="font-size:17px;color:var(--green)">Đang hoạt động</div><div class="stat-foot">Tài khoản đã được xác thực</div></div>
+            <div class="stat-card"><div class="stat-top"><span class="stat-label">Phiên đăng nhập</span><span class="stat-icon">◷</span></div><div class="stat-value" style="font-size:17px">6 giờ</div><div class="stat-foot">Tự hết hạn khi phiên kết thúc</div></div>
+          `}
+        </section>
+        <div class="section-head"><div><h2>Ứng dụng & công cụ nội bộ</h2><p>Chọn tiện ích bạn cần sử dụng</p></div><div class="search-box"><span class="search-icon">⌕</span><input id="linkSearch" type="search" placeholder="Tìm ứng dụng..." value="${escapeHtml(state.linkQuery)}"></div></div>
+        <div class="filter-row" id="linkFilters"></div>
+        <div class="module-grid" id="moduleGrid"></div>
+      `;
+      renderLinkFilters();
+      renderModuleCards();
+      $('linkSearch').addEventListener('input', (event) => { state.linkQuery = event.target.value; renderModuleCards(); });
+    }
+
+    function renderLinkFilters() {
+      const links = (state.dashboard && state.dashboard.links) || [];
+      const categories = ['Tất cả', ...new Set(links.map((item) => item.category || 'Ứng dụng'))];
+      $('linkFilters').innerHTML = categories.map((category) => `<button class="filter-chip ${state.linkCategory === category ? 'active' : ''}" data-category="${escapeHtml(category)}" type="button">${escapeHtml(category)}</button>`).join('');
+      $('linkFilters').querySelectorAll('[data-category]').forEach((button) => button.addEventListener('click', () => {
+        state.linkCategory = button.dataset.category;
+        renderLinkFilters(); renderModuleCards();
+      }));
+    }
+
+    function renderModuleCards() {
+      const all = (state.dashboard && state.dashboard.links) || [];
+      const query = state.linkQuery.trim().toLowerCase();
+      const links = all.filter((item) => {
+        const text = [item.title, item.category, item.description, item.iconText].join(' ').toLowerCase();
+        return (!query || text.includes(query)) && (state.linkCategory === 'Tất cả' || item.category === state.linkCategory);
+      });
+      const grid = $('moduleGrid');
+      if (!links.length) {
+        grid.innerHTML = `<div class="empty-state">${all.length ? 'Không tìm thấy ứng dụng phù hợp với từ khóa.' : 'Chưa có ứng dụng nào được cấp quyền cho tài khoản này. Vui lòng liên hệ Quản lý.'}</div>`;
+        return;
+      }
+      grid.innerHTML = links.map((item) => `
+        <a class="module-card" href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer">
+          <div class="module-top"><span class="module-category">${escapeHtml(item.category || 'Ứng dụng')}</span><span class="module-icon">${escapeHtml(item.iconText || 'APP')}</span></div>
+          <div><div class="module-title">${escapeHtml(item.title)}</div><div class="module-desc">${escapeHtml(item.description || 'Truy cập công cụ nghiệp vụ nội bộ.')}</div></div>
+          <div class="module-bottom"><span>Mở ứng dụng</span><span>↗</span></div>
+        </a>`).join('');
+    }
+
+    function renderAccountsPage() {
+      const data = state.adminData || { users: [] };
+      const users = data.users || [];
+      const query = state.accountQuery.toLowerCase();
+      const shown = users.filter((user) => [user.username, user.fullName, user.role, user.status].join(' ').toLowerCase().includes(query));
+      $('pageContent').innerHTML = `
+        <div class="section-head" style="margin-top:0"><div><h2>Danh sách nhân sự</h2><p>Quản lý thông tin và quyền truy cập của từng tài khoản</p></div><button class="btn btn-primary" data-action="new-account">＋ Tạo tài khoản</button></div>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-label">Tổng tài khoản</div><div class="stat-value">${users.length}</div></div>
+          <div class="stat-card"><div class="stat-label">Đang hoạt động</div><div class="stat-value" style="color:var(--green)">${users.filter(u => isStatusActive(u.status)).length}</div></div>
+          <div class="stat-card"><div class="stat-label">Đang khóa</div><div class="stat-value" style="color:var(--red)">${users.filter(u => !isStatusActive(u.status)).length}</div></div>
+          <div class="stat-card"><div class="stat-label">Quản trị viên</div><div class="stat-value">${users.filter(u => String(u.role).toLowerCase() === 'admin' || String(u.role).toLowerCase() === 'quản trị viên').length}</div></div>
+        </div>
+        <div class="table-card">
+          <div class="table-toolbar"><div class="eyebrow">TÀI KHOẢN NHÂN VIÊN · ${shown.length} KẾT QUẢ</div><div class="search-box"><span class="search-icon">⌕</span><input id="accountSearch" type="search" placeholder="Tìm tên, tài khoản, vai trò..." value="${escapeHtml(state.accountQuery)}"></div></div>
+          <div class="table-wrap"><table><thead><tr><th>Nhân viên</th><th>Tài khoản</th><th>Vai trò</th><th>Trạng thái</th><th>Đăng nhập gần nhất</th><th>Thao tác</th></tr></thead><tbody>
+            ${shown.length ? shown.map((user) => `<tr>
+              <td><div class="cell-main">${escapeHtml(user.fullName)}</div><div class="cell-sub">Tạo: ${escapeHtml(user.createdAt || '—')}</div></td>
+              <td>${escapeHtml(user.username)}</td><td><span class="role-pill">${escapeHtml(user.role)}</span></td>
+              <td><span class="status-pill ${isStatusActive(user.status) ? 'status-active' : 'status-inactive'}">${isStatusActive(user.status) ? 'Hoạt động' : 'Đã khóa'}</span></td>
+              <td>${escapeHtml(user.lastLogin || 'Chưa đăng nhập')}</td>
+              <td><div class="actions"><button class="icon-btn" title="Chỉnh sửa" data-action="edit-account" data-key="${escapeHtml(user.username)}">✎</button><button class="icon-btn" title="${isStatusActive(user.status) ? 'Khóa tài khoản' : 'Mở khóa'}" data-action="toggle-account" data-key="${escapeHtml(user.username)}">${isStatusActive(user.status) ? 'Ⅱ' : '▶'}</button><button class="icon-btn danger" title="Xóa tài khoản" data-action="delete-account" data-key="${escapeHtml(user.username)}">×</button></div></td>
+            </tr>`).join('') : '<tr><td colspan="6"><div class="empty-state">Không tìm thấy tài khoản phù hợp.</div></td></tr>'}
+          </tbody></table></div>
+        </div>
+        <div class="page-note">Mật khẩu được lưu dạng văn bản trong sheet Members theo cấu hình hiện tại. Chỉ quản trị viên được quyền truy cập bảng tính; không chia sẻ sheet Members cho nhân viên.</div>
+      `;
+      $('accountSearch').addEventListener('input', (event) => { state.accountQuery = event.target.value; renderAccountsPage(); const input = $('accountSearch'); input.focus(); input.setSelectionRange(input.value.length, input.value.length); });
+    }
+
+    function renderLinksAdminPage() {
+      const data = state.adminData || { links: [] };
+      const links = data.links || [];
+      const query = state.linkAdminQuery.toLowerCase();
+      const shown = links.filter((link) => [link.title, link.url, link.category, link.allowedRoles].join(' ').toLowerCase().includes(query));
+      $('pageContent').innerHTML = `
+        <div class="section-head" style="margin-top:0"><div><h2>Danh mục ứng dụng</h2><p>Các liên kết được phân quyền sẽ hiển thị trên trang Tổng quan</p></div><button class="btn btn-primary" data-action="new-link">＋ Thêm liên kết</button></div>
+        <div class="table-card"><div class="table-toolbar"><div class="eyebrow">CẤU HÌNH LIÊN KẾT · ${shown.length} MỤC</div><div class="search-box"><span class="search-icon">⌕</span><input id="linkAdminSearch" type="search" placeholder="Tìm ứng dụng..." value="${escapeHtml(state.linkAdminQuery)}"></div></div>
+          <div class="table-wrap"><table><thead><tr><th>Tên ứng dụng</th><th>Danh mục</th><th>Đường dẫn</th><th>Quyền truy cập</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody>
+            ${shown.length ? shown.map((link) => `<tr><td><div class="cell-main">${escapeHtml(link.title)}</div><div class="cell-sub">${escapeHtml(link.description || link.iconText || '')}</div></td><td>${escapeHtml(link.category)}</td><td><a href="${escapeHtml(link.url)}" target="_blank" rel="noopener noreferrer" style="color:#8fbdf0;text-decoration:none">Mở liên kết ↗</a></td><td>${escapeHtml(link.allowedRoles || '*')}</td><td><span class="status-pill ${link.isActive ? 'status-active' : 'status-inactive'}">${link.isActive ? 'Hiển thị' : 'Ẩn'}</span></td><td><div class="actions"><button class="icon-btn" title="Chỉnh sửa" data-action="edit-link" data-key="${escapeHtml(link.id)}">✎</button><button class="icon-btn" title="${link.isActive ? 'Ẩn liên kết' : 'Hiện liên kết'}" data-action="toggle-link" data-key="${escapeHtml(link.id)}">${link.isActive ? '◉' : '○'}</button><button class="icon-btn danger" title="Xóa" data-action="delete-link" data-key="${escapeHtml(link.id)}">×</button></div></td></tr>`).join('') : '<tr><td colspan="6"><div class="empty-state">Chưa có liên kết nào. Hãy thêm ứng dụng đầu tiên.</div></td></tr>'}
+          </tbody></table></div></div>
+        <div class="page-note">Quyền truy cập dùng tên vai trò, phân tách bằng dấu phẩy. Nhập <b>*</b> để cho phép tất cả vai trò. Ví dụ: <b>Admin, Giám sát</b>.</div>
+      `;
+      $('linkAdminSearch').addEventListener('input', (event) => { state.linkAdminQuery = event.target.value; renderLinksAdminPage(); const input = $('linkAdminSearch'); input.focus(); input.setSelectionRange(input.value.length, input.value.length); });
+    }
+
+    function renderLogsPage() {
+      const logs = (state.adminData && state.adminData.logs) || [];
+      const query = state.logQuery.toLowerCase();
+      const shown = logs.filter((log) => [log.username, log.fullName, log.action, log.details].join(' ').toLowerCase().includes(query));
+      $('pageContent').innerHTML = `
+        <div class="section-head" style="margin-top:0"><div><h2>Lịch sử hệ thống</h2><p>100 sự kiện mới nhất được ghi nhận tự động</p></div><button class="btn btn-secondary" data-action="refresh-admin">↻ Tải nhật ký</button></div>
+        <div class="table-card"><div class="table-toolbar"><div class="eyebrow">ACTIVITY LOG · ${shown.length} SỰ KIỆN</div><div class="search-box"><span class="search-icon">⌕</span><input id="logSearch" type="search" placeholder="Tìm hoạt động, người dùng..." value="${escapeHtml(state.logQuery)}"></div></div>
+          <div class="table-wrap"><table><thead><tr><th>Thời gian</th><th>Người thực hiện</th><th>Hoạt động</th><th>Chi tiết</th></tr></thead><tbody>
+            ${shown.length ? shown.map((log) => `<tr><td style="white-space:nowrap">${escapeHtml(log.timestamp)}</td><td><div class="cell-main">${escapeHtml(log.fullName || log.username)}</div><div class="cell-sub">${escapeHtml(log.username)}</div></td><td><span class="role-pill">${escapeHtml(log.action)}</span></td><td>${escapeHtml(log.details)}</td></tr>`).join('') : '<tr><td colspan="4"><div class="empty-state">Chưa có dữ liệu hoạt động phù hợp.</div></td></tr>'}
+          </tbody></table></div></div>
+      `;
+      $('logSearch').addEventListener('input', (event) => { state.logQuery = event.target.value; renderLogsPage(); const input = $('logSearch'); input.focus(); input.setSelectionRange(input.value.length, input.value.length); });
+    }
+
+    function renderSettingsPage() {
+      const data = state.adminData || {};
+      $('pageContent').innerHTML = `
+        <div class="section-head" style="margin-top:0"><div><h2>Cấu hình cổng nội bộ</h2><p>Thay đổi thông tin dùng chung trên trang Tổng quan và đăng nhập</p></div></div>
+        <div class="settings-grid">
+          <section class="panel"><h3>Thông báo nội bộ</h3><p class="panel-desc">Nội dung này sẽ hiển thị nổi bật trên trang Tổng quan của toàn bộ nhân viên.</p>
+            <form id="settingsForm">
+              <div class="field"><label for="announcementInput">Thông báo</label><textarea id="announcementInput" maxlength="500" placeholder="Nhập thông báo mới...">${escapeHtml(data.announcement || '')}</textarea></div>
+              <div class="field"><label for="supportInput">Hướng dẫn hỗ trợ</label><input id="supportInput" maxlength="200" value="${escapeHtml(data.supportText || '')}" placeholder="Ví dụ: Liên hệ Quản lý ca để được hỗ trợ."></div>
+              <button class="btn btn-primary" type="submit">Lưu cấu hình</button>
+            </form>
+          </section>
+          <section class="panel"><h3>Trạng thái hệ thống</h3><p class="panel-desc">Thông tin vận hành cơ bản của cổng nội bộ.</p>
+            <div style="display:grid;gap:13px">
+              <div><div class="eyebrow">NỀN TẢNG</div><div style="font-size:11px;margin-top:5px">Google Apps Script + Google Sheets</div></div>
+              <div><div class="eyebrow">PHƯƠNG THỨC ĐĂNG NHẬP</div><div style="font-size:11px;margin-top:5px">Tên tài khoản + mật khẩu</div></div>
+              <div><div class="eyebrow">THỜI HẠN PHIÊN</div><div style="font-size:11px;margin-top:5px">Tối đa 6 giờ, có kiểm tra trạng thái tài khoản</div></div>
+              <div><div class="eyebrow">PHÂN QUYỀN</div><div style="font-size:11px;margin-top:5px">Theo vai trò trên sheet Members</div></div>
+            </div>
+            <div class="page-note">Mật khẩu hiện được lưu dạng văn bản theo yêu cầu. Hãy giới hạn quyền truy cập trực tiếp vào Google Sheets và chỉ cấp quyền quản trị cho người đáng tin cậy.</div>
+          </section>
+        </div>
+      `;
+      $('settingsForm').addEventListener('submit', saveSettings);
+    }
+
+    function isStatusActive(status) {
+      return ['active', 'hoạt động', 'đang hoạt động', 'true', '1', 'yes', 'có'].includes(String(status == null ? '' : status).trim().toLowerCase());
+    }
+
+    function openModal(title, bodyHtml) {
+      $('modalRoot').innerHTML = `<div class="modal" role="dialog" aria-modal="true"><div class="modal-head"><h2>${escapeHtml(title)}</h2><button class="modal-close" type="button" data-action="close-modal">×</button></div><div class="modal-body">${bodyHtml}</div></div>`;
+      $('modalRoot').classList.add('open');
+      $('modalRoot').setAttribute('aria-hidden', 'false');
+    }
+    function closeModal() {
+      $('modalRoot').classList.remove('open');
+      $('modalRoot').setAttribute('aria-hidden', 'true');
+      $('modalRoot').innerHTML = '';
+    }
+
+    function openAccountModal(username) {
+      const user = username ? (state.adminData.users || []).find((item) => item.username === username) : null;
+      const isEdit = !!user;
+      const roles = ['Admin', 'Quản lý', 'Giám sát', 'Nhân viên'];
+      if (user && !roles.includes(user.role)) roles.push(user.role);
+      openModal(isEdit ? 'Cập nhật tài khoản' : 'Tạo tài khoản nhân viên', `
+        <form id="accountForm">
+          <input type="hidden" id="originalUsername" value="${escapeHtml(user ? user.username : '')}">
+          <div class="modal-grid">
+            <div class="field"><label for="accountUsername">Tên tài khoản * · 3–30 ký tự</label><input id="accountUsername" required minlength="3" maxlength="30" value="${escapeHtml(user ? user.username : '')}" placeholder="Ví dụ: nv001" ${isEdit && user.username === state.user.username ? 'readonly' : ''}></div>
+            <div class="field"><label for="accountFullName">Họ và tên *</label><input id="accountFullName" required maxlength="100" value="${escapeHtml(user ? user.fullName : '')}" placeholder="Nguyễn Văn A"></div>
+            <div class="field"><label for="accountRole">Vai trò</label><select id="accountRole">${roles.map((role) => `<option value="${escapeHtml(role)}" ${user && user.role === role ? 'selected' : (!user && role === 'Nhân viên' ? 'selected' : '')}>${escapeHtml(role)}</option>`).join('')}</select></div>
+            <div class="field"><label for="accountStatus">Trạng thái</label><select id="accountStatus"><option value="Active" ${!user || isStatusActive(user.status) ? 'selected' : ''}>Hoạt động</option><option value="Inactive" ${user && !isStatusActive(user.status) ? 'selected' : ''}>Đã khóa</option></select></div>
+            <div class="field span-2"><label for="accountPassword">${isEdit ? 'Mật khẩu mới (để trống nếu không đổi)' : 'Mật khẩu *'}</label><input id="accountPassword" type="password" ${isEdit ? '' : 'required'} minlength="6" maxlength="200" autocomplete="new-password" placeholder="Tối thiểu 6 ký tự"></div>
+            <div class="field span-2"><label for="accountNote">Ghi chú</label><input id="accountNote" maxlength="200" value="${escapeHtml(user ? user.note : '')}" placeholder="Bộ phận, ghi chú nội bộ..."></div>
+          </div>
+          <div class="modal-actions"><button class="btn btn-secondary" type="button" data-action="close-modal">Hủy</button><button class="btn btn-primary" type="submit">${isEdit ? 'Lưu thay đổi' : 'Tạo tài khoản'}</button></div>
+        </form>
+      `);
+      $('accountForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const payload = {
+          originalUsername: $('originalUsername').value,
+          username: $('accountUsername').value.trim(),
+          fullName: $('accountFullName').value.trim(),
+          role: $('accountRole').value,
+          status: $('accountStatus').value,
+          password: $('accountPassword').value,
+          note: $('accountNote').value.trim()
+        };
+        await runModalAction('Đang lưu tài khoản...', async () => {
+          const result = await callApi('apiAdminSaveAccount', state.token, payload);
+          await loadAdminData(); renderAccountsPage(); closeModal(); toast(result.message);
+        });
+      });
+    }
+
+    function openLinkModal(id) {
+      const link = id ? (state.adminData.links || []).find((item) => item.id === id) : null;
+      openModal(link ? 'Chỉnh sửa liên kết' : 'Thêm ứng dụng mới', `
+        <form id="linkForm">
+          <input type="hidden" id="linkId" value="${escapeHtml(link ? link.id : '')}">
+          <div class="modal-grid">
+            <div class="field span-2"><label for="linkTitle">Tên ứng dụng *</label><input id="linkTitle" required maxlength="100" value="${escapeHtml(link ? link.title : '')}" placeholder="Ví dụ: Báo cáo POSM"></div>
+            <div class="field span-2"><label for="linkUrl">Đường dẫn URL *</label><input id="linkUrl" type="url" required value="${escapeHtml(link ? link.url : '')}" placeholder="https://..."></div>
+            <div class="field"><label for="linkCategory">Danh mục</label><input id="linkCategory" maxlength="50" value="${escapeHtml(link ? link.category : 'Nghiệp vụ')}" placeholder="Nghiệp vụ"></div>
+            <div class="field"><label for="linkIcon">Mã biểu tượng</label><input id="linkIcon" maxlength="24" value="${escapeHtml(link ? link.iconText : 'APP')}" placeholder="POSM"></div>
+            <div class="field"><label for="linkRoles">Vai trò được phép</label><input id="linkRoles" value="${escapeHtml(link ? link.allowedRoles : '*')}" placeholder="* hoặc Admin, Giám sát"></div>
+            <div class="field"><label for="linkSort">Thứ tự hiển thị</label><input id="linkSort" type="number" value="${Number(link ? link.sortOrder : 0)}"></div>
+            <div class="field span-2"><label for="linkDescription">Mô tả ngắn</label><input id="linkDescription" maxlength="250" value="${escapeHtml(link ? link.description : '')}" placeholder="Mô tả công dụng của ứng dụng"></div>
+            <div class="field span-2"><label class="check-label"><input id="linkActive" type="checkbox" ${!link || link.isActive ? 'checked' : ''}> Hiển thị liên kết trên cổng nội bộ</label></div>
+          </div>
+          <div class="modal-actions"><button class="btn btn-secondary" type="button" data-action="close-modal">Hủy</button><button class="btn btn-primary" type="submit">Lưu liên kết</button></div>
+        </form>
+      `);
+      $('linkForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const payload = {
+          id: $('linkId').value,
+          title: $('linkTitle').value.trim(),
+          url: $('linkUrl').value.trim(),
+          category: $('linkCategory').value.trim(),
+          iconText: $('linkIcon').value.trim(),
+          allowedRoles: $('linkRoles').value.trim() || '*',
+          sortOrder: Number($('linkSort').value || 0),
+          description: $('linkDescription').value.trim(),
+          isActive: $('linkActive').checked
+        };
+        await runModalAction('Đang lưu liên kết...', async () => {
+          const result = await callApi('apiAdminSaveLink', state.token, payload);
+          await loadAdminData(); renderLinksAdminPage(); closeModal(); toast(result.message);
+          await refreshDashboard(false);
+        });
+      });
+    }
+
+    async function runModalAction(message, callback) {
+      showBusy(message);
+      try { await callback(); }
+      catch (error) { toast(error.message || 'Có lỗi xảy ra.', 'error'); }
+      finally { hideBusy(); }
+    }
+
+    async function saveSettings(event) {
+      event.preventDefault();
+      showBusy('Đang lưu cài đặt...');
+      try {
+        const result = await callApi('apiAdminSaveSettings', state.token, {
+          announcement: $('announcementInput').value,
+          supportText: $('supportInput').value
+        });
+        await loadAdminData();
+        await refreshDashboard(false);
+        renderSettingsPage();
+        toast(result.message);
+      } catch (error) { toast(error.message, 'error'); }
+      finally { hideBusy(); }
+    }
+
+    function openChangePasswordModal() {
+      openModal('Đổi mật khẩu cá nhân', `
+        <form id="passwordForm">
+          <div class="field"><label for="currentPassword">Mật khẩu hiện tại</label><div class="input-wrap"><input id="currentPassword" type="password" required autocomplete="current-password"><button class="password-toggle" type="button" data-toggle-password="currentPassword">Hiện</button></div></div>
+          <div class="field"><label for="newPassword">Mật khẩu mới</label><div class="input-wrap"><input id="newPassword" type="password" minlength="6" maxlength="200" required autocomplete="new-password"><button class="password-toggle" type="button" data-toggle-password="newPassword">Hiện</button></div></div>
+          <div class="field"><label for="confirmPassword">Xác nhận mật khẩu mới</label><input id="confirmPassword" type="password" minlength="6" maxlength="200" required autocomplete="new-password"></div>
+          <div class="modal-actions"><button class="btn btn-secondary" type="button" data-action="close-modal">Hủy</button><button class="btn btn-primary" type="submit">Cập nhật mật khẩu</button></div>
+        </form>
+      `);
+      $('passwordForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const next = $('newPassword').value;
+        if (next !== $('confirmPassword').value) { toast('Mật khẩu xác nhận không khớp.', 'error'); return; }
+        await runModalAction('Đang đổi mật khẩu...', async () => {
+          const result = await callApi('apiChangePassword', state.token, $('currentPassword').value, next);
+          closeModal(); toast(result.message);
+        });
+      });
+    }
+
+    async function handleAction(action, key) {
+      if (action === 'close-modal') return closeModal();
+      if (action === 'new-account') return openAccountModal('');
+      if (action === 'edit-account') return openAccountModal(key);
+      if (action === 'new-link') return openLinkModal('');
+      if (action === 'edit-link') return openLinkModal(key);
+      if (action === 'change-password') return openChangePasswordModal();
+      if (action === 'refresh' || action === 'refresh-admin') {
+        showBusy('Đang làm mới dữ liệu...');
+        try {
+          await refreshDashboard(false);
+          if (isAdminUser() && ['accounts', 'links', 'logs', 'settings'].includes(state.activePage)) await loadAdminData();
+          renderPage(); toast('Dữ liệu đã được cập nhật.');
+        } catch (error) { toast(error.message, 'error'); }
+        finally { hideBusy(); }
+        return;
+      }
+      if (action === 'toggle-account') {
+        const user = (state.adminData.users || []).find((item) => item.username === key);
+        if (!user) return;
+        if (user.username === state.user.username && isStatusActive(user.status)) { toast('Không thể tự khóa tài khoản đang đăng nhập.', 'error'); return; }
+        const nextStatus = isStatusActive(user.status) ? 'Inactive' : 'Active';
+        if (!confirm((nextStatus === 'Inactive' ? 'Khóa' : 'Mở khóa') + ' tài khoản ' + key + '?')) return;
+        showBusy('Đang cập nhật tài khoản...');
+        try {
+          const result = await callApi('apiAdminSaveAccount', state.token, {
+            originalUsername: user.username, username: user.username, fullName: user.fullName,
+            role: user.role, status: nextStatus, password: '', note: user.note || ''
+          });
+          await loadAdminData(); renderAccountsPage(); toast(result.message);
+        } catch (error) { toast(error.message, 'error'); }
+        finally { hideBusy(); }
+        return;
+      }
+      if (action === 'delete-account') {
+        if (!confirm('Xóa vĩnh viễn tài khoản ' + key + '? Thao tác này không thể hoàn tác.')) return;
+        showBusy('Đang xóa tài khoản...');
+        try {
+          const result = await callApi('apiAdminDeleteAccount', state.token, key);
+          await loadAdminData(); renderAccountsPage(); toast(result.message);
+        } catch (error) { toast(error.message, 'error'); }
+        finally { hideBusy(); }
+        return;
+      }
+      if (action === 'toggle-link') {
+        const link = (state.adminData.links || []).find((item) => item.id === key);
+        if (!link) return;
+        showBusy('Đang cập nhật liên kết...');
+        try {
+          const payload = Object.assign({}, link, { isActive: !link.isActive });
+          const result = await callApi('apiAdminSaveLink', state.token, payload);
+          await loadAdminData(); renderLinksAdminPage(); await refreshDashboard(false); toast(result.message);
+        } catch (error) { toast(error.message, 'error'); }
+        finally { hideBusy(); }
+        return;
+      }
+      if (action === 'delete-link') {
+        const link = (state.adminData.links || []).find((item) => item.id === key);
+        if (!link || !confirm('Xóa liên kết ' + link.title + '?')) return;
+        showBusy('Đang xóa liên kết...');
+        try {
+          const result = await callApi('apiAdminDeleteLink', state.token, key);
+          await loadAdminData(); renderLinksAdminPage(); await refreshDashboard(false); toast(result.message);
+        } catch (error) { toast(error.message, 'error'); }
+        finally { hideBusy(); }
+      }
+    }
+
+    document.addEventListener('click', (event) => {
+      const passwordToggle = event.target.closest('[data-toggle-password]');
+      if (passwordToggle) {
+        const input = $(passwordToggle.dataset.togglePassword);
+        if (input) {
+          input.type = input.type === 'password' ? 'text' : 'password';
+          passwordToggle.textContent = input.type === 'password' ? 'Hiện' : 'Ẩn';
+        }
+        return;
+      }
+      const nav = event.target.closest('[data-nav]');
+      if (nav) { navigate(nav.dataset.nav).catch((error) => toast(error.message, 'error')); return; }
+      const actionNode = event.target.closest('[data-action]');
+      if (actionNode) {
+        handleAction(actionNode.dataset.action, actionNode.dataset.key || '').catch((error) => toast(error.message, 'error'));
       }
     });
+
+    $('modalRoot').addEventListener('click', (event) => { if (event.target.id === 'modalRoot') closeModal(); });
+    $('logoutButton').addEventListener('click', logout);
+    $('headerRefreshButton').addEventListener('click', () => handleAction('refresh', ''));
+    $('mobileMenuButton').addEventListener('click', () => $('sidebar').classList.toggle('open'));
+    document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeModal(); });
+
+    window.addEventListener('DOMContentLoaded', boot);
   </script>
 </body>
 </html>
