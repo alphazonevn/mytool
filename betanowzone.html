@@ -1,152 +1,156 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Beta Nowzone | Cổng Nội Bộ Nhân Sự</title>
-    
-    <link rel="icon" href="https://play-lh.googleusercontent.com/so_2mIzE8qaobdSafVStIV7olRZL8Q1SkclYErPgbFDPn1SzAUO33stPfshdztJZCVA0eqfWsO_iia59aHLKZL8" type="image/png">
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@200;300;400;500;600&display=swap" rel="stylesheet">
-
-    <style>
-        :root {
-            color-scheme: dark;
-            --brand-accent: #f58220;
-            --brand-secondary: #00549c;
-            --surface-glass: rgba(15, 15, 20, 0.75);
-            --border-thin: rgba(255, 255, 255, 0.1);
-            --text-primary: #ffffff;
-            --text-secondary: rgba(255, 255, 255, 0.5);
-            --holo-glow: 0 0 50px rgba(245, 130, 32, 0.1);
-        }
-
-        body {
-            margin: 0; padding: 20px; font-family: 'Be Vietnam Pro', sans-serif;
-            background-color: #030508; color: var(--text-primary);
-            display: flex; justify-content: center; align-items: center;
-            min-height: 100vh; position: relative; overflow-x: hidden;
-        }
-
-        body::before, body::after {
-            content: ''; position: absolute; border-radius: 50%;
-            filter: blur(100px); z-index: -1; opacity: 0.3;
-        }
-        body::before { width: 45vw; height: 45vw; background: var(--brand-secondary); top: -10%; left: -10%; }
-        body::after { width: 40vw; height: 40vw; background: var(--brand-accent); bottom: -10%; right: -10%; }
-
-        .glass-container {
-            position: relative; width: 100%; max-width: 480px;
-            padding: 40px 35px; border-radius: 4px;
-            background: var(--surface-glass);
-            backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
-            border: 1px solid var(--border-thin);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), var(--holo-glow);
-            z-index: 1; box-sizing: border-box;
-        }
-
-        .logo-header { text-align: center; margin-bottom: 25px; }
-        .logo-header img { width: 55px; height: 55px; object-fit: cover; border-radius: 4px; filter: grayscale(10%) contrast(120%); }
-
-        h2 { text-align: center; margin: 0 0 10px; font-weight: 300; font-size: 1.2rem; letter-spacing: 3px; text-transform: uppercase; }
-        .subtitle { text-align: center; font-size: 0.75rem; color: var(--text-secondary); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 30px; }
-
-        .form-group { margin-bottom: 25px; }
-        label { display: block; margin-bottom: 8px; font-size: 0.7rem; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1.5px; }
-
-        input {
-            width: 100%; padding: 10px 0; background: transparent; border: none; border-bottom: 1px solid var(--border-thin);
-            color: var(--text-primary); font-family: inherit; font-size: 1rem; font-weight: 300; box-sizing: border-box; transition: all 0.4s ease;
-        }
-        input:focus { outline: none; border-bottom-color: var(--brand-accent); background: linear-gradient(to top, rgba(245, 130, 32, 0.03) 0%, transparent 50%); }
-        input::placeholder { color: rgba(255, 255, 255, 0.15); }
-
-        .btn-main {
-            width: 100%; padding: 15px; margin-top: 15px; background: var(--text-primary); border: none; color: #000000;
-            font-weight: 600; font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; font-family: inherit; cursor: pointer; transition: all 0.4s;
-        }
-        .btn-main:hover { background: var(--brand-accent); color: #ffffff; box-shadow: 0 10px 30px rgba(245, 130, 32, 0.3); }
-
-        /* --- DASHBOARD NỘI BỘ (ẨN KHI CHƯA ĐĂNG NHẬP) --- */
-        #dashboardView { display: none; width: 100%; max-width: 650px; }
-        
-        .announcement-ticker {
-            background: rgba(245, 130, 32, 0.08); border: 1px solid rgba(245, 130, 32, 0.2);
-            padding: 12px 20px; font-size: 0.8rem; margin-bottom: 25px; display: flex; align-items: center; gap: 15px;
-        }
-        .announcement-ticker span { color: var(--brand-accent); font-weight: 600; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 1px; }
-
-        .section-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-secondary); margin-bottom: 15px; border-bottom: 1px solid var(--border-thin); padding-bottom: 8px; }
-
-        .modules-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-bottom: 30px;
-        }
-        
-        .module-card {
-            background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-thin);
-            padding: 20px; text-decoration: none; color: var(--text-primary); display: flex; flex-direction: column;
-            justify-content: space-between; height: 110px; transition: all 0.3s ease; position: relative; overflow: hidden;
-        }
-        .module-card:hover { border-color: var(--brand-accent); background: rgba(245, 130, 32, 0.04); transform: translateY(-3px); }
-        .module-card .tag { font-size: 0.65rem; color: var(--brand-accent); text-transform: uppercase; letter-spacing: 1px; }
-        .module-card .title { font-size: 0.9rem; font-weight: 500; }
-        
-        .user-welcome { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        .logout-btn { background: transparent; border: 1px solid var(--border-thin); color: var(--text-secondary); padding: 6px 12px; font-size: 0.7rem; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
-        .logout-btn:hover { border-color: #fff; color: #fff; }
-        
-        .error-msg { color: #ff5555; font-size: 0.75rem; margin-top: 15px; text-align: center; display: none; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#030508">
+  <title>Beta Nowzone | Cổng Nội Bộ Nhân Sự</title>
+  <link rel="icon" href="https://play-lh.googleusercontent.com/so_2mIzE8qaobdSafVStIV7olRZL8Q1SkclYErPgbFDPn1SzAUO33stPfshdztJZCVA0eqfWsO_iia59aHLKZL8" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: dark;
+      --brand-accent: #f58220;
+      --brand-secondary: #00549c;
+      --surface-glass: rgba(15, 15, 20, .78);
+      --border-thin: rgba(255, 255, 255, .10);
+      --text-primary: #fff;
+      --text-secondary: rgba(255, 255, 255, .52);
+      --holo-glow: 0 0 50px rgba(245, 130, 32, .10);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 20px; font-family: 'Be Vietnam Pro', sans-serif;
+      background: #030508; color: var(--text-primary); min-height: 100vh;
+      display: flex; justify-content: center; align-items: center; position: relative;
+      overflow-x: hidden;
+    }
+    body::before, body::after {
+      content: ''; position: fixed; border-radius: 50%; filter: blur(100px);
+      z-index: 0; opacity: .28; pointer-events: none;
+    }
+    body::before { width: 45vw; height: 45vw; min-width: 260px; min-height: 260px; background: var(--brand-secondary); top: -10%; left: -10%; }
+    body::after { width: 40vw; height: 40vw; min-width: 240px; min-height: 240px; background: var(--brand-accent); bottom: -10%; right: -10%; }
+    .glass-container {
+      position: relative; width: 100%; max-width: 480px; padding: 40px 35px;
+      background: var(--surface-glass); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+      border: 1px solid var(--border-thin); box-shadow: 0 20px 50px rgba(0,0,0,.6), var(--holo-glow);
+      z-index: 1;
+    }
+    .logo-header { text-align: center; margin-bottom: 25px; }
+    .logo-header img { width: 55px; height: 55px; object-fit: cover; border-radius: 4px; filter: grayscale(10%) contrast(120%); }
+    h1 { text-align: center; margin: 0 0 10px; font-weight: 300; font-size: 1.2rem; letter-spacing: 3px; text-transform: uppercase; }
+    .subtitle { text-align: center; font-size: .72rem; color: var(--text-secondary); letter-spacing: 1.4px; text-transform: uppercase; margin-bottom: 32px; }
+    .form-group { margin-bottom: 24px; }
+    label { display: block; margin-bottom: 9px; font-size: .68rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1.4px; }
+    input {
+      width: 100%; padding: 12px 0; background: transparent; border: 0;
+      border-bottom: 1px solid var(--border-thin); border-radius: 0; color: var(--text-primary);
+      font-family: inherit; font-size: .98rem; font-weight: 300; transition: border-color .25s ease;
+    }
+    input:focus { outline: none; border-bottom-color: var(--brand-accent); }
+    input::placeholder { color: rgba(255,255,255,.2); }
+    .btn-main {
+      width: 100%; padding: 15px; margin-top: 12px; background: #fff; border: 0; color: #000;
+      font-weight: 700; font-size: .76rem; letter-spacing: 1.7px; text-transform: uppercase;
+      font-family: inherit; cursor: pointer; transition: all .25s ease;
+    }
+    .btn-main:hover { background: var(--brand-accent); color: #fff; box-shadow: 0 10px 30px rgba(245,130,32,.25); }
+    .btn-main:disabled { opacity: .6; cursor: wait; }
+    .login-hint { color: var(--text-secondary); font-size: .68rem; line-height: 1.6; margin-top: 18px; text-align: center; }
+    #dashboardView { display: none; width: 100%; max-width: 700px; }
+    .announcement-ticker {
+      background: rgba(245,130,32,.08); border: 1px solid rgba(245,130,32,.2);
+      padding: 13px 16px; font-size: .76rem; margin-bottom: 27px;
+      display: flex; align-items: flex-start; gap: 13px; line-height: 1.6;
+    }
+    .announcement-ticker strong { flex: 0 0 auto; color: var(--brand-accent); font-size: .67rem; letter-spacing: 1px; text-transform: uppercase; }
+    .section-title { font-size: .7rem; text-transform: uppercase; letter-spacing: 1.8px; color: var(--text-secondary); margin-bottom: 15px; border-bottom: 1px solid var(--border-thin); padding-bottom: 9px; }
+    .modules-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 13px; margin-bottom: 12px; }
+    .module-card {
+      min-height: 132px; padding: 19px; background: rgba(255,255,255,.025); border: 1px solid var(--border-thin);
+      text-decoration: none; color: var(--text-primary); display: flex; flex-direction: column;
+      justify-content: space-between; gap: 12px; transition: all .25s ease; overflow: hidden;
+    }
+    .module-card:hover { border-color: var(--brand-accent); background: rgba(245,130,32,.055); transform: translateY(-3px); }
+    .module-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .module-card .tag { font-size: .62rem; color: var(--brand-accent); text-transform: uppercase; letter-spacing: 1px; }
+    .module-card .icon-text { font-size: .62rem; color: var(--text-secondary); border: 1px solid var(--border-thin); padding: 4px 7px; }
+    .module-card .title { font-size: .88rem; font-weight: 600; line-height: 1.45; }
+    .module-card .link-label { font-size: .68rem; color: var(--text-secondary); }
+    .user-welcome { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 25px; }
+    .user-meta { min-width: 0; }
+    .user-name { font-weight: 600; font-size: 1rem; margin-top: 4px; overflow-wrap: anywhere; }
+    .user-role { color: var(--brand-accent); font-size: .66rem; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; }
+    .logout-btn { background: transparent; border: 1px solid var(--border-thin); color: var(--text-secondary); padding: 8px 12px; font-size: .65rem; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; white-space: nowrap; font-family: inherit; }
+    .logout-btn:hover { border-color: #fff; color: #fff; }
+    .error-msg { color: #ff6868; font-size: .73rem; line-height: 1.5; margin-top: 15px; text-align: center; display: none; }
+    .empty-state { color: var(--text-secondary); border: 1px dashed var(--border-thin); padding: 24px 15px; text-align: center; font-size: .76rem; line-height: 1.7; }
+    .loading { color: var(--text-secondary); font-size: .76rem; padding: 16px 0; }
+    @media (max-width: 520px) {
+      body { padding: 14px; align-items: flex-start; }
+      .glass-container { padding: 30px 22px; margin: auto 0; }
+      #dashboardView { margin: 10px 0; }
+      .modules-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+      .module-card { padding: 14px; min-height: 125px; }
+      .module-card .title { font-size: .8rem; }
+    }
+    @media (max-width: 360px) { .modules-grid { grid-template-columns: 1fr; } }
+  </style>
 </head>
 <body>
+  <!-- MÀN HÌNH ĐĂNG NHẬP -->
+  <main class="glass-container" id="loginCard">
+    <div class="logo-header">
+      <img src="https://play-lh.googleusercontent.com/so_2mIzE8qaobdSafVStIV7olRZL8Q1SkclYErPgbFDPn1SzAUO33stPfshdztJZCVA0eqfWsO_iia59aHLKZL8" alt="Logo Beta">
+    </div>
+    <h1>Beta Nowzone</h1>
+    <div class="subtitle">Cổng Nhân Sự Nội Bộ</div>
 
-    <!-- MÀN HÌNH ĐĂNG NHẬP -->
-    <div class="glass-container" id="loginCard">
-        <div class="logo-header">
-            <img src="https://play-lh.googleusercontent.com/so_2mIzE8qaobdSafVStIV7olRZL8Q1SkclYErPgbFDPn1SzAUO33stPfshdztJZCVA0eqfWsO_iia59aHLKZL8" alt="Logo">
-        </div>
-        <h2>Beta Nowzone</h2>
-        <div class="subtitle">Cổng Nhân Sự Nội Bộ</div>
-        
-        <form id="loginForm">
-            <div class="form-group">
-                <label>Email Nội Bộ</label>
-                <input type="email" id="loginEmail" required placeholder="nhansu@beta.vn">
-            </div>
-            <div class="form-group">
-                <label>Mật Khẩu</label>
-                <input type="password" id="loginPass" required placeholder="••••••••">
-            </div>
-            <button type="submit" class="btn-main" id="loginBtn">Đăng Nhập Hệ Thống</button>
-            <div class="error-msg" id="loginError"></div>
-        </form>
+    <form id="loginForm" autocomplete="on">
+      <div class="form-group">
+        <label for="loginUsername">Tài Khoản Nhân Viên</label>
+        <input type="text" id="loginUsername" name="username" required
+          placeholder="Nhập tài khoản được cấp" autocomplete="username"
+          autocapitalize="none" spellcheck="false">
+      </div>
+      <div class="form-group">
+        <label for="loginPass">Mật Khẩu</label>
+        <input type="password" id="loginPass" name="password" required
+          placeholder="Nhập mật khẩu" autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn-main" id="loginBtn">Đăng Nhập Hệ Thống</button>
+      <div class="error-msg" id="loginError" role="alert" aria-live="polite"></div>
+      <div class="login-hint">Sử dụng tài khoản và mật khẩu do Quản lý cấp. Không cần sử dụng email.</div>
+    </form>
+  </main>
+
+  <!-- DASHBOARD SAU KHI ĐĂNG NHẬP -->
+  <main class="glass-container" id="dashboardView">
+    <div class="user-welcome">
+      <div class="user-meta">
+        <div style="font-size:.66rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:1.2px;">Xin chào,</div>
+        <div class="user-name" id="userNameDisplay"></div>
+        <div class="user-role" id="userRoleDisplay"></div>
+      </div>
+      <button class="logout-btn" id="logoutBtn" type="button">Đăng Xuất</button>
     </div>
 
-    <!-- MÀN HÌNH DASHBOARD NỘI BỘ (Sau khi đăng nhập) -->
-    <div class="glass-container" id="dashboardView">
-        <div class="user-welcome">
-            <div>
-                <div style="font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">Xin chào,</div>
-                <div id="userNameDisplay" style="font-weight: 500; font-size: 1.1rem; margin-top: 2px;"></div>
-            </div>
-            <button class="logout-btn" id="logoutBtn">Đăng Xuất</button>
-        </div>
-
-        <div class="announcement-ticker">
-            <span>Thông Báo</span>
-            <div id="tickerText">Hệ thống đồng bộ dữ liệu POSM và chấm công đã hoạt động ổn định.</div>
-        </div>
-
-        <div class="section-title">Ứng Dụng & Công Cụ Đang Phát Triển</div>
-        
-        <!-- Các nút và liên kết được nạp tự động từ Google Apps Script / Sheets -->
-        <div class="modules-grid" id="modulesGrid">
-            <!-- Render động qua JS -->
-        </div>
+    <div class="announcement-ticker">
+      <strong>Thông Báo</strong>
+      <div id="tickerText">Hệ thống thông tin nội bộ Beta Nowzone. Vui lòng theo dõi các cập nhật từ Quản lý.</div>
     </div>
 
-<script>
-    // --- THAY LINK WEB APP APPS SCRIPT CỦA BẠN VÀO ĐÂY ---
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzn-42kqYWqAeTeopHomiEwEboXxCC0x3z3uwLlKF3qdjYfQWquEza7OBk9mMo0D3j-/exec';
+    <div class="section-title">Ứng Dụng & Công Cụ Nội Bộ</div>
+    <div class="modules-grid" id="modulesGrid">
+      <div class="loading">Đang tải danh mục...</div>
+    </div>
+  </main>
+
+  <script>
+    // Giữ nguyên URL Web App Apps Script của hệ thống.
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz_fSXIaEfIjxNYIKetWsxX5i3k57j0yHSTyqQiVpdJVQB2Ohcgz1Fqvuhc9XySKnel/exec';
+    const SESSION_KEY = 'betaNowzoneSession';
 
     const loginCard = document.getElementById('loginCard');
     const dashboardView = document.getElementById('dashboardView');
@@ -155,87 +159,178 @@
     const loginBtn = document.getElementById('loginBtn');
     const logoutBtn = document.getElementById('logoutBtn');
     const userNameDisplay = document.getElementById('userNameDisplay');
+    const userRoleDisplay = document.getElementById('userRoleDisplay');
     const modulesGrid = document.getElementById('modulesGrid');
 
-    // Xử lý đăng nhập
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        loginBtn.disabled = true;
-        loginBtn.textContent = 'ĐANG XÁC THỰC...';
-        loginError.style.display = 'none';
+    /** Gửi JSON trong POST body, không đưa mật khẩu lên URL. */
+    async function apiRequest(payload) {
+      const response = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload),
+        redirect: 'follow'
+      });
 
-        const email = document.getElementById('loginEmail').value;
-        const pass = document.getElementById('loginPass').value;
-
-        try {
-            const response = await fetch(`${SCRIPT_URL}?action=login&email=${encodeURIComponent(email)}&pass=${encodeURIComponent(pass)}`);
-            const data = await response.json();
-
-            if (data.status === 'success') {
-                // Lưu session tạm thời
-                sessionStorage.setItem('betaUser', JSON.stringify(data.user));
-                initDashboard(data.user);
-            } else {
-                throw new Error(data.message);
-            }
-        } catch (err) {
-            loginError.style.display = 'block';
-            loginError.textContent = err.message || 'Lỗi kết nối máy chủ.';
-            loginBtn.disabled = false;
-            loginBtn.textContent = 'ĐĂNG NHẬP HỆ THỐNG';
-        }
-    });
-
-    // Kiểm tra session cũ
-    window.addEventListener('DOMContentLoaded', () => {
-        const savedUser = sessionStorage.getItem('betaUser');
-        if (savedUser) {
-            initDashboard(JSON.parse(savedUser));
-        }
-    });
-
-    // Khởi tạo Dashboard & Tải các nút liên kết động
-    async function initDashboard(user) {
-        loginCard.style.display = 'none';
-        dashboardView.style.display = 'block';
-        userNameDisplay.textContent = user.name + ` (${user.role})`;
-
-        modulesGrid.innerHTML = '<div style="color:var(--text-secondary); font-size:0.8rem;">Đang tải danh mục...</div>';
-
-        try {
-            const response = await fetch(`${SCRIPT_URL}?action=getConfig`);
-            const data = await response.json();
-
-            if (data.status === 'success') {
-                modulesGrid.innerHTML = '';
-                data.links.forEach(item => {
-                    const card = document.createElement('a');
-                    card.href = item.url;
-                    card.target = '_blank';
-                    card.className = 'module-card';
-                    card.innerHTML = `
-                        <div class="tag">${item.category}</div>
-                        <div class="title">${item.title}</div>
-                        <div style="font-size:0.7rem; color:var(--text-secondary);">Truy cập hệ thống →</div>
-                    `;
-                    modulesGrid.appendChild(card);
-                });
-            }
-        } catch (err) {
-            modulesGrid.innerHTML = '<div style="color:#ff5555; font-size:0.8rem;">Không thể tải danh sách liên kết.</div>';
-        }
+      const raw = await response.text();
+      let data;
+      try {
+        data = JSON.parse(raw);
+      } catch (_) {
+        throw new Error('Máy chủ trả về dữ liệu không hợp lệ. Hãy kiểm tra URL triển khai Apps Script.');
+      }
+      if (!response.ok) throw new Error(data.message || 'Không thể kết nối máy chủ.');
+      return data;
     }
 
-    // Đăng xuất
-    logoutBtn.addEventListener('click', () => {
-        sessionStorage.removeItem('betaUser');
-        dashboardView.style.display = 'none';
+    function showLoginError(message) {
+      loginError.textContent = message;
+      loginError.style.display = 'block';
+    }
+
+    function showLogin() {
+      dashboardView.style.display = 'none';
+      loginCard.style.display = 'block';
+      loginForm.reset();
+      loginError.textContent = '';
+      loginError.style.display = 'none';
+      loginBtn.disabled = false;
+      loginBtn.textContent = 'ĐĂNG NHẬP HỆ THỐNG';
+    }
+
+    loginForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const username = document.getElementById('loginUsername').value.trim();
+      const password = document.getElementById('loginPass').value;
+
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'ĐANG XÁC THỰC...';
+      loginError.style.display = 'none';
+
+      try {
+        const data = await apiRequest({
+          action: 'login',
+          username: username,
+          password: password
+        });
+
+        if (data.status !== 'success' || !data.token || !data.user) {
+          throw new Error(data.message || 'Không thể xác thực tài khoản.');
+        }
+
+        const session = { token: data.token, user: data.user };
+        sessionStorage.setItem(SESSION_KEY, JSON.stringify(session));
+        await initDashboard(session);
+      } catch (error) {
         loginCard.style.display = 'block';
-        loginForm.reset();
+        dashboardView.style.display = 'none';
+        showLoginError(error.message || 'Lỗi kết nối máy chủ.');
         loginBtn.disabled = false;
         loginBtn.textContent = 'ĐĂNG NHẬP HỆ THỐNG';
+      }
     });
-</script>
 
+    /** Kiểm tra lại token với máy chủ trước khi hiển thị dashboard. */
+    async function initDashboard(session) {
+      if (!session || !session.token) throw new Error('Phiên đăng nhập không hợp lệ.');
+
+      loginCard.style.display = 'none';
+      dashboardView.style.display = 'block';
+      userNameDisplay.textContent = (session.user && session.user.name) || 'Nhân viên';
+      userRoleDisplay.textContent = (session.user && session.user.role) || '';
+      modulesGrid.innerHTML = '<div class="loading">Đang tải danh mục...</div>';
+
+      const data = await apiRequest({ action: 'getConfig', token: session.token });
+      if (data.status !== 'success') {
+        sessionStorage.removeItem(SESSION_KEY);
+        throw new Error(data.message || 'Phiên đăng nhập đã hết hạn.');
+      }
+
+      // Dữ liệu người dùng được lấy lại từ máy chủ, không tin dữ liệu cache trên trình duyệt.
+      if (data.user) {
+        userNameDisplay.textContent = data.user.name || data.user.username || 'Nhân viên';
+        userRoleDisplay.textContent = data.user.role || '';
+      }
+      renderLinks(data.links || []);
+    }
+
+    /** Render an toàn bằng textContent, không chèn dữ liệu Sheet trực tiếp vào HTML. */
+    function renderLinks(links) {
+      modulesGrid.replaceChildren();
+      if (!links.length) {
+        const empty = document.createElement('div');
+        empty.className = 'empty-state';
+        empty.textContent = 'Hiện chưa có ứng dụng nào được cấp quyền cho tài khoản này. Vui lòng liên hệ Quản lý.';
+        modulesGrid.appendChild(empty);
+        return;
+      }
+
+      links.forEach(item => {
+        if (!item.url || !/^https?:\/\//i.test(item.url)) return;
+
+        const card = document.createElement('a');
+        card.className = 'module-card';
+        card.href = item.url;
+        card.target = '_blank';
+        card.rel = 'noopener noreferrer';
+
+        const top = document.createElement('div');
+        top.className = 'module-top';
+        const tag = document.createElement('div');
+        tag.className = 'tag';
+        tag.textContent = item.category || 'Ứng dụng';
+        top.appendChild(tag);
+
+        if (item.iconText) {
+          const icon = document.createElement('div');
+          icon.className = 'icon-text';
+          icon.textContent = item.iconText;
+          top.appendChild(icon);
+        }
+
+        const title = document.createElement('div');
+        title.className = 'title';
+        title.textContent = item.title || 'Ứng dụng nội bộ';
+
+        const label = document.createElement('div');
+        label.className = 'link-label';
+        label.textContent = 'Truy cập hệ thống  →';
+
+        card.append(top, title, label);
+        modulesGrid.appendChild(card);
+      });
+    }
+
+    logoutBtn.addEventListener('click', async () => {
+      const raw = sessionStorage.getItem(SESSION_KEY);
+      let session = null;
+      try { session = raw ? JSON.parse(raw) : null; } catch (_) {}
+
+      logoutBtn.disabled = true;
+      try {
+        if (session && session.token) {
+          await apiRequest({ action: 'logout', token: session.token });
+        }
+      } catch (error) {
+        // Dù máy chủ mất kết nối, vẫn xóa phiên cục bộ trên thiết bị hiện tại.
+      } finally {
+        sessionStorage.removeItem(SESSION_KEY);
+        logoutBtn.disabled = false;
+        showLogin();
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      const raw = sessionStorage.getItem(SESSION_KEY);
+      if (!raw) return;
+      try {
+        const session = JSON.parse(raw);
+        await initDashboard(session);
+      } catch (error) {
+        sessionStorage.removeItem(SESSION_KEY);
+        showLogin();
+        if (error.message) showLoginError(error.message);
+      }
+    });
+  </script>
 </body>
 </html>
