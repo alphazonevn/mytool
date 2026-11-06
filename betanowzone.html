@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#07579f">
   <title>Beta Nowzone | Cổng Nhân Sự Nội Bộ</title>
+  <link rel="preconnect" href="https://script.google.com" crossorigin>
+  <link rel="dns-prefetch" href="//script.google.com">
+  <link rel="dns-prefetch" href="//script.googleusercontent.com">
   <link rel="icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrHqRceRcnxQuqHdl1GRiVzTAJ9JsLd6RiJs_cSgBz9w&amp;s=10" type="image/jpeg">
   <style>
     :root {
@@ -1417,7 +1420,7 @@
             <div class="brand-mark"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrHqRceRcnxQuqHdl1GRiVzTAJ9JsLd6RiJs_cSgBz9w&amp;s=10" alt="Logo Beta Cinemas" decoding="async" loading="eager" fetchpriority="high" referrerpolicy="no-referrer"></div>
             <div><div class="brand-name">BETA NOWZONE</div><div class="brand-sub">INTERNAL WORKSPACE</div></div>
           </div>
-          <h1>KHÔNG GIAN<br><span>VẬN HÀNH THÔNG MINH<span></h1>
+          <h1>Một không gian<br><span>vận hành thông minh.</span></h1>
           <p>Cổng thông tin nội bộ dành cho đội ngũ Beta Nowzone. Truy cập nhanh các công cụ nghiệp vụ, thông báo và tài nguyên được phân quyền theo tài khoản.</p>
           <div class="feature-list">
             <div class="feature"><span class="feature-dot">✓</span> Tập trung các ứng dụng nghiệp vụ</div>
@@ -1433,11 +1436,11 @@
           <div><div class="brand-name">BETA NOWZONE</div><div class="brand-sub">CỔNG NHÂN SỰ NỘI BỘ</div></div>
         </div>
         <h2>Đăng nhập hệ thống</h2>
-        <p class="lead">Sử dụng tên tài khoản và mật khẩu được Quản lý cấp</p>
+        <p class="lead">Sử dụng tên tài khoản và mật khẩu được Quản lý cấp. Không cần email.</p>
         <form id="loginForm" autocomplete="on">
           <div class="field">
             <label for="loginUsername">Tài khoản nhân viên</label>
-            <input id="loginUsername" name="username" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="Tên tài khoản" required maxlength="80">
+            <input id="loginUsername" name="username" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="Ví dụ: nv001" required maxlength="80">
           </div>
           <div class="field">
             <label for="loginPassword">Mật khẩu</label>
@@ -2252,6 +2255,9 @@ tr:hover td { background: #f8fbfd; }
 
     const SESSION_KEY = 'betaNowzoneSessionV2'; // Tương thích phiên cũ trong tab hiện tại.
     const DEVICE_SESSION_KEY = 'betaNowzoneDeviceSessionV3'; // Phiên được lưu riêng trong trình duyệt/thiết bị này.
+    const DASHBOARD_CACHE_KEY = 'betaNowzoneDashboardCacheV1'; // Cache giao diện gần nhất theo trình duyệt.
+    const DASHBOARD_CACHE_TTL_MS = 4 * 60 * 60 * 1000;
+    const ADMIN_CACHE_TTL_MS = 60000;
     const USERNAME_KEY = 'betaNowzoneUsername';
     const state = {
       token: '', user: null, dashboard: null, adminData: null,
@@ -2261,6 +2267,7 @@ tr:hover td { background: #f8fbfd; }
       dashboardPromise: null
     };
     let searchRenderTimer = 0;
+    let busyCounter = 0;
 
     const $ = (id) => document.getElementById(id);
 
@@ -2285,8 +2292,8 @@ tr:hover td { background: #f8fbfd; }
     function storageRemove(storage, key) {
       try { storage.removeItem(key); } catch (error) { /* Storage không khả dụng. */ }
     }
-    function saveLoginSession(token, rememberDevice) {
-      const record = JSON.stringify({ token: token, savedAt: Date.now(), scope: 'this-browser' });
+    function saveLoginSession(token, rememberDevice, username) {
+      const record = JSON.stringify({ token: token, username: String(username || ''), savedAt: Date.now(), scope: 'this-browser' });
       // Luôn giữ phiên trong tab hiện tại; chỉ ghi localStorage khi người dùng chọn thiết bị tin cậy.
       storageSet(sessionStorage, SESSION_KEY, record);
       if (rememberDevice) storageSet(localStorage, DEVICE_SESSION_KEY, record);
@@ -2297,6 +2304,33 @@ tr:hover td { background: #f8fbfd; }
       if (deviceRecord) return { raw: deviceRecord, persistent: true };
       const tabRecord = storageGet(sessionStorage, SESSION_KEY);
       return tabRecord ? { raw: tabRecord, persistent: false } : null;
+    }
+    function dashboardCacheStorage(persistent) { return persistent ? localStorage : sessionStorage; }
+    function readDashboardCache(persistent, username) {
+      const raw = storageGet(dashboardCacheStorage(persistent), DASHBOARD_CACHE_KEY);
+      if (!raw) return null;
+      try {
+        const record = JSON.parse(raw);
+        if (!record || !record.data || !record.data.user || !record.savedAt) return null;
+        if (Date.now() - Number(record.savedAt) > DASHBOARD_CACHE_TTL_MS) return null;
+        if (username && String(record.username || record.data.user.username || '').toLowerCase() !== String(username).toLowerCase()) return null;
+        return record.data;
+      } catch (error) { return null; }
+    }
+    function findDashboardCache(username) {
+      return readDashboardCache(true, username) || readDashboardCache(false, username);
+    }
+    function saveDashboardCache(data) {
+      if (!data || !data.user) return;
+      const persistent = !!storageGet(localStorage, DEVICE_SESSION_KEY);
+      const target = dashboardCacheStorage(persistent);
+      const record = JSON.stringify({ savedAt: Date.now(), username: data.user.username || '', data: data });
+      storageSet(target, DASHBOARD_CACHE_KEY, record);
+      storageRemove(persistent ? sessionStorage : localStorage, DASHBOARD_CACHE_KEY);
+    }
+    function clearDashboardCache() {
+      storageRemove(localStorage, DASHBOARD_CACHE_KEY);
+      storageRemove(sessionStorage, DASHBOARD_CACHE_KEY);
     }
 
     function serverCall(functionName, ...args) {
@@ -2407,10 +2441,14 @@ tr:hover td { background: #f8fbfd; }
     }
 
     function showBusy(message) {
+      busyCounter += 1;
       $('busyText').textContent = message || 'Đang xử lý...';
       $('busyOverlay').classList.add('show');
     }
-    function hideBusy() { $('busyOverlay').classList.remove('show'); }
+    function hideBusy() {
+      busyCounter = Math.max(0, busyCounter - 1);
+      if (!busyCounter) $('busyOverlay').classList.remove('show');
+    }
 
     function toast(message, type) {
       const el = document.createElement('div');
@@ -2454,7 +2492,6 @@ tr:hover td { background: #f8fbfd; }
       const remembered = storageGet(localStorage, USERNAME_KEY);
       if (remembered) $('loginUsername').value = remembered;
 
-      // Khôi phục phiên lưu trên thiết bị trước, sau đó mới xét phiên cũ theo tab.
       const storedSession = readLoginSession();
       if (storedSession) {
         try {
@@ -2462,23 +2499,31 @@ tr:hover td { background: #f8fbfd; }
           if (!session || !session.token) throw new Error('Phiên đăng nhập không hợp lệ.');
           state.token = session.token;
           $('rememberUsername').checked = storedSession.persistent;
+
+          // Hiển thị dashboard gần nhất ngay lập tức, sau đó xác thực/làm mới ở nền.
+          const cachedDashboard = readDashboardCache(storedSession.persistent, session.username);
+          if (cachedDashboard && cachedDashboard.user) {
+            applyDashboardData(cachedDashboard, false);
+            refreshDashboard(false).catch((error) => {
+              if (!isSessionErrorMessage(error.message)) toast('Đang hiển thị dữ liệu gần nhất. Chưa thể đồng bộ máy chủ: ' + error.message, 'error');
+            });
+            return;
+          }
+
           await refreshDashboard(false);
           return;
         } catch (error) {
-          clearSession();
+          if (isSessionErrorMessage(error.message)) clearSession();
           showLoginScreen();
           displayLoginError(error.message || 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
           return;
         }
       }
 
-      // Chỉ gọi cấu hình hỗ trợ khi chưa có phiên nào để khôi phục.
-      try {
-        const bootData = await callApi('apiBootstrap');
+      // Không chặn thao tác đăng nhập chỉ để tải dòng hướng dẫn hỗ trợ.
+      callApi('apiBootstrap').then((bootData) => {
         if (bootData.supportText) $('loginSupport').textContent = bootData.supportText;
-      } catch (error) {
-        displayLoginError(error.message);
-      }
+      }).catch(() => { /* Bootstrap chỉ bổ sung nội dung, không phải điều kiện đăng nhập. */ });
     }
 
     $('loginForm').addEventListener('submit', async (event) => {
@@ -2487,21 +2532,37 @@ tr:hover td { background: #f8fbfd; }
       const username = $('loginUsername').value.trim();
       const password = $('loginPassword').value;
       const button = $('loginButton');
+      if (button.disabled) return;
       button.disabled = true;
       button.textContent = 'ĐANG XÁC THỰC...';
       try {
         const result = await callApi('apiLogin', username, password);
+        if (!result.token) throw new Error('Máy chủ không trả về mã phiên đăng nhập hợp lệ.');
         state.token = result.token;
-        state.adminData = null; state.adminDataLoadedAt = 0;
+        state.adminData = null;
+        state.adminDataLoadedAt = 0;
         const rememberDevice = $('rememberUsername').checked;
-        saveLoginSession(result.token, rememberDevice);
+        saveLoginSession(result.token, rememberDevice, username);
         if (rememberDevice) storageSet(localStorage, USERNAME_KEY, username);
         else storageRemove(localStorage, USERNAME_KEY);
         $('loginPassword').value = '';
-        await refreshDashboard(true);
-        toast('Đăng nhập thành công. Xin chào ' + (state.user.name || state.user.username) + '!');
+
+        // Ưu tiên dữ liệu trả thẳng từ API đăng nhập (nếu backend có hỗ trợ).
+        const loginDashboard = result.dashboard && result.dashboard.user ? result.dashboard : null;
+        const cachedDashboard = loginDashboard || findDashboardCache(username);
+        if (cachedDashboard) {
+          applyDashboardData(cachedDashboard, !!loginDashboard);
+          // Xác thực/làm mới trong nền để người dùng vào hệ thống ngay.
+          refreshDashboard(false).catch((error) => {
+            if (!isSessionErrorMessage(error.message)) toast('Chưa thể đồng bộ dữ liệu mới: ' + error.message, 'error');
+          });
+          toast('Đăng nhập thành công. Xin chào ' + (state.user.name || state.user.username) + '!');
+        } else {
+          await refreshDashboard(false);
+          toast('Đăng nhập thành công. Xin chào ' + (state.user.name || state.user.username) + '!');
+        }
       } catch (error) {
-        if (state.token) clearSession();
+        if (state.token && isSessionErrorMessage(error.message)) clearSession();
         showLoginScreen();
         displayLoginError(error.message || 'Không thể đăng nhập.');
       } finally {
@@ -2510,28 +2571,36 @@ tr:hover td { background: #f8fbfd; }
       }
     });
 
+    function applyDashboardData(data, persistCache) {
+      if (!data || !data.user) throw new Error('Dữ liệu tổng quan không hợp lệ.');
+      state.dashboard = data;
+      state.user = data.user;
+      $('sideUserName').textContent = data.user.name || data.user.username;
+      $('sideUserRole').textContent = data.user.role || 'Nhân viên';
+      $('userAvatar').textContent = initials(data.user.name || data.user.username);
+      $('serverTime').textContent = data.serverTime || '';
+      $('loginScreen').classList.add('hidden');
+      $('appScreen').classList.remove('hidden');
+      document.querySelectorAll('[data-admin-only]').forEach((node) => {
+        node.classList.toggle('hidden', !isAdminUser());
+      });
+      if (!isAdminUser() && ['accounts', 'links', 'logs', 'settings'].includes(state.activePage)) state.activePage = 'home';
+      renderPage();
+      if (persistCache) saveDashboardCache(data);
+    }
+
     async function refreshDashboard(showLoader) {
       if (!state.token) throw new Error('Bạn chưa đăng nhập.');
-      // Nếu dashboard đang được đồng bộ, dùng chung yêu cầu hiện tại thay vì gửi request trùng.
+      // Dùng chung request đang chạy để tránh gửi lặp tới Apps Script.
       if (state.dashboardPromise) return state.dashboardPromise;
       if (showLoader) showBusy('Đang đồng bộ dữ liệu...');
 
+      const requestToken = state.token;
       const request = (async () => {
         try {
-          const data = await callApi('apiGetDashboard', state.token);
-          state.dashboard = data;
-          state.user = data.user;
-          $('sideUserName').textContent = data.user.name || data.user.username;
-          $('sideUserRole').textContent = data.user.role || 'Nhân viên';
-          $('userAvatar').textContent = initials(data.user.name || data.user.username);
-          $('serverTime').textContent = data.serverTime || '';
-          $('loginScreen').classList.add('hidden');
-          $('appScreen').classList.remove('hidden');
-          document.querySelectorAll('[data-admin-only]').forEach((node) => {
-            node.classList.toggle('hidden', !isAdminUser());
-          });
-          if (!isAdminUser() && ['accounts', 'links', 'logs', 'settings'].includes(state.activePage)) state.activePage = 'home';
-          renderPage();
+          const data = await callApi('apiGetDashboard', requestToken);
+          if (state.token !== requestToken) return null;
+          applyDashboardData(data, true);
           return data;
         } catch (error) {
           if (isSessionErrorMessage(error.message)) {
@@ -2565,9 +2634,11 @@ tr:hover td { background: #f8fbfd; }
       state.dashboard = null;
       state.adminData = null;
       state.adminDataLoadedAt = 0;
+      state.adminDataPromise = null;
       state.dashboardPromise = null;
       storageRemove(sessionStorage, SESSION_KEY);
       storageRemove(localStorage, DEVICE_SESSION_KEY);
+      clearDashboardCache();
     }
 
     function showLoginScreen() {
@@ -2577,14 +2648,16 @@ tr:hover td { background: #f8fbfd; }
     }
 
     async function logout() {
-      showBusy('Đang đăng xuất...');
-      try { if (state.token) await callApi('apiLogout', state.token); } catch (error) { /* Xóa phiên cục bộ dù máy chủ mất kết nối. */ }
+      const token = state.token;
+      // Đăng xuất cục bộ ngay lập tức; không bắt người dùng chờ máy chủ phản hồi.
+      busyCounter = 0;
+      $('busyOverlay').classList.remove('show');
       clearSession();
       state.activePage = 'home';
-      hideBusy();
       $('sidebar').classList.remove('open');
       showLoginScreen();
       toast('Bạn đã đăng xuất khỏi hệ thống.');
+      if (token) callApi('apiLogout', token).catch(() => { /* Hết phiên cục bộ; máy chủ tự hết hạn token theo chính sách. */ });
     }
 
     function pageMeta(page) {
@@ -2615,15 +2688,17 @@ tr:hover td { background: #f8fbfd; }
       renderPage();
     }
 
-    async function loadAdminData(force = false) {
-      const cacheFresh = state.adminData && (Date.now() - state.adminDataLoadedAt < 30000);
+    async function loadAdminData(force = false, silent = false) {
+      const cacheFresh = state.adminData && (Date.now() - state.adminDataLoadedAt < ADMIN_CACHE_TTL_MS);
       if (!force && cacheFresh) return state.adminData;
       if (state.adminDataPromise) return state.adminDataPromise;
 
-      showBusy('Đang tải dữ liệu quản trị...');
+      if (!silent) showBusy('Đang tải dữ liệu quản trị...');
+      const requestToken = state.token;
       state.adminDataPromise = (async () => {
         try {
-          const data = await callApi('apiAdminGetData', state.token);
+          const data = await callApi('apiAdminGetData', requestToken);
+          if (state.token !== requestToken) return state.adminData;
           state.adminData = data;
           state.adminDataLoadedAt = Date.now();
           return data;
@@ -2636,7 +2711,7 @@ tr:hover td { background: #f8fbfd; }
           throw error;
         } finally {
           state.adminDataPromise = null;
-          hideBusy();
+          if (!silent) hideBusy();
         }
       })();
       return state.adminDataPromise;
@@ -2949,8 +3024,12 @@ tr:hover td { background: #f8fbfd; }
       if (action === 'refresh' || action === 'refresh-admin') {
         showBusy('Đang làm mới dữ liệu...');
         try {
-          const refreshJobs = [refreshDashboard(false)];
-          if (isAdminUser() && ['accounts', 'links', 'logs', 'settings'].includes(state.activePage)) refreshJobs.push(loadAdminData(true));
+          const refreshJobs = [];
+          if (action === 'refresh') refreshJobs.push(refreshDashboard(false));
+          if (isAdminUser() && (action === 'refresh-admin' || ['accounts', 'links', 'logs', 'settings'].includes(state.activePage))) {
+            refreshJobs.push(loadAdminData(true, true));
+          }
+          if (!refreshJobs.length) refreshJobs.push(refreshDashboard(false));
           await Promise.all(refreshJobs);
           renderPage(); toast('Dữ liệu đã được cập nhật.');
         } catch (error) { toast(error.message, 'error'); }
@@ -3035,8 +3114,12 @@ tr:hover td { background: #f8fbfd; }
         state.dashboard = null;
         state.adminData = null;
         state.adminDataLoadedAt = 0;
+        state.adminDataPromise = null;
         state.dashboardPromise = null;
+        busyCounter = 0;
+        $('busyOverlay').classList.remove('show');
         storageRemove(sessionStorage, SESSION_KEY);
+        clearDashboardCache();
         showLoginScreen();
         toast('Phiên đăng nhập trên thiết bị này đã kết thúc.');
       }
