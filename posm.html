@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nghiệm Thu POSM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --cyan-accent: #00e5ff;
+            --amber-accent: #ffbf00;
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: radial-gradient(circle at 15% 50%, rgba(0, 229, 255, 0.05), transparent 25%),
+                              radial-gradient(circle at 85% 30%, rgba(255, 191, 0, 0.05), transparent 25%);
+        }
+
+        .glass-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        h2 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, var(--cyan-accent), var(--amber-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: var(--cyan-accent);
+        }
+
+        .file-upload-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-upload-wrapper input[type="file"] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+            height: 100%;
+        }
+
+        .btn-upload {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            background: transparent;
+            border: 1px dashed var(--amber-accent);
+            border-radius: 10px;
+            color: var(--amber-accent);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-upload:hover {
+            background: rgba(255, 191, 0, 0.1);
+        }
+
+        .preview-img {
+            margin-top: 15px;
+            max-width: 100%;
+            border-radius: 10px;
+            display: none;
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(90deg, #00b8cc, var(--cyan-accent));
+            border: none;
+            border-radius: 10px;
+            color: #000;
+            font-weight: 700;
+            font-size: 1rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: opacity 0.3s, transform 0.1s;
+            margin-top: 10px;
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .status-msg {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="glass-container">
+    <h2>Báo Cáo POSM</h2>
+    <form id="posmForm">
+        <div class="form-group">
+            <label>Tên Cửa hàng / Đại lý</label>
+            <input type="text" id="storeName" required placeholder="Nhập tên cửa hàng...">
+        </div>
+        
+        <div class="form-group">
+            <label>Mã POSM</label>
+            <input type="text" id="posmCode" required placeholder="VD: Standee-01...">
+        </div>
+
+        <div class="form-group">
+            <label>Hình ảnh chụp thực tế</label>
+            <div class="file-upload-wrapper">
+                <div class="btn-upload" id="uploadBtnText">📸 Bấm để chụp hoặc chọn ảnh</div>
+                <input type="file" id="imageFile" accept="image/*" capture="environment" required>
+            </div>
+            <img id="imagePreview" class="preview-img" alt="Preview">
+        </div>
+
+        <div class="form-group">
+            <label>Ghi chú (Tình trạng, vị trí...)</label>
+            <textarea id="notes" rows="3" placeholder="Nhập ghi chú nếu có..."></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">Gửi Nghiệm Thu</button>
+        <div class="status-msg" id="statusMsg"></div>
+    </form>
+</div>
+
+<script>
+    // --- ĐIỀN URL WEB APP CỦA APPS SCRIPT VÀO ĐÂY ---
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby-ZDfuZLIraLUeubzXStnMoeAJNa3s_P6GQYMfjpvrYLAlTTJPAinWKLYN5l7Odyc/exec';
+    
+    let base64ImageString = "";
+
+    const imageFileInput = document.getElementById('imageFile');
+    const imagePreview = document.getElementById('imagePreview');
+    const uploadBtnText = document.getElementById('uploadBtnText');
+
+    // Chuyển ảnh thành Base64 khi người dùng chọn/chụp ảnh
+    imageFileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                base64ImageString = event.target.result;
+                imagePreview.src = base64ImageString;
+                imagePreview.style.display = 'block';
+                uploadBtnText.textContent = "✅ Đã chọn ảnh (Bấm để thay đổi)";
+                uploadBtnText.style.borderColor = "var(--cyan-accent)";
+                uploadBtnText.style.color = "var(--cyan-accent)";
+            };
+            // Nén ảnh cơ bản nếu file lớn có thể dùng Canvas ở đây, 
+            // hiện tại readAsDataURL trực tiếp cho ảnh tiêu chuẩn.
+            reader.readAsDataURL(file);
+        }
+    });
+
+    document.getElementById('posmForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const submitBtn = document.getElementById('submitBtn');
+        const statusMsg = document.getElementById('statusMsg');
+        
+        if(!base64ImageString) {
+            alert("Vui lòng chụp hoặc chọn ảnh POSM!");
+            return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = '⏳ Đang tải lên...';
+        statusMsg.style.display = 'none';
+
+        const payload = {
+            storeName: document.getElementById('storeName').value,
+            posmCode: document.getElementById('posmCode').value,
+            notes: document.getElementById('notes').value,
+            imageBase64: base64ImageString
+        };
+
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.status === "success") {
+                statusMsg.style.display = 'block';
+                statusMsg.style.color = 'var(--cyan-accent)';
+                statusMsg.textContent = '✅ Đã ghi nhận báo cáo thành công!';
+                document.getElementById('posmForm').reset();
+                imagePreview.style.display = 'none';
+                uploadBtnText.textContent = "📸 Bấm để chụp hoặc chọn ảnh";
+                uploadBtnText.style.borderColor = "var(--amber-accent)";
+                uploadBtnText.style.color = "var(--amber-accent)";
+                base64ImageString = "";
+            } else {
+                throw new Error(data.message);
+            }
+        })
+        .catch(error => {
+            statusMsg.style.display = 'block';
+            statusMsg.style.color = '#ff4444';
+            statusMsg.textContent = '❌ Lỗi: ' + error.message;
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Gửi Nghiệm Thu';
+        });
+    });
+</script>
+
+</body>
+</html>
