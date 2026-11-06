@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Xác Nhận POSM | Beta Nowzone</title>
+    <title>Hệ Thống POSM | Beta Nowzone</title>
     
     <link rel="icon" href="https://play-lh.googleusercontent.com/so_2mIzE8qaobdSafVStIV7olRZL8Q1SkclYErPgbFDPn1SzAUO33stPfshdztJZCVA0eqfWsO_iia59aHLKZL8" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@200;300;400;500;600&display=swap" rel="stylesheet">
@@ -22,14 +22,12 @@
         }
 
         body {
-            margin: 0; padding: 20px;
-            font-family: 'Be Vietnam Pro', sans-serif;
+            margin: 0; padding: 20px; font-family: 'Be Vietnam Pro', sans-serif;
             background-color: #030508; color: var(--text-primary);
             display: flex; justify-content: center; align-items: center;
             min-height: 100vh; position: relative; overflow-x: hidden;
         }
 
-        /* Ambient Holo Lighting */
         body::before, body::after {
             content: ''; position: absolute; border-radius: 50%;
             filter: blur(90px); z-index: -1; opacity: 0.35;
@@ -37,10 +35,9 @@
         body::before { width: 40vw; height: 40vw; background: var(--brand-secondary); top: -10%; left: -10%; }
         body::after { width: 35vw; height: 35vw; background: var(--brand-accent); bottom: -10%; right: -10%; }
 
-        /* Premium Glass Container */
         .glass-container {
             position: relative; width: 100%; max-width: 400px;
-            padding: 45px 35px; border-radius: 2px;
+            padding: 40px 30px; border-radius: 2px;
             background: var(--surface-glass);
             backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
             border: 1px solid var(--border-thin);
@@ -48,12 +45,24 @@
             z-index: 1; box-sizing: border-box;
         }
 
-        .logo-header { text-align: center; margin-bottom: 35px; }
-        .logo-header img { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; filter: grayscale(20%) contrast(120%); }
+        .logo-header { text-align: center; margin-bottom: 25px; }
+        .logo-header img { width: 55px; height: 55px; object-fit: cover; border-radius: 4px; filter: grayscale(20%) contrast(120%); }
 
-        h2 { text-align: center; margin: 0 0 35px; font-weight: 300; font-size: 1.25rem; letter-spacing: 3px; text-transform: uppercase; }
+        h2 { text-align: center; margin: 0 0 25px; font-weight: 300; font-size: 1.1rem; letter-spacing: 3px; text-transform: uppercase; }
 
-        .form-group { margin-bottom: 28px; }
+        /* TAB SWITCHER NGHIỆM THU / NHẬN */
+        .type-switcher {
+            display: flex; background: rgba(0,0,0,0.4); border: 1px solid var(--border-thin);
+            border-radius: 8px; margin-bottom: 30px; overflow: hidden;
+        }
+        .type-btn {
+            flex: 1; text-align: center; padding: 12px 0; cursor: pointer;
+            font-size: 0.75rem; font-weight: 500; color: var(--text-secondary);
+            letter-spacing: 1px; text-transform: uppercase; transition: all 0.3s;
+        }
+        .type-btn.active { background: rgba(255,255,255,0.1); color: var(--text-primary); box-shadow: inset 0 0 10px rgba(255,255,255,0.05); }
+
+        .form-group { margin-bottom: 25px; }
         .row { display: flex; gap: 20px; } .row .form-group { flex: 1; }
         label { display: block; margin-bottom: 8px; font-size: 0.7rem; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1.5px; }
 
@@ -71,19 +80,19 @@
         .btn-upload {
             display: flex; align-items: center; justify-content: center; padding: 20px;
             background: rgba(255, 255, 255, 0.02); border: 1px dashed var(--border-thin); color: var(--text-secondary);
-            font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase; text-align: center; cursor: pointer; transition: all 0.4s;
+            font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; text-align: center; cursor: pointer; transition: all 0.4s;
         }
         .btn-upload:hover { border-color: rgba(255,255,255,0.4); color: var(--text-primary); }
         .preview-img { margin-top: 15px; width: 100%; height: auto; display: none; border: 1px solid var(--border-thin); filter: brightness(0.9); }
 
         .btn-submit {
-            width: 100%; padding: 16px; margin-top: 20px; background: var(--text-primary); border: none; color: #000000;
+            width: 100%; padding: 16px; margin-top: 10px; background: var(--text-primary); border: none; color: #000000;
             font-weight: 600; font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; font-family: inherit; cursor: pointer; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .btn-submit:hover { background: var(--brand-accent); color: #ffffff; box-shadow: 0 10px 30px rgba(245, 130, 32, 0.3); transform: translateY(-2px); }
         .btn-submit:disabled { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.3); cursor: not-allowed; transform: none; box-shadow: none; }
 
-        /* Popup Modal Cập Nhật Hiển Thị Ảnh */
+        /* Popup */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
@@ -91,17 +100,13 @@
             opacity: 0; transition: opacity 0.4s ease;
         }
         .modal-overlay.active { display: flex; opacity: 1; }
-        
         .modal-content { text-align: center; max-width: 420px; padding: 35px; border: 1px solid var(--border-thin); }
         .modal-content h3 { color: var(--text-primary); font-size: 1.1rem; font-weight: 300; letter-spacing: 2px; text-transform: uppercase; margin: 0 0 15px; }
         .modal-content p { color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 20px; line-height: 1.6; font-weight: 300; }
         
-        /* Cấu hình hiển thị ảnh Preview trong Modal */
         .modal-receipt-preview {
-            width: 100%; max-height: 320px; object-fit: contain;
-            border-radius: 4px; border: 1px solid rgba(255,255,255,0.15);
-            margin-bottom: 25px; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            background: #050505;
+            width: 100%; max-height: 320px; object-fit: contain; border-radius: 4px; border: 1px solid rgba(255,255,255,0.15);
+            margin-bottom: 25px; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.5); background: #050505;
         }
         
         .modal-actions { display: flex; flex-direction: column; gap: 12px; }
@@ -113,7 +118,7 @@
         .btn-close { background: transparent; color: var(--text-secondary); margin-top: 5px; font-size: 0.75rem; }
         .btn-close:hover { color: var(--text-primary); }
 
-        /* Hidden Receipt Ticket (Bản thiết kế ảnh để render) */
+        /* Hidden Receipt Ticket */
         #receiptTicket {
             position: absolute; left: -9999px; top: 0; width: 550px;
             background: #050505; color: #ffffff; padding: 50px; box-sizing: border-box;
@@ -136,27 +141,37 @@
     <div class="logo-header">
         <img crossorigin="anonymous" src="https://play-lh.googleusercontent.com/so_2mIzE8qaobdSafVStIV7olRZL8Q1SkclYErPgbFDPn1SzAUO33stPfshdztJZCVA0eqfWsO_iia59aHLKZL8" alt="Logo">
     </div>
-    <h2>Báo Cáo POSM</h2>
     
-    <form id="receivePosmForm">
+    <div class="type-switcher">
+        <div class="type-btn active" id="tabNhan">Nhận Hàng POSM</div>
+        <div class="type-btn" id="tabNghiemThu">Báo Cáo Nghiệm Thu</div>
+    </div>
+    
+    <form id="posmForm">
         <div class="form-group">
-            <label>Người Nhận</label>
+            <label>Họ và Tên</label>
             <input type="text" id="receiver" required placeholder="Nhập họ và tên...">
         </div>
+        
         <div class="row">
             <div class="form-group">
-                <label>Ngày Nhận</label>
+                <label id="dateLabel">Ngày Nhận</label>
                 <input type="date" id="receiveDate" required>
             </div>
-            <div class="form-group">
+            
+            <!-- Ô nhập Số lượng sẽ bị ẩn khi chuyển sang Nghiệm thu -->
+            <div class="form-group" id="qtyGroup">
                 <label>Số Lượng</label>
                 <input type="number" id="quantity" required min="1" placeholder="00">
             </div>
         </div>
-        <div class="form-group">
+        
+        <!-- Ô nhập Chi tiết sẽ bị ẩn khi chuyển sang Nghiệm thu -->
+        <div class="form-group" id="descGroup">
             <label>Chi Tiết Hạng Mục</label>
             <textarea id="description" rows="1" required placeholder="Mô tả vật phẩm..."></textarea>
         </div>
+
         <div class="form-group">
             <label>Tài Liệu Đính Kèm</label>
             <div class="file-upload-wrapper">
@@ -165,58 +180,85 @@
             </div>
             <img id="imagePreview" class="preview-img" alt="Bản xem trước">
         </div>
-        <button type="submit" class="btn-submit" id="submitBtn">Xác Nhận</button>
+        
+        <button type="submit" class="btn-submit" id="submitBtn">XÁC NHẬN NHẬN POSM</button>
     </form>
 </div>
 
-<!-- Popup Modal Mới -->
+<!-- Popup Modal -->
 <div id="successModal" class="modal-overlay">
     <div class="glass-container modal-content">
         <h3>Hoàn Tất</h3>
-        <p>Phiếu xác nhận đã được tạo và lưu trữ tự động.</p>
-        
-        <!-- Khung hiển thị ảnh Preview -->
+        <p id="modalMsg">Tài liệu đã được tạo và lưu trữ tự động.</p>
         <img id="modalReceiptPreview" class="modal-receipt-preview" alt="Phiếu Xác Nhận">
-        
         <div class="modal-actions">
-            <button id="btnDownload" class="btn-action btn-download">Tải Phiếu Xác Nhận</button>
+            <button id="btnDownload" class="btn-action btn-download">Tải Phiếu Về Máy</button>
             <button id="btnShare" class="btn-action btn-share">Chia Sẻ Tài Liệu</button>
             <button id="btnCloseModal" class="btn-action btn-close">Đóng Giao Diện</button>
         </div>
     </div>
 </div>
 
-<!-- Mẫu Phiếu Nhận ẩn -->
+<!-- Mẫu Phiếu ẩn (Dùng render ảnh) -->
 <div id="receiptTicket">
     <div class="receipt-header">
         <img crossorigin="anonymous" src="https://play-lh.googleusercontent.com/so_2mIzE8qaobdSafVStIV7olRZL8Q1SkclYErPgbFDPn1SzAUO33stPfshdztJZCVA0eqfWsO_iia59aHLKZL8" alt="Logo">
-        <h1>PHIẾU NHẬN HÀNG</h1>
+        <h1 id="t_title">PHIẾU NHẬN POSM</h1>
         <div>Beta Cinemas Nowzone</div>
     </div>
     <div class="receipt-body">
-        <div><strong>Người Nhận:</strong> <span id="t_receiver"></span></div>
-        <div><strong>Ngày Nhận POSM:</strong> <span id="t_date"></span></div>
-        <div><strong>Số Lượng POSM:</strong> <span id="t_qty"></span></div>
-        <div><strong>Chi Tiết:</strong> <span id="t_desc"></span></div>
+        <div><strong>Người Thực Hiện:</strong> <span id="t_receiver"></span></div>
+        <div><strong>Ngày Ghi Nhận:</strong> <span id="t_date"></span></div>
+        <div id="t_qty_box"><strong>Số Lượng:</strong> <span id="t_qty"></span></div>
+        <div id="t_desc_box"><strong>Chi Tiết:</strong> <span id="t_desc"></span></div>
     </div>
     <div class="receipt-img-box">
         <img id="t_img" src="" alt="Tài liệu đính kèm">
     </div>
     <div class="receipt-footer">
-        <p>Loading...</p>
+        <p>Tài liệu được xuất tự động từ Hệ Thống Báo Cáo</p>
     </div>
 </div>
 
 <script>
     // --- ĐIỀN URL WEB APP CỦA APPS SCRIPT VÀO ĐÂY ---
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyi3FEXoipiFl0z4Ek5FgivDT7eLjl5Mk8LlcJ5J5J9RMFeD0ni0c_32wZ3lgwGE6Y/exec';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyMsqidjwcaykOMJW0cG8-3_L-fEbrrV0DKcUhOWWnaj8ZFNeCf3F0mG7J4map5z3gw/exec';
     
     document.getElementById('receiveDate').valueAsDate = new Date();
 
+    // --- LOGIC CHUYỂN TAB ---
+    let currentMode = 'NHAN'; // 'NHAN' hoặc 'NGHIEMTHU'
+    const tabNhan = document.getElementById('tabNhan');
+    const tabNghiemThu = document.getElementById('tabNghiemThu');
+    const qtyGroup = document.getElementById('qtyGroup');
+    const descGroup = document.getElementById('descGroup');
+    const qtyInput = document.getElementById('quantity');
+    const descInput = document.getElementById('description');
+    const submitBtn = document.getElementById('submitBtn');
+    const dateLabel = document.getElementById('dateLabel');
+
+    tabNhan.addEventListener('click', () => {
+        currentMode = 'NHAN';
+        tabNhan.classList.add('active'); tabNghiemThu.classList.remove('active');
+        qtyGroup.style.display = 'block'; descGroup.style.display = 'block';
+        qtyInput.required = true; descInput.required = true;
+        submitBtn.textContent = 'XÁC NHẬN NHẬN POSM';
+        dateLabel.textContent = 'Ngày Nhận';
+    });
+
+    tabNghiemThu.addEventListener('click', () => {
+        currentMode = 'NGHIEMTHU';
+        tabNghiemThu.classList.add('active'); tabNhan.classList.remove('active');
+        qtyGroup.style.display = 'none'; descGroup.style.display = 'none';
+        qtyInput.required = false; descInput.required = false;
+        submitBtn.textContent = 'GỬI BÁO CÁO NGHIỆM THU';
+        dateLabel.textContent = 'Ngày Nghiệm Thu';
+    });
+
+    // --- LOGIC XỬ LÝ ẢNH & GỬI FORM ---
     let base64ImageString = "";
     let lastSavedReceiver = ""; 
-    let generatedCanvasObj = null; // Lưu trữ biến canvas toàn cục để tải/share cực nhanh
-
+    let generatedCanvasObj = null; 
     const imageFileInput = document.getElementById('imageFile');
     const imagePreview = document.getElementById('imagePreview');
     const uploadBtnText = document.getElementById('uploadBtnText');
@@ -238,9 +280,8 @@
         }
     });
 
-    document.getElementById('receivePosmForm').addEventListener('submit', function(e) {
+    document.getElementById('posmForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        const submitBtn = document.getElementById('submitBtn');
         
         if(!base64ImageString) {
             alert("Vui lòng đính kèm hình ảnh xác thực.");
@@ -250,15 +291,24 @@
         submitBtn.disabled = true;
         submitBtn.textContent = 'ĐANG ĐỒNG BỘ...';
 
+        // Tạo Payload động tùy theo Tab đang chọn
         const payload = {
-            receiveDate: document.getElementById('receiveDate').value,
-            receiver: document.getElementById('receiver').value,
-            quantity: document.getElementById('quantity').value,
-            description: document.getElementById('description').value,
+            "Người Báo Cáo": document.getElementById('receiver').value,
+            "Ngày Thực Hiện": document.getElementById('receiveDate').value,
             imageBase64: base64ImageString
         };
 
-        lastSavedReceiver = payload.receiver;
+        if (currentMode === 'NHAN') {
+            payload.sheetName = 'Nhan_POSM';
+            payload.LoaiPhieu = 'Nhan';
+            payload["Số Lượng"] = qtyInput.value;
+            payload["Chi Tiết"] = descInput.value;
+        } else {
+            payload.sheetName = 'Nghiem_Thu';
+            payload.LoaiPhieu = 'NghiemThu';
+        }
+
+        lastSavedReceiver = payload["Người Báo Cáo"];
 
         fetch(SCRIPT_URL, {
             method: 'POST',
@@ -269,31 +319,36 @@
             if(data.status === "success") {
                 submitBtn.textContent = 'ĐANG TẠO PHIẾU...';
 
-                // Điền dữ liệu vào phiếu ẩn
-                document.getElementById('t_receiver').textContent = payload.receiver;
-                const dateParts = payload.receiveDate.split('-');
+                // Tùy chỉnh Phiếu hiển thị
+                document.getElementById('t_receiver').textContent = payload["Người Báo Cáo"];
+                const dateParts = payload["Ngày Thực Hiện"].split('-');
                 document.getElementById('t_date').textContent = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
-                document.getElementById('t_qty').textContent = payload.quantity;
-                document.getElementById('t_desc').textContent = payload.description;
                 document.getElementById('t_img').src = base64ImageString;
 
-                // NGAY LẬP TỨC TẠO ẢNH PHIẾU
-                try {
-                    const canvas = await html2canvas(document.getElementById('receiptTicket'), { useCORS: true, scale: 2 });
-                    generatedCanvasObj = canvas; // Lưu lại
-                    
-                    // Đưa ảnh vừa tạo hiển thị ngay trên Popup
-                    modalReceiptPreview.src = canvas.toDataURL('image/png');
-                    modalReceiptPreview.style.display = 'block';
-                } catch (err) {
-                    console.log("Lỗi tạo hình xem trước", err);
+                if (currentMode === 'NHAN') {
+                    document.getElementById('t_title').textContent = 'PHIẾU NHẬN POSM';
+                    document.getElementById('t_qty_box').style.display = 'block';
+                    document.getElementById('t_desc_box').style.display = 'block';
+                    document.getElementById('t_qty').textContent = payload["Số Lượng"];
+                    document.getElementById('t_desc').textContent = payload["Chi Tiết"];
+                } else {
+                    document.getElementById('t_title').textContent = 'PHIẾU NGHIỆM THU';
+                    document.getElementById('t_qty_box').style.display = 'none';
+                    document.getElementById('t_desc_box').style.display = 'none';
                 }
 
-                // Hiển thị Popup
+                // Render Ảnh Popup
+                try {
+                    const canvas = await html2canvas(document.getElementById('receiptTicket'), { useCORS: true, scale: 2 });
+                    generatedCanvasObj = canvas; 
+                    modalReceiptPreview.src = canvas.toDataURL('image/png');
+                    modalReceiptPreview.style.display = 'block';
+                } catch (err) { console.log(err); }
+
                 document.getElementById('successModal').classList.add('active');
 
-                // Khôi phục lại form để sẵn sàng nhập cái mới
-                document.getElementById('receivePosmForm').reset();
+                // Reset Form
+                document.getElementById('posmForm').reset();
                 document.getElementById('receiver').value = lastSavedReceiver;
                 document.getElementById('receiveDate').valueAsDate = new Date();
                 imagePreview.style.display = 'none';
@@ -301,19 +356,16 @@
                 uploadBtnText.style.borderColor = "var(--border-thin)";
                 uploadBtnText.style.color = "var(--text-secondary)";
                 base64ImageString = "";
-            } else {
-                throw new Error(data.message);
-            }
+            } else { throw new Error(data.message); }
         })
-        .catch(error => {
-            alert('Lỗi Hệ Thống: ' + error.message);
-        })
+        .catch(error => { alert('Lỗi: ' + error.message); })
         .finally(() => {
             submitBtn.disabled = false;
-            submitBtn.textContent = 'XÁC NHẬN';
+            submitBtn.textContent = currentMode === 'NHAN' ? 'XÁC NHẬN NHẬN POSM' : 'GỬI BÁO CÁO NGHIỆM THU';
         });
     });
 
+    // --- LOGIC POPUP ---
     const btnDownload = document.getElementById('btnDownload');
     const btnShare = document.getElementById('btnShare');
     const btnCloseModal = document.getElementById('btnCloseModal');
@@ -321,39 +373,32 @@
 
     btnCloseModal.addEventListener('click', () => {
         successModal.classList.remove('active');
-        // Reset hình ảnh xem trước khi đóng
         setTimeout(() => { modalReceiptPreview.style.display = 'none'; }, 300);
     });
 
-    // Nút tải ảnh lấy thẳng từ biến đã tạo sẵn, cực mượt
     btnDownload.addEventListener('click', () => {
         if(!generatedCanvasObj) return;
+        const prefix = currentMode === 'NHAN' ? 'PhieuNhan' : 'PhieuNghiemThu';
         const link = document.createElement('a');
-        link.download = `Bien_Ban_POSM_${lastSavedReceiver}_${new Date().getTime()}.png`;
+        link.download = `${prefix}_${lastSavedReceiver}_${new Date().getTime()}.png`;
         link.href = generatedCanvasObj.toDataURL('image/png');
         link.click();
     });
 
-    // Nút chia sẻ lấy thẳng từ biến đã tạo sẵn
     btnShare.addEventListener('click', () => {
         if(!generatedCanvasObj) return;
         const btnOrigin = btnShare.innerHTML;
         btnShare.innerHTML = "ĐANG MỞ CHIA SẺ...";
+        const titleText = currentMode === 'NHAN' ? 'Biên Bản Nhận POSM' : 'Báo Cáo Nghiệm Thu POSM';
         
         generatedCanvasObj.toBlob(async (blob) => {
-            const file = new File([blob], `Bien_Ban_POSM_${lastSavedReceiver}.png`, { type: 'image/png' });
+            const file = new File([blob], `BaoCao_${lastSavedReceiver}.png`, { type: 'image/png' });
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
                 try {
-                    await navigator.share({
-                        title: 'Biên Bản Nghiệm Thu POSM',
-                        text: `Tài liệu nghiệm thu POSM từ ${lastSavedReceiver}`,
-                        files: [file]
-                    });
-                } catch(e) {
-                    console.log("Hủy chia sẻ", e);
-                }
+                    await navigator.share({ title: titleText, text: `${titleText} từ ${lastSavedReceiver}`, files: [file] });
+                } catch(e) {}
             } else {
-                alert("Trình duyệt không hỗ trợ chia sẻ trực tiếp. Vui lòng sử dụng tính năng Tải Xuống.");
+                alert("Trình duyệt không hỗ trợ chia sẻ. Vui lòng sử dụng tính năng Tải Về Máy.");
             }
             btnShare.innerHTML = btnOrigin;
         }, 'image/png');
