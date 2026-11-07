@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Quản Lý Kho Thông Minh | MyTool Beta</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#0f172a', /* Slate 900 - Minimalist Dark */
+                        accent: '#4f46e5',  /* Indigo 600 - Highlights */
+                        success: '#10b981',
+                        danger: '#ef4444',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Scrollbar - Modern Minimalist */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        body { background-color: #f8fafc; }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        
+        .fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .loader {
+            border: 2px solid #e2e8f0;
+            border-top: 2px solid #4f46e5;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Global Loading Overlay */
+        #global-loader {
+            position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            backdrop-filter: blur(4px); transition: opacity 0.3s;
+        }
+        .hidden-loader { opacity: 0; pointer-events: none; }
+        
+        /* Modern Input Styling */
+        .modern-input {
+            border: 1px solid #e2e8f0;
+            background-color: #ffffff;
+            transition: all 0.2s;
+        }
+        .modern-input:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            outline: none;
+        }
+
+        /* Autocomplete Dropdown */
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 50;
+            display: none;
+        }
+        .autocomplete-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid #f1f5f9;
+            transition: background 0.1s;
+        }
+        .autocomplete-item:hover, .autocomplete-item.active {
+            background: #f8fafc;
+        }
+        .autocomplete-item:last-child { border-bottom: none; }
+    </style>
+</head>
+<body class="text-slate-800 font-sans antialiased flex h-screen overflow-hidden">
+
+    <!-- Global Loader -->
+    <div id="global-loader" class="hidden-loader">
+        <div class="loader" style="width: 40px; height: 40px; border-width: 3px;"></div>
+        <p class="mt-4 font-medium text-slate-500 tracking-wide" id="loader-text">Đang đồng bộ dữ liệu...</p>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white border-r border-slate-200 flex flex-col transition-all duration-300 z-20" id="sidebar">
+        <div class="h-20 flex flex-col justify-center px-8 border-b border-slate-100">
+            <h1 class="text-xl font-bold tracking-tight text-primary">MyTool Beta</h1>
+            <p class="text-xs font-medium text-slate-400 mt-1 uppercase tracking-widest">Kho Trung Tâm</p>
+        </div>
+        
+        <nav class="flex-1 py-6 overflow-y-auto px-4">
+            <ul class="space-y-1">
+                <li>
+                    <a href="#" onclick="switchTab('dashboard')" class="nav-btn active flex items-center px-4 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-primary transition-all" data-target="dashboard">
+                        <span class="nav-indicator w-1.5 h-1.5 rounded-full mr-3 bg-transparent"></span> Tổng quan
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="switchTab('import')" class="nav-btn flex items-center px-4 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-primary transition-all" data-target="import">
+                        <span class="nav-indicator w-1.5 h-1.5 rounded-full mr-3 bg-transparent"></span> Nhập kho
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="switchTab('export')" class="nav-btn flex items-center px-4 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-primary transition-all" data-target="export">
+                        <span class="nav-indicator w-1.5 h-1.5 rounded-full mr-3 bg-transparent"></span> Xuất kho
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="switchTab('inventory')" class="nav-btn flex items-center px-4 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-primary transition-all" data-target="inventory">
+                        <span class="nav-indicator w-1.5 h-1.5 rounded-full mr-3 bg-transparent"></span> Kiểm tồn
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="switchTab('history')" class="nav-btn flex items-center px-4 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-primary transition-all" data-target="history">
+                        <span class="nav-indicator w-1.5 h-1.5 rounded-full mr-3 bg-transparent"></span> Lịch sử Giao dịch
+                    </a>
+                </li>
+                <li class="pt-4 mt-4 border-t border-slate-100">
+                    <a href="#" onclick="switchTab('settings')" class="nav-btn flex items-center px-4 py-2.5 rounded-lg text-sm font-medium text-slate-500 hover:bg-slate-50 hover:text-primary transition-all" data-target="settings">
+                        <span class="nav-indicator w-1.5 h-1.5 rounded-full mr-3 bg-transparent"></span> Cấu hình API
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <div class="p-6 bg-slate-50/50 border-t border-slate-100">
+            <div id="sync-status" class="flex items-center text-xs font-medium text-slate-500">
+                <span class="w-2 h-2 rounded-full bg-green-500 mr-2"></span> Đã đồng bộ
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-screen relative">
+        <!-- Header -->
+        <header class="h-20 glass-effect border-b border-slate-200/60 flex items-center justify-between px-8 z-10 sticky top-0">
+            <div class="flex items-center">
+                <button onclick="toggleSidebar()" class="text-slate-500 hover:text-primary font-medium text-sm mr-6 lg:hidden uppercase tracking-wider">
+                    Menu
+                </button>
+                <h2 class="text-xl font-bold tracking-tight text-slate-800" id="page-title">Tổng quan Kho</h2>
+            </div>
+            
+            <div class="flex items-center space-x-6">
+                <!-- Smart Barcode Toggle (Text-based) -->
+                <div class="flex items-center space-x-3 bg-white border border-slate-200 rounded-full px-4 py-1.5 shadow-sm">
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Chế độ quét</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="barcode-mode" class="sr-only peer">
+                        <div class="w-8 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-accent"></div>
+                    </label>
+                </div>
+                
+                <button onclick="forceSync()" class="text-sm font-semibold text-accent hover:text-primary transition-colors flex items-center" id="sync-btn">
+                    Đồng bộ
+                </button>
+                
+                <div class="w-9 h-9 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-sm shadow-md">
+                    AD
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="flex-1 overflow-auto p-8 relative" id="content-area">
+            
+            <!-- Dashboard View -->
+            <div id="view-dashboard" class="view-section fade-in">
+                <!-- Stats Row -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 flex flex-col justify-between">
+                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Tổng Mã Sản Phẩm</p>
+                        <h3 class="text-3xl font-bold text-slate-800 mt-4 tracking-tight" id="stat-total-items">0</h3>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 flex flex-col justify-between">
+                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Nhập Tháng Này</p>
+                        <h3 class="text-3xl font-bold text-slate-800 mt-4 tracking-tight" id="stat-imported">0</h3>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 flex flex-col justify-between">
+                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Xuất Tháng Này</p>
+                        <h3 class="text-3xl font-bold text-slate-800 mt-4 tracking-tight" id="stat-exported">0</h3>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 flex flex-col justify-between cursor-pointer hover:border-danger/30 transition-colors" onclick="switchTab('inventory')">
+                        <p class="text-xs font-semibold text-danger uppercase tracking-wider">Cảnh Báo Tồn Ít</p>
+                        <h3 class="text-3xl font-bold text-danger mt-4 tracking-tight" id="stat-low-stock">0</h3>
+                    </div>
+                </div>
+
+                <!-- Chart Row -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+                        <h3 class="font-bold text-slate-800 mb-6 tracking-tight">Giao dịch Gần Đây</h3>
+                        <div class="overflow-y-auto max-h-[350px] pr-2">
+                            <ul class="space-y-4" id="recent-transactions-list">
+                                <!-- Populated by JS -->
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 flex flex-col">
+                        <h3 class="font-bold text-slate-800 mb-6 tracking-tight">Phân Bổ Danh Mục</h3>
+                        <div class="flex-1 flex items-center justify-center">
+                            <canvas id="stockChart" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Import View -->
+            <div id="view-import" class="view-section hidden fade-in max-w-4xl mx-auto">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                    <div class="p-8 border-b border-slate-100 flex justify-between items-center">
+                        <div>
+                            <h3 class="font-bold text-xl tracking-tight text-slate-800">Tạo Phiếu Nhập Kho</h3>
+                            <p class="text-sm text-slate-500 mt-1">Bổ sung hàng hóa vào hệ thống</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Ngày ghi nhận</p>
+                            <p class="text-sm font-medium text-slate-800" id="current-date-import"></p>
+                        </div>
+                    </div>
+                    <div class="p-8">
+                        <form id="form-import" onsubmit="handleImportSubmit(event)">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                                <!-- Smart Search Input -->
+                                <div class="md:col-span-2 relative">
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Tìm kiếm hoặc Nhập Mã (SKU) *</label>
+                                    <input type="text" id="imp-search" required class="modern-input w-full px-4 py-3 rounded-xl text-slate-800" placeholder="Nhập tên sản phẩm hoặc quét mã..." oninput="handleSearch('imp')" autocomplete="off">
+                                    <p class="text-xs font-medium mt-2 transition-colors" id="imp-sku-hint"></p>
+                                    <!-- Dropdown Autocomplete -->
+                                    <div id="imp-dropdown" class="autocomplete-dropdown"></div>
+                                </div>
+
+                                <div class="hidden">
+                                    <input type="hidden" id="imp-sku">
+                                </div>
+                                
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Tên Sản Phẩm *</label>
+                                    <input type="text" id="imp-name" required class="modern-input w-full px-4 py-3 rounded-xl text-slate-800" placeholder="Tên hàng hóa...">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Số Lượng *</label>
+                                    <input type="number" id="imp-qty" min="1" required class="modern-input w-full px-4 py-3 rounded-xl text-slate-800 font-mono text-lg" placeholder="0">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Đơn Giá Nhập (VNĐ)</label>
+                                    <input type="number" id="imp-price" min="0" class="modern-input w-full px-4 py-3 rounded-xl text-slate-800 font-mono text-lg" placeholder="0">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Nhà Cung Cấp / Ghi chú</label>
+                                    <input type="text" id="imp-note" class="modern-input w-full px-4 py-3 rounded-xl text-slate-800" placeholder="Nguồn gốc, số lô...">
+                                </div>
+                            </div>
+                            <div class="mt-10 flex justify-end items-center border-t border-slate-100 pt-6">
+                                <button type="button" onclick="clearForm('imp')" class="text-sm font-semibold text-slate-500 hover:text-slate-800 px-4 py-2 mr-4 transition-colors">Xóa trắng</button>
+                                <button type="submit" class="px-8 py-3 bg-slate-900 text-white font-semibold rounded-xl hover:bg-accent transition-all shadow-md">
+                                    Xác Nhận Nhập
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export View -->
+            <div id="view-export" class="view-section hidden fade-in max-w-4xl mx-auto">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                    <div class="p-8 border-b border-slate-100 flex justify-between items-center">
+                        <div>
+                            <h3 class="font-bold text-xl tracking-tight text-slate-800">Tạo Phiếu Xuất Kho</h3>
+                            <p class="text-sm text-slate-500 mt-1">Xuất hàng hóa để sử dụng/bán</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Ngày ghi nhận</p>
+                            <p class="text-sm font-medium text-slate-800" id="current-date-export"></p>
+                        </div>
+                    </div>
+                    <div class="p-8">
+                        <form id="form-export" onsubmit="handleExportSubmit(event)">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                                <!-- Smart Search Input -->
+                                <div class="md:col-span-2 relative">
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Tìm kiếm hoặc Nhập Mã (SKU) *</label>
+                                    <input type="text" id="exp-search" required class="modern-input w-full px-4 py-3 rounded-xl text-slate-800" placeholder="Nhập tên sản phẩm hoặc quét mã..." oninput="handleSearch('exp')" autocomplete="off">
+                                    <p class="text-xs font-medium mt-2 transition-colors" id="exp-sku-hint">Tồn kho hiện tại: --</p>
+                                    <!-- Dropdown Autocomplete -->
+                                    <div id="exp-dropdown" class="autocomplete-dropdown"></div>
+                                </div>
+
+                                <div class="hidden">
+                                    <input type="hidden" id="exp-sku">
+                                </div>
+                                
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Tên Sản Phẩm</label>
+                                    <input type="text" id="exp-name" readonly class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none text-slate-500 cursor-not-allowed">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Số Lượng Xuất *</label>
+                                    <input type="number" id="exp-qty" min="1" required class="modern-input w-full px-4 py-3 rounded-xl text-slate-800 font-mono text-lg" placeholder="0">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Người Nhận / Bộ Phận *</label>
+                                    <input type="text" id="exp-receiver" required class="modern-input w-full px-4 py-3 rounded-xl text-slate-800" placeholder="Tên người nhận...">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Lý do xuất / Ghi chú</label>
+                                    <input type="text" id="exp-note" class="modern-input w-full px-4 py-3 rounded-xl text-slate-800" placeholder="Mục đích sử dụng...">
+                                </div>
+                            </div>
+                            <div class="mt-10 flex justify-end items-center border-t border-slate-100 pt-6">
+                                <button type="button" onclick="clearForm('exp')" class="text-sm font-semibold text-slate-500 hover:text-slate-800 px-4 py-2 mr-4 transition-colors">Xóa trắng</button>
+                                <button type="submit" class="px-8 py-3 bg-slate-900 text-white font-semibold rounded-xl hover:bg-danger transition-all shadow-md">
+                                    Xác Nhận Xuất
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inventory Check View -->
+            <div id="view-inventory" class="view-section hidden fade-in h-full flex flex-col">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                    <div class="w-full md:w-80">
+                        <input type="text" id="search-inventory" placeholder="Tìm kiếm SKU, tên sản phẩm..." class="modern-input w-full px-4 py-2.5 rounded-xl text-sm" oninput="renderInventoryTable()">
+                    </div>
+                    <div class="flex space-x-3 w-full md:w-auto">
+                        <button onclick="exportToCSV()" class="flex-1 md:flex-none px-5 py-2.5 bg-white border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition text-sm">
+                            Xuất Excel
+                        </button>
+                        <button onclick="submitStockCheck()" class="flex-1 md:flex-none px-5 py-2.5 bg-slate-900 text-white font-semibold rounded-xl hover:bg-accent transition shadow-md text-sm">
+                            Lưu Kiểm Tồn
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 flex-1 overflow-hidden flex flex-col">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-slate-100">
+                                    <th class="p-5 text-xs font-semibold text-slate-500 uppercase tracking-wider w-28">SKU</th>
+                                    <th class="p-5 text-xs font-semibold text-slate-500 uppercase tracking-wider">Tên Sản Phẩm</th>
+                                    <th class="p-5 text-xs font-semibold text-slate-500 uppercase tracking-wider w-32 text-center">Tồn Máy</th>
+                                    <th class="p-5 text-xs font-semibold text-slate-500 uppercase tracking-wider w-40 text-center">Kiểm Đếm</th>
+                                    <th class="p-5 text-xs font-semibold text-slate-500 uppercase tracking-wider w-32 text-center">Chênh Lệch</th>
+                                    <th class="p-5 text-xs font-semibold text-slate-500 uppercase tracking-wider">Trạng thái</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventory-table-body" class="text-sm divide-y divide-slate-100">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History View -->
+            <div id="view-history" class="view-section hidden fade-in">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                    <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-white">
+                        <h3 class="font-bold text-lg tracking-tight text-slate-800">Lịch sử xuất nhập</h3>
+                        <select id="filter-type" class="modern-input rounded-lg px-4 py-2 text-sm font-medium text-slate-700 bg-white" onchange="renderHistory()">
+                            <option value="all">Tất cả giao dịch</option>
+                            <option value="import">Chỉ Phiếu Nhập</option>
+                            <option value="export">Chỉ Phiếu Xuất</option>
+                        </select>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="bg-slate-50 text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-100">
+                                    <th class="p-5">Thời gian</th>
+                                    <th class="p-5">Loại</th>
+                                    <th class="p-5">SKU</th>
+                                    <th class="p-5">Sản phẩm</th>
+                                    <th class="p-5 text-right">Số lượng</th>
+                                    <th class="p-5">Người / Ghi chú</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-table-body" class="text-sm divide-y divide-slate-100">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings View -->
+            <div id="view-settings" class="view-section hidden fade-in max-w-2xl mx-auto">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-10 text-center">
+                    <div class="w-16 h-16 bg-slate-900 rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-lg">
+                        <span class="text-2xl font-bold text-white tracking-widest">API</span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800 mb-3 tracking-tight">Cấu Hình Kết Nối</h2>
+                    <p class="text-slate-500 mb-8 text-sm">Nhập Web App URL từ Google Apps Script để kích hoạt đồng bộ hóa đám mây.</p>
+                    
+                    <div class="text-left mb-8">
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Endpoint URL</label>
+                        <input type="text" id="api-url-input" class="modern-input w-full px-4 py-3 rounded-xl font-mono text-sm" placeholder="https://script.google.com/macros/s/...">
+                    </div>
+
+                    <button onclick="saveApiSettings()" class="w-full py-3.5 bg-slate-900 text-white font-semibold rounded-xl hover:bg-accent transition-all shadow-md">
+                        Lưu Cấu Hình
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- App Logic -->
+    <script>
+        // --- 1. STATE & MOCK DATA (MYTOOL) ---
+        let currentTab = 'dashboard';
+        let isBarcodeMode = false;
+        let apiUrl = localStorage.getItem('https://script.google.com/macros/s/AKfycby9osZG6EVoFmDkcdZSqoq8RkF_tEM7_vQd3WIKMRV_zKSKGOP1FKFNV_hE-7qtMnM4/exec') || '';
+        let chartInstance = null;
+        let activeDropdownIndex = -1;
+
+        // Smart Feature: Audio Beep for Scanner
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playBeep(success = true) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            oscillator.type = 'sine';
+            oscillator.frequency.value = success ? 1000 : 300; 
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            oscillator.start();
+            gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.1);
+            oscillator.stop(audioCtx.currentTime + 0.1);
+        }
+
+        function showGlobalLoader(show, text = 'Đang đồng bộ dữ liệu...') {
+            const loader = document.getElementById('global-loader');
+            document.getElementById('loader-text').textContent = text;
+            if(show) {
+                loader.classList.remove('hidden-loader');
+            } else {
+                loader.classList.add('hidden-loader');
+            }
+        }
+
+        // Mock Database for Demo - Updated for MyTool (Hardware/Tools)
+        let inventory = [
+            { sku: 'MT-001', name: 'Máy khoan động lực Bosch GSB 550', qty: 45, price: 1050000, min_stock: 10, category: 'Máy khoan' },
+            { sku: 'MT-002', name: 'Máy mài góc Makita 9553NB', qty: 8, price: 950000, min_stock: 15, category: 'Máy mài' },
+            { sku: 'MT-003', name: 'Bộ cờ lê vòng miệng Yeti 14 chi tiết', qty: 32, price: 250000, min_stock: 10, category: 'Dụng cụ cầm tay' },
+            { sku: 'MT-004', name: 'Búa đinh cán thép mạ Stanley', qty: 120, price: 85000, min_stock: 50, category: 'Dụng cụ cầm tay' },
+            { sku: 'MT-005', name: 'Máy cắt sắt Maktec MT241', qty: 3, price: 2150000, min_stock: 5, category: 'Máy cắt' },
+            { sku: 'MT-006', name: 'Thước cuộn thép 5m Total', qty: 200, price: 35000, min_stock: 50, category: 'Đo lường' },
+            { sku: 'MT-007', name: 'Máy bắn vít dùng pin DeWalt 12V', qty: 15, price: 1850000, min_stock: 5, category: 'Dụng cụ pin' },
+        ];
+
+        let transactions = [
+            { id: 1, type: 'import', sku: 'MT-001', name: 'Máy khoan động lực Bosch GSB 550', qty: 50, date: new Date(Date.now() - 86400000 * 2).toISOString(), user_note: 'Nhập hàng đầu tháng' },
+            { id: 2, type: 'export', sku: 'MT-002', name: 'Máy mài góc Makita 9553NB', qty: 2, date: new Date(Date.now() - 86400000 * 1).toISOString(), user_note: 'Xuất cho xưởng mộc' },
+        ];
+
+        const formatDate = (dateStr) => {
+            const d = new Date(dateStr);
+            return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth()+1).toString().padStart(2, '0')}/${d.getFullYear()} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
+        };
+
+        // --- 2. INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('current-date-import').textContent = new Date().toLocaleDateString('vi-VN');
+            document.getElementById('current-date-export').textContent = new Date().toLocaleDateString('vi-VN');
+            document.getElementById('api-url-input').value = apiUrl;
+            
+            // Barcode mode listener
+            document.getElementById('barcode-mode').addEventListener('change', function(e) {
+                isBarcodeMode = e.target.checked;
+                // Close dropdowns if switching to barcode mode
+                if (isBarcodeMode) {
+                    document.getElementById('imp-dropdown').style.display = 'none';
+                    document.getElementById('exp-dropdown').style.display = 'none';
+                }
+            });
+
+            // Input enter for barcode mode (Search inputs are used for scanning now)
+            ['imp-search', 'exp-search'].forEach(id => {
+                document.getElementById(id).addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (isBarcodeMode) {
+                            playBeep(true);
+                            // Set hidden SKU and autofill
+                            const mode = id.split('-')[0];
+                            document.getElementById(`${mode}-sku`).value = this.value;
+                            autoFillProductFast(mode, this.value);
+                            // Focus next
+                            document.getElementById(`${mode}-qty`).focus();
+                        }
+                    }
+                });
+            });
+
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.relative')) {
+                    document.getElementById('imp-dropdown').style.display = 'none';
+                    document.getElementById('exp-dropdown').style.display = 'none';
+                }
+            });
+
+            initApp();
+        });
+
+        async function initApp() {
+            const storedInv = localStorage.getItem('demo_inventory');
+            const storedTx = localStorage.getItem('demo_transactions');
+            if (storedInv) inventory = JSON.parse(storedInv);
+            if (storedTx) transactions = JSON.parse(storedTx);
+
+            if (apiUrl) {
+                await fetchRealData();
+            }
+
+            renderDashboard();
+        }
+
+        async function fetchRealData() {
+            showGlobalLoader(true, 'Đang tải dữ liệu từ Đám mây...');
+            try {
+                const response = await fetch(apiUrl);
+                const result = await response.json();
+                if(result.success) {
+                    if(result.data.inventory) inventory = result.data.inventory;
+                    if(result.data.transactions) transactions = result.data.transactions;
+                    saveLocal(); 
+                }
+            } catch (err) {
+                console.error("API Load Error", err);
+            } finally {
+                showGlobalLoader(false);
+            }
+        }
+
+        function saveLocal() {
+            localStorage.setItem('demo_inventory', JSON.stringify(inventory));
+            localStorage.setItem('demo_transactions', JSON.stringify(transactions));
+        }
+
+        // --- 3. UI NAVIGATION ---
+        const titles = {
+            'dashboard': 'Tổng quan Kho',
+            'import': 'Phiếu Nhập Kho',
+            'export': 'Phiếu Xuất Kho',
+            'inventory': 'Kiểm Tồn',
+            'history': 'Lịch Sử Giao Dịch',
+            'settings': 'Cấu hình Hệ Thống'
+        };
+
+        function switchTab(tabId) {
+            // Update Active Nav Classes
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-primary', 'bg-slate-50');
+                btn.classList.add('text-slate-600');
+                btn.querySelector('.nav-indicator').classList.remove('bg-primary');
+                btn.querySelector('.nav-indicator').classList.add('bg-transparent');
+                
+                if (btn.dataset.target === tabId) {
+                    btn.classList.remove('text-slate-600');
+                    btn.classList.add('text-primary', 'bg-slate-50');
+                    btn.querySelector('.nav-indicator').classList.remove('bg-transparent');
+                    btn.querySelector('.nav-indicator').classList.add('bg-primary');
+                }
+            });
+
+            document.getElementById('page-title').textContent = titles[tabId];
+
+            document.querySelectorAll('.view-section').forEach(view => {
+                view.classList.add('hidden');
+            });
+
+            document.getElementById(`view-${tabId}`).classList.remove('hidden');
+            currentTab = tabId;
+
+            if (tabId === 'dashboard') renderDashboard();
+            if (tabId === 'inventory') renderInventoryTable();
+            if (tabId === 'history') renderHistory();
+            if (tabId === 'import') setTimeout(() => document.getElementById('imp-search').focus(), 100);
+            if (tabId === 'export') setTimeout(() => document.getElementById('exp-search').focus(), 100);
+
+            if (window.innerWidth < 1024) toggleSidebar();
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+                sidebar.classList.add('translate-x-0', 'absolute', 'shadow-2xl', 'h-full');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                sidebar.classList.remove('translate-x-0', 'absolute', 'shadow-2xl', 'h-full');
+            }
+        }
+
+        // --- 4. DASHBOARD LOGIC ---
+        function renderDashboard() {
+            const totalItems = inventory.length;
+            const currentMonth = new Date().getMonth();
+            
+            let monthImports = 0;
+            let monthExports = 0;
+
+            transactions.forEach(tx => {
+                const txDate = new Date(tx.date);
+                if (txDate.getMonth() === currentMonth) {
+                    if (tx.type === 'import') monthImports += parseInt(tx.qty);
+                    if (tx.type === 'export') monthExports += parseInt(tx.qty);
+                }
+            });
+
+            const lowStockCount = inventory.filter(item => item.qty <= item.min_stock).length;
+
+            animateValue('stat-total-items', 0, totalItems, 500);
+            animateValue('stat-imported', 0, monthImports, 500);
+            animateValue('stat-exported', 0, monthExports, 500);
+            animateValue('stat-low-stock', 0, lowStockCount, 500);
+
+            renderChart();
+            renderRecentTransactions();
+        }
+
+        function animateValue(id, start, end, duration) {
+            const obj = document.getElementById(id);
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                obj.innerHTML = Math.floor(progress * (end - start) + start);
+                if (progress < 1) window.requestAnimationFrame(step);
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        function renderChart() {
+            const ctx = document.getElementById('stockChart').getContext('2d');
+            const catMap = {};
+            inventory.forEach(item => { catMap[item.category] = (catMap[item.category] || 0) + item.qty; });
+
+            const labels = Object.keys(catMap);
+            const data = Object.values(catMap);
+
+            if (chartInstance) chartInstance.destroy();
+
+            chartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: ['#0f172a', '#334155', '#4f46e5', '#818cf8', '#cbd5e1'],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '75%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20, font: { family: 'Inter' } } }
+                    }
+                }
+            });
+        }
+
+        function renderRecentTransactions() {
+            const list = document.getElementById('recent-transactions-list');
+            list.innerHTML = '';
+            
+            const recent = [...transactions].sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
+            
+            if (recent.length === 0) {
+                list.innerHTML = '<li class="text-sm text-slate-500 py-4">Chưa có giao dịch.</li>';
+                return;
+            }
+
+            recent.forEach(tx => {
+                const isImp = tx.type === 'import';
+                const badge = isImp ? '<span class="w-10 h-10 rounded-xl bg-slate-100 text-slate-800 flex items-center justify-center font-bold text-xs uppercase">Nhập</span>' : '<span class="w-10 h-10 rounded-xl bg-slate-800 text-white flex items-center justify-center font-bold text-xs uppercase">Xuất</span>';
+                
+                list.innerHTML += `
+                    <li class="flex items-center justify-between group">
+                        <div class="flex items-center space-x-4">
+                            ${badge}
+                            <div>
+                                <p class="text-sm font-bold text-slate-800 tracking-tight">${tx.sku} <span class="font-normal text-slate-400 mx-1">|</span> ${isImp ? '+' : '-'}${tx.qty}</p>
+                                <p class="text-xs text-slate-500 mt-0.5 truncate max-w-[250px]">${tx.name}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs font-semibold text-slate-400">${new Date(tx.date).toLocaleDateString('vi-VN')}</p>
+                        </div>
+                    </li>
+                `;
+            });
+        }
+
+        // --- 5. SMART SEARCH / AUTOCOMPLETE LOGIC ---
+
+        function handleSearch(mode) {
+            const searchInput = document.getElementById(`${mode}-search`);
+            const query = searchInput.value.trim().toLowerCase();
+            const dropdown = document.getElementById(`${mode}-dropdown`);
+            
+            // Nếu bật chế độ quét mã, không hiện dropdown tìm kiếm
+            if (isBarcodeMode) {
+                dropdown.style.display = 'none';
+                return;
+            }
+
+            if (query.length < 1) {
+                dropdown.style.display = 'none';
+                // Reset hidden SKU if input is empty
+                document.getElementById(`${mode}-sku`).value = '';
+                return;
+            }
+
+            const results = inventory.filter(item => 
+                item.sku.toLowerCase().includes(query) || 
+                item.name.toLowerCase().includes(query)
+            );
+
+            if (results.length > 0) {
+                dropdown.innerHTML = results.map(item => `
+                    <div class="autocomplete-item flex justify-between items-center" onclick="selectItem('${mode}', '${item.sku}')">
+                        <div>
+                            <p class="text-sm font-bold text-slate-800">${item.name}</p>
+                            <p class="text-xs text-slate-500 font-mono mt-0.5">${item.sku}</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs font-semibold ${item.qty > 0 ? 'text-slate-600' : 'text-danger'} bg-slate-100 px-2 py-1 rounded">Tồn: ${item.qty}</span>
+                        </div>
+                    </div>
+                `).join('');
+                dropdown.style.display = 'block';
+            } else {
+                if(mode === 'imp') {
+                    dropdown.innerHTML = `<div class="p-3 text-sm text-slate-500">Mã mới. Sẽ tạo sản phẩm mới khi nhập.</div>`;
+                    dropdown.style.display = 'block';
+                    // Auto set for new creation
+                    document.getElementById('imp-sku').value = searchInput.value.trim().toUpperCase();
+                    document.getElementById('imp-sku-hint').textContent = 'Sản phẩm mới';
+                    document.getElementById('imp-sku-hint').className = 'text-xs font-medium mt-2 text-accent';
+                } else {
+                    dropdown.innerHTML = `<div class="p-3 text-sm text-danger">Không tìm thấy sản phẩm trong kho.</div>`;
+                    dropdown.style.display = 'block';
+                }
+            }
+        }
+
+        function selectItem(mode, sku) {
+            document.getElementById(`${mode}-dropdown`).style.display = 'none';
+            document.getElementById(`${mode}-search`).value = sku; // Display SKU in search box
+            document.getElementById(`${mode}-sku`).value = sku; // Real value in hidden input
+            autoFillProductFast(mode, sku);
+            // Auto focus on Quantity to speed up workflow
+            document.getElementById(`${mode}-qty`).focus();
+        }
+
+        function autoFillProductFast(mode, skuInput) {
+            const sku = skuInput.trim().toUpperCase();
+            const product = inventory.find(p => p.sku.toUpperCase() === sku);
+            
+            if (mode === 'imp') {
+                const hint = document.getElementById('imp-sku-hint');
+                if (product) {
+                    document.getElementById('imp-name').value = product.name;
+                    document.getElementById('imp-price').value = product.price;
+                    hint.textContent = `Tồn kho hiện tại: ${product.qty}`;
+                    hint.className = 'text-xs font-medium mt-2 text-slate-500';
+                } else {
+                    document.getElementById('imp-name').value = '';
+                    document.getElementById('imp-price').value = '';
+                    hint.textContent = 'Mã mới, sẽ tạo khi nhập.';
+                    hint.className = 'text-xs font-medium mt-2 text-accent';
+                }
+            } else if (mode === 'exp') {
+                const hint = document.getElementById('exp-sku-hint');
+                if (product) {
+                    document.getElementById('exp-name').value = product.name;
+                    hint.textContent = `Tồn kho hiện tại: ${product.qty}`;
+                    hint.className = product.qty > 0 ? 'text-xs font-medium mt-2 text-slate-500' : 'text-xs font-medium mt-2 text-danger';
+                    document.getElementById('exp-qty').max = product.qty;
+                } else {
+                    document.getElementById('exp-name').value = '';
+                    hint.textContent = 'Không tìm thấy sản phẩm!';
+                    hint.className = 'text-xs font-medium mt-2 text-danger';
+                }
+            }
+        }
+
+        function clearForm(mode) {
+            document.getElementById(`form-${mode}`).reset();
+            document.getElementById(`${mode}-sku`).value = '';
+            document.getElementById(`${mode}-sku-hint`).textContent = mode === 'exp' ? 'Tồn kho hiện tại: --' : '';
+        }
+
+        async function handleImportSubmit(e) {
+            e.preventDefault();
+            const searchVal = document.getElementById('imp-search').value.trim();
+            const hiddenSku = document.getElementById('imp-sku').value.trim();
+            const sku = (hiddenSku || searchVal).toUpperCase();
+            
+            const name = document.getElementById('imp-name').value.trim();
+            const qty = parseInt(document.getElementById('imp-qty').value);
+            const price = document.getElementById('imp-price').value || 0;
+            const note = document.getElementById('imp-note').value;
+
+            let existingItem = inventory.find(p => p.sku === sku);
+            if (existingItem) {
+                existingItem.qty += qty;
+                if(price > 0) existingItem.price = price;
+            } else {
+                inventory.push({ sku, name, qty, price, min_stock: 10, category: 'Phân loại mới' });
+            }
+
+            const tx = { id: Date.now(), type: 'import', sku, name, qty, price, user_note: note, date: new Date().toISOString() };
+            transactions.push(tx);
+            saveLocal();
+
+            await syncWithAppScript('import', tx);
+
+            Swal.fire({
+                icon: 'success', title: 'Hoàn tất', text: `Đã nhập ${qty} ${name}`,
+                toast: true, position: 'top-end', showConfirmButton: false, timer: 3000
+            });
+
+            clearForm('imp');
+            if (isBarcodeMode) document.getElementById('imp-search').focus();
+        }
+
+        async function handleExportSubmit(e) {
+            e.preventDefault();
+            const searchVal = document.getElementById('exp-search').value.trim();
+            const hiddenSku = document.getElementById('exp-sku').value.trim();
+            const sku = (hiddenSku || searchVal).toUpperCase();
+            
+            const qty = parseInt(document.getElementById('exp-qty').value);
+            const receiver = document.getElementById('exp-receiver').value;
+            const note = document.getElementById('exp-note').value;
+
+            let existingItem = inventory.find(p => p.sku === sku);
+            
+            if (!existingItem) {
+                Swal.fire({icon: 'error', title: 'Lỗi', text: 'Mã sản phẩm không tồn tại.'});
+                return;
+            }
+            if (existingItem.qty < qty) {
+                Swal.fire({icon: 'error', title: 'Thiếu hụt', text: `Tồn kho chỉ còn ${existingItem.qty}`});
+                return;
+            }
+
+            existingItem.qty -= qty;
+            
+            const tx = { id: Date.now(), type: 'export', sku, name: existingItem.name, qty, receiver, user_note: note, date: new Date().toISOString() };
+            transactions.push(tx);
+            saveLocal();
+
+            await syncWithAppScript('export', tx);
+
+            Swal.fire({
+                icon: 'success', title: 'Hoàn tất', text: `Đã xuất ${qty} ${existingItem.name}`,
+                toast: true, position: 'top-end', showConfirmButton: false, timer: 3000
+            });
+
+            clearForm('exp');
+            if (isBarcodeMode) document.getElementById('exp-search').focus();
+        }
+
+        // --- 6. INVENTORY CHECK (KIỂM TỒN) ---
+        function renderInventoryTable() {
+            const searchTerm = document.getElementById('search-inventory').value.toLowerCase();
+            const tbody = document.getElementById('inventory-table-body');
+            tbody.innerHTML = '';
+
+            const filtered = inventory.filter(item => 
+                item.sku.toLowerCase().includes(searchTerm) || 
+                item.name.toLowerCase().includes(searchTerm)
+            );
+
+            filtered.forEach(item => {
+                const isLowStock = item.qty <= item.min_stock;
+                const statusHtml = isLowStock 
+                    ? `<span class="px-3 py-1 bg-danger/10 text-danger rounded-lg text-xs font-bold uppercase tracking-wider">Tồn Ít</span>` 
+                    : `<span class="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold uppercase tracking-wider">Ổn định</span>`;
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="p-5 font-mono font-bold text-sm text-slate-800">${item.sku}</td>
+                        <td class="p-5 text-sm font-medium text-slate-600">${item.name}</td>
+                        <td class="p-5 text-center font-bold text-slate-400" id="theo-${item.sku}">${item.qty}</td>
+                        <td class="p-5 text-center">
+                            <input type="number" min="0" value="${item.qty}" data-sku="${item.sku}" onchange="calculateDiff(this)" class="actual-qty w-20 px-3 py-1.5 border border-slate-200 rounded-lg text-center outline-none focus:border-accent text-sm font-bold text-slate-800 bg-white">
+                        </td>
+                        <td class="p-5 text-center font-bold text-slate-300 text-sm" id="diff-${item.sku}">0</td>
+                        <td class="p-5">${statusHtml}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function calculateDiff(inputEl) {
+            const sku = inputEl.dataset.sku;
+            const actual = parseInt(inputEl.value) || 0;
+            const theoretical = parseInt(document.getElementById(`theo-${sku}`).textContent);
+            const diffCell = document.getElementById(`diff-${sku}`);
+            
+            const diff = actual - theoretical;
+            diffCell.textContent = diff > 0 ? `+${diff}` : diff;
+            
+            if (diff > 0) diffCell.className = "p-5 text-center font-bold text-success text-sm";
+            else if (diff < 0) diffCell.className = "p-5 text-center font-bold text-danger text-sm";
+            else diffCell.className = "p-5 text-center font-bold text-slate-300 text-sm";
+        }
+
+        async function submitStockCheck() {
+            const inputs = document.querySelectorAll('.actual-qty');
+            let changes = [];
+
+            inputs.forEach(input => {
+                const sku = input.dataset.sku;
+                const actual = parseInt(input.value) || 0;
+                const item = inventory.find(p => p.sku === sku);
+                if (item && item.qty !== actual) {
+                    changes.push({ sku, oldQty: item.qty, newQty: actual, diff: actual - item.qty });
+                    item.qty = actual; 
+                }
+            });
+
+            if (changes.length === 0) {
+                Swal.fire({icon: 'info', title: 'Không có thay đổi', text: 'Khớp số liệu tồn kho.'});
+                return;
+            }
+
+            saveLocal();
+            await syncWithAppScript('stockCheck', { changes });
+
+            Swal.fire({icon: 'success', title: 'Đã cập nhật', text: `Kiểm tồn ${changes.length} mặt hàng.`});
+            renderInventoryTable();
+        }
+
+        function exportToCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; 
+            csvContent += "SKU,Tên Sản Phẩm,Số Lượng,Đơn Giá,Danh Mục\r\n";
+            inventory.forEach(item => {
+                csvContent += `"${item.sku}","${item.name}",${item.qty},${item.price},"${item.category}"\r\n`;
+            });
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `KiemTon_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // --- 7. HISTORY LOGIC ---
+        function renderHistory() {
+            const filter = document.getElementById('filter-type').value;
+            const tbody = document.getElementById('history-table-body');
+            tbody.innerHTML = '';
+
+            let data = [...transactions].sort((a,b) => new Date(b.date) - new Date(a.date));
+            if (filter !== 'all') data = data.filter(tx => tx.type === filter);
+
+            data.forEach(tx => {
+                const isImp = tx.type === 'import';
+                const typeText = isImp ? 'NHẬP' : 'XUẤT';
+                const sign = isImp ? '+' : '-';
+                const qtyColor = isImp ? 'text-slate-800' : 'text-slate-500';
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-5 text-sm text-slate-500 font-medium">${formatDate(tx.date)}</td>
+                        <td class="p-5"><span class="px-2 py-1 rounded bg-slate-100 text-slate-600 text-xs font-bold tracking-widest">${typeText}</span></td>
+                        <td class="p-5 font-mono text-sm font-bold text-slate-800">${tx.sku}</td>
+                        <td class="p-5 text-sm font-medium text-slate-600 truncate max-w-[250px]">${tx.name}</td>
+                        <td class="p-5 text-right font-bold text-sm ${qtyColor}">${sign}${tx.qty}</td>
+                        <td class="p-5 text-slate-400 text-xs">${tx.receiver || tx.user_note || '-'}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        // --- 8. APPS SCRIPT INTEGRATION ---
+        function saveApiSettings() {
+            const val = document.getElementById('api-url-input').value.trim();
+            localStorage.setItem('APPS_SCRIPT_URL', val);
+            apiUrl = val;
+            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Đã lưu cấu hình', showConfirmButton: false, timer: 2000});
+            if(apiUrl) {
+                setTimeout(() => fetchRealData().then(() => renderDashboard()), 1500);
+            }
+        }
+
+        async function forceSync() {
+            const btn = document.getElementById('sync-btn');
+            const originalText = btn.textContent;
+            btn.textContent = 'Đang xử lý...';
+            
+            try {
+                await syncWithAppScript('fullSync', { inventory });
+                Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Đã đồng bộ', showConfirmButton: false, timer: 2000});
+            } catch (e) {
+                if(!apiUrl) {
+                    Swal.fire({ toast: true, position: 'top-end', icon: 'info', title: 'Chế độ Demo (Không API)', showConfirmButton: false, timer: 2000});
+                }
+            } finally {
+                setTimeout(() => btn.textContent = originalText, 500);
+            }
+        }
+
+        async function syncWithAppScript(action, payload) {
+            if (!apiUrl) return;
+            const syncStatus = document.getElementById('sync-status');
+            syncStatus.innerHTML = `Đang đồng bộ...`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: action, data: payload, timestamp: new Date().toISOString() })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    syncStatus.innerHTML = `<span class="w-2 h-2 rounded-full bg-success mr-2"></span> Đã đồng bộ`;
+                } else {
+                    syncStatus.innerHTML = `<span class="w-2 h-2 rounded-full bg-danger mr-2"></span> Lỗi đồng bộ`;
+                }
+            } catch (error) {
+                syncStatus.innerHTML = `<span class="w-2 h-2 rounded-full bg-slate-400 mr-2"></span> Lưu cục bộ`;
+            }
+        }
+
+    </script>
+</body>
+</html>
