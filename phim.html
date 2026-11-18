@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Beta Nowzone • Timeline Realtime</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: 'Be Vietnam Pro', sans-serif;
+      background-color: #09090b;
+      color: #f4f4f5;
+      margin: 0;
+      overflow: hidden; /* Khóa cuộn body, chỉ cuộn trong vùng timeline */
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Thanh cuộn mảnh cho mobile */
+    .timeline-scroll::-webkit-scrollbar { height: 5px; width: 5px; }
+    .timeline-scroll::-webkit-scrollbar-track { background: #18181b; }
+    .timeline-scroll::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+
+    /* Cột phòng cố định bên trái */
+    .sticky-col {
+      position: sticky;
+      left: 0;
+      z-index: 20;
+      background: #121215;
+      border-right: 1px solid #27272a;
+    }
+
+    /* Hàng giờ cố định bên trên */
+    .sticky-header {
+      position: sticky;
+      top: 0;
+      z-index: 25;
+      background: #121215;
+      border-bottom: 1px solid #27272a;
+    }
+
+    /* Góc trên cùng bên trái */
+    .sticky-corner {
+      position: sticky;
+      top: 0;
+      left: 0;
+      z-index: 30;
+      background: #121215;
+      border-right: 1px solid #27272a;
+      border-bottom: 1px solid #27272a;
+    }
+
+    /* Lưới kẻ dọc mỗi 15 phút / 1 tiếng */
+    .grid-bg {
+      background-image: linear-gradient(to right, rgba(255,255,255,0.06) 1px, transparent 1px);
+    }
+
+    /* Vạch thời gian thực màu xanh giống ảnh */
+    .now-line {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background-color: #3b82f6;
+      box-shadow: 0 0 8px rgba(59, 130, 246, 0.9);
+      z-index: 15;
+      pointer-events: none;
+    }
+    .now-badge {
+      position: absolute;
+      top: 2px;
+      transform: translateX(-50%);
+      background: #3b82f6;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 1px 4px;
+      border-radius: 3px;
+      white-space: nowrap;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    .live-dot { animation: pulse-dot 1.4s infinite; }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR NHỎ GỌN -->
+  <header class="bg-zinc-950 border-b border-zinc-800 px-3 py-2 flex items-center justify-between shrink-0">
+    <div class="flex items-center gap-2">
+      <span class="w-2 h-2 rounded-full bg-emerald-400 live-dot"></span>
+      <div>
+        <h1 class="text-xs font-bold uppercase tracking-wider text-white">Beta Nowzone</h1>
+        <p id="liveClock" class="text-[11px] font-semibold text-amber-400 tabular-nums leading-none mt-0.5">--:--:--</p>
+      </div>
+    </div>
+
+    <!-- Điều hướng ngày & Nút về giờ hiện tại -->
+    <div class="flex items-center gap-1.5">
+      <button onclick="scrollToNow()" class="px-2.5 py-1.5 rounded-lg bg-blue-600/20 border border-blue-500/40 text-blue-400 text-[11px] font-semibold active:scale-95 flex items-center gap-1">
+        <i class="fa-solid fa-crosshairs text-[10px]"></i> Hiện tại
+      </button>
+
+      <div class="flex items-center bg-zinc-900 border border-zinc-800 rounded-lg p-0.5">
+        <button onclick="changeDate(-1)" class="w-7 h-7 flex items-center justify-center text-zinc-400 active:text-white">
+          <i class="fa-solid fa-chevron-left text-[10px]"></i>
+        </button>
+        <input type="date" id="datePicker" onchange="onDatePick(this.value)" class="bg-transparent text-[11px] font-semibold text-zinc-200 px-1 focus:outline-none w-[98px] text-center">
+        <button onclick="changeDate(1)" class="w-7 h-7 flex items-center justify-center text-zinc-400 active:text-white">
+          <i class="fa-solid fa-chevron-right text-[10px]"></i>
+        </button>
+      </div>
+
+      <button onclick="fetchSchedule(true)" id="btnRefresh" class="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-300 active:scale-95">
+        <i class="fa-solid fa-rotate-right text-xs"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- TIMELINE CONTAINER (VUỐT NGANG & DỌC) -->
+  <div id="timelineScroll" class="timeline-scroll flex-1 overflow-auto relative bg-zinc-950">
+    <div id="timelineCanvas" class="relative min-w-max">
+      <!-- Nội dung Timeline được render bằng JS -->
+    </div>
+  </div>
+
+  <!-- BOTTOM MODAL CHI TIẾT SUẤT CHIẾU KHI CHẠM VÀO -->
+  <div id="detailModal" onclick="closeModal()" class="fixed inset-0 bg-black/70 backdrop-blur-xs z-50 hidden items-end justify-center p-3">
+    <div onclick="event.stopPropagation()" class="bg-zinc-900 border border-zinc-700 w-full max-w-md rounded-2xl p-4 shadow-2xl">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <span id="mRoom" class="inline-block px-2 py-0.5 rounded bg-amber-500 text-zinc-950 text-xs font-bold mb-1.5">P1</span>
+          <h3 id="mTitle" class="text-base font-bold text-white leading-snug">Tên phim</h3>
+          <p id="mFormat" class="text-xs text-zinc-400 mt-0.5">2D Phụ đề</p>
+        </div>
+        <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-zinc-800 text-zinc-400 flex items-center justify-center">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      
+      <div class="grid grid-cols-2 gap-2.5 mt-4 pt-3 border-t border-zinc-800 text-xs">
+        <div class="bg-zinc-950/70 p-2.5 rounded-xl border border-zinc-800/80">
+          <span class="text-zinc-500 block text-[10px] uppercase">Khung giờ chiếu</span>
+          <span id="mTime" class="text-sm font-bold text-zinc-100 mt-0.5 block tabular-nums">00:00 - 00:00</span>
+        </div>
+        <div class="bg-zinc-950/70 p-2.5 rounded-xl border border-zinc-800/80">
+          <span class="text-zinc-500 block text-[10px] uppercase">Tình trạng / Vé</span>
+          <span id="mStatus" class="text-sm font-bold text-emerald-400 mt-0.5 block">Đang chiếu</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ==========================================
+    // DÁN URL APPS SCRIPT CỦA BẠN VÀO DÒNG DƯỚI
+    // ==========================================
+    const API_URL = 'https://script.google.com/macros/s/AKfycbySppvG2ktVom3Z6NlT6KQfIU7HRZUjv-XKCQRCczwCpUyJmgSEYeojweUa1lwThnrQ/exec';
+
+    // Cấu hình trục thời gian: Từ 06:00 sáng hôm nay đến 04:00 sáng hôm sau (22 tiếng)
+    const START_HOUR = 6;
+    const TOTAL_HOURS = 22; // 6 AM -> 4 AM hôm sau
+    const HOUR_WIDTH = 135; // Độ rộng 1 tiếng (px) - tối ưu vừa mắt trên mobile
+    const ROOM_COL_WIDTH = 72; // Độ rộng cột tên phòng bên trái
+
+    // Danh sách phòng & số ghế chuẩn của Beta Nowzone theo ảnh
+    const ROOMS = [
+      { id: 'P1', seats: 108 },
+      { id: 'P2', seats: 122 },
+      { id: 'P3', seats: 90 },
+      { id: 'P4', seats: 129 },
+      { id: 'P5', seats: 90 },
+      { id: 'P6', seats: 129 }
+    ];
+
+    // Bảng màu phân biệt từng phim giống giao diện rạp
+    const MOVIE_PALETTE = [
+      { bg: 'bg-slate-600/90', border: 'border-slate-400/50', text: 'text-white' },
+      { bg: 'bg-indigo-600/85', border: 'border-indigo-400/50', text: 'text-white' },
+      { bg: 'bg-teal-600/85', border: 'border-teal-400/50', text: 'text-white' },
+      { bg: 'bg-sky-700/85', border: 'border-sky-400/50', text: 'text-white' },
+      { bg: 'bg-purple-700/85', border: 'border-purple-400/50', text: 'text-white' },
+      { bg: 'bg-emerald-700/85', border: 'border-emerald-400/50', text: 'text-white' }
+    ];
+
+    let rawShows = [];
+    let selectedDate = new Date();
+
+    // Dữ liệu mẫu khớp ảnh để xem ngay khi chưa gắn API
+    const MOCK_DATA = [
+      { ngay: formatDateVN(new Date()), phong: 'P1', batDau: '03:00', ketThuc: '04:57', tenPhim: 'Ngày Con Còn Mẹ', dinhDang: '2D-PD', soVe: '0/108' },
+      { ngay: formatDateVN(new Date()), phong: 'P2', batDau: '08:50', ketThuc: '10:38', tenPhim: 'Kẻ Hồi Sinh', dinhDang: '2D-PD', soVe: '2/122' },
+      { ngay: formatDateVN(new Date()), phong: 'P2', batDau: '10:40', ketThuc: '12:37', tenPhim: 'Ngày Con Còn Mẹ', dinhDang: '2D-PD', soVe: '5/122' },
+      { ngay: formatDateVN(new Date()), phong: 'P2', batDau: '12:40', ketThuc: '14:37', tenPhim: 'Ngày Con Còn Mẹ', dinhDang: '2D-PD', soVe: '7/122' },
+      { ngay: formatDateVN(new Date()), phong: 'P2', batDau: '14:40', ketThuc: '16:37', tenPhim: 'Ngày Con Còn Mẹ', dinhDang: '2D-PD', soVe: '5/122' },
+      { ngay: formatDateVN(new Date()), phong: 'P2', batDau: '16:40', ketThuc: '18:37', tenPhim: 'Ngày Con Còn Mẹ', dinhDang: '2D-PD', soVe: '9/122' },
+      { ngay: formatDateVN(new Date()), phong: 'P2', batDau: '18:40', ketThuc: '20:59', tenPhim: 'Trại Giam Hạnh Phúc', dinhDang: '2D-PD', soVe: '49/122' },
+      { ngay: formatDateVN(new Date()), phong: 'P2', batDau: '21:00', ketThuc: '23:19', tenPhim: 'Trại Giam Hạnh Phúc', dinhDang: '2D-PD', soVe: '75/122' },
+      { ngay: formatDateVN(new Date()), phong: 'P2', batDau: '23:20', ketThuc: '01:39', tenPhim: 'Trại Giam Hạnh Phúc', dinhDang: '2D-PD', soVe: '87/122' },
+
+      { ngay: formatDateVN(new Date()), phong: 'P3', batDau: '08:40', ketThuc: '11:46', tenPhim: 'Dune: Hành Tinh Cát - Phần Hai', dinhDang: '2D-PD', soVe: '1/90' },
+      { ngay: formatDateVN(new Date()), phong: 'P3', batDau: '11:50', ketThuc: '14:47', tenPhim: 'Ramayana: Khởi Nguyên Một Huyền Thoại', dinhDang: '2D-PD', soVe: '16/90' },
+      { ngay: formatDateVN(new Date()), phong: 'P3', batDau: '15:00', ketThuc: '16:57', tenPhim: 'Thung Lũng Ma: Quỷ Cái Đòi', dinhDang: '2D-PD', soVe: '4/90' },
+      { ngay: formatDateVN(new Date()), phong: 'P3', batDau: '17:00', ketThuc: '19:57', tenPhim: 'Ramayana: Khởi Nguyên Một Huyền Thoại', dinhDang: '2D-PD', soVe: '0/90' },
+      { ngay: formatDateVN(new Date()), phong: 'P3', batDau: '20:00', ketThuc: '21:57', tenPhim: 'Ngày Con Còn Mẹ', dinhDang: '2D-PD', soVe: '27/90' },
+      { ngay: formatDateVN(new Date()), phong: 'P3', batDau: '22:10', ketThuc: '00:07', tenPhim: 'Ngày Con Còn Mẹ', dinhDang: '2D-PD', soVe: '16/90' },
+      { ngay: formatDateVN(new Date()), phong: 'P3', batDau: '00:10', ketThuc: '02:24', tenPhim: 'Trại Giam Hạnh Phúc', dinhDang: '2D-PD', soVe: '0/90' },
+
+      { ngay: formatDateVN(new Date()), phong: 'P4', batDau: '09:30', ketThuc: '11:32', tenPhim: 'Ebenezer Phép Màu Đêm Giáng Sinh', dinhDang: '2D-PD', soVe: '3/129' },
+      { ngay: formatDateVN(new Date()), phong: 'P4', batDau: '11:40', ketThuc: '13:38', tenPhim: 'Bò Sữa Bay', dinhDang: '2D-PD', soVe: '14/129' },
+      { ngay: formatDateVN(new Date()), phong: 'P4', batDau: '13:40', ketThuc: '15:38', tenPhim: 'Bò Sữa Bay', dinhDang: '2D-PD', soVe: '8/129' },
+      { ngay: formatDateVN(new Date()), phong: 'P4', batDau: '15:40', ketThuc: '17:38', tenPhim: 'Bò Sữa Bay', dinhDang: '2D-PD', soVe: '9/129' },
+      { ngay: formatDateVN(new Date()), phong: 'P4', batDau: '17:40', ketThuc: '19:38', tenPhim: 'Bò Sữa Bay', dinhDang: '2D-PD', soVe: '20/129' },
+      { ngay: formatDateVN(new Date()), phong: 'P4', batDau: '19:40', ketThuc: '21:59', tenPhim: 'Trại Giam Hạnh Phúc', dinhDang: '2D-PD', soVe: '79/129' },
+      { ngay: formatDateVN(new Date()), phong: 'P4', batDau: '22:00', ketThuc: '00:19', tenPhim: 'Trại Giam Hạnh Phúc', dinhDang: '2D-PD', soVe: '103/129' },
+      { ngay: formatDateVN(new Date()), phong: 'P4', batDau: '00:20', ketThuc: '02:17', tenPhim: 'Thung Lũng Ma: Quỷ Cái Đòi', dinhDang: '2D-PD', soVe: '0/129' },
+
+      { ngay: formatDateVN(new Date()), phong: 'P5', batDau: '09:00', ketThuc: '11:12', tenPhim: 'Bí Kíp Luyện Cướp', dinhDang: '2D-PD', soVe: '3/90' },
+      { ngay: formatDateVN(new Date()), phong: 'P5', batDau: '11:20', ketThuc: '13:17', tenPhim: 'Ngày Con Còn Mẹ', dinhDang: '2D-PD', soVe: '4/90' },
+      { ngay: formatDateVN(new Date()), phong: 'P5', batDau: '13:20', ketThuc: '15:17', tenPhim: 'Ngày Con Còn Mẹ', dinhDang: '2D-PD', soVe: '19/90' },
+      { ngay: formatDateVN(new Date()), phong: 'P5', batDau: '15:20', ketThuc: '17:17', tenPhim: 'Ngày Con Còn Mẹ', dinhDang: '2D-PD', soVe: '6/90' },
+      { ngay: formatDateVN(new Date()), phong: 'P5', batDau: '17:20', ketThuc: '19:17', tenPhim: 'Ngày Con Còn Mẹ', dinhDang: '2D-PD', soVe: '4/90' },
+      { ngay: formatDateVN(new Date()), phong: 'P5', batDau: '19:20', ketThuc: '21:17', tenPhim: 'Ngày Con Còn Mẹ', dinhDang: '2D-PD', soVe: '38/90' },
+      { ngay: formatDateVN(new Date()), phong: 'P5', batDau: '21:20', ketThuc: '23:17', tenPhim: 'Ngày Con Còn Mẹ', dinhDang: '2D-PD', soVe: '24/90' },
+      { ngay: formatDateVN(new Date()), phong: 'P5', batDau: '23:30', ketThuc: '01:49', tenPhim: 'Trại Giam Hạnh Phúc', dinhDang: '2D-PD', soVe: '29/90' },
+      { ngay: formatDateVN(new Date()), phong: 'P5', batDau: '03:00', ketThuc: '04:57', tenPhim: 'Ngày Con Còn Mẹ', dinhDang: '2D-PD', soVe: '1/90' },
+
+      { ngay: formatDateVN(new Date()), phong: 'P6', batDau: '10:00', ketThuc: '11:57', tenPhim: 'Ngày Con Còn Mẹ', dinhDang: '2D-PD', soVe: '13/129' },
+      { ngay: formatDateVN(new Date()), phong: 'P6', batDau: '12:00', ketThuc: '13:57', tenPhim: 'Ngày Con Còn Mẹ', dinhDang: '2D-PD', soVe: '5/129' },
+      { ngay: formatDateVN(new Date()), phong: 'P6', batDau: '14:00', ketThuc: '15:57', tenPhim: 'Ngày Con Còn Mẹ', dinhDang: '2D-PD', soVe: '15/129' },
+      { ngay: formatDateVN(new Date()), phong: 'P6', batDau: '16:00', ketThuc: '17:57', tenPhim: 'Ngày Con Còn Mẹ', dinhDang: '2D-PD', soVe: '1/129' },
+      { ngay: formatDateVN(new Date()), phong: 'P6', batDau: '18:00', ketThuc: '20:19', tenPhim: 'Trại Giam Hạnh Phúc', dinhDang: '2D-PD', soVe: '60/129' },
+      { ngay: formatDateVN(new Date()), phong: 'P6', batDau: '20:20', ketThuc: '22:39', tenPhim: 'Trại Giam Hạnh Phúc', dinhDang: '2D-PD', soVe: '77/129' },
+      { ngay: formatDateVN(new Date()), phong: 'P6', batDau: '22:40', ketThuc: '00:59', tenPhim: 'Trại Giam Hạnh Phúc', dinhDang: '2D-PD', soVe: '100/129' }
+    ];
+
+    function formatDateVN(d) {
+      return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+    }
+
+    function formatDateInput(d) {
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    // Quy đổi "HH:mm" thành số phút tính từ 06:00 sáng của ngày chiếu
+    function timeToMinutesFromStart(timeStr, isEnd = false, startMinutes = 0) {
+      const [hh, mm] = timeStr.split(':').map(Number);
+      // Nếu giờ < 6 sáng (00:00 - 05:59), tính là thuộc rạng sáng ngày hôm sau (+24h)
+      let adjustedHour = hh < START_HOUR ? hh + 24 : hh;
+      let totalMins = (adjustedHour - START_HOUR) * 60 + mm;
+      if (isEnd && totalMins < startMinutes) {
+        totalMins += 24 * 60;
+      }
+      return totalMins;
+    }
+
+    // Gán màu nhất quán theo tên phim
+    function getMovieColor(title) {
+      let hash = 0;
+      for (let i = 0; i < title.length; i++) {
+        hash = title.charCodeAt(i) + ((hash << 5) - hash);
+      }
+      return MOVIE_PALETTE[Math.abs(hash) % MOVIE_PALETTE.length];
+    }
+
+    async function fetchSchedule(isManual = false) {
+      const btn = document.getElementById('btnRefresh');
+      if (isManual) btn.querySelector('i').classList.add('fa-spin');
+
+      const dateStr = formatDateVN(selectedDate);
+      document.getElementById('datePicker').value = formatDateInput(selectedDate);
+
+      try {
+        if (!API_URL || API_URL.includes('DÁN_URL')) {
+          rawShows = MOCK_DATA;
+        } else {
+          const res = await fetch(`${API_URL}?date=${encodeURIComponent(dateStr)}`);
+          const json = await res.json();
+          rawShows = json.status === 'success' ? json.data : [];
+        }
+        renderTimeline();
+        if (!isManual) setTimeout(scrollToNow, 150);
+      } catch (err) {
+        alert('Lỗi tải dữ liệu: ' + err.message);
+      } finally {
+        if (isManual) setTimeout(() => btn.querySelector('i').classList.remove('fa-spin'), 400);
+      }
+    }
+
+    function renderTimeline() {
+      const gridTotalWidth = TOTAL_HOURS * HOUR_WIDTH;
+      const dateStr = formatDateVN(selectedDate);
+      const nextDate = new Date(selectedDate);
+      nextDate.setDate(nextDate.getDate() + 1);
+      const nextDateStr = formatDateVN(nextDate);
+
+      // 1. Tạo Header Trục Giờ
+      let hoursHtml = '';
+      for (let i = 0; i < TOTAL_HOURS; i++) {
+        const h24 = (START_HOUR + i) % 24;
+        const period = h24 >= 12 ? 'PM' : 'AM';
+        const h12 = h24 % 12 === 0 ? 12 : h24 % 12;
+        hoursHtml += `
+          <div style="width: ${HOUR_WIDTH}px" class="shrink-0 border-r border-zinc-800/80 px-2 py-1 text-[11px] font-semibold text-zinc-400 flex items-center justify-between">
+            <span>${h12} ${period}</span>
+            <span class="text-[9px] text-zinc-600 font-normal">${String(h24).padStart(2,'0')}:00</span>
+          </div>`;
+      }
+
+      // 2. Tạo từng hàng Phòng Chiếu (P1 -> P6)
+      let rowsHtml = '';
+      ROOMS.forEach(room => {
+        const roomShows = rawShows.filter(s => s.phong.toUpperCase() === room.id);
+
+        const blocksHtml = roomShows.map((show, idx) => {
+          const startMins = timeToMinutesFromStart(show.batDau);
+          const endMins = timeToMinutesFromStart(show.ketThuc, true, startMins);
+          const durationMins = Math.max(30, endMins - startMins);
+
+          const leftPx = (startMins / 60) * HOUR_WIDTH;
+          const widthPx = (durationMins / 60) * HOUR_WIDTH - 2; // trừ 2px tạo khe hở giữa các suất
+
+          const color = getMovieColor(show.tenPhim);
+
+          // Xử lý thanh phần trăm vé bán dưới đáy mỗi block (giống thanh xanh/vàng/đỏ trong ảnh)
+          let ticketBarHtml = '';
+          if (show.soVe && show.soVe.includes('/')) {
+            const [sold, total] = show.soVe.split('/').map(Number);
+            const pct = total > 0 ? ((sold / total) * 100).toFixed(1) : 0;
+            const barColor = pct >= 70 ? 'bg-rose-500' : pct >= 40 ? 'bg-amber-400' : 'bg-emerald-500';
+            ticketBarHtml = `
+              <div class="mt-auto bg-zinc-950/85 px-1.5 py-0.5 rounded-b-[5px] relative overflow-hidden">
+                <div class="absolute inset-y-0 left-0 ${barColor}/30" style="width: ${Math.min(100, pct)}%"></div>
+                <div class="relative flex items-center justify-between text-[10px] font-bold text-zinc-100 tabular-nums">
+                  <span>${show.soVe} (${pct}%)</span>
+                  <span class="w-1.5 h-1.5 rounded-full ${barColor}"></span>
+                </div>
+              </div>`;
+          } else {
+            ticketBarHtml = `
+              <div class="mt-auto bg-zinc-950/60 px-1.5 py-0.5 text-[10px] text-zinc-300 font-medium">
+                ${durationMins}p
+              </div>`;
+          }
+
+          // Lưu JSON an toàn để mở modal khi bấm vào
+          const showDataAttr = encodeURIComponent(JSON.stringify({ ...show, durationMins }));
+
+          return `
+            <div onclick="openModal('${showDataAttr}')"
+                 style="left: ${leftPx}px; width: ${widthPx}px;"
+                 class="absolute top-1.5 bottom-1.5 rounded-md border ${color.bg} ${color.border} flex flex-col justify-between overflow-hidden shadow-md active:brightness-125 cursor-pointer transition">
+              <div class="p-1.5 leading-tight">
+                <div class="text-[11px] font-bold ${color.text} truncate">
+                  ${show.dinhDang ? show.dinhDang + ' | ' : ''}${show.tenPhim}
+                </div>
+                <div class="text-[10px] text-white/85 font-medium tabular-nums mt-0.5">
+                  ${show.batDau} - ${show.ketThuc} (${durationMins}p)
+                </div>
+              </div>
+              ${ticketBarHtml}
+            </div>`;
+        }).join('');
+
+        rowsHtml += `
+          <div class="flex border-b border-zinc-800/80 h-[82px]">
+            <!-- Cột Phòng Sticky -->
+            <div style="width: ${ROOM_COL_WIDTH}px" class="sticky-col shrink-0 px-2 flex flex-col justify-center">
+              <span class="text-sm font-bold text-white">${room.id}</span>
+              <span class="text-[10px] text-zinc-500">(${room.seats} ghế)</span>
+            </div>
+            <!-- Vùng Timeline của Phòng -->
+            <div style="width: ${gridTotalWidth}px; background-size: ${HOUR_WIDTH / 2}px 100%;" class="relative grid-bg shrink-0">
+              ${blocksHtml}
+            </div>
+          </div>`;
+      });
+
+      // 3. Ghép toàn bộ Canvas
+      document.getElementById('timelineCanvas').innerHTML = `
+        <!-- Hàng Header Cố Định -->
+        <div class="flex sticky-header">
+          <div style="width: ${ROOM_COL_WIDTH}px" class="sticky-corner shrink-0 flex items-center justify-center text-[10px] font-bold text-zinc-400 uppercase">
+            Phòng
+          </div>
+          <div style="width: ${gridTotalWidth}px" class="shrink-0">
+            <!-- Dòng Ngày -->
+            <div class="flex border-b border-zinc-800/80 text-[10px] font-semibold text-zinc-400 bg-zinc-900/60">
+              <div style="width: ${(24 - START_HOUR) * HOUR_WIDTH}px" class="px-2 py-0.5 border-r border-zinc-800 text-center">
+                ${dateStr}
+              </div>
+              <div style="width: ${(TOTAL_HOURS - (24 - START_HOUR)) * HOUR_WIDTH}px" class="px-2 py-0.5 text-center text-amber-400/80">
+                ${nextDateStr}
+              </div>
+            </div>
+            <!-- Dòng Giờ -->
+            <div class="flex">
+              ${hoursHtml}
+            </div>
+          </div>
+        </div>
+
+        <!-- Vùng Chứa Các Phòng & Vạch Thời Gian Thực -->
+        <div class="relative">
+          <div id="nowLine" class="now-line" style="left: ${ROOM_COL_WIDTH}px;">
+            <div id="nowBadge" class="now-badge">--:--</div>
+          </div>
+          ${rowsHtml}
+        </div>
+      `;
+
+      updateNowLine();
+    }
+
+    // Cập nhật vị trí vạch xanh dương theo thời gian thực
+    function updateNowLine() {
+      const now = new Date();
+      document.getElementById('liveClock').textContent = now.toTimeString().split(' ')[0];
+
+      const lineEl = document.getElementById('nowLine');
+      const badgeEl = document.getElementById('nowBadge');
+      if (!lineEl) return;
+
+      const currentTimeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+      const minsFromStart = timeToMinutesFromStart(currentTimeStr) + (now.getSeconds() / 60);
+
+      if (minsFromStart >= 0 && minsFromStart <= TOTAL_HOURS * 60) {
+        const leftPx = ROOM_COL_WIDTH + (minsFromStart / 60) * HOUR_WIDTH;
+        lineEl.style.display = 'block';
+        lineEl.style.left = `${leftPx}px`;
+        badgeEl.textContent = currentTimeStr;
+      } else {
+        lineEl.style.display = 'none';
+      }
+    }
+
+    // Tự động cuộn màn hình điện thoại tới đúng vị trí vạch xanh hiện tại
+    function scrollToNow() {
+      const container = document.getElementById('timelineScroll');
+      const now = new Date();
+      const currentTimeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+      const minsFromStart = timeToMinutesFromStart(currentTimeStr);
+
+      if (minsFromStart >= 0 && minsFromStart <= TOTAL_HOURS * 60) {
+        const targetX = (minsFromStart / 60) * HOUR_WIDTH - (container.clientWidth / 3);
+        container.scrollTo({ left: Math.max(0, targetX), behavior: 'smooth' });
+      }
+    }
+
+    function openModal(encodedData) {
+      const show = JSON.parse(decodeURIComponent(encodedData));
+      document.getElementById('mRoom').textContent = `Phòng ${show.phong}`;
+      document.getElementById('mTitle').textContent = show.tenPhim;
+      document.getElementById('mFormat').textContent = `${show.dinhDang || '2D'} • Thời lượng ${show.durationMins} phút`;
+      document.getElementById('mTime').textContent = `${show.batDau} → ${show.ketThuc}`;
+      document.getElementById('mStatus').textContent = show.soVe ? `Đã bán: ${show.soVe} vé` : 'Đã duyệt chiếu';
+
+      const modal = document.getElementById('detailModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('detailModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function changeDate(delta) {
+      selectedDate.setDate(selectedDate.getDate() + delta);
+      fetchSchedule();
+    }
+
+    function onDatePick(val) {
+      if (!val) return;
+      const [y, m, d] = val.split('-').map(Number);
+      selectedDate = new Date(y, m - 1, d);
+      fetchSchedule();
+    }
+
+    // Cập nhật vạch thời gian thực mỗi giây
+    setInterval(updateNowLine, 1000);
+    // Tự động đồng bộ lại Sheet mỗi 3 phút
+    setInterval(() => fetchSchedule(false), 180000);
+
+    // Khởi chạy
+    fetchSchedule();
+  </script>
+</body>
+</html>
