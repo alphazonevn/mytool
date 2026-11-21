@@ -1420,7 +1420,7 @@
             <div class="brand-mark"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrHqRceRcnxQuqHdl1GRiVzTAJ9JsLd6RiJs_cSgBz9w&amp;s=10" alt="Logo Beta Cinemas" decoding="async" loading="eager" fetchpriority="high" referrerpolicy="no-referrer"></div>
             <div><div class="brand-name">BETA NOWZONE</div><div class="brand-sub">INTERNAL WORKSPACE</div></div>
           </div>
-          <h1>Không gian<br><span>vận hành thông minh.</span></h1>
+          <h1><figcaption></figcaption><br><span>KHÔNG GIAN VẬN HÀNH THÔNG MINH</span></h1>
           <p>Cổng thông tin nội bộ dành cho đội ngũ Beta Nowzone. Truy cập nhanh các công cụ nghiệp vụ, thông báo và tài nguyên được phân quyền theo tài khoản.</p>
           <div class="feature-list">
           </div>
@@ -1475,6 +1475,7 @@
       </nav>
       <div class="nav-label">Cá nhân</div>
       <nav class="nav-list">
+        <button class="nav-item" data-nav="notifications"><span class="nav-icon">✉</span> Thông báo <span class="nav-count" id="sidebarNotificationBadge" hidden>0</span></button>
         <button class="nav-item" data-action="change-password"><span class="nav-icon">⌑</span> Đổi mật khẩu</button>
         <button class="nav-item" data-action="refresh"><span class="nav-icon">↻</span> Làm mới dữ liệu</button>
       </nav>
@@ -1496,6 +1497,7 @@
         </div>
         <div class="top-actions">
           <span class="top-time" id="serverTime"></span>
+          <button class="btn btn-secondary notification-shortcut" id="topNotificationButton" type="button" aria-label="Mở thông báo">✉ <span id="topNotificationBadge" hidden>0</span></button>
           <button class="btn btn-secondary" id="headerRefreshButton" type="button">↻ Làm mới</button>
         </div>
       </header>
@@ -2247,6 +2249,53 @@ tr:hover td { background: #f8fbfd; }
 
   </style>
 
+  <style id="beta-smart-features">
+    .nav-count, #topNotificationBadge { display:inline-flex; align-items:center; justify-content:center; min-width:19px; height:19px; padding:0 5px; border-radius:20px; background:#e5534b; color:#fff; font-size:10px; font-weight:800; margin-left:auto; }
+    .nav-count[hidden], #topNotificationBadge[hidden] { display:none !important; }
+    .notification-shortcut { position:relative; min-width:40px; padding:9px 11px; }
+    .notification-shortcut #topNotificationBadge { position:absolute; top:-7px; right:-7px; border:2px solid #fff; }
+    .schedule-panel { margin:24px 0 27px; overflow:hidden; border:1px solid #dce8e0; border-radius:17px; background:linear-gradient(135deg,#fff 0%,#f6fbf6 100%); box-shadow:0 10px 28px rgba(41,78,53,.055); }
+    .schedule-head { display:flex; justify-content:space-between; align-items:center; gap:14px; padding:19px 20px 15px; border-bottom:1px solid #eaf0ea; }
+    .schedule-head h2 { margin:5px 0 4px; color:#294334; font-size:16px; }
+    .schedule-head p { margin:0; color:#7c8c80; font-size:10px; }
+    .schedule-actions { display:flex; align-items:center; gap:8px; }
+    .schedule-sync { color:#26764e; background:#eaf6ed; border:1px solid #d9ecdc; border-radius:30px; padding:7px 10px; font-size:9px; white-space:nowrap; }
+    .schedule-list { display:grid; }
+    .shift-row { display:grid; grid-template-columns:100px minmax(0,1fr) minmax(80px,.7fr); gap:12px; align-items:center; padding:12px 20px; border-bottom:1px solid #eef2ee; }
+    .shift-row:last-child { border-bottom:0; }
+    .shift-row.shift-today { background:#f0f8f1; }
+    .shift-date strong { display:block; color:#31533b; font-size:12px; }
+    .shift-date span { display:block; margin-top:3px; color:#829286; font-size:9px; }
+    .shift-main strong { display:block; color:#3b5142; font-size:11px; }
+    .shift-main span { display:block; margin-top:4px; color:#557060; font-size:10px; }
+    .shift-main small { display:block; margin-top:3px; color:#8b9a8f; font-size:9px; }
+    .shift-extra { color:#7b8b80; font-size:9px; text-align:right; }
+    .schedule-empty { padding:25px 18px; color:#819086; font-size:10px; text-align:center; }
+    .schedule-warning { margin:12px 18px 0; padding:10px 12px; color:#926b32; background:#fff8e8; border:1px solid #f3e4bd; border-radius:9px; font-size:10px; line-height:1.6; }
+    .schedule-foot { display:flex; justify-content:space-between; gap:8px; padding:10px 20px; color:#92a096; font-size:9px; background:#fbfdfb; border-top:1px solid #edf2ed; }
+    .notice-toolbar { display:flex; flex-wrap:wrap; gap:8px; }
+    .notice-grid { display:grid; gap:11px; }
+    .notice-card { border:1px solid #e1eae2; border-left:4px solid #83a28a; border-radius:13px; background:#fff; padding:16px 17px; box-shadow:0 5px 16px rgba(45,78,55,.035); }
+    .notice-card.priority-high { border-left-color:#d75b50; }
+    .notice-card.priority-low { border-left-color:#7d9ab2; }
+    .notice-card.is-unread { background:#f9fcf9; }
+    .notice-card-top, .notice-card-foot { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; color:#8b998e; font-size:9px; }
+    .notice-priority { color:#467354; font-weight:800; text-transform:uppercase; letter-spacing:.5px; }
+    .notice-card.priority-high .notice-priority { color:#b94f49; }
+    .notice-card h3 { margin:10px 0 6px; color:#2f4636; font-size:13px; }
+    .notice-card p { margin:0 0 13px; color:#586b5e; font-size:11px; line-height:1.75; white-space:pre-wrap; overflow-wrap:anywhere; }
+    .notice-card-foot { padding-top:10px; border-top:1px solid #edf2ed; }
+    @media(max-width:720px) {
+      .schedule-head { align-items:flex-start; flex-direction:column; padding:16px; }
+      .schedule-actions { width:100%; justify-content:space-between; }
+      .shift-row { grid-template-columns:78px minmax(0,1fr); padding:11px 14px; }
+      .shift-extra { grid-column:2; text-align:left; }
+      .schedule-foot { padding:9px 14px; flex-direction:column; }
+      .notice-toolbar { width:100%; }
+      .notice-toolbar .btn { flex:1; }
+    }
+  </style>
+
   <script>
     'use strict';
 
@@ -2260,6 +2309,7 @@ tr:hover td { background: #f8fbfd; }
       token: '', user: null, dashboard: null, adminData: null,
       activePage: 'home', linkQuery: '', linkCategory: 'Tất cả',
       accountQuery: '', logQuery: '', linkAdminQuery: '',
+      notificationData: [], notificationLoadedAt: 0, notificationPromise: null,
       adminDataLoadedAt: 0, adminDataPromise: null,
       dashboardPromise: null
     };
@@ -2270,7 +2320,7 @@ tr:hover td { background: #f8fbfd; }
 
     // Dán URL Web App /exec sau khi Deploy Apps Script dạng backend.
     // Không thêm tham số ?health=1 vào URL này.
-    const API_URL = 'https://script.google.com/macros/s/AKfycbzIlZj519PJ2Nvd5Oj4dyPPlDAAA9heCJO0up7-IDMHgS24m0MPRemjSt3zRiQol0OY/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbw2OkMfJa0Sv3chFtNIN14VQcHfqN79kTQI4s22xnxAsb4zcXeeLCmpUw45NCvYZKIu/exec';
     const API_TIMEOUT_MS = 45000;
     let apiRequestCounter = 0;
 
@@ -2360,14 +2410,20 @@ tr:hover td { background: #f8fbfd; }
           case 'apiLogin':
             payload.username = args[0]; payload.password = args[1]; break;
           case 'apiGetDashboard':
+          case 'apiGetNotifications':
+          case 'apiRefreshSchedule':
+          case 'apiMarkAllNotificationsRead':
           case 'apiLogout':
           case 'apiAdminGetData':
             payload.token = args[0]; break;
+          case 'apiMarkNotificationRead':
+            payload.token = args[0]; payload.id = args[1]; break;
           case 'apiChangePassword':
             payload.token = args[0]; payload.currentPassword = args[1]; payload.newPassword = args[2]; break;
           case 'apiAdminSaveAccount':
           case 'apiAdminSaveLink':
           case 'apiAdminSaveSettings':
+          case 'apiAdminSendNotification':
             payload.token = args[0]; payload.data = args[1] || {}; break;
           case 'apiAdminDeleteAccount':
             payload.token = args[0]; payload.username = args[1]; break;
@@ -2576,6 +2632,7 @@ tr:hover td { background: #f8fbfd; }
       $('sideUserRole').textContent = data.user.role || 'Nhân viên';
       $('userAvatar').textContent = initials(data.user.name || data.user.username);
       $('serverTime').textContent = data.serverTime || '';
+      updateNotificationBadge(data.notificationUnreadCount || 0);
       $('loginScreen').classList.add('hidden');
       $('appScreen').classList.remove('hidden');
       document.querySelectorAll('[data-admin-only]').forEach((node) => {
@@ -2584,6 +2641,7 @@ tr:hover td { background: #f8fbfd; }
       if (!isAdminUser() && ['accounts', 'links', 'logs', 'settings'].includes(state.activePage)) state.activePage = 'home';
       renderPage();
       if (persistCache) saveDashboardCache(data);
+      if (state.token) loadNotifications(true, true).catch(() => {});
     }
 
     async function refreshDashboard(showLoader) {
@@ -2625,6 +2683,61 @@ tr:hover td { background: #f8fbfd; }
       return role === 'admin' || role === 'quản trị viên';
     }
 
+    function updateNotificationBadge(count) {
+      const value = Math.max(0, Number(count || 0));
+      ['sidebarNotificationBadge', 'topNotificationBadge'].forEach((id) => {
+        const node = $(id);
+        if (!node) return;
+        node.textContent = value > 99 ? '99+' : String(value);
+        node.hidden = value <= 0;
+      });
+      const button = $('topNotificationButton');
+      if (button) button.setAttribute('aria-label', value ? `Bạn có ${value} thông báo chưa đọc` : 'Mở thông báo');
+    }
+
+    async function loadNotifications(force = false, silent = false) {
+      if (!state.token) return [];
+      if (!force && state.notificationLoadedAt && Date.now() - state.notificationLoadedAt < 30000) return state.notificationData;
+      if (state.notificationPromise) return state.notificationPromise;
+      const token = state.token;
+      state.notificationPromise = (async () => {
+        try {
+          const data = await callApi('apiGetNotifications', token);
+          if (state.token !== token) return [];
+          state.notificationData = data.notifications || [];
+          state.notificationLoadedAt = Date.now();
+          if (state.dashboard) state.dashboard.notificationUnreadCount = Number(data.unreadCount || 0);
+          updateNotificationBadge(data.unreadCount);
+          return state.notificationData;
+        } catch (error) {
+          if (!silent && !isSessionErrorMessage(error.message)) toast(error.message, 'error');
+          throw error;
+        } finally {
+          state.notificationPromise = null;
+        }
+      })();
+      return state.notificationPromise;
+    }
+
+    async function markNotificationRead(id) {
+      await callApi('apiMarkNotificationRead', state.token, id);
+      const item = (state.notificationData || []).find((x) => x.id === id);
+      if (item) item.isRead = true;
+      const unread = (state.notificationData || []).filter((x) => !x.isRead).length;
+      if (state.dashboard) state.dashboard.notificationUnreadCount = unread;
+      updateNotificationBadge(unread);
+      renderNotificationsPage();
+    }
+
+    async function markAllNotificationsRead() {
+      const result = await callApi('apiMarkAllNotificationsRead', state.token);
+      (state.notificationData || []).forEach((item) => { item.isRead = true; });
+      if (state.dashboard) state.dashboard.notificationUnreadCount = 0;
+      updateNotificationBadge(0);
+      renderNotificationsPage();
+      toast(result.message || 'Đã cập nhật thông báo.');
+    }
+
     function clearSession() {
       state.token = '';
       state.user = null;
@@ -2633,6 +2746,10 @@ tr:hover td { background: #f8fbfd; }
       state.adminDataLoadedAt = 0;
       state.adminDataPromise = null;
       state.dashboardPromise = null;
+      state.notificationData = [];
+      state.notificationLoadedAt = 0;
+      state.notificationPromise = null;
+      updateNotificationBadge(0);
       storageRemove(sessionStorage, SESSION_KEY);
       storageRemove(localStorage, DEVICE_SESSION_KEY);
       clearDashboardCache();
@@ -2663,7 +2780,8 @@ tr:hover td { background: #f8fbfd; }
         accounts: ['Quản lý tài khoản', 'Tạo, cập nhật, khóa và phân quyền nhân sự'],
         links: ['Quản lý liên kết', 'Cấu hình các ứng dụng hiển thị trên cổng nội bộ'],
         logs: ['Nhật ký hoạt động', 'Theo dõi các thao tác quan trọng trong hệ thống'],
-        settings: ['Thiết lập hệ thống', 'Quản lý thông báo và hướng dẫn hỗ trợ']
+        settings: ['Thiết lập hệ thống', 'Quản lý thông báo và hướng dẫn hỗ trợ'],
+        notifications: ['Thông báo cá nhân', 'Các cập nhật được gửi riêng đến tài khoản của bạn']
       };
       return map[page] || map.home;
     }
@@ -2681,6 +2799,11 @@ tr:hover td { background: #f8fbfd; }
       $('pageSubtitle').textContent = meta[1];
       if (['accounts', 'links', 'logs', 'settings'].includes(page)) {
         await loadAdminData();
+      }
+      if (page === 'notifications') {
+        const jobs = [loadNotifications(true)];
+        if (isAdminUser()) jobs.push(loadAdminData());
+        await Promise.all(jobs);
       }
       renderPage();
     }
@@ -2720,6 +2843,7 @@ tr:hover td { background: #f8fbfd; }
       if (page === 'links') return renderLinksAdminPage();
       if (page === 'logs') return renderLogsPage();
       if (page === 'settings') return renderSettingsPage();
+      if (page === 'notifications') return renderNotificationsPage();
       return renderHomePage();
     }
 
@@ -2749,6 +2873,7 @@ tr:hover td { background: #f8fbfd; }
             <div class="stat-card"><div class="stat-top"><span class="stat-label">Phiên đăng nhập</span><span class="stat-icon">◷</span></div><div class="stat-value" style="font-size:17px">6 giờ</div><div class="stat-foot">Tự hết hạn khi phiên kết thúc</div></div>
           `}
         </section>
+        ${renderSchedulePanel(data.schedule || {})}
         <div class="section-head"><div><h2>Ứng dụng & công cụ nội bộ</h2><p>Chọn tiện ích bạn cần sử dụng</p></div><div class="search-box"><span class="search-icon">⌕</span><input id="linkSearch" type="search" placeholder="Tìm ứng dụng..." value="${escapeHtml(state.linkQuery)}"></div></div>
         <div class="filter-row" id="linkFilters"></div>
         <div class="module-grid" id="moduleGrid"></div>
@@ -2759,6 +2884,92 @@ tr:hover td { background: #f8fbfd; }
         state.linkQuery = event.target.value;
         window.clearTimeout(searchRenderTimer);
         searchRenderTimer = window.setTimeout(renderModuleCards, 60);
+      });
+    }
+
+    function formatScheduleDay(dateKey, dateLabel, weekday) {
+      const label = dateLabel || dateKey || '';
+      return `${weekday ? weekday + ', ' : ''}${label}`;
+    }
+
+    function renderSchedulePanel(schedule) {
+      const records = Array.isArray(schedule.records) ? schedule.records : [];
+      const todayKey = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Ho_Chi_Minh' });
+      const todayRecords = records.filter((item) => item.dateKey === todayKey);
+      const heading = todayRecords.length ? `Hôm nay · ${todayRecords.length} ca` : 'Lịch làm việc sắp tới';
+      const list = records.slice(0, 8);
+      const content = list.length ? list.map((item) => `
+        <article class="shift-row ${item.dateKey === todayKey ? 'shift-today' : ''}">
+          <div class="shift-date"><strong>${escapeHtml(item.dateLabel || '')}</strong><span>${escapeHtml(item.weekday || '')}</span></div>
+          <div class="shift-main"><strong>${escapeHtml(item.shift || 'Ca làm việc')}</strong><span>${escapeHtml([item.startTime, item.endTime].filter(Boolean).join(' – ') || 'Chưa cập nhật giờ')}</span>
+            ${item.position ? `<small>${escapeHtml(item.position)}</small>` : ''}
+          </div>
+          <div class="shift-extra">${item.note ? escapeHtml(item.note) : (item.employee && !schedule.personalized ? escapeHtml(item.employee) : '')}</div>
+        </article>`).join('') : `<div class="schedule-empty">${escapeHtml(schedule.message || 'Chưa có lịch làm việc để hiển thị.')}</div>`;
+      return `
+        <section class="schedule-panel">
+          <div class="schedule-head">
+            <div><div class="eyebrow">KẾ HOẠCH CA TRỰC</div><h2>${escapeHtml(heading)}</h2><p>${schedule.personalized ? 'Lịch được lọc theo tài khoản đang đăng nhập' : 'Lịch lấy trực tiếp từ Google Sheets'}</p></div>
+            <div class="schedule-actions"><span class="schedule-sync">${schedule.configured ? 'Đồng bộ Google Sheets' : 'Chưa kết nối'}</span><button class="btn btn-secondary btn-small" type="button" data-action="refresh-schedule">↻ Cập nhật</button></div>
+          </div>
+          ${!schedule.configured ? `<div class="schedule-warning">${escapeHtml(schedule.message || 'Hãy kiểm tra cấu hình kết nối lịch.')}</div>` : ''}
+          <div class="schedule-list">${content}</div>
+          <div class="schedule-foot"><span>${records.length ? `${records.length} ca trong 3 tuần tới` : 'Dữ liệu được lấy từ trang tính lịch'}</span><span>${schedule.updatedAt ? `Cập nhật ${escapeHtml(schedule.updatedAt)}` : ''}</span></div>
+        </section>`;
+    }
+
+    function renderNotificationsPage() {
+      const items = state.notificationData || [];
+      const unread = items.filter((item) => !item.isRead).length;
+      const admin = isAdminUser();
+      const cards = items.length ? items.map((item) => `
+        <article class="notice-card ${item.isRead ? 'is-read' : 'is-unread'} priority-${escapeHtml(item.priority || 'normal')}">
+          <div class="notice-card-top"><span class="notice-priority">${item.priority === 'high' ? 'Ưu tiên cao' : (item.priority === 'low' ? 'Thông tin' : 'Thông báo')}</span><span>${escapeHtml(item.createdAt || '')}</span></div>
+          <h3>${escapeHtml(item.title || 'Thông báo')}</h3><p>${escapeHtml(item.message || '')}</p>
+          <div class="notice-card-foot"><span>${escapeHtml(item.senderName || 'Quản lý')}${item.isRead ? ' · Đã đọc' : ' · Chưa đọc'}</span>${item.isRead ? '' : `<button class="btn btn-secondary btn-small" data-action="read-notification" data-key="${escapeHtml(item.id)}" type="button">Đánh dấu đã đọc</button>`}</div>
+        </article>`).join('') : `<div class="empty-state">Hộp thư của bạn đang trống. Các thông báo mới sẽ xuất hiện tại đây.</div>`;
+      const history = admin ? (state.adminData && state.adminData.notifications || []).slice(0, 12).map((item) => `
+        <tr><td>${escapeHtml(item.createdAt || '')}</td><td><strong>${escapeHtml(item.title)}</strong><div class="cell-sub">${escapeHtml(item.senderName || '')}</div></td><td>${escapeHtml(item.recipientUsername || '')}</td><td>${item.isRead ? 'Đã đọc' : 'Chưa đọc'}</td></tr>`).join('') : '';
+      $('pageContent').innerHTML = `
+        <div class="section-head" style="margin-top:0"><div><h2>Hộp thư thông báo</h2><p>${unread ? `${unread} thông báo chưa đọc` : 'Bạn đã xem hết thông báo'}</p></div>
+          <div class="notice-toolbar">${unread ? '<button class="btn btn-secondary" data-action="read-all-notifications" type="button">Đánh dấu tất cả đã đọc</button>' : ''}${admin ? '<button class="btn btn-primary" data-action="new-notification" type="button">＋ Gửi thông báo</button>' : ''}</div>
+        </div>
+        <div class="notice-grid">${cards}</div>
+        ${admin ? `<div class="section-head"><div><h2>Lịch sử gửi gần đây</h2><p>Nhật ký thông báo theo từng tài khoản nhận</p></div></div>
+        <div class="table-card"><div class="table-wrap"><table><thead><tr><th>Thời gian</th><th>Nội dung</th><th>Tài khoản nhận</th><th>Trạng thái</th></tr></thead><tbody>${history || '<tr><td colspan="4"><div class="empty-state">Chưa có lịch sử gửi.</div></td></tr>'}</tbody></table></div></div>` : ''}
+      `;
+    }
+
+    function openNotificationModal() {
+      const users = (state.adminData && state.adminData.users || []).filter((user) => isStatusActive(user.status));
+      const options = ['<option value="ALL">Tất cả nhân viên đang hoạt động</option>'].concat(users.map((user) => `<option value="${escapeHtml(user.username)}">${escapeHtml(user.fullName || user.username)} · ${escapeHtml(user.username)}</option>`)).join('');
+      openModal('Gửi thông báo nội bộ', `
+        <form id="notificationForm">
+          <div class="field"><label for="noticeRecipient">Người nhận</label><select id="noticeRecipient" required>${options}</select></div>
+          <div class="field"><label for="noticeTitle">Tiêu đề *</label><input id="noticeTitle" required maxlength="120" placeholder="Ví dụ: Thay đổi lịch làm việc tuần này"></div>
+          <div class="field"><label for="noticeMessage">Nội dung *</label><textarea id="noticeMessage" required maxlength="2000" rows="5" placeholder="Nhập nội dung thông báo..."></textarea></div>
+          <div class="modal-grid">
+            <div class="field"><label for="noticePriority">Mức độ</label><select id="noticePriority"><option value="normal">Thông thường</option><option value="high">Ưu tiên cao</option><option value="low">Thông tin</option></select></div>
+            <div class="field"><label for="noticeExpiry">Hết hạn (không bắt buộc)</label><input id="noticeExpiry" type="date"></div>
+          </div>
+          <div class="page-note">Thông báo gửi riêng sẽ chỉ xuất hiện trong hộp thư của tài khoản được chọn. Khi gửi toàn bộ, mỗi nhân viên sẽ có một bản ghi riêng.</div>
+          <div class="modal-actions"><button class="btn btn-secondary" type="button" data-action="close-modal">Hủy</button><button class="btn btn-primary" type="submit">Gửi thông báo</button></div>
+        </form>`);
+      $('notificationForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const payload = {
+          recipientUsername: $('noticeRecipient').value,
+          title: $('noticeTitle').value.trim(),
+          message: $('noticeMessage').value.trim(),
+          priority: $('noticePriority').value,
+          expiresAt: $('noticeExpiry').value
+        };
+        await runModalAction('Đang gửi thông báo...', async () => {
+          const result = await callApi('apiAdminSendNotification', state.token, payload);
+          await loadAdminData(true);
+          await loadNotifications(true, true).catch(() => {});
+          renderNotificationsPage(); closeModal(); toast(result.message || 'Đã gửi thông báo.');
+        });
       });
     }
 
@@ -2861,6 +3072,8 @@ tr:hover td { background: #f8fbfd; }
             <form id="settingsForm">
               <div class="field"><label for="announcementInput">Thông báo</label><textarea id="announcementInput" maxlength="500" placeholder="Nhập thông báo mới...">${escapeHtml(data.announcement || '')}</textarea></div>
               <div class="field"><label for="supportInput">Hướng dẫn hỗ trợ</label><input id="supportInput" maxlength="200" value="${escapeHtml(data.supportText || '')}" placeholder="Ví dụ: Liên hệ Quản lý ca để được hỗ trợ."></div>
+              <div class="field"><label for="scheduleSheetNameInput">Tên tab lịch làm việc (để trống = tab đầu tiên)</label><input id="scheduleSheetNameInput" maxlength="100" value="${escapeHtml(data.scheduleSheetName || '')}" placeholder="Ví dụ: Lịch làm việc"></div>
+              <div class="page-note">Nguồn lịch: bảng tính Google Sheets được cấu hình sẵn. Apps Script cần được cấp quyền đọc bảng tính này.</div>
               <button class="btn btn-primary" type="submit">Lưu cấu hình</button>
             </form>
           </section>
@@ -2870,6 +3083,7 @@ tr:hover td { background: #f8fbfd; }
               <div><div class="eyebrow">PHƯƠNG THỨC ĐĂNG NHẬP</div><div style="font-size:11px;margin-top:5px">Tên tài khoản + mật khẩu</div></div>
               <div><div class="eyebrow">THỜI HẠN PHIÊN</div><div style="font-size:11px;margin-top:5px">Tối đa 6 giờ, có kiểm tra trạng thái tài khoản</div></div>
               <div><div class="eyebrow">PHÂN QUYỀN</div><div style="font-size:11px;margin-top:5px">Theo vai trò trên sheet Members</div></div>
+              <div><div class="eyebrow">LỊCH LÀM VIỆC</div><div style="font-size:11px;margin-top:5px"><a href="${safeHttpUrl(data.scheduleSpreadsheetUrl || 'https://docs.google.com/spreadsheets/d/1xUpLk7oMrXBsc6sbego3Fg6NemT_IQJvmXeLdJki-p4/edit')}" target="_blank" rel="noopener">Mở bảng tính nguồn ↗</a></div></div>
             </div>
             <div class="page-note">Mật khẩu hiện được lưu dạng văn bản theo yêu cầu. Hãy giới hạn quyền truy cập trực tiếp vào Google Sheets và chỉ cấp quyền quản trị cho người đáng tin cậy.</div>
           </section>
@@ -2982,7 +3196,8 @@ tr:hover td { background: #f8fbfd; }
       try {
         const result = await callApi('apiAdminSaveSettings', state.token, {
           announcement: $('announcementInput').value,
-          supportText: $('supportInput').value
+          supportText: $('supportInput').value,
+          scheduleSheetName: $('scheduleSheetNameInput').value.trim()
         });
         await Promise.all([loadAdminData(true), refreshDashboard(false)]);
         renderSettingsPage();
@@ -3018,6 +3233,21 @@ tr:hover td { background: #f8fbfd; }
       if (action === 'new-link') return openLinkModal('');
       if (action === 'edit-link') return openLinkModal(key);
       if (action === 'change-password') return openChangePasswordModal();
+      if (action === 'open-notifications') return navigate('notifications');
+      if (action === 'new-notification') return openNotificationModal();
+      if (action === 'read-notification') return markNotificationRead(key);
+      if (action === 'read-all-notifications') return markAllNotificationsRead();
+      if (action === 'refresh-schedule') {
+        showBusy('Đang cập nhật lịch làm việc...');
+        try {
+          await callApi('apiRefreshSchedule', state.token);
+          await refreshDashboard(false);
+          toast('Lịch làm việc đã được cập nhật.');
+        }
+        catch (error) { toast(error.message, 'error'); }
+        finally { hideBusy(); }
+        return;
+      }
       if (action === 'refresh' || action === 'refresh-admin') {
         showBusy('Đang làm mới dữ liệu...');
         try {
@@ -3123,7 +3353,14 @@ tr:hover td { background: #f8fbfd; }
     });
     $('logoutButton').addEventListener('click', logout);
     $('headerRefreshButton').addEventListener('click', () => handleAction('refresh', ''));
+    $('topNotificationButton').addEventListener('click', () => navigate('notifications').catch((error) => toast(error.message, 'error')));
     $('mobileMenuButton').addEventListener('click', () => $('sidebar').classList.toggle('open'));
+    window.setInterval(() => {
+      if (!state.token) return;
+      loadNotifications(true, true).then(() => {
+        if (state.activePage === 'notifications') renderNotificationsPage();
+      }).catch(() => {});
+    }, 60000);
     document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeModal(); });
 
     window.addEventListener('DOMContentLoaded', boot);
