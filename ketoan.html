@@ -79,8 +79,8 @@
         <kbd class="px-1.5 py-0.5 rounded bg-zinc-900 text-zinc-400 text-[10px]">Ctrl K</kbd>
       </button>
       <div class="flex items-center gap-2 text-[11px] text-zinc-500 px-1">
-        <span id="conn-dot" class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
-        <span id="conn-text">Chế độ Demo</span>
+        <span id="conn-dot" class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+        <span id="conn-text">Google Sheets Live</span>
       </div>
     </div>
   </aside>
@@ -272,12 +272,13 @@
       <div class="glass-panel rounded-xl p-6 space-y-5">
         <div>
           <h3 class="text-sm font-normal text-white">Kết nối Google Apps Script</h3>
-          <p class="text-xs text-zinc-500 mt-1">Dán URL Web App (Exec) từ Google Sheets để đồng bộ dữ liệu thời gian thực.</p>
+          <p class="text-xs text-zinc-500 mt-1">Đã tích hợp sẵn đường dẫn Web App Backend của bạn. Bạn có thể cập nhật lại URL khác tại đây nếu cần.</p>
         </div>
-        <input type="url" id="script-url-input" placeholder="https://script.google.com/macros/s/AKfycbynGAvMVJEq7Fmc7TxxNlEMGajbscAevfARxMFDY99UIKnRte-lDUVYhbUUPI8c3S2r/exec" class="w-full bg-bg hairline rounded-lg px-4 py-3 text-xs text-white">
+        <input type="url" id="script-url-input" placeholder="https://script.google.com/macros/s/.../exec" class="w-full bg-bg hairline rounded-lg px-4 py-3 text-xs text-white">
         <div class="flex gap-3">
           <button onclick="saveScriptUrl()" class="px-5 py-2 rounded-lg bg-amber-400 text-zinc-950 text-xs font-normal">Lưu & Kết nối</button>
-          <button onclick="resetDemo()" class="px-4 py-2 rounded-lg hairline text-zinc-400 text-xs">Dùng dữ liệu Demo</button>
+          <button onclick="restoreDefaultBackend()" class="px-4 py-2 rounded-lg hairline text-zinc-300 text-xs">Khôi phục URL mặc định</button>
+          <button onclick="resetDemo()" class="px-4 py-2 rounded-lg hairline text-zinc-500 text-xs">Dùng dữ liệu Demo</button>
         </div>
       </div>
     </section>
@@ -403,7 +404,8 @@
   </div>
 
   <script>
-    let SCRIPT_URL = localStorage.getItem('ALPHA_ERP_URL') || '';
+    const DEFAULT_BACKEND_URL = 'https://script.google.com/macros/s/AKfycbynGAvMVJEq7Fmc7TxxNlEMGajbscAevfARxMFDY99UIKnRte-lDUVYhbUUPI8c3S2r/exec';
+    let SCRIPT_URL = localStorage.getItem('ALPHA_ERP_URL') !== null ? localStorage.getItem('ALPHA_ERP_URL') : DEFAULT_BACKEND_URL;
     let state = { products: [], transactions: [], txFilter: 'ALL' };
     let chartInstance = null;
 
@@ -474,6 +476,8 @@
           state.transactions = data.transactions;
           renderAll();
           toast('Đã đồng bộ dữ liệu thực tế');
+        } else {
+          toast(data.message || 'Không thể tải dữ liệu');
         }
       } catch (e) {
         toast('Lỗi kết nối Apps Script');
@@ -484,19 +488,17 @@
 
     // SMART ANALYTICS ENGINE (ABC Classification, DOI Forecast, Dead Stock)
     function computeSmartMetrics() {
-      const totalInvValue = state.products.reduce((s, p) => s + (p.Stock * p.AvgCost), 0);
-      // Sort by inventory value desc for ABC
-      const sorted = [...state.products].sort((a, b) => (b.Stock * b.AvgCost) - (a.Stock * a.AvgCost));
+      const totalInvValue = state.products.reduce((s, p) => s + (Number(p.Stock) * Number(p.AvgCost)), 0);
+      const sorted = [...state.products].sort((a, b) => (Number(b.Stock) * Number(b.AvgCost)) - (Number(a.Stock) * Number(a.AvgCost)));
       let cumVal = 0;
       const abcMap = {};
       sorted.forEach(p => {
-        const val = p.Stock * p.AvgCost;
+        const val = Number(p.Stock) * Number(p.AvgCost);
         cumVal += val;
         const pct = totalInvValue > 0 ? (cumVal / totalInvValue) * 100 : 100;
         abcMap[p.SKU] = pct <= 80 ? 'A' : (pct <= 95 ? 'B' : 'C');
       });
 
-      // Sales velocity (last 30 days)
       const salesBySku = {};
       state.transactions.forEach(t => {
         if (t.Type === 'EXPORT') {
@@ -505,20 +507,28 @@
       });
 
       return state.products.map(p => {
-        const val = p.Stock * p.AvgCost;
+        const stock = Number(p.Stock) || 0;
+        const avgCost = Number(p.AvgCost) || 0;
+        const sellPrice = Number(p.SellPrice) || 0;
+        const minStock = Number(p.MinStock) || 0;
+        const val = stock * avgCost;
         const sold30d = salesBySku[p.SKU] || 0;
         const dailyRate = sold30d / 30;
-        const daysLeft = dailyRate > 0 ? Math.round(p.Stock / dailyRate) : Infinity;
-        const marginPct = p.SellPrice > 0 ? (((p.SellPrice - p.AvgCost) / p.SellPrice) * 100).toFixed(1) : 0;
+        const daysLeft = dailyRate > 0 ? Math.round(stock / dailyRate) : Infinity;
+        const marginPct = sellPrice > 0 ? (((sellPrice - avgCost) / sellPrice) * 100).toFixed(1) : 0;
         return {
           ...p,
+          Stock: stock,
+          AvgCost: avgCost,
+          SellPrice: sellPrice,
+          MinStock: minStock,
           invValue: val,
           abc: abcMap[p.SKU] || 'C',
           sold30d,
           daysLeft,
           marginPct,
-          isLow: Number(p.Stock) <= Number(p.MinStock),
-          isDead: sold30d === 0 && Number(p.Stock) > 0
+          isLow: stock <= minStock,
+          isDead: sold30d === 0 && stock > 0
         };
       });
     }
@@ -536,11 +546,11 @@
       let rev = 0, cogs = 0, profit = 0;
       state.transactions.forEach(t => {
         if (t.Type === 'EXPORT') {
-          rev += Number(t.TotalAmount);
-          cogs += Number(t.COGS);
-          profit += Number(t.Profit);
+          rev += Number(t.TotalAmount) || 0;
+          cogs += Number(t.COGS) || 0;
+          profit += Number(t.Profit) || 0;
         } else if (t.Type === 'ADJ_OUT') {
-          profit -= Number(t.TotalAmount);
+          profit -= Number(t.TotalAmount) || 0;
         }
       });
 
@@ -555,7 +565,6 @@
       document.getElementById('kpi-margin').textContent = `Biên lãi gộp: ${margin}%`;
       document.getElementById('kpi-gmroi').textContent = `${gmroi}x`;
 
-      // AI Insights Generation
       const insights = [];
       enriched.filter(p => p.isLow).forEach(p => {
         const suggest = Math.max(p.MinStock * 2 - p.Stock, 1);
@@ -576,8 +585,8 @@
         });
       });
 
-      const topMargin = [...enriched].sort((a, b) => b.marginPct - a.marginPct)[0];
-      if (topMargin && topMargin.marginPct > 0) {
+      const topMargin = [...enriched].sort((a, b) => Number(b.marginPct) - Number(a.marginPct))[0];
+      if (topMargin && Number(topMargin.marginPct) > 0) {
         insights.push({
           type: 'good',
           title: `Biên lãi cao nhất: ${topMargin.Name}`,
@@ -613,8 +622,8 @@
         data: {
           labels: exports.length ? exports.map(t => t.TxID) : ['Chưa có dữ liệu'],
           datasets: [
-            { label: 'Doanh thu', data: exports.map(t => t.TotalAmount), backgroundColor: 'rgba(229, 169, 60, 0.85)', borderRadius: 4, barThickness: 18 },
-            { label: 'Lợi nhuận gộp', data: exports.map(t => t.Profit), backgroundColor: 'rgba(52, 211, 153, 0.85)', borderRadius: 4, barThickness: 18 }
+            { label: 'Doanh thu', data: exports.map(t => Number(t.TotalAmount)), backgroundColor: 'rgba(229, 169, 60, 0.85)', borderRadius: 4, barThickness: 18 },
+            { label: 'Lợi nhuận gộp', data: exports.map(t => Number(t.Profit)), backgroundColor: 'rgba(52, 211, 153, 0.85)', borderRadius: 4, barThickness: 18 }
           ]
         },
         options: {
@@ -635,14 +644,14 @@
       const f = document.getElementById('inv-filter').value;
 
       const filtered = data.filter(p => {
-        const match = p.SKU.toLowerCase().includes(q) || p.Name.toLowerCase().includes(q);
+        const match = String(p.SKU).toLowerCase().includes(q) || String(p.Name).toLowerCase().includes(q);
         if (f === 'A') return match && p.abc === 'A';
         if (f === 'LOW') return match && p.isLow;
         if (f === 'DEAD') return match && p.isDead;
         return match;
       });
 
-      document.getElementById('inv-tbody').innerHTML = filtered.map(p => `
+      document.getElementById('inv-tbody').innerHTML = filtered.length ? filtered.map(p => `
         <tr class="hover:bg-white/[0.02] transition">
           <td class="p-4 font-mono text-amber-400/90">${p.SKU}</td>
           <td class="p-4 text-white">${p.Name} <span class="text-zinc-600 text-[11px] block">${p.Category || 'Chưa phân nhóm'}</span></td>
@@ -655,22 +664,23 @@
           <td class="p-4 text-right text-zinc-400">${p.daysLeft === Infinity ? '∞' : p.daysLeft + ' ngày'}</td>
           <td class="p-4 text-right text-white">${vnd(p.invValue)}</td>
         </tr>
-      `).join('');
+      `).join('') : `<tr><td colspan="8" class="p-8 text-center text-zinc-600">Chưa có mã hàng hóa nào trong kho. Hãy bấm "+ Mã hàng" để khởi tạo.</td></tr>`;
     }
 
     function renderTransactions() {
       const filtered = state.transactions.filter(t => {
         if (state.txFilter === 'ALL') return true;
-        if (state.txFilter === 'ADJ') return t.Type.startsWith('ADJ');
+        if (state.txFilter === 'ADJ') return String(t.Type).startsWith('ADJ');
         return t.Type === state.txFilter;
       });
 
-      document.getElementById('tx-tbody').innerHTML = filtered.map(t => {
+      document.getElementById('tx-tbody').innerHTML = filtered.length ? filtered.map(t => {
         const badge = t.Type === 'IMPORT' 
           ? '<span class="text-emerald-400">Nhập kho</span>' 
           : t.Type === 'EXPORT' 
           ? '<span class="text-amber-400">Xuất bán</span>' 
           : '<span class="text-sky-400">Kiểm kê</span>';
+        const profitVal = Number(t.Profit) || 0;
         return `
           <tr class="hover:bg-white/[0.02] transition">
             <td class="p-4 font-mono text-zinc-300">${t.TxID}</td>
@@ -680,18 +690,18 @@
             <td class="p-4 text-right text-zinc-300">${t.Qty}</td>
             <td class="p-4 text-right text-zinc-400">${vnd(t.UnitPrice)}</td>
             <td class="p-4 text-right text-white">${vnd(t.TotalAmount)}</td>
-            <td class="p-4 text-right ${t.Profit > 0 ? 'text-emerald-400' : t.Profit < 0 ? 'text-rose-400' : 'text-zinc-600'}">${t.Type === 'IMPORT' ? '-' : vnd(t.Profit)}</td>
+            <td class="p-4 text-right ${profitVal > 0 ? 'text-emerald-400' : profitVal < 0 ? 'text-rose-400' : 'text-zinc-600'}">${t.Type === 'IMPORT' ? '-' : vnd(profitVal)}</td>
             <td class="p-4 text-center">
               <button onclick='printPDF(${JSON.stringify(t)})' class="text-zinc-500 hover:text-amber-400 transition"><i class="fa-regular fa-file-pdf"></i></button>
             </td>
           </tr>
         `;
-      }).join('');
+      }).join('') : `<tr><td colspan="9" class="p-8 text-center text-zinc-600">Chưa có chứng từ nào được ghi sổ.</td></tr>`;
     }
 
     // STOCKTAKE RENDER & SUBMIT
     function renderStocktake() {
-      document.getElementById('stocktake-tbody').innerHTML = state.products.map(p => `
+      document.getElementById('stocktake-tbody').innerHTML = state.products.length ? state.products.map(p => `
         <tr class="hover:bg-white/[0.02]">
           <td class="p-4 font-mono text-amber-400/90">${p.SKU}</td>
           <td class="p-4 text-white">${p.Name}</td>
@@ -702,7 +712,7 @@
           <td id="diff-qty-${p.SKU}" class="p-4 text-right text-zinc-500">0</td>
           <td id="diff-val-${p.SKU}" class="p-4 text-right text-zinc-500">0 ₫</td>
         </tr>
-      `).join('');
+      `).join('') : `<tr><td colspan="6" class="p-8 text-center text-zinc-600">Chưa có sản phẩm để kiểm kê.</td></tr>`;
     }
 
     function calcStocktakeDiff(el) {
@@ -750,14 +760,19 @@
       }
 
       toast('Đang đồng bộ kiểm kê...');
-      const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'STOCKTAKE', items }) });
-      const data = await res.json();
-      toast(data.message);
-      if (data.status === 'success') syncData();
+      try {
+        const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'STOCKTAKE', items }) });
+        const data = await res.json();
+        toast(data.message);
+        if (data.status === 'success') syncData();
+      } catch (err) {
+        toast('Lỗi khi gửi dữ liệu kiểm kê');
+      }
     }
 
     // BATCH VOUCHER MODAL LOGIC
     function openBatchModal(type, preselectSku = null) {
+      if (!state.products.length) return toast('Vui lòng thêm ít nhất 1 mã hàng trước khi lập phiếu!');
       document.getElementById('batch-type').value = type;
       document.getElementById('batch-title').textContent = type === 'IMPORT' ? 'Lập Phiếu Nhập Kho Đa Dòng' : 'Lập Phiếu Xuất Bán Đa Dòng';
       const container = document.getElementById('batch-rows');
@@ -767,7 +782,6 @@
     }
 
     function addBatchRow(sku = null) {
-      const type = document.getElementById('batch-type').value;
       const container = document.getElementById('batch-rows');
       const div = document.createElement('div');
       div.className = 'grid grid-cols-12 gap-2 items-center batch-row';
@@ -822,7 +836,6 @@
       closeModal('modal-batch');
 
       if (!SCRIPT_URL) {
-        // Check stock first
         if (type === 'EXPORT') {
           for (const it of items) {
             const p = state.products.find(x => x.SKU === it.sku);
@@ -853,14 +866,18 @@
         return toast(`Đã ghi sổ chứng từ ${txId}`);
       }
 
-      toast('Đang hạch toán chứng từ...');
-      const res = await fetch(SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify({ action: 'BATCH_TRANSACTION', type, partner, note, items })
-      });
-      const data = await res.json();
-      toast(data.message);
-      if (data.status === 'success') syncData();
+      toast('Đang hạch toán chứng từ lên Google Sheets...');
+      try {
+        const res = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'BATCH_TRANSACTION', type, partner, note, items })
+        });
+        const data = await res.json();
+        toast(data.message);
+        if (data.status === 'success') syncData();
+      } catch (err) {
+        toast('Lỗi ghi sổ chứng từ');
+      }
     }
 
     async function submitProduct(e) {
@@ -882,10 +899,15 @@
         renderAll();
         return toast('Đã thêm mã hàng mới');
       }
-      const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
-      const data = await res.json();
-      toast(data.message);
-      if (data.status === 'success') syncData();
+      toast('Đang lưu mã hàng mới...');
+      try {
+        const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+        const data = await res.json();
+        toast(data.message);
+        if (data.status === 'success') syncData();
+      } catch (err) {
+        toast('Lỗi khi thêm mã hàng');
+      }
     }
 
     // COMMAND PALETTE
@@ -947,9 +969,16 @@
       updateConnUI();
       syncData();
     }
+    function restoreDefaultBackend() {
+      SCRIPT_URL = DEFAULT_BACKEND_URL;
+      localStorage.setItem('ALPHA_ERP_URL', SCRIPT_URL);
+      document.getElementById('script-url-input').value = SCRIPT_URL;
+      updateConnUI();
+      syncData();
+    }
     function resetDemo() {
       SCRIPT_URL = '';
-      localStorage.removeItem('ALPHA_ERP_URL');
+      localStorage.setItem('ALPHA_ERP_URL', '');
       document.getElementById('script-url-input').value = '';
       state.products = [];
       updateConnUI();
@@ -973,8 +1002,8 @@
       doc.text(`Nghiep vu: ${t.Type} | Doi tac: ${t.Partner || '-'}`, 20, 44);
       doc.line(20, 50, 190, 50);
       doc.text(`Ma SKU: ${t.SKU} - ${t.ProductName}`, 20, 60);
-      doc.text(`So luong: ${t.Qty} | Don gia: ${t.UnitPrice.toLocaleString()} VND`, 20, 68);
-      doc.text(`Tong gia tri: ${t.TotalAmount.toLocaleString()} VND`, 20, 78);
+      doc.text(`So luong: ${t.Qty} | Don gia: ${Number(t.UnitPrice).toLocaleString()} VND`, 20, 68);
+      doc.text(`Tong gia tri: ${Number(t.TotalAmount).toLocaleString()} VND`, 20, 78);
       doc.save(`${t.TxID}.pdf`);
     }
     function toast(msg) {
