@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALPHA ERP — Minimalist Smart Inventory</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['"Be Vietnam Pro"', 'sans-serif'] },
+          colors: {
+            bg: '#070709',
+            panel: '#0e0e12',
+            border: 'rgba(255,255,255,0.06)',
+            gold: '#e5a93c'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background-color: #070709; color: #e4e4e7; font-weight: 300; letter-spacing: 0.01em; }
+    .hairline { border: 1px solid rgba(255, 255, 255, 0.06); }
+    .hairline-b { border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
+    .hairline-t { border-top: 1px solid rgba(255, 255, 255, 0.06); }
+    .glass-panel { background: rgba(14, 14, 18, 0.75); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.06); }
+    input, select { font-weight: 300; }
+    input:focus, select:focus { outline: none; border-color: rgba(229, 169, 60, 0.5); }
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col lg:flex-row antialiased selection:bg-amber-500/30 selection:text-amber-200">
+
+  <!-- MINIMAL SIDEBAR -->
+  <aside class="w-full lg:w-60 glass-panel border-b lg:border-b-0 lg:border-r border-white/[0.06] flex flex-col justify-between p-6 shrink-0">
+    <div>
+      <div class="flex items-center justify-between mb-10">
+        <div>
+          <span class="text-xs tracking-[0.28em] text-amber-400/90 uppercase font-normal block">ALPHA</span>
+          <span class="text-[11px] text-zinc-500 font-extralight tracking-wider">Inventory & Ledger</span>
+        </div>
+        <button onclick="openCommandPalette()" title="Tìm nhanh (Ctrl+K)" class="w-8 h-8 rounded-lg hairline flex items-center justify-center text-zinc-400 hover:text-amber-400 transition text-xs">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+      </div>
+
+      <nav class="space-y-1 text-left">
+        <button onclick="switchTab('dashboard')" data-tab="dashboard" class="nav-btn w-full text-left flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs text-amber-400 bg-amber-400/[0.07] transition">
+          <i class="fa-regular fa-compass w-4 text-center"></i> Tổng quan thông minh
+        </button>
+        <button onclick="switchTab('inventory')" data-tab="inventory" class="nav-btn w-full text-left flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs text-zinc-400 hover:text-zinc-200 transition">
+          <i class="fa-solid fa-layer-group w-4 text-center"></i> Kho hàng & Phân tích ABC
+        </button>
+        <button onclick="switchTab('transactions')" data-tab="transactions" class="nav-btn w-full text-left flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs text-zinc-400 hover:text-zinc-200 transition">
+          <i class="fa-regular fa-file-lines w-4 text-center"></i> Sổ nhật ký chứng từ
+        </button>
+        <button onclick="switchTab('stocktake')" data-tab="stocktake" class="nav-btn w-full text-left flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs text-zinc-400 hover:text-zinc-200 transition">
+          <i class="fa-solid fa-scale-balanced w-4 text-center"></i> Kiểm kê & Cân bằng
+        </button>
+        <button onclick="switchTab('settings')" data-tab="settings" class="nav-btn w-full text-left flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs text-zinc-400 hover:text-zinc-200 transition">
+          <i class="fa-solid fa-link w-4 text-center"></i> Kết nối Backend
+        </button>
+      </nav>
+    </div>
+
+    <div class="mt-8 pt-4 hairline-t space-y-3">
+      <button onclick="openCommandPalette()" class="w-full px-3 py-2 rounded-lg hairline bg-white/[0.02] hover:bg-white/[0.04] flex items-center justify-between text-[11px] text-zinc-500 transition">
+        <span>Lệnh nhanh...</span>
+        <kbd class="px-1.5 py-0.5 rounded bg-zinc-900 text-zinc-400 text-[10px]">Ctrl K</kbd>
+      </button>
+      <div class="flex items-center gap-2 text-[11px] text-zinc-500 px-1">
+        <span id="conn-dot" class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+        <span id="conn-text">Chế độ Demo</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN WORKSPACE -->
+  <main class="flex-1 p-6 lg:p-10 overflow-y-auto max-w-7xl mx-auto w-full">
+    
+    <!-- MINIMAL HEADER -->
+    <header class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-8 hairline-b mb-8">
+      <div>
+        <p class="text-[11px] uppercase tracking-[0.2em] text-zinc-500 mb-1">Hệ thống kế toán tự động AVCO</p>
+        <h1 id="header-title" class="text-2xl font-extralight text-white tracking-tight">Tổng quan tài chính & Tồn kho</h1>
+      </div>
+      
+      <div class="flex flex-wrap items-center gap-2">
+        <button onclick="syncData()" class="px-3.5 py-2 rounded-lg hairline hover:border-zinc-600 text-xs text-zinc-400 hover:text-white flex items-center gap-2 transition">
+          <i id="sync-icon" class="fa-solid fa-arrows-rotate text-[11px]"></i> Đồng bộ
+        </button>
+        <button onclick="openModal('modal-product')" class="px-3.5 py-2 rounded-lg hairline hover:border-amber-400/40 text-xs text-zinc-200 flex items-center gap-2 transition">
+          <i class="fa-solid fa-plus text-[11px] text-amber-400"></i> Mã hàng
+        </button>
+        <button onclick="openBatchModal('IMPORT')" class="px-4 py-2 rounded-lg hairline bg-emerald-500/10 hover:bg-emerald-500/20 border-emerald-500/20 text-emerald-400 text-xs flex items-center gap-2 transition">
+          <i class="fa-solid fa-arrow-down text-[11px]"></i> Nhập kho
+        </button>
+        <button onclick="openBatchModal('EXPORT')" class="px-4 py-2 rounded-lg bg-amber-400 hover:bg-amber-300 text-zinc-950 font-normal text-xs flex items-center gap-2 transition">
+          <i class="fa-solid fa-arrow-up text-[11px]"></i> Xuất bán
+        </button>
+      </div>
+    </header>
+
+    <!-- TAB 1: SMART DASHBOARD -->
+    <section id="tab-dashboard" class="tab-content space-y-8">
+      <!-- KPI STRIP -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="glass-panel rounded-xl p-5">
+          <p class="text-[11px] text-zinc-500 uppercase tracking-wider">Giá trị tồn kho thuần</p>
+          <h3 id="kpi-inv" class="text-2xl font-light text-white mt-2">0 ₫</h3>
+          <p id="kpi-sku-count" class="text-[11px] text-zinc-500 mt-2">0 mã hàng</p>
+        </div>
+
+        <div class="glass-panel rounded-xl p-5">
+          <p class="text-[11px] text-zinc-500 uppercase tracking-wider">Doanh thu thuần</p>
+          <h3 id="kpi-rev" class="text-2xl font-light text-white mt-2">0 ₫</h3>
+          <p id="kpi-cogs" class="text-[11px] text-zinc-500 mt-2">Giá vốn: 0 ₫</p>
+        </div>
+
+        <div class="glass-panel rounded-xl p-5">
+          <p class="text-[11px] text-zinc-500 uppercase tracking-wider">Lợi nhuận gộp</p>
+          <h3 id="kpi-profit" class="text-2xl font-light text-emerald-400 mt-2">0 ₫</h3>
+          <p id="kpi-margin" class="text-[11px] text-emerald-400/70 mt-2">Biên lãi: 0%</p>
+        </div>
+
+        <div class="glass-panel rounded-xl p-5">
+          <p class="text-[11px] text-zinc-500 uppercase tracking-wider">Tỷ suất sinh lời tồn kho (GMROI)</p>
+          <h3 id="kpi-gmroi" class="text-2xl font-light text-amber-400 mt-2">0.00x</h3>
+          <p class="text-[11px] text-zinc-500 mt-2">Lãi gộp / Giá trị tồn kho</p>
+        </div>
+      </div>
+
+      <!-- AI SMART INSIGHTS & CHART -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="glass-panel rounded-xl p-6 lg:col-span-2 flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h4 class="text-sm font-normal text-white">Hiệu suất Doanh thu & Lợi nhuận</h4>
+              <p class="text-[11px] text-zinc-500">Biểu đồ đối chiếu dòng tiền thu về và lãi ròng trên từng chứng từ xuất</p>
+            </div>
+          </div>
+          <div class="h-64">
+            <canvas id="mainChart"></canvas>
+          </div>
+        </div>
+
+        <!-- AI AUDITOR PANEL -->
+        <div class="glass-panel rounded-xl p-6 flex flex-col">
+          <div class="flex items-center gap-2 mb-4">
+            <i class="fa-solid fa-sparkles text-amber-400 text-xs"></i>
+            <h4 class="text-sm font-normal text-white">Trợ Lý Kiểm Toán Thông Minh</h4>
+          </div>
+          <div id="ai-insights-list" class="space-y-3 overflow-y-auto max-h-64 pr-1 text-xs">
+            <!-- Dynamic AI Insights -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: INVENTORY & ABC ANALYSIS -->
+    <section id="tab-inventory" class="tab-content hidden space-y-5">
+      <div class="flex flex-col sm:flex-row gap-3 justify-between">
+        <input type="text" id="inv-search" onkeyup="renderInventory()" placeholder="Lọc theo SKU, tên hàng, nhóm ABC..." class="w-full sm:w-80 bg-panel hairline rounded-lg px-4 py-2 text-xs text-white placeholder-zinc-600">
+        <div class="flex gap-2">
+          <select id="inv-filter" onchange="renderInventory()" class="bg-panel hairline rounded-lg px-3.5 py-2 text-xs text-zinc-400">
+            <option value="ALL">Tất cả phân loại</option>
+            <option value="A">Nhóm A (Chiếm 80% giá trị kho)</option>
+            <option value="LOW">Cảnh báo sắp hết hàng</option>
+            <option value="DEAD">Hàng tồn đọng (Chưa có xuất bán)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="glass-panel rounded-xl overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="hairline-b text-[10px] uppercase tracking-widest text-zinc-500">
+                <th class="p-4 font-normal">SKU</th>
+                <th class="p-4 font-normal">Tên hàng hóa</th>
+                <th class="p-4 font-normal text-center">Nhóm ABC</th>
+                <th class="p-4 font-normal text-right">Tồn kho</th>
+                <th class="p-4 font-normal text-right">Giá vốn AVCO</th>
+                <th class="p-4 font-normal text-right">Biên lãi</th>
+                <th class="p-4 font-normal text-right">Dự báo hết</th>
+                <th class="p-4 font-normal text-right">Giá trị tồn</th>
+              </tr>
+            </thead>
+            <tbody id="inv-tbody" class="divide-y divide-white/[0.04] text-xs"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: TRANSACTIONS LEDGER -->
+    <section id="tab-transactions" class="tab-content hidden space-y-5">
+      <div class="flex flex-wrap gap-2 justify-between items-center">
+        <div class="flex gap-1.5">
+          <button onclick="setTxFilter('ALL')" class="tx-tab px-3 py-1.5 rounded-lg text-xs bg-white/10 text-white">Tất cả</button>
+          <button onclick="setTxFilter('IMPORT')" class="tx-tab px-3 py-1.5 rounded-lg text-xs text-zinc-400 hover:text-white">Phiếu nhập</button>
+          <button onclick="setTxFilter('EXPORT')" class="tx-tab px-3 py-1.5 rounded-lg text-xs text-zinc-400 hover:text-white">Phiếu xuất</button>
+          <button onclick="setTxFilter('ADJ')" class="tx-tab px-3 py-1.5 rounded-lg text-xs text-zinc-400 hover:text-white">Kiểm kê</button>
+        </div>
+        <button onclick="exportCSV()" class="px-3.5 py-1.5 rounded-lg hairline hover:border-amber-400/40 text-xs text-zinc-300 flex items-center gap-2">
+          <i class="fa-solid fa-download text-[11px] text-amber-400"></i> Xuất CSV
+        </button>
+      </div>
+
+      <div class="glass-panel rounded-xl overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="hairline-b text-[10px] uppercase tracking-widest text-zinc-500">
+                <th class="p-4 font-normal">Chứng từ</th>
+                <th class="p-4 font-normal">Ngày giờ</th>
+                <th class="p-4 font-normal">Nghiệp vụ</th>
+                <th class="p-4 font-normal">Sản phẩm</th>
+                <th class="p-4 font-normal text-right">SL</th>
+                <th class="p-4 font-normal text-right">Đơn giá</th>
+                <th class="p-4 font-normal text-right">Thành tiền</th>
+                <th class="p-4 font-normal text-right">Lãi/Lỗ</th>
+                <th class="p-4 font-normal text-center">PDF</th>
+              </tr>
+            </thead>
+            <tbody id="tx-tbody" class="divide-y divide-white/[0.04] text-xs"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: SMART STOCKTAKE (KIỂM KÊ CÂN BẰNG KHO) -->
+    <section id="tab-stocktake" class="tab-content hidden space-y-5">
+      <div class="glass-panel rounded-xl p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h3 class="text-sm font-normal text-white">Kiểm kê & Tự động cân bằng sổ sách</h3>
+          <p class="text-xs text-zinc-500 mt-1">Nhập số lượng thực tế kiểm đếm tại kho. Hệ thống tự động sinh phiếu điều chỉnh (ADJ) cho các mã lệch.</p>
+        </div>
+        <button onclick="submitStocktake()" class="px-5 py-2.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-zinc-950 font-normal text-xs transition">
+          Xác nhận & Cân bằng kho
+        </button>
+      </div>
+
+      <div class="glass-panel rounded-xl overflow-hidden">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="hairline-b text-[10px] uppercase tracking-widest text-zinc-500">
+              <th class="p-4 font-normal">SKU</th>
+              <th class="p-4 font-normal">Tên hàng hóa</th>
+              <th class="p-4 font-normal text-right">Tồn sổ sách</th>
+              <th class="p-4 font-normal text-right w-40">Tồn thực tế</th>
+              <th class="p-4 font-normal text-right">Chênh lệch</th>
+              <th class="p-4 font-normal text-right">Giá trị lệch</th>
+            </tr>
+          </thead>
+          <tbody id="stocktake-tbody" class="divide-y divide-white/[0.04] text-xs"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 5: SETTINGS -->
+    <section id="tab-settings" class="tab-content hidden max-w-xl">
+      <div class="glass-panel rounded-xl p-6 space-y-5">
+        <div>
+          <h3 class="text-sm font-normal text-white">Kết nối Google Apps Script</h3>
+          <p class="text-xs text-zinc-500 mt-1">Dán URL Web App (Exec) từ Google Sheets để đồng bộ dữ liệu thời gian thực.</p>
+        </div>
+        <input type="url" id="script-url-input" placeholder="https://script.google.com/macros/s/AKfycbynGAvMVJEq7Fmc7TxxNlEMGajbscAevfARxMFDY99UIKnRte-lDUVYhbUUPI8c3S2r/exec" class="w-full bg-bg hairline rounded-lg px-4 py-3 text-xs text-white">
+        <div class="flex gap-3">
+          <button onclick="saveScriptUrl()" class="px-5 py-2 rounded-lg bg-amber-400 text-zinc-950 text-xs font-normal">Lưu & Kết nối</button>
+          <button onclick="resetDemo()" class="px-4 py-2 rounded-lg hairline text-zinc-400 text-xs">Dùng dữ liệu Demo</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: KHAI BÁO MÃ HÀNG -->
+  <div id="modal-product" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4 z-50">
+    <div class="glass-panel rounded-2xl max-w-md w-full p-6 space-y-5">
+      <div class="flex justify-between items-center pb-3 hairline-b">
+        <h3 class="text-sm font-normal text-white">Khai báo hàng hóa mới</h3>
+        <button onclick="closeModal('modal-product')" class="text-zinc-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form onsubmit="submitProduct(event)" class="space-y-3.5 text-xs">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-zinc-500 mb-1">Mã SKU *</label>
+            <input type="text" id="p-sku" required placeholder="VD: MAC-M3" class="w-full bg-bg hairline rounded-lg px-3 py-2 text-white">
+          </div>
+          <div>
+            <label class="block text-zinc-500 mb-1">Đơn vị tính *</label>
+            <input type="text" id="p-unit" required placeholder="Chiếc, Hộp..." class="w-full bg-bg hairline rounded-lg px-3 py-2 text-white">
+          </div>
+        </div>
+        <div>
+          <label class="block text-zinc-500 mb-1">Tên hàng hóa *</label>
+          <input type="text" id="p-name" required placeholder="Tên sản phẩm..." class="w-full bg-bg hairline rounded-lg px-3 py-2 text-white">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-zinc-500 mb-1">Nhóm hàng</label>
+            <input type="text" id="p-cat" placeholder="Thiết bị..." class="w-full bg-bg hairline rounded-lg px-3 py-2 text-white">
+          </div>
+          <div>
+            <label class="block text-zinc-500 mb-1">Định mức tối thiểu</label>
+            <input type="number" id="p-min" value="5" min="0" class="w-full bg-bg hairline rounded-lg px-3 py-2 text-white">
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="block text-zinc-500 mb-1">Tồn đầu</label>
+            <input type="number" id="p-stock" value="0" min="0" class="w-full bg-bg hairline rounded-lg px-3 py-2 text-white">
+          </div>
+          <div>
+            <label class="block text-zinc-500 mb-1">Giá vốn đầu</label>
+            <input type="number" id="p-cost" value="0" min="0" class="w-full bg-bg hairline rounded-lg px-3 py-2 text-white">
+          </div>
+          <div>
+            <label class="block text-zinc-500 mb-1">Giá bán</label>
+            <input type="number" id="p-price" value="0" min="0" class="w-full bg-bg hairline rounded-lg px-3 py-2 text-white">
+          </div>
+        </div>
+        <div class="pt-3 flex justify-end gap-2">
+          <button type="button" onclick="closeModal('modal-product')" class="px-4 py-2 rounded-lg hairline text-zinc-400">Hủy</button>
+          <button type="submit" class="px-4 py-2 rounded-lg bg-amber-400 text-zinc-950 font-normal">Lưu dữ liệu</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: PHIẾU NHẬP / XUẤT ĐA DÒNG (BATCH VOUCHER) -->
+  <div id="modal-batch" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4 z-50">
+    <div class="glass-panel rounded-2xl max-w-2xl w-full p-6 space-y-5">
+      <div class="flex justify-between items-center pb-3 hairline-b">
+        <div>
+          <h3 id="batch-title" class="text-sm font-normal text-white">Lập Phiếu Nhập Kho Đa Dòng</h3>
+          <p class="text-[11px] text-zinc-500">Hỗ trợ hạch toán nhiều mã hàng cùng lúc và tự động tính lại giá vốn AVCO</p>
+        </div>
+        <button onclick="closeModal('modal-batch')" class="text-zinc-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form onsubmit="submitBatch(event)" class="space-y-4 text-xs">
+        <input type="hidden" id="batch-type" value="IMPORT">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-zinc-500 mb-1">Đối tác (NCC / Khách hàng)</label>
+            <input type="text" id="batch-partner" placeholder="Nhập tên đối tác..." class="w-full bg-bg hairline rounded-lg px-3 py-2 text-white">
+          </div>
+          <div>
+            <label class="block text-zinc-500 mb-1">Diễn giải chứng từ</label>
+            <input type="text" id="batch-note" placeholder="Số hợp đồng, hóa đơn..." class="w-full bg-bg hairline rounded-lg px-3 py-2 text-white">
+          </div>
+        </div>
+
+        <!-- DANH SÁCH DÒNG HÀNG -->
+        <div class="space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="text-[11px] uppercase tracking-wider text-zinc-500">Chi tiết hàng hóa</span>
+            <button type="button" onclick="addBatchRow()" class="text-[11px] text-amber-400 hover:underline">+ Thêm dòng hàng</button>
+          </div>
+          <div id="batch-rows" class="space-y-2 max-h-56 overflow-y-auto pr-1"></div>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-bg hairline flex justify-between items-center">
+          <span class="text-zinc-400">Tổng giá trị chứng từ:</span>
+          <span id="batch-total" class="text-base font-light text-amber-400">0 ₫</span>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="closeModal('modal-batch')" class="px-4 py-2 rounded-lg hairline text-zinc-400">Hủy</button>
+          <button type="submit" class="px-5 py-2 rounded-lg bg-amber-400 text-zinc-950 font-normal">Ghi sổ kế toán</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- COMMAND PALETTE (CTRL+K) -->
+  <div id="cmd-palette" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-start justify-center pt-24 p-4 z-50" onclick="if(event.target===this) closeCommandPalette()">
+    <div class="glass-panel rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl">
+      <div class="p-3.5 hairline-b flex items-center gap-3">
+        <i class="fa-solid fa-magnifying-glass text-zinc-500 text-xs"></i>
+        <input type="text" id="cmd-input" onkeyup="filterCommands()" placeholder="Gõ lệnh hoặc tìm mã hàng (VD: Nhập kho, Xuất bán, MacBook...)" class="w-full bg-transparent text-xs text-white focus:outline-none">
+        <span class="text-[10px] text-zinc-600">ESC</span>
+      </div>
+      <div id="cmd-results" class="max-h-72 overflow-y-auto p-2 space-y-1 text-xs"></div>
+    </div>
+  </div>
+
+  <!-- MINIMAL TOAST -->
+  <div id="toast" class="fixed bottom-6 right-6 px-4 py-2.5 rounded-lg glass-panel text-xs text-zinc-200 transform translate-y-16 opacity-0 transition-all duration-300 z-50 flex items-center gap-2.5">
+    <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+    <span id="toast-msg">Thông báo</span>
+  </div>
+
+  <script>
+    let SCRIPT_URL = localStorage.getItem('ALPHA_ERP_URL') || '';
+    let state = { products: [], transactions: [], txFilter: 'ALL' };
+    let chartInstance = null;
+
+    const DEMO_DATA = {
+      products: [
+        { SKU: 'MBP-14-M3', Name: 'MacBook Pro 14 M3 Pro 18GB', Category: 'Laptop', Unit: 'Chiếc', Stock: 14, AvgCost: 42000000, SellPrice: 48900000, MinStock: 5 },
+        { SKU: 'IP16-PM', Name: 'iPhone 16 Pro Max 256GB', Category: 'Điện thoại', Unit: 'Chiếc', Stock: 3, AvgCost: 29500000, SellPrice: 33990000, MinStock: 6 },
+        { SKU: 'SONY-XM5', Name: 'Tai nghe Sony WH-1000XM5', Category: 'Âm thanh', Unit: 'Cái', Stock: 22, AvgCost: 6100000, SellPrice: 7990000, MinStock: 5 },
+        { SKU: 'IPAD-PRO', Name: 'iPad Pro M4 11 inch Wi-Fi', Category: 'Tablet', Unit: 'Chiếc', Stock: 9, AvgCost: 24500000, SellPrice: 28490000, MinStock: 4 },
+        { SKU: 'KEY-MX', Name: 'Bàn phím Logitech MX Keys S', Category: 'Phụ kiện', Unit: 'Cái', Stock: 30, AvgCost: 2100000, SellPrice: 2890000, MinStock: 8 }
+      ],
+      transactions: [
+        { TxID: 'PX-902114', Date: new Date().toISOString(), Type: 'EXPORT', SKU: 'MBP-14-M3', ProductName: 'MacBook Pro 14 M3 Pro 18GB', Qty: 3, UnitPrice: 48900000, TotalAmount: 146700000, COGS: 126000000, Profit: 20700000, Partner: 'Studio Sáng Tạo', Note: 'HĐ #102' },
+        { TxID: 'PX-901842', Date: new Date(Date.now() - 86400000).toISOString(), Type: 'EXPORT', SKU: 'IP16-PM', ProductName: 'iPhone 16 Pro Max 256GB', Qty: 4, UnitPrice: 33990000, TotalAmount: 135960000, COGS: 118000000, Profit: 17960000, Partner: 'Khách VIP', Note: 'Chuyển khoản' },
+        { TxID: 'PN-901200', Date: new Date(Date.now() - 172800000).toISOString(), Type: 'IMPORT', SKU: 'SONY-XM5', ProductName: 'Tai nghe Sony WH-1000XM5', Qty: 15, UnitPrice: 6100000, TotalAmount: 91500000, COGS: 0, Profit: 0, Partner: 'Sony Center', Note: 'Nhập bổ sung' }
+      ]
+    };
+
+    const vnd = (n) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(n || 0);
+
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('script-url-input').value = SCRIPT_URL;
+      updateConnUI();
+      syncData();
+    });
+
+    // Keyboard Shortcuts
+    window.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        openCommandPalette();
+      } else if (e.key === 'Escape') {
+        closeCommandPalette();
+        closeModal('modal-product');
+        closeModal('modal-batch');
+      }
+    });
+
+    function updateConnUI() {
+      const dot = document.getElementById('conn-dot');
+      const txt = document.getElementById('conn-text');
+      if (SCRIPT_URL) {
+        dot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-400';
+        txt.textContent = 'Google Sheets Live';
+      } else {
+        dot.className = 'w-1.5 h-1.5 rounded-full bg-amber-400';
+        txt.textContent = 'Chế độ Demo';
+      }
+    }
+
+    async function syncData() {
+      const icon = document.getElementById('sync-icon');
+      icon.classList.add('fa-spin');
+      if (!SCRIPT_URL) {
+        if (!state.products.length) {
+          state.products = JSON.parse(JSON.stringify(DEMO_DATA.products));
+          state.transactions = JSON.parse(JSON.stringify(DEMO_DATA.transactions));
+        }
+        renderAll();
+        setTimeout(() => icon.classList.remove('fa-spin'), 300);
+        return;
+      }
+      try {
+        const res = await fetch(SCRIPT_URL);
+        const data = await res.json();
+        if (data.status === 'success') {
+          state.products = data.products;
+          state.transactions = data.transactions;
+          renderAll();
+          toast('Đã đồng bộ dữ liệu thực tế');
+        }
+      } catch (e) {
+        toast('Lỗi kết nối Apps Script');
+      } finally {
+        icon.classList.remove('fa-spin');
+      }
+    }
+
+    // SMART ANALYTICS ENGINE (ABC Classification, DOI Forecast, Dead Stock)
+    function computeSmartMetrics() {
+      const totalInvValue = state.products.reduce((s, p) => s + (p.Stock * p.AvgCost), 0);
+      // Sort by inventory value desc for ABC
+      const sorted = [...state.products].sort((a, b) => (b.Stock * b.AvgCost) - (a.Stock * a.AvgCost));
+      let cumVal = 0;
+      const abcMap = {};
+      sorted.forEach(p => {
+        const val = p.Stock * p.AvgCost;
+        cumVal += val;
+        const pct = totalInvValue > 0 ? (cumVal / totalInvValue) * 100 : 100;
+        abcMap[p.SKU] = pct <= 80 ? 'A' : (pct <= 95 ? 'B' : 'C');
+      });
+
+      // Sales velocity (last 30 days)
+      const salesBySku = {};
+      state.transactions.forEach(t => {
+        if (t.Type === 'EXPORT') {
+          salesBySku[t.SKU] = (salesBySku[t.SKU] || 0) + Number(t.Qty);
+        }
+      });
+
+      return state.products.map(p => {
+        const val = p.Stock * p.AvgCost;
+        const sold30d = salesBySku[p.SKU] || 0;
+        const dailyRate = sold30d / 30;
+        const daysLeft = dailyRate > 0 ? Math.round(p.Stock / dailyRate) : Infinity;
+        const marginPct = p.SellPrice > 0 ? (((p.SellPrice - p.AvgCost) / p.SellPrice) * 100).toFixed(1) : 0;
+        return {
+          ...p,
+          invValue: val,
+          abc: abcMap[p.SKU] || 'C',
+          sold30d,
+          daysLeft,
+          marginPct,
+          isLow: Number(p.Stock) <= Number(p.MinStock),
+          isDead: sold30d === 0 && Number(p.Stock) > 0
+        };
+      });
+    }
+
+    function renderAll() {
+      const enriched = computeSmartMetrics();
+      renderDashboard(enriched);
+      renderInventory(enriched);
+      renderTransactions();
+      renderStocktake();
+    }
+
+    function renderDashboard(enriched) {
+      const totalInv = enriched.reduce((s, p) => s + p.invValue, 0);
+      let rev = 0, cogs = 0, profit = 0;
+      state.transactions.forEach(t => {
+        if (t.Type === 'EXPORT') {
+          rev += Number(t.TotalAmount);
+          cogs += Number(t.COGS);
+          profit += Number(t.Profit);
+        } else if (t.Type === 'ADJ_OUT') {
+          profit -= Number(t.TotalAmount);
+        }
+      });
+
+      const margin = rev > 0 ? ((profit / rev) * 100).toFixed(1) : 0;
+      const gmroi = totalInv > 0 ? (profit / totalInv).toFixed(2) : '0.00';
+
+      document.getElementById('kpi-inv').textContent = vnd(totalInv);
+      document.getElementById('kpi-sku-count').textContent = `${enriched.length} mã hàng đang quản lý`;
+      document.getElementById('kpi-rev').textContent = vnd(rev);
+      document.getElementById('kpi-cogs').textContent = `Giá vốn: ${vnd(cogs)}`;
+      document.getElementById('kpi-profit').textContent = vnd(profit);
+      document.getElementById('kpi-margin').textContent = `Biên lãi gộp: ${margin}%`;
+      document.getElementById('kpi-gmroi').textContent = `${gmroi}x`;
+
+      // AI Insights Generation
+      const insights = [];
+      enriched.filter(p => p.isLow).forEach(p => {
+        const suggest = Math.max(p.MinStock * 2 - p.Stock, 1);
+        insights.push({
+          type: 'danger',
+          title: `Cần nhập gấp: ${p.Name}`,
+          desc: `Tồn ${p.Stock} ${p.Unit} (Định mức ${p.MinStock}). Đề xuất nhập +${suggest} ${p.Unit}.`,
+          action: () => openBatchModal('IMPORT', p.SKU)
+        });
+      });
+
+      enriched.filter(p => p.isDead).forEach(p => {
+        insights.push({
+          type: 'warn',
+          title: `Vốn đọng: ${p.Name}`,
+          desc: `Chưa phát sinh đơn xuất nào. Đang giam ${vnd(p.invValue)} vốn lưu động.`,
+          action: () => openBatchModal('EXPORT', p.SKU)
+        });
+      });
+
+      const topMargin = [...enriched].sort((a, b) => b.marginPct - a.marginPct)[0];
+      if (topMargin && topMargin.marginPct > 0) {
+        insights.push({
+          type: 'good',
+          title: `Biên lãi cao nhất: ${topMargin.Name}`,
+          desc: `Đạt tỷ suất lợi nhuận ${topMargin.marginPct}% trên mỗi đơn vị bán ra.`
+        });
+      }
+
+      const list = document.getElementById('ai-insights-list');
+      list.innerHTML = insights.length ? insights.map((item, idx) => `
+        <div class="p-3.5 rounded-lg bg-bg hairline flex items-start justify-between gap-3">
+          <div>
+            <p class="font-normal ${item.type === 'danger' ? 'text-rose-400' : item.type === 'warn' ? 'text-amber-400' : 'text-emerald-400'}">${item.title}</p>
+            <p class="text-[11px] text-zinc-500 mt-1 leading-relaxed">${item.desc}</p>
+          </div>
+          ${item.action ? `<button onclick="triggerInsight(${idx})" class="shrink-0 px-2.5 py-1 rounded hairline hover:border-amber-400 text-[10px] text-zinc-300">Xử lý</button>` : ''}
+        </div>
+      `).join('') : `<p class="text-zinc-500 text-center py-8">Hệ thống vận hành tối ưu. Không có cảnh báo rủi ro.</p>`;
+      
+      window._currentInsights = insights;
+      renderChart();
+    }
+
+    function triggerInsight(idx) {
+      if (window._currentInsights[idx]?.action) window._currentInsights[idx].action();
+    }
+
+    function renderChart() {
+      const ctx = document.getElementById('mainChart').getContext('2d');
+      const exports = state.transactions.filter(t => t.Type === 'EXPORT').slice(0, 8).reverse();
+      if (chartInstance) chartInstance.destroy();
+      chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: exports.length ? exports.map(t => t.TxID) : ['Chưa có dữ liệu'],
+          datasets: [
+            { label: 'Doanh thu', data: exports.map(t => t.TotalAmount), backgroundColor: 'rgba(229, 169, 60, 0.85)', borderRadius: 4, barThickness: 18 },
+            { label: 'Lợi nhuận gộp', data: exports.map(t => t.Profit), backgroundColor: 'rgba(52, 211, 153, 0.85)', borderRadius: 4, barThickness: 18 }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: '#71717a', font: { family: 'Be Vietnam Pro', size: 11, weight: 300 } } } },
+          scales: {
+            x: { ticks: { color: '#52525b', font: { size: 10 } }, grid: { display: false } },
+            y: { ticks: { color: '#52525b', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.03)' } }
+          }
+        }
+      });
+    }
+
+    function renderInventory(enrichedData) {
+      const data = enrichedData || computeSmartMetrics();
+      const q = document.getElementById('inv-search').value.toLowerCase();
+      const f = document.getElementById('inv-filter').value;
+
+      const filtered = data.filter(p => {
+        const match = p.SKU.toLowerCase().includes(q) || p.Name.toLowerCase().includes(q);
+        if (f === 'A') return match && p.abc === 'A';
+        if (f === 'LOW') return match && p.isLow;
+        if (f === 'DEAD') return match && p.isDead;
+        return match;
+      });
+
+      document.getElementById('inv-tbody').innerHTML = filtered.map(p => `
+        <tr class="hover:bg-white/[0.02] transition">
+          <td class="p-4 font-mono text-amber-400/90">${p.SKU}</td>
+          <td class="p-4 text-white">${p.Name} <span class="text-zinc-600 text-[11px] block">${p.Category || 'Chưa phân nhóm'}</span></td>
+          <td class="p-4 text-center">
+            <span class="px-2 py-0.5 rounded text-[10px] ${p.abc === 'A' ? 'bg-amber-400/15 text-amber-400' : p.abc === 'B' ? 'bg-sky-400/15 text-sky-400' : 'bg-zinc-800 text-zinc-400'}">Nhóm ${p.abc}</span>
+          </td>
+          <td class="p-4 text-right ${p.isLow ? 'text-rose-400' : 'text-white'}">${p.Stock} <span class="text-zinc-600 text-[10px]">${p.Unit}</span></td>
+          <td class="p-4 text-right text-zinc-300">${vnd(p.AvgCost)}</td>
+          <td class="p-4 text-right text-emerald-400/90">${p.marginPct}%</td>
+          <td class="p-4 text-right text-zinc-400">${p.daysLeft === Infinity ? '∞' : p.daysLeft + ' ngày'}</td>
+          <td class="p-4 text-right text-white">${vnd(p.invValue)}</td>
+        </tr>
+      `).join('');
+    }
+
+    function renderTransactions() {
+      const filtered = state.transactions.filter(t => {
+        if (state.txFilter === 'ALL') return true;
+        if (state.txFilter === 'ADJ') return t.Type.startsWith('ADJ');
+        return t.Type === state.txFilter;
+      });
+
+      document.getElementById('tx-tbody').innerHTML = filtered.map(t => {
+        const badge = t.Type === 'IMPORT' 
+          ? '<span class="text-emerald-400">Nhập kho</span>' 
+          : t.Type === 'EXPORT' 
+          ? '<span class="text-amber-400">Xuất bán</span>' 
+          : '<span class="text-sky-400">Kiểm kê</span>';
+        return `
+          <tr class="hover:bg-white/[0.02] transition">
+            <td class="p-4 font-mono text-zinc-300">${t.TxID}</td>
+            <td class="p-4 text-zinc-500">${new Date(t.Date).toLocaleDateString('vi-VN')}</td>
+            <td class="p-4">${badge}</td>
+            <td class="p-4 text-white">${t.ProductName} <span class="text-zinc-600">(${t.SKU})</span></td>
+            <td class="p-4 text-right text-zinc-300">${t.Qty}</td>
+            <td class="p-4 text-right text-zinc-400">${vnd(t.UnitPrice)}</td>
+            <td class="p-4 text-right text-white">${vnd(t.TotalAmount)}</td>
+            <td class="p-4 text-right ${t.Profit > 0 ? 'text-emerald-400' : t.Profit < 0 ? 'text-rose-400' : 'text-zinc-600'}">${t.Type === 'IMPORT' ? '-' : vnd(t.Profit)}</td>
+            <td class="p-4 text-center">
+              <button onclick='printPDF(${JSON.stringify(t)})' class="text-zinc-500 hover:text-amber-400 transition"><i class="fa-regular fa-file-pdf"></i></button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // STOCKTAKE RENDER & SUBMIT
+    function renderStocktake() {
+      document.getElementById('stocktake-tbody').innerHTML = state.products.map(p => `
+        <tr class="hover:bg-white/[0.02]">
+          <td class="p-4 font-mono text-amber-400/90">${p.SKU}</td>
+          <td class="p-4 text-white">${p.Name}</td>
+          <td class="p-4 text-right text-zinc-400">${p.Stock} ${p.Unit}</td>
+          <td class="p-4 text-right">
+            <input type="number" min="0" value="${p.Stock}" data-sku="${p.SKU}" data-sys="${p.Stock}" data-cost="${p.AvgCost}" oninput="calcStocktakeDiff(this)" class="st-input w-28 text-right bg-bg hairline rounded px-2.5 py-1 text-white">
+          </td>
+          <td id="diff-qty-${p.SKU}" class="p-4 text-right text-zinc-500">0</td>
+          <td id="diff-val-${p.SKU}" class="p-4 text-right text-zinc-500">0 ₫</td>
+        </tr>
+      `).join('');
+    }
+
+    function calcStocktakeDiff(el) {
+      const sku = el.dataset.sku;
+      const sys = Number(el.dataset.sys);
+      const cost = Number(el.dataset.cost);
+      const actual = Number(el.value);
+      const diff = actual - sys;
+      const qtyEl = document.getElementById(`diff-qty-${sku}`);
+      const valEl = document.getElementById(`diff-val-${sku}`);
+      qtyEl.textContent = diff > 0 ? `+${diff}` : diff;
+      qtyEl.className = `p-4 text-right ${diff > 0 ? 'text-emerald-400' : diff < 0 ? 'text-rose-400' : 'text-zinc-500'}`;
+      valEl.textContent = vnd(diff * cost);
+    }
+
+    async function submitStocktake() {
+      const inputs = document.querySelectorAll('.st-input');
+      const items = [];
+      inputs.forEach(inp => {
+        if (Number(inp.value) !== Number(inp.dataset.sys)) {
+          items.push({ sku: inp.dataset.sku, actualStock: Number(inp.value) });
+        }
+      });
+      if (!items.length) return toast('Không có mã hàng nào chênh lệch!');
+
+      if (!SCRIPT_URL) {
+        items.forEach(it => {
+          const p = state.products.find(x => x.SKU === it.sku);
+          const diff = it.actualStock - p.Stock;
+          p.Stock = it.actualStock;
+          state.transactions.unshift({
+            TxID: 'KK-' + Date.now().toString().slice(-6),
+            Date: new Date().toISOString(),
+            Type: diff > 0 ? 'ADJ_IN' : 'ADJ_OUT',
+            SKU: p.SKU, ProductName: p.Name,
+            Qty: Math.abs(diff), UnitPrice: p.AvgCost,
+            TotalAmount: Math.abs(diff) * p.AvgCost,
+            COGS: diff < 0 ? Math.abs(diff) * p.AvgCost : 0,
+            Profit: diff * p.AvgCost,
+            Partner: 'Kiểm kê kho', Note: 'Cân bằng tự động'
+          });
+        });
+        renderAll();
+        return toast(`Đã cân bằng ${items.length} mã hàng!`);
+      }
+
+      toast('Đang đồng bộ kiểm kê...');
+      const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'STOCKTAKE', items }) });
+      const data = await res.json();
+      toast(data.message);
+      if (data.status === 'success') syncData();
+    }
+
+    // BATCH VOUCHER MODAL LOGIC
+    function openBatchModal(type, preselectSku = null) {
+      document.getElementById('batch-type').value = type;
+      document.getElementById('batch-title').textContent = type === 'IMPORT' ? 'Lập Phiếu Nhập Kho Đa Dòng' : 'Lập Phiếu Xuất Bán Đa Dòng';
+      const container = document.getElementById('batch-rows');
+      container.innerHTML = '';
+      addBatchRow(preselectSku);
+      openModal('modal-batch');
+    }
+
+    function addBatchRow(sku = null) {
+      const type = document.getElementById('batch-type').value;
+      const container = document.getElementById('batch-rows');
+      const div = document.createElement('div');
+      div.className = 'grid grid-cols-12 gap-2 items-center batch-row';
+      const options = state.products.map(p => `<option value="${p.SKU}" ${p.SKU === sku ? 'selected' : ''}>${p.SKU} - ${p.Name} (Tồn: ${p.Stock})</option>`).join('');
+      
+      div.innerHTML = `
+        <select onchange="onBatchRowProductChange(this)" class="col-span-6 bg-bg hairline rounded-lg px-2.5 py-2 text-white b-sku">${options}</select>
+        <input type="number" min="1" value="1" oninput="calcBatchTotal()" placeholder="SL" class="col-span-2 bg-bg hairline rounded-lg px-2.5 py-2 text-right text-white b-qty">
+        <input type="number" min="0" value="0" oninput="calcBatchTotal()" placeholder="Đơn giá" class="col-span-3 bg-bg hairline rounded-lg px-2.5 py-2 text-right text-white b-price">
+        <button type="button" onclick="this.parentElement.remove(); calcBatchTotal()" class="col-span-1 text-zinc-600 hover:text-rose-400 text-center"><i class="fa-solid fa-trash-can"></i></button>
+      `;
+      container.appendChild(div);
+      onBatchRowProductChange(div.querySelector('.b-sku'));
+    }
+
+    function onBatchRowProductChange(selectEl) {
+      const row = selectEl.closest('.batch-row');
+      const type = document.getElementById('batch-type').value;
+      const p = state.products.find(x => x.SKU === selectEl.value);
+      if (p) {
+        row.querySelector('.b-price').value = type === 'IMPORT' ? p.AvgCost : p.SellPrice;
+        calcBatchTotal();
+      }
+    }
+
+    function calcBatchTotal() {
+      let total = 0;
+      document.querySelectorAll('.batch-row').forEach(row => {
+        const qty = Number(row.querySelector('.b-qty').value) || 0;
+        const price = Number(row.querySelector('.b-price').value) || 0;
+        total += qty * price;
+      });
+      document.getElementById('batch-total').textContent = vnd(total);
+    }
+
+    async function submitBatch(e) {
+      e.preventDefault();
+      const type = document.getElementById('batch-type').value;
+      const partner = document.getElementById('batch-partner').value.trim();
+      const note = document.getElementById('batch-note').value.trim();
+      const items = [];
+
+      document.querySelectorAll('.batch-row').forEach(row => {
+        items.push({
+          sku: row.querySelector('.b-sku').value,
+          qty: Number(row.querySelector('.b-qty').value),
+          unitPrice: Number(row.querySelector('.b-price').value)
+        });
+      });
+
+      if (!items.length) return;
+      closeModal('modal-batch');
+
+      if (!SCRIPT_URL) {
+        // Check stock first
+        if (type === 'EXPORT') {
+          for (const it of items) {
+            const p = state.products.find(x => x.SKU === it.sku);
+            if (p.Stock < it.qty) return toast(`Không đủ tồn kho cho mã ${it.sku}!`);
+          }
+        }
+        const txId = (type === 'IMPORT' ? 'PN-' : 'PX-') + Date.now().toString().slice(-6);
+        items.forEach(it => {
+          const p = state.products.find(x => x.SKU === it.sku);
+          const totalAmount = it.qty * it.unitPrice;
+          let cogs = 0, profit = 0;
+          if (type === 'IMPORT') {
+            const oldVal = p.Stock * p.AvgCost;
+            p.Stock += it.qty;
+            p.AvgCost = Math.round((oldVal + totalAmount) / p.Stock);
+          } else {
+            p.Stock -= it.qty;
+            cogs = it.qty * p.AvgCost;
+            profit = totalAmount - cogs;
+          }
+          state.transactions.unshift({
+            TxID: txId, Date: new Date().toISOString(), Type: type,
+            SKU: p.SKU, ProductName: p.Name, Qty: it.qty, UnitPrice: it.unitPrice,
+            TotalAmount: totalAmount, COGS: cogs, Profit: profit, Partner: partner, Note: note
+          });
+        });
+        renderAll();
+        return toast(`Đã ghi sổ chứng từ ${txId}`);
+      }
+
+      toast('Đang hạch toán chứng từ...');
+      const res = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action: 'BATCH_TRANSACTION', type, partner, note, items })
+      });
+      const data = await res.json();
+      toast(data.message);
+      if (data.status === 'success') syncData();
+    }
+
+    async function submitProduct(e) {
+      e.preventDefault();
+      const payload = {
+        action: 'ADD_PRODUCT',
+        sku: document.getElementById('p-sku').value.trim().toUpperCase(),
+        name: document.getElementById('p-name').value.trim(),
+        category: document.getElementById('p-cat').value.trim(),
+        unit: document.getElementById('p-unit').value.trim(),
+        stock: Number(document.getElementById('p-stock').value),
+        avgCost: Number(document.getElementById('p-cost').value),
+        sellPrice: Number(document.getElementById('p-price').value),
+        minStock: Number(document.getElementById('p-min').value)
+      };
+      closeModal('modal-product');
+      if (!SCRIPT_URL) {
+        state.products.push({ SKU: payload.sku, Name: payload.name, Category: payload.category, Unit: payload.unit, Stock: payload.stock, AvgCost: payload.avgCost, SellPrice: payload.sellPrice, MinStock: payload.minStock });
+        renderAll();
+        return toast('Đã thêm mã hàng mới');
+      }
+      const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+      const data = await res.json();
+      toast(data.message);
+      if (data.status === 'success') syncData();
+    }
+
+    // COMMAND PALETTE
+    function openCommandPalette() {
+      const el = document.getElementById('cmd-palette');
+      el.classList.remove('hidden');
+      el.classList.add('flex');
+      const inp = document.getElementById('cmd-input');
+      inp.value = '';
+      inp.focus();
+      filterCommands();
+    }
+    function closeCommandPalette() {
+      const el = document.getElementById('cmd-palette');
+      el.classList.add('hidden');
+      el.classList.remove('flex');
+    }
+    function filterCommands() {
+      const q = document.getElementById('cmd-input').value.toLowerCase();
+      const actions = [
+        { label: 'Lập phiếu nhập kho mới', icon: 'fa-arrow-down text-emerald-400', run: () => openBatchModal('IMPORT') },
+        { label: 'Lập phiếu xuất bán hàng', icon: 'fa-arrow-up text-amber-400', run: () => openBatchModal('EXPORT') },
+        { label: 'Khai báo mã hàng hóa mới', icon: 'fa-plus text-zinc-400', run: () => openModal('modal-product') },
+        { label: 'Mở bảng kiểm kê & cân bằng kho', icon: 'fa-scale-balanced text-sky-400', run: () => switchTab('stocktake') },
+        { label: 'Xuất sổ kế toán ra file CSV', icon: 'fa-download text-zinc-400', run: () => exportCSV() },
+        ...state.products.map(p => ({
+          label: `Nhập nhanh: ${p.Name} (${p.SKU}) — Tồn: ${p.Stock}`,
+          icon: 'fa-box text-zinc-500',
+          run: () => openBatchModal('IMPORT', p.SKU)
+        }))
+      ];
+      const matched = actions.filter(a => a.label.toLowerCase().includes(q));
+      window._cmdActions = matched;
+      document.getElementById('cmd-results').innerHTML = matched.map((a, i) => `
+        <button onclick="runCmd(${i})" class="w-full text-left px-3 py-2.5 rounded-lg hover:bg-white/[0.05] flex items-center gap-3 text-zinc-300 transition">
+          <i class="fa-solid ${a.icon} w-4 text-center"></i>
+          <span>${a.label}</span>
+        </button>
+      `).join('');
+    }
+    function runCmd(i) {
+      closeCommandPalette();
+      window._cmdActions[i]?.run();
+    }
+
+    // NAVIGATION & UTILS
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById('tab-' + tab).classList.remove('hidden');
+      document.querySelectorAll('.nav-btn').forEach(b => b.className = 'nav-btn w-full text-left flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs text-zinc-400 hover:text-zinc-200 transition');
+      document.querySelector(`[data-tab="${tab}"]`).className = 'nav-btn w-full text-left flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs text-amber-400 bg-amber-400/[0.07] transition';
+    }
+    function openModal(id) { document.getElementById(id).classList.remove('hidden'); document.getElementById(id).classList.add('flex'); }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); document.getElementById(id).classList.remove('flex'); }
+    function setTxFilter(f) { state.txFilter = f; renderTransactions(); }
+    function saveScriptUrl() {
+      SCRIPT_URL = document.getElementById('script-url-input').value.trim();
+      localStorage.setItem('ALPHA_ERP_URL', SCRIPT_URL);
+      updateConnUI();
+      syncData();
+    }
+    function resetDemo() {
+      SCRIPT_URL = '';
+      localStorage.removeItem('ALPHA_ERP_URL');
+      document.getElementById('script-url-input').value = '';
+      state.products = [];
+      updateConnUI();
+      syncData();
+    }
+    function exportCSV() {
+      let csv = '\uFEFFChungTu,Ngay,NghiepVu,SKU,TenHang,SL,DonGia,ThanhTien,GiaVon,LaiLo,DoiTac\n';
+      state.transactions.forEach(t => csv += `"${t.TxID}","${t.Date}","${t.Type}","${t.SKU}","${t.ProductName}",${t.Qty},${t.UnitPrice},${t.TotalAmount},${t.COGS},${t.Profit},"${t.Partner}"\n`);
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+      a.download = `So_Ke_Toan_${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
+    }
+    function printPDF(t) {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.setFontSize(14);
+      doc.text(`CHUNG TU KE TOAN: ${t.TxID}`, 20, 25);
+      doc.setFontSize(10);
+      doc.text(`Ngay: ${new Date(t.Date).toLocaleString('vi-VN')}`, 20, 36);
+      doc.text(`Nghiep vu: ${t.Type} | Doi tac: ${t.Partner || '-'}`, 20, 44);
+      doc.line(20, 50, 190, 50);
+      doc.text(`Ma SKU: ${t.SKU} - ${t.ProductName}`, 20, 60);
+      doc.text(`So luong: ${t.Qty} | Don gia: ${t.UnitPrice.toLocaleString()} VND`, 20, 68);
+      doc.text(`Tong gia tri: ${t.TotalAmount.toLocaleString()} VND`, 20, 78);
+      doc.save(`${t.TxID}.pdf`);
+    }
+    function toast(msg) {
+      const el = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = msg;
+      el.classList.remove('translate-y-16', 'opacity-0');
+      setTimeout(() => el.classList.add('translate-y-16', 'opacity-0'), 2800);
+    }
+  </script>
+</body>
+</html>
