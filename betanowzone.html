@@ -1420,7 +1420,7 @@
             <div class="brand-mark"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrHqRceRcnxQuqHdl1GRiVzTAJ9JsLd6RiJs_cSgBz9w&amp;s=10" alt="Logo Beta Cinemas" decoding="async" loading="eager" fetchpriority="high" referrerpolicy="no-referrer"></div>
             <div><div class="brand-name">BETA NOWZONE</div><div class="brand-sub">INTERNAL WORKSPACE</div></div>
           </div>
-          <h1><figcaption></figcaption><br><span>KHÔNG GIAN VẬN HÀNH THÔNG MINH</span></h1>
+          <h1>Không gian<br><span>vận hành thông minh.</span></h1>
           <p>Cổng thông tin nội bộ dành cho đội ngũ Beta Nowzone. Truy cập nhanh các công cụ nghiệp vụ, thông báo và tài nguyên được phân quyền theo tài khoản.</p>
           <div class="feature-list">
           </div>
@@ -2254,25 +2254,6 @@ tr:hover td { background: #f8fbfd; }
     .nav-count[hidden], #topNotificationBadge[hidden] { display:none !important; }
     .notification-shortcut { position:relative; min-width:40px; padding:9px 11px; }
     .notification-shortcut #topNotificationBadge { position:absolute; top:-7px; right:-7px; border:2px solid #fff; }
-    .schedule-panel { margin:24px 0 27px; overflow:hidden; border:1px solid #dce8e0; border-radius:17px; background:linear-gradient(135deg,#fff 0%,#f6fbf6 100%); box-shadow:0 10px 28px rgba(41,78,53,.055); }
-    .schedule-head { display:flex; justify-content:space-between; align-items:center; gap:14px; padding:19px 20px 15px; border-bottom:1px solid #eaf0ea; }
-    .schedule-head h2 { margin:5px 0 4px; color:#294334; font-size:16px; }
-    .schedule-head p { margin:0; color:#7c8c80; font-size:10px; }
-    .schedule-actions { display:flex; align-items:center; gap:8px; }
-    .schedule-sync { color:#26764e; background:#eaf6ed; border:1px solid #d9ecdc; border-radius:30px; padding:7px 10px; font-size:9px; white-space:nowrap; }
-    .schedule-list { display:grid; }
-    .shift-row { display:grid; grid-template-columns:100px minmax(0,1fr) minmax(80px,.7fr); gap:12px; align-items:center; padding:12px 20px; border-bottom:1px solid #eef2ee; }
-    .shift-row:last-child { border-bottom:0; }
-    .shift-row.shift-today { background:#f0f8f1; }
-    .shift-date strong { display:block; color:#31533b; font-size:12px; }
-    .shift-date span { display:block; margin-top:3px; color:#829286; font-size:9px; }
-    .shift-main strong { display:block; color:#3b5142; font-size:11px; }
-    .shift-main span { display:block; margin-top:4px; color:#557060; font-size:10px; }
-    .shift-main small { display:block; margin-top:3px; color:#8b9a8f; font-size:9px; }
-    .shift-extra { color:#7b8b80; font-size:9px; text-align:right; }
-    .schedule-empty { padding:25px 18px; color:#819086; font-size:10px; text-align:center; }
-    .schedule-warning { margin:12px 18px 0; padding:10px 12px; color:#926b32; background:#fff8e8; border:1px solid #f3e4bd; border-radius:9px; font-size:10px; line-height:1.6; }
-    .schedule-foot { display:flex; justify-content:space-between; gap:8px; padding:10px 20px; color:#92a096; font-size:9px; background:#fbfdfb; border-top:1px solid #edf2ed; }
     .notice-toolbar { display:flex; flex-wrap:wrap; gap:8px; }
     .notice-grid { display:grid; gap:11px; }
     .notice-card { border:1px solid #e1eae2; border-left:4px solid #83a28a; border-radius:13px; background:#fff; padding:16px 17px; box-shadow:0 5px 16px rgba(45,78,55,.035); }
@@ -2285,12 +2266,20 @@ tr:hover td { background: #f8fbfd; }
     .notice-card h3 { margin:10px 0 6px; color:#2f4636; font-size:13px; }
     .notice-card p { margin:0 0 13px; color:#586b5e; font-size:11px; line-height:1.75; white-space:pre-wrap; overflow-wrap:anywhere; }
     .notice-card-foot { padding-top:10px; border-top:1px solid #edf2ed; }
+    .notice-message { white-space:pre-wrap; overflow-wrap:anywhere; }
+    .notice-resources { display:grid; gap:7px; margin:10px 0 13px; }
+    .notice-resource { display:flex; align-items:center; gap:10px; padding:9px 11px; border:1px solid #e4ebef; border-radius:10px; background:#f7fafc; color:#34516a; text-decoration:none; font-size:10px; min-width:0; }
+    .notice-resource:hover { border-color:#9bc5e4; background:#f0f7fc; }
+    .notice-resource-icon { width:28px; height:28px; flex:0 0 28px; display:grid; place-items:center; border-radius:8px; background:#e5f0f8; color:#07579f; font-weight:800; }
+    .notice-resource-meta { min-width:0; display:grid; gap:3px; text-align:left; }
+    .notice-resource-name { font-weight:800; overflow-wrap:anywhere; }
+    .notice-resource-sub { color:#8193a2; font-size:9px; }
+    .notice-resource-action { margin-left:auto; white-space:nowrap; color:#07579f; font-weight:800; }
+    .notice-compose-help { padding:10px 12px; border:1px dashed #d2e0e9; border-radius:10px; color:#6f8292; background:#f8fbfd; font-size:10px; line-height:1.65; }
+    .notice-file-preview { display:grid; gap:5px; margin-top:8px; }
+    .notice-file-preview-item { color:#496477; font-size:10px; display:flex; justify-content:space-between; gap:10px; }
+    .notice-links-preview { color:#496477; font-size:10px; white-space:pre-wrap; overflow-wrap:anywhere; }
     @media(max-width:720px) {
-      .schedule-head { align-items:flex-start; flex-direction:column; padding:16px; }
-      .schedule-actions { width:100%; justify-content:space-between; }
-      .shift-row { grid-template-columns:78px minmax(0,1fr); padding:11px 14px; }
-      .shift-extra { grid-column:2; text-align:left; }
-      .schedule-foot { padding:9px 14px; flex-direction:column; }
       .notice-toolbar { width:100%; }
       .notice-toolbar .btn { flex:1; }
     }
@@ -2320,7 +2309,7 @@ tr:hover td { background: #f8fbfd; }
 
     // Dán URL Web App /exec sau khi Deploy Apps Script dạng backend.
     // Không thêm tham số ?health=1 vào URL này.
-    const API_URL = 'https://script.google.com/macros/s/AKfycbw2OkMfJa0Sv3chFtNIN14VQcHfqN79kTQI4s22xnxAsb4zcXeeLCmpUw45NCvYZKIu/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyAbpiS0GKauiX5okDfPHcxoicm67FDSmFm8Q-S8HWQFJ4_swin4znOFbY2uDs0t72s/exec';
     const API_TIMEOUT_MS = 45000;
     let apiRequestCounter = 0;
 
@@ -2411,13 +2400,14 @@ tr:hover td { background: #f8fbfd; }
             payload.username = args[0]; payload.password = args[1]; break;
           case 'apiGetDashboard':
           case 'apiGetNotifications':
-          case 'apiRefreshSchedule':
           case 'apiMarkAllNotificationsRead':
           case 'apiLogout':
           case 'apiAdminGetData':
             payload.token = args[0]; break;
           case 'apiMarkNotificationRead':
             payload.token = args[0]; payload.id = args[1]; break;
+          case 'apiDownloadNotificationAttachment':
+            payload.token = args[0]; payload.notificationId = args[1]; payload.attachmentId = args[2]; break;
           case 'apiChangePassword':
             payload.token = args[0]; payload.currentPassword = args[1]; payload.newPassword = args[2]; break;
           case 'apiAdminSaveAccount':
@@ -2449,7 +2439,8 @@ tr:hover td { background: #f8fbfd; }
         });
 
         let finished = false;
-        const timeout = window.setTimeout(() => finish(new Error('Máy chủ phản hồi quá thời gian. Hãy kiểm tra quyền triển khai Web App và thử lại.')), API_TIMEOUT_MS);
+        const timeoutMs = functionName === 'apiAdminSendNotification' || functionName === 'apiDownloadNotificationAttachment' ? 120000 : API_TIMEOUT_MS;
+        const timeout = window.setTimeout(() => finish(new Error('Máy chủ phản hồi quá thời gian. Hãy kiểm tra quyền triển khai Web App và thử lại.')), timeoutMs);
         function cleanup() {
           window.removeEventListener('message', onMessage);
           window.clearTimeout(timeout);
@@ -2524,6 +2515,25 @@ tr:hover td { background: #f8fbfd; }
       } catch (error) {
         return '#';
       }
+    }
+
+    function renderMessageWithLinks(value) {
+      const raw = String(value || '');
+      const pattern = /https?:\/\/[^\s<>"']+/gi;
+      let output = '';
+      let cursor = 0;
+      let match;
+      while ((match = pattern.exec(raw)) !== null) {
+        let target = match[0];
+        let suffix = '';
+        while (/[),.!?;:]$/.test(target)) { suffix = target.slice(-1) + suffix; target = target.slice(0, -1); }
+        if (!target) continue;
+        output += escapeHtml(raw.slice(cursor, match.index));
+        output += '<a href="' + safeHttpUrl(target) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(target) + '</a>' + escapeHtml(suffix);
+        cursor = match.index + match[0].length;
+      }
+      output += escapeHtml(raw.slice(cursor));
+      return output;
     }
 
     function initials(name) {
@@ -2873,7 +2883,6 @@ tr:hover td { background: #f8fbfd; }
             <div class="stat-card"><div class="stat-top"><span class="stat-label">Phiên đăng nhập</span><span class="stat-icon">◷</span></div><div class="stat-value" style="font-size:17px">6 giờ</div><div class="stat-foot">Tự hết hạn khi phiên kết thúc</div></div>
           `}
         </section>
-        ${renderSchedulePanel(data.schedule || {})}
         <div class="section-head"><div><h2>Ứng dụng & công cụ nội bộ</h2><p>Chọn tiện ích bạn cần sử dụng</p></div><div class="search-box"><span class="search-icon">⌕</span><input id="linkSearch" type="search" placeholder="Tìm ứng dụng..." value="${escapeHtml(state.linkQuery)}"></div></div>
         <div class="filter-row" id="linkFilters"></div>
         <div class="module-grid" id="moduleGrid"></div>
@@ -2887,35 +2896,27 @@ tr:hover td { background: #f8fbfd; }
       });
     }
 
-    function formatScheduleDay(dateKey, dateLabel, weekday) {
-      const label = dateLabel || dateKey || '';
-      return `${weekday ? weekday + ', ' : ''}${label}`;
+    function formatFileSize(bytes) {
+      const value = Number(bytes || 0);
+      if (value < 1024) return value + ' B';
+      if (value < 1024 * 1024) return (value / 1024).toFixed(1) + ' KB';
+      return (value / (1024 * 1024)).toFixed(1) + ' MB';
     }
 
-    function renderSchedulePanel(schedule) {
-      const records = Array.isArray(schedule.records) ? schedule.records : [];
-      const todayKey = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Ho_Chi_Minh' });
-      const todayRecords = records.filter((item) => item.dateKey === todayKey);
-      const heading = todayRecords.length ? `Hôm nay · ${todayRecords.length} ca` : 'Lịch làm việc sắp tới';
-      const list = records.slice(0, 8);
-      const content = list.length ? list.map((item) => `
-        <article class="shift-row ${item.dateKey === todayKey ? 'shift-today' : ''}">
-          <div class="shift-date"><strong>${escapeHtml(item.dateLabel || '')}</strong><span>${escapeHtml(item.weekday || '')}</span></div>
-          <div class="shift-main"><strong>${escapeHtml(item.shift || 'Ca làm việc')}</strong><span>${escapeHtml([item.startTime, item.endTime].filter(Boolean).join(' – ') || 'Chưa cập nhật giờ')}</span>
-            ${item.position ? `<small>${escapeHtml(item.position)}</small>` : ''}
-          </div>
-          <div class="shift-extra">${item.note ? escapeHtml(item.note) : (item.employee && !schedule.personalized ? escapeHtml(item.employee) : '')}</div>
-        </article>`).join('') : `<div class="schedule-empty">${escapeHtml(schedule.message || 'Chưa có lịch làm việc để hiển thị.')}</div>`;
-      return `
-        <section class="schedule-panel">
-          <div class="schedule-head">
-            <div><div class="eyebrow">KẾ HOẠCH CA TRỰC</div><h2>${escapeHtml(heading)}</h2><p>${schedule.personalized ? 'Lịch được lọc theo tài khoản đang đăng nhập' : 'Lịch lấy trực tiếp từ Google Sheets'}</p></div>
-            <div class="schedule-actions"><span class="schedule-sync">${schedule.configured ? 'Đồng bộ Google Sheets' : 'Chưa kết nối'}</span><button class="btn btn-secondary btn-small" type="button" data-action="refresh-schedule">↻ Cập nhật</button></div>
-          </div>
-          ${!schedule.configured ? `<div class="schedule-warning">${escapeHtml(schedule.message || 'Hãy kiểm tra cấu hình kết nối lịch.')}</div>` : ''}
-          <div class="schedule-list">${content}</div>
-          <div class="schedule-foot"><span>${records.length ? `${records.length} ca trong 3 tuần tới` : 'Dữ liệu được lấy từ trang tính lịch'}</span><span>${schedule.updatedAt ? `Cập nhật ${escapeHtml(schedule.updatedAt)}` : ''}</span></div>
-        </section>`;
+    function renderNotificationResources(item, canDownload) {
+      const links = Array.isArray(item.links) ? item.links : [];
+      const files = Array.isArray(item.attachments) ? item.attachments : [];
+      if (!links.length && !files.length) return '';
+      const linkHtml = links.map((link) => `
+        <a class="notice-resource" href="${safeHttpUrl(link.url)}" target="_blank" rel="noopener noreferrer">
+          <span class="notice-resource-icon">↗</span><span class="notice-resource-meta"><span class="notice-resource-name">${escapeHtml(link.label || link.url)}</span><span class="notice-resource-sub">${escapeHtml(link.url)}</span></span><span class="notice-resource-action">Mở</span>
+        </a>`).join('');
+      const fileHtml = files.map((file) => canDownload ? `
+        <button class="notice-resource" type="button" data-action="download-notification-attachment" data-key="${escapeHtml(item.id)}" data-extra="${escapeHtml(file.id)}">
+          <span class="notice-resource-icon">↓</span><span class="notice-resource-meta"><span class="notice-resource-name">${escapeHtml(file.name || 'Tệp đính kèm')}</span><span class="notice-resource-sub">${escapeHtml(formatFileSize(file.size))}</span></span><span class="notice-resource-action">Tải tệp</span>
+        </button>` : `
+        <div class="notice-resource"><span class="notice-resource-icon">▤</span><span class="notice-resource-meta"><span class="notice-resource-name">${escapeHtml(file.name || 'Tệp đính kèm')}</span><span class="notice-resource-sub">${escapeHtml(formatFileSize(file.size))}</span></span></div>`).join('');
+      return `<div class="notice-resources">${linkHtml}${fileHtml}</div>`;
     }
 
     function renderNotificationsPage() {
@@ -2925,52 +2926,109 @@ tr:hover td { background: #f8fbfd; }
       const cards = items.length ? items.map((item) => `
         <article class="notice-card ${item.isRead ? 'is-read' : 'is-unread'} priority-${escapeHtml(item.priority || 'normal')}">
           <div class="notice-card-top"><span class="notice-priority">${item.priority === 'high' ? 'Ưu tiên cao' : (item.priority === 'low' ? 'Thông tin' : 'Thông báo')}</span><span>${escapeHtml(item.createdAt || '')}</span></div>
-          <h3>${escapeHtml(item.title || 'Thông báo')}</h3><p>${escapeHtml(item.message || '')}</p>
+          <h3>${escapeHtml(item.title || 'Thông báo')}</h3>${item.message ? `<p class="notice-message">${renderMessageWithLinks(item.message)}</p>` : ''}
+          ${renderNotificationResources(item, true)}
           <div class="notice-card-foot"><span>${escapeHtml(item.senderName || 'Quản lý')}${item.isRead ? ' · Đã đọc' : ' · Chưa đọc'}</span>${item.isRead ? '' : `<button class="btn btn-secondary btn-small" data-action="read-notification" data-key="${escapeHtml(item.id)}" type="button">Đánh dấu đã đọc</button>`}</div>
         </article>`).join('') : `<div class="empty-state">Hộp thư của bạn đang trống. Các thông báo mới sẽ xuất hiện tại đây.</div>`;
       const history = admin ? (state.adminData && state.adminData.notifications || []).slice(0, 12).map((item) => `
-        <tr><td>${escapeHtml(item.createdAt || '')}</td><td><strong>${escapeHtml(item.title)}</strong><div class="cell-sub">${escapeHtml(item.senderName || '')}</div></td><td>${escapeHtml(item.recipientUsername || '')}</td><td>${item.isRead ? 'Đã đọc' : 'Chưa đọc'}</td></tr>`).join('') : '';
+        <tr><td>${escapeHtml(item.createdAt || '')}</td><td><strong>${escapeHtml(item.title)}</strong><div class="cell-sub">${escapeHtml(item.senderName || '')}</div></td><td>${escapeHtml(item.recipientUsername || '')}</td><td>${item.isRead ? 'Đã đọc' : 'Chưa đọc'}</td><td>${(item.attachments || []).length} tệp · ${(item.links || []).length} link</td></tr>`).join('') : '';
       $('pageContent').innerHTML = `
         <div class="section-head" style="margin-top:0"><div><h2>Hộp thư thông báo</h2><p>${unread ? `${unread} thông báo chưa đọc` : 'Bạn đã xem hết thông báo'}</p></div>
           <div class="notice-toolbar">${unread ? '<button class="btn btn-secondary" data-action="read-all-notifications" type="button">Đánh dấu tất cả đã đọc</button>' : ''}${admin ? '<button class="btn btn-primary" data-action="new-notification" type="button">＋ Gửi thông báo</button>' : ''}</div>
         </div>
         <div class="notice-grid">${cards}</div>
         ${admin ? `<div class="section-head"><div><h2>Lịch sử gửi gần đây</h2><p>Nhật ký thông báo theo từng tài khoản nhận</p></div></div>
-        <div class="table-card"><div class="table-wrap"><table><thead><tr><th>Thời gian</th><th>Nội dung</th><th>Tài khoản nhận</th><th>Trạng thái</th></tr></thead><tbody>${history || '<tr><td colspan="4"><div class="empty-state">Chưa có lịch sử gửi.</div></td></tr>'}</tbody></table></div></div>` : ''}
+        <div class="table-card"><div class="table-wrap"><table><thead><tr><th>Thời gian</th><th>Nội dung</th><th>Tài khoản nhận</th><th>Trạng thái</th><th>Tệp & liên kết</th></tr></thead><tbody>${history || '<tr><td colspan="5"><div class="empty-state">Chưa có lịch sử gửi.</div></td></tr>'}</tbody></table></div></div>` : ''}
       `;
+    }
+
+    function readFileAsAttachment(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const result = String(reader.result || '');
+          const comma = result.indexOf(',');
+          if (comma < 0) return reject(new Error('Không thể đọc tệp ' + file.name + '.'));
+          resolve({ name: file.name, mimeType: file.type || 'application/octet-stream', size: file.size, base64: result.slice(comma + 1) });
+        };
+        reader.onerror = () => reject(new Error('Không thể đọc tệp ' + file.name + '.'));
+        reader.readAsDataURL(file);
+      });
     }
 
     function openNotificationModal() {
       const users = (state.adminData && state.adminData.users || []).filter((user) => isStatusActive(user.status));
       const options = ['<option value="ALL">Tất cả nhân viên đang hoạt động</option>'].concat(users.map((user) => `<option value="${escapeHtml(user.username)}">${escapeHtml(user.fullName || user.username)} · ${escapeHtml(user.username)}</option>`)).join('');
-      openModal('Gửi thông báo nội bộ', `
+      openModal('Gửi tin nhắn nội bộ', `
         <form id="notificationForm">
           <div class="field"><label for="noticeRecipient">Người nhận</label><select id="noticeRecipient" required>${options}</select></div>
-          <div class="field"><label for="noticeTitle">Tiêu đề *</label><input id="noticeTitle" required maxlength="120" placeholder="Ví dụ: Thay đổi lịch làm việc tuần này"></div>
-          <div class="field"><label for="noticeMessage">Nội dung *</label><textarea id="noticeMessage" required maxlength="2000" rows="5" placeholder="Nhập nội dung thông báo..."></textarea></div>
+          <div class="field"><label for="noticeTitle">Tiêu đề *</label><input id="noticeTitle" required maxlength="120" placeholder="Ví dụ: Thông tin vận hành hôm nay"></div>
+          <div class="field"><label for="noticeMessage">Nội dung tin nhắn</label><textarea id="noticeMessage" maxlength="2000" rows="5" placeholder="Nhập nội dung tin nhắn..."></textarea></div>
+          <div class="field"><label for="noticeLinks">Đường dẫn đính kèm (mỗi dòng một link)</label><textarea id="noticeLinks" rows="3" placeholder="https://...\nhttps://drive.google.com/..."></textarea></div>
+          <div class="field"><label for="noticeAttachments">Tệp đính kèm</label><input id="noticeAttachments" type="file" multiple><div id="noticeFilesPreview" class="notice-file-preview"></div></div>
+          <div class="notice-compose-help">Tối đa 5 tệp, mỗi tệp không quá 2 MB và tổng dung lượng không quá 5 MB. Tệp được lưu riêng tư trên Google Drive; chỉ tài khoản nhận thông báo mới tải được từ hộp thư. Có thể gửi chỉ nội dung, chỉ link hoặc chỉ tệp.</div>
           <div class="modal-grid">
             <div class="field"><label for="noticePriority">Mức độ</label><select id="noticePriority"><option value="normal">Thông thường</option><option value="high">Ưu tiên cao</option><option value="low">Thông tin</option></select></div>
             <div class="field"><label for="noticeExpiry">Hết hạn (không bắt buộc)</label><input id="noticeExpiry" type="date"></div>
           </div>
-          <div class="page-note">Thông báo gửi riêng sẽ chỉ xuất hiện trong hộp thư của tài khoản được chọn. Khi gửi toàn bộ, mỗi nhân viên sẽ có một bản ghi riêng.</div>
-          <div class="modal-actions"><button class="btn btn-secondary" type="button" data-action="close-modal">Hủy</button><button class="btn btn-primary" type="submit">Gửi thông báo</button></div>
+          <div class="modal-actions"><button class="btn btn-secondary" type="button" data-action="close-modal">Hủy</button><button class="btn btn-primary" type="submit">Gửi tin nhắn</button></div>
         </form>`);
+      $('noticeAttachments').addEventListener('change', () => {
+        const files = Array.from($('noticeAttachments').files || []);
+        const total = files.reduce((sum, file) => sum + file.size, 0);
+        $('noticeFilesPreview').innerHTML = files.map((file) => `<div class="notice-file-preview-item"><span>${escapeHtml(file.name)}</span><span>${escapeHtml(formatFileSize(file.size))}</span></div>`).join('');
+        if (files.length > 5) toast('Chỉ được chọn tối đa 5 tệp.', 'error');
+        else if (files.some((file) => file.size > 2 * 1024 * 1024) || total > 5 * 1024 * 1024) toast('Dung lượng tệp vượt giới hạn cho phép.', 'error');
+      });
       $('notificationForm').addEventListener('submit', async (event) => {
         event.preventDefault();
-        const payload = {
-          recipientUsername: $('noticeRecipient').value,
-          title: $('noticeTitle').value.trim(),
-          message: $('noticeMessage').value.trim(),
-          priority: $('noticePriority').value,
-          expiresAt: $('noticeExpiry').value
-        };
-        await runModalAction('Đang gửi thông báo...', async () => {
-          const result = await callApi('apiAdminSendNotification', state.token, payload);
-          await loadAdminData(true);
-          await loadNotifications(true, true).catch(() => {});
-          renderNotificationsPage(); closeModal(); toast(result.message || 'Đã gửi thông báo.');
-        });
+        const files = Array.from($('noticeAttachments').files || []);
+        const total = files.reduce((sum, file) => sum + file.size, 0);
+        if (files.length > 5) { toast('Chỉ được đính kèm tối đa 5 tệp.', 'error'); return; }
+        if (files.some((file) => file.size > 2 * 1024 * 1024) || total > 5 * 1024 * 1024) { toast('Mỗi tệp tối đa 2 MB và tổng dung lượng tối đa 5 MB.', 'error'); return; }
+        const links = $('noticeLinks').value.split(/\r?\n/).map((value) => value.trim()).filter(Boolean);
+        if (links.length > 10) { toast('Chỉ được thêm tối đa 10 liên kết.', 'error'); return; }
+        try {
+          const payload = {
+            recipientUsername: $('noticeRecipient').value,
+            title: $('noticeTitle').value.trim(),
+            message: $('noticeMessage').value.trim(),
+            links: links,
+            attachments: await Promise.all(files.map(readFileAsAttachment)),
+            priority: $('noticePriority').value,
+            expiresAt: $('noticeExpiry').value
+          };
+          if (!payload.message && !payload.links.length && !payload.attachments.length) { toast('Hãy nhập nội dung, thêm link hoặc chọn tệp đính kèm.', 'error'); return; }
+          await runModalAction('Đang gửi tin nhắn và tải tệp lên...', async () => {
+            const result = await callApi('apiAdminSendNotification', state.token, payload);
+            await loadAdminData(true);
+            await loadNotifications(true, true).catch(() => {});
+            renderNotificationsPage(); closeModal(); toast(result.message || 'Đã gửi tin nhắn.');
+          });
+        } catch (error) { toast(error.message || 'Không thể chuẩn bị tệp đính kèm.', 'error'); }
       });
+    }
+
+    async function downloadNotificationAttachment(notificationId, attachmentId) {
+      showBusy('Đang tải tệp đính kèm...');
+      try {
+        const result = await callApi('apiDownloadNotificationAttachment', state.token, notificationId, attachmentId);
+        const binary = atob(result.base64 || '');
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+        // Luôn tải xuống dạng nhị phân, không hiển thị nội dung HTML/SVG được đính kèm.
+        const blob = new Blob([bytes], { type: 'application/octet-stream' });
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = result.fileName || 'tep-dinh-kem';
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        window.setTimeout(() => URL.revokeObjectURL(url), 1500);
+      } catch (error) {
+        toast(error.message || 'Không thể tải tệp đính kèm.', 'error');
+      } finally { hideBusy(); }
     }
 
     function renderLinkFilters() {
@@ -3072,8 +3130,6 @@ tr:hover td { background: #f8fbfd; }
             <form id="settingsForm">
               <div class="field"><label for="announcementInput">Thông báo</label><textarea id="announcementInput" maxlength="500" placeholder="Nhập thông báo mới...">${escapeHtml(data.announcement || '')}</textarea></div>
               <div class="field"><label for="supportInput">Hướng dẫn hỗ trợ</label><input id="supportInput" maxlength="200" value="${escapeHtml(data.supportText || '')}" placeholder="Ví dụ: Liên hệ Quản lý ca để được hỗ trợ."></div>
-              <div class="field"><label for="scheduleSheetNameInput">Tên tab lịch làm việc (để trống = tab đầu tiên)</label><input id="scheduleSheetNameInput" maxlength="100" value="${escapeHtml(data.scheduleSheetName || '')}" placeholder="Ví dụ: Lịch làm việc"></div>
-              <div class="page-note">Nguồn lịch: bảng tính Google Sheets được cấu hình sẵn. Apps Script cần được cấp quyền đọc bảng tính này.</div>
               <button class="btn btn-primary" type="submit">Lưu cấu hình</button>
             </form>
           </section>
@@ -3083,7 +3139,6 @@ tr:hover td { background: #f8fbfd; }
               <div><div class="eyebrow">PHƯƠNG THỨC ĐĂNG NHẬP</div><div style="font-size:11px;margin-top:5px">Tên tài khoản + mật khẩu</div></div>
               <div><div class="eyebrow">THỜI HẠN PHIÊN</div><div style="font-size:11px;margin-top:5px">Tối đa 6 giờ, có kiểm tra trạng thái tài khoản</div></div>
               <div><div class="eyebrow">PHÂN QUYỀN</div><div style="font-size:11px;margin-top:5px">Theo vai trò trên sheet Members</div></div>
-              <div><div class="eyebrow">LỊCH LÀM VIỆC</div><div style="font-size:11px;margin-top:5px"><a href="${safeHttpUrl(data.scheduleSpreadsheetUrl || 'https://docs.google.com/spreadsheets/d/1xUpLk7oMrXBsc6sbego3Fg6NemT_IQJvmXeLdJki-p4/edit?usp=sharing')}" target="_blank" rel="noopener">Mở bảng tính nguồn ↗</a></div></div>
             </div>
             <div class="page-note">Mật khẩu hiện được lưu dạng văn bản theo yêu cầu. Hãy giới hạn quyền truy cập trực tiếp vào Google Sheets và chỉ cấp quyền quản trị cho người đáng tin cậy.</div>
           </section>
@@ -3196,8 +3251,7 @@ tr:hover td { background: #f8fbfd; }
       try {
         const result = await callApi('apiAdminSaveSettings', state.token, {
           announcement: $('announcementInput').value,
-          supportText: $('supportInput').value,
-          scheduleSheetName: $('scheduleSheetNameInput').value.trim()
+          supportText: $('supportInput').value
         });
         await Promise.all([loadAdminData(true), refreshDashboard(false)]);
         renderSettingsPage();
@@ -3226,7 +3280,7 @@ tr:hover td { background: #f8fbfd; }
       });
     }
 
-    async function handleAction(action, key) {
+    async function handleAction(action, key, extra) {
       if (action === 'close-modal') return closeModal();
       if (action === 'new-account') return openAccountModal('');
       if (action === 'edit-account') return openAccountModal(key);
@@ -3237,17 +3291,7 @@ tr:hover td { background: #f8fbfd; }
       if (action === 'new-notification') return openNotificationModal();
       if (action === 'read-notification') return markNotificationRead(key);
       if (action === 'read-all-notifications') return markAllNotificationsRead();
-      if (action === 'refresh-schedule') {
-        showBusy('Đang cập nhật lịch làm việc...');
-        try {
-          await callApi('apiRefreshSchedule', state.token);
-          await refreshDashboard(false);
-          toast('Lịch làm việc đã được cập nhật.');
-        }
-        catch (error) { toast(error.message, 'error'); }
-        finally { hideBusy(); }
-        return;
-      }
+      if (action === 'download-notification-attachment') return downloadNotificationAttachment(key, extra);
       if (action === 'refresh' || action === 'refresh-admin') {
         showBusy('Đang làm mới dữ liệu...');
         try {
@@ -3328,7 +3372,7 @@ tr:hover td { background: #f8fbfd; }
       if (nav) { navigate(nav.dataset.nav).catch((error) => toast(error.message, 'error')); return; }
       const actionNode = event.target.closest('[data-action]');
       if (actionNode) {
-        handleAction(actionNode.dataset.action, actionNode.dataset.key || '').catch((error) => toast(error.message, 'error'));
+        handleAction(actionNode.dataset.action, actionNode.dataset.key || '', actionNode.dataset.extra || '').catch((error) => toast(error.message, 'error'));
       }
     });
 
